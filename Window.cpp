@@ -29,14 +29,22 @@ void Window::MainLoop()
     	1, 2, 3    // second triangle
 	};
 
+	glm::vec3 color(0.0f);
+
 	Renderer::Model model = Renderer::CreateModel(vertices, indices);
-	Shader::StaticShader shader = Shader::StaticShader("res/shaders/vertexShader.glsl", "res/shaders/fragmentShader.glsl"); 
+	Shader::StaticShader shader("res/shaders/vertexShader.glsl", "res/shaders/fragmentShader.glsl"); 
 	startTime = SDL_GetTicks64();
 
 	while (true)
 	{
+		f64 timeValue = SDL_GetTicks64() / (f64) 1000;
+		color.r = sin(timeValue) / 2.0f + 0.5f;
+		color.g = cos(timeValue) / 2.0f + 0.5f;
+		color.b = tan(timeValue) / 2.0f + 0.5f;
+
 		Renderer::Prepare();
 		shader.program.Start();
+		shader.LoadColor(color);
 		Renderer::Render(model);
 		shader.program.Stop();
 

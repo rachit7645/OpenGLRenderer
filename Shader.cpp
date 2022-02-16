@@ -17,8 +17,38 @@ ShaderProgram Shader::CreateShader(std::string vertexPath, std::string fragmentP
 	return m_shader;
 }
 
+u32 ShaderProgram::GetUniformLocation(const std::string& name) const
+{
+	return glGetUniformLocation(programID, name.c_str());
+}
+
+void ShaderProgram::LoadInt(u32 location, u32 value) const
+{
+	glUniform1i(location, value);
+}
+
+void ShaderProgram::LoadFloat(u32 location, f32 value) const
+{
+	glUniform1f(location, value);
+}
+
+void ShaderProgram::LoadBool(u32 location, bool value) const
+{
+	glUniform1f(location, value ? 1 : 0);
+}
+
+void ShaderProgram::LoadVector(u32 location, const glm::vec3& vector) const
+{
+	glUniform3fv(location, 1, &vector[0]);
+}
+
+void ShaderProgram::LoadMatrix(u32 location, const glm::mat4& matrix) const
+{
+	glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
+}
+
 // Util function to load shaders
-u32 LoadShader(GLenum type, std::string path)
+u32 Shader::LoadShader(GLenum type, std::string path)
 {
 	std::string content;
 	#ifdef _DEBUG

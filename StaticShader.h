@@ -1,20 +1,24 @@
 #ifndef STATIC_SHADER_H
 #define STATIC_SHADER_H
 
+#include <glm/glm.hpp>
 #include "Shader.h"
 
 namespace Shader
 {
 
-	struct StaticShader
+	class StaticShader
 	{
-		StaticShader(const std::string& vertexPath, const std::string& fragmentPath)
-		{
-			program = Shader::CreateShader(vertexPath, fragmentPath);
-		}
+	public:
+		StaticShader(const std::string& vertexPath, const std::string& fragmentPath);
+		void GetUniformLocations();
+		void LoadColor(const glm::vec3& color);
 
 		ShaderProgram program;
-		std::vector<u32> uniforms;
+
+	private:
+		u32 location_color;
+
 	};
 
 }
