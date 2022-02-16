@@ -22,4 +22,4 @@ namespace Logger
 
 }
 
-#endif
+#endif // LOG_H

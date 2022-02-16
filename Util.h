@@ -25,4 +25,4 @@ typedef	double f64;
 #define clamp(number, range) if (number > range) number = range
 
 
-#endif
+#endif // UTIL_H

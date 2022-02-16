@@ -21,7 +21,8 @@ namespace Window
 	constexpr s32 WINDOW_HEIGHT = 576;
 	constexpr s32 WINDOW_FLAGS = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
-	static f64 delta;
+	// This is a surprise tool that will help up later
+	UNUSED static f64 delta;
 
 	void CreateWindow();
 	void MainLoop();
@@ -31,4 +32,4 @@ namespace Window
 
 }
 
-#endif
+#endif // WINDOW_H

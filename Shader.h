@@ -13,7 +13,6 @@
 
 namespace Shader
 {
-
 	class ShaderProgram
 	{
 	public:	
@@ -32,10 +31,9 @@ namespace Shader
 		void LoadVector(u32 location, const glm::vec3& vector) const;
 		void LoadMatrix(u32 location, const glm::mat4& matrix) const;
 	};
-
+	
 	ShaderProgram CreateShader(std::string vertexPath, std::string fragmentPath);
 	u32 LoadShader(GLenum type, std::string path);
-
 }
 
 #endif // SHADER_H

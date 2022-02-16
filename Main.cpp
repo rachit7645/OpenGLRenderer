@@ -9,6 +9,5 @@ int main(UNUSED int argc, UNUSED char **argv)
 {
 	// Create Window and start main loop
 	Window::CreateWindow();
-
 	return 0;
 }

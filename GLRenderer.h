@@ -6,10 +6,8 @@
 
 namespace Renderer
 {
-
 	void Prepare();
 	void Render(Model model);
-
 }
 
 #endif

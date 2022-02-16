@@ -29,22 +29,23 @@ void Window::MainLoop()
     	1, 2, 3    // second triangle
 	};
 
-	glm::vec3 color(0.0f);
+	std::vector<f32> textureCoords =
+	{
+    	0, 0,
+		0, 1,
+		1, 1,
+		1, 0
+	};
 
-	Renderer::Model model = Renderer::CreateModel(vertices, indices);
+	Renderer::Model model = Renderer::CreateModel(vertices, indices, textureCoords, "res/textures/stone.png");
 	Shader::StaticShader shader("res/shaders/vertexShader.glsl", "res/shaders/fragmentShader.glsl"); 
 	startTime = SDL_GetTicks64();
 
 	while (true)
 	{
-		f64 timeValue = SDL_GetTicks64() / (f64) 1000;
-		color.r = sin(timeValue) / 2.0f + 0.5f;
-		color.g = cos(timeValue) / 2.0f + 0.5f;
-		color.b = tan(timeValue) / 2.0f + 0.5f;
 
 		Renderer::Prepare();
 		shader.program.Start();
-		shader.LoadColor(color);
 		Renderer::Render(model);
 		shader.program.Stop();
 
@@ -110,6 +111,8 @@ void Window::CreateWindow()
 		Logger::LogAndExit("glewInit() Failed\n", 4);
 	}
 
+	SDL_GL_SetSwapInterval(0);
+
 	// GL Defs
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	glEnable(GL_MULTISAMPLE);
@@ -124,7 +127,6 @@ void Window::CreateWindow()
 // Calculates the FPS and the the frame delta
 void Window::CalculateFPS()
 {
-
 	if ( (endTime = SDL_GetTicks64()) >= startTime + 1000 )
 	{
 		std::cout << "\rFPS: " << FPS;
@@ -136,7 +138,6 @@ void Window::CalculateFPS()
 	{
 		FPS++;
 	}
-
 }
 
 // Function to process SDL Events

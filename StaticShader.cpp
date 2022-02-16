@@ -8,12 +8,4 @@ StaticShader::StaticShader(const std::string& vertexPath, const std::string& fra
 	GetUniformLocations();
 }
 
-void StaticShader::GetUniformLocations()
-{
-	location_color = program.GetUniformLocation("color");
-}
-
-void StaticShader::LoadColor(const glm::vec3& color)
-{
-	program.LoadVector(location_color, color);
-}
+void StaticShader::GetUniformLocations() {}

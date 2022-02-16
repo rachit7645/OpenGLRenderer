@@ -2,6 +2,7 @@
 
 using namespace Shader;
 
+// Creates a vertex and fragment shader and links em' into a program
 ShaderProgram Shader::CreateShader(std::string vertexPath, std::string fragmentPath)
 {
 	ShaderProgram m_shader;
@@ -94,6 +95,7 @@ void ShaderProgram::Stop()
 	glUseProgram(0);
 }
 
+// Memory management
 void ShaderProgram::CleanUP()
 {
 	Stop();
