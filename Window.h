@@ -6,11 +6,11 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
-#include "Window.h"
 #include "Log.h"
 #include "Util.h"
 #include "GLRenderer.h"
 #include "StaticShader.h"
+#include "Model.h"
 
 namespace Window
 {

@@ -1,5 +1,4 @@
 #include "Window.h"
-#include "Model.h"
 
 // Global definitions
 

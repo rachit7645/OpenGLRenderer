@@ -1,7 +1,7 @@
 #ifndef STATIC_SHADER_H
 #define STATIC_SHADER_H
 
-#include <glm/glm.hpp>
+#include <map>
 #include "Shader.h"
 
 namespace Shader
@@ -12,6 +12,7 @@ namespace Shader
 		StaticShader(const std::string& vertexPath, const std::string& fragmentPath);
 		void GetUniformLocations();
 	private:
+		std::map<const std::string, u32> uniforms;
 	};
 }
 
