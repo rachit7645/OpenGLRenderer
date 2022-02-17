@@ -22,7 +22,4 @@ typedef std::uint64_t u64;
 typedef float f32;
 typedef	double f64;
 
-#define clamp(number, range) if (number > range) number = range
-
-
 #endif // UTIL_H
