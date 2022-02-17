@@ -3,19 +3,16 @@
 using namespace Shader;
 
 // Creates a vertex and fragment shader and links em' into a program
-ShaderProgram Shader::CreateShader(std::string vertexPath, std::string fragmentPath)
+ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath)
 {
-	ShaderProgram m_shader;
-	m_shader.programID = glCreateProgram();
-	m_shader.vertexShaderID = LoadShader(GL_VERTEX_SHADER, vertexPath);
-	m_shader.fragmentShaderID = LoadShader(GL_FRAGMENT_SHADER, fragmentPath);
+	programID = glCreateProgram();
+	vertexShaderID = LoadShader(GL_VERTEX_SHADER, vertexPath);
+	fragmentShaderID = LoadShader(GL_FRAGMENT_SHADER, fragmentPath);
 
-	glAttachShader(m_shader.programID, m_shader.vertexShaderID);
-	glAttachShader(m_shader.programID, m_shader.fragmentShaderID);
-	glLinkProgram(m_shader.programID);
-	glValidateProgram(m_shader.programID);
-
-	return m_shader;
+	glAttachShader(programID, vertexShaderID);
+	glAttachShader(programID, fragmentShaderID);
+	glLinkProgram(programID);
+	glValidateProgram(programID);
 }
 
 u32 ShaderProgram::GetUniformLocation(const std::string& name) const
@@ -49,7 +46,7 @@ void ShaderProgram::LoadMatrix(u32 location, const glm::mat4& matrix) const
 }
 
 // Util function to load shaders
-u32 Shader::LoadShader(GLenum type, std::string path)
+u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
 {
 	std::string content;
 	#ifdef _DEBUG
@@ -96,7 +93,7 @@ void ShaderProgram::Stop()
 }
 
 // Memory management
-void ShaderProgram::CleanUp()
+ShaderProgram::~ShaderProgram()
 {
 	Stop();
 	glDetachShader(programID, vertexShaderID);

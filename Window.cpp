@@ -43,18 +43,16 @@ void Window::MainLoop()
 
 	while (true)
 	{
-
 		Renderer::Prepare();
-		shader.program.Start();
+		shader.Start();
 		Renderer::Render(model);
-		shader.program.Stop();
+		shader.Stop();
 
 		SDL_GL_SwapWindow(window);
 		CalculateFPS();
 			
 		if (PollEvents()) break;
 	}
-	shader.program.CleanUp();
 }
 
 // Creates a SDL window, gets an opengl context and jumps to the main loop

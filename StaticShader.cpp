@@ -2,9 +2,9 @@
 
 using namespace Shader;
 
-StaticShader::StaticShader(const std::string& vertexPath, const std::string& fragmentPath)
+StaticShader::StaticShader(const std::string& vertexPath, const std::string& fragmentPath) :
+						   ShaderProgram(vertexPath, fragmentPath)
 {
-	program = Shader::CreateShader(vertexPath, fragmentPath);
 	GetUniformLocations();
 }
 

@@ -12,6 +12,7 @@ namespace Renderer
 	struct Model
 	{
 		Model(std::vector<f32>& m_vertices, std::vector<u32>& m_indices, std::vector<f32>& m_textureCoords, const std::string& texturePath);
+
 		u32 vaoID;								 // Vertex Attribute Object ID
 		u32 eboID;								 // Element Buffer Object ID
 		std::vector<f32> vertices;				 // Vertices

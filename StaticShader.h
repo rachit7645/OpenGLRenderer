@@ -6,13 +6,11 @@
 
 namespace Shader
 {
-	class StaticShader
+	class StaticShader : public ShaderProgram
 	{
 	public:
 		StaticShader(const std::string& vertexPath, const std::string& fragmentPath);
 		void GetUniformLocations();
-
-		ShaderProgram program;
 	private:
 	};
 }
