@@ -96,7 +96,7 @@ void ShaderProgram::Stop()
 }
 
 // Memory management
-void ShaderProgram::CleanUP()
+void ShaderProgram::CleanUp()
 {
 	Stop();
 	glDetachShader(programID, vertexShaderID);

@@ -2,22 +2,20 @@
 
 using namespace Renderer;
 
-Model Renderer::CreateModel(std::vector<f32>& vertices, std::vector<u32>& indices, std::vector<f32>& textureCoords, const std::string& texturePath)
+Model::Model(std::vector<f32>& m_vertices, std::vector<u32>& m_indices,
+			 std::vector<f32>& m_textureCoords, const std::string& texturePath)
+			: texture(texturePath)
 {
-	Model model;
-	model.vertices = vertices;
-	model.indices = indices;
+	vertices = m_vertices;
+	indices = m_indices;
+	textureCoords = m_textureCoords;
 
-	glGenVertexArrays(1, &model.vaoID);
-	glBindVertexArray(model.vaoID);
-	model.vboIDs.push_back(CreateVBO(0, 3, vertices));
-	model.vboIDs.push_back(CreateVBO(1, 2, textureCoords));
-	CreateEBO(&model.eboID, indices);
+	glGenVertexArrays(1, &vaoID);
+	glBindVertexArray(vaoID);
+	vboIDs["vertices"] = CreateVBO(0, 3, vertices);
+	vboIDs["textureCoords"] = CreateVBO(1, 2, textureCoords);
+	eboID = CreateEBO(indices);
 	glBindVertexArray(0);
-
-	model.texture = Renderer::LoadTexture(texturePath);
-
-	return model;
 }
 
 u32 CreateVBO(u32 slot, u32 coordSize, std::vector<f32>& data)
@@ -31,10 +29,11 @@ u32 CreateVBO(u32 slot, u32 coordSize, std::vector<f32>& data)
 	return m_vertexBufferID;
 }
 
-void CreateEBO(u32* id, std::vector<u32>& data)
+u32 CreateEBO(std::vector<u32>& data)
 {
-	glGenBuffers(1, id);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *id);
+	u32 m_elementBufferID;
+	glGenBuffers(1, &m_elementBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_elementBufferID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(u32), data.data(), GL_STATIC_DRAW);
-
+	return m_elementBufferID;
 }

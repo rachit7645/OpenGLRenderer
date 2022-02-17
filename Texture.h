@@ -9,11 +9,11 @@ namespace Renderer
 {
 	struct Texture
 	{
+		Texture(const std::string& path);
 		u32 textureID;
 		int width;
 		int height;
 		int channels;
 	}; 
-	Texture LoadTexture(const std::string& path);
 }
 #endif // TEXTURE_H

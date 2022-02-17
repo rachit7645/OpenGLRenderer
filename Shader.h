@@ -22,7 +22,7 @@ namespace Shader
 
 		void Start();
 		void Stop();
-		void CleanUP();
+		void CleanUp();
 
 		u32 GetUniformLocation(const std::string& name) const;
 		void LoadInt(u32 location, u32 value) const;

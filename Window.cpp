@@ -37,7 +37,7 @@ void Window::MainLoop()
 		1, 0
 	};
 
-	Renderer::Model model = Renderer::CreateModel(vertices, indices, textureCoords, "res/textures/stone.png");
+	Renderer::Model model(vertices, indices, textureCoords, "res/textures/stone.png");
 	Shader::StaticShader shader("res/shaders/vertexShader.glsl", "res/shaders/fragmentShader.glsl"); 
 	startTime = SDL_GetTicks64();
 
@@ -54,7 +54,7 @@ void Window::MainLoop()
 			
 		if (PollEvents()) break;
 	}
-	shader.program.CleanUP();
+	shader.program.CleanUp();
 }
 
 // Creates a SDL window, gets an opengl context and jumps to the main loop
