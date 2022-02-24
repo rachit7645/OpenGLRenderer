@@ -8,6 +8,7 @@
 int main(UNUSED int argc, UNUSED char **argv)
 {
 	// Create Window and start main loop
-	Window::CreateWindow();
+	Window::SDLWindow window; 
+	window.MainLoop();
 	return 0;
 }

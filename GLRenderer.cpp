@@ -1,14 +1,16 @@
 #include "GLRenderer.h"
 
+using namespace Renderer;
+
 // Clear framebuffer for renderering
-void Renderer::Prepare()
+void GLRenderer::Prepare()
 {
 	glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 // Draw Models
-void Renderer::Render(Model model)
+void GLRenderer::Render(const Model& model)
 {
 	glBindVertexArray(model.vaoID);
 	glEnableVertexAttribArray(0);
