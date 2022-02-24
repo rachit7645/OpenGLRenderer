@@ -10,7 +10,8 @@ namespace Shader
 	{
 	public:
 		StaticShader(const std::string& vertexPath, const std::string& fragmentPath);
-		void GetUniformLocations();
+		void BindAttributes() override;
+		void GetUniformLocations() override;
 	private:
 		std::map<const std::string, u32> uniforms;
 	};

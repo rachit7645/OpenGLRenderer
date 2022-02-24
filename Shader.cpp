@@ -11,13 +11,16 @@ ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& f
 
 	glAttachShader(programID, vertexShaderID);
 	glAttachShader(programID, fragmentShaderID);
-	glLinkProgram(programID);
-	glValidateProgram(programID);
 }
 
-u32 ShaderProgram::GetUniformLocation(const std::string& name) const
+void ShaderProgram::BindAttribute(u32 attribute, const char* name) const
 {
-	return glGetUniformLocation(programID, name.c_str());
+	glBindAttribLocation(programID, attribute, name);
+}
+
+u32 ShaderProgram::GetUniformLocation(const char* name) const
+{
+	return glGetUniformLocation(programID, name);
 }
 
 void ShaderProgram::LoadInt(u32 location, u32 value) const
@@ -42,7 +45,7 @@ void ShaderProgram::LoadVector(u32 location, const glm::vec3& vector) const
 
 void ShaderProgram::LoadMatrix(u32 location, const glm::mat4& matrix) const
 {
-	glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
 // Util function to load shaders

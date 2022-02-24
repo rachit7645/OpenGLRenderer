@@ -8,6 +8,7 @@
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "Util.h"
 #include "Log.h"
 
@@ -26,7 +27,9 @@ namespace Shader
 		void Start();
 		void Stop();
 
-		u32 GetUniformLocation(const std::string& name) const;
+		u32 GetUniformLocation(const char* name) const;
+		void BindAttribute(u32 attribute, const char* name) const;
+		virtual void BindAttributes() = 0;
 		virtual void GetUniformLocations() = 0;
 		void LoadInt(u32 location, u32 value) const;
 		void LoadFloat(u32 location, f32 value) const;
