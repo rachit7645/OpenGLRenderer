@@ -12,7 +12,7 @@ void GLRenderer::Prepare()
 // Draw Models
 void GLRenderer::Render(const Model& model)
 {
-	glBindVertexArray(model.vaoID);
+	glBindVertexArray(model.vao.id);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glActiveTexture(GL_TEXTURE0);
