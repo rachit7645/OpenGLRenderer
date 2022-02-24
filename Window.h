@@ -14,21 +14,32 @@
 
 namespace Window
 {
-	// TODO: Make a config system
-
 	// Choosing a 16:9 Resolution
 	constexpr s32 WINDOW_WIDTH = 1024;
 	constexpr s32 WINDOW_HEIGHT = 576;
 	constexpr s32 WINDOW_FLAGS = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
-	// This is a surprise tool that will help up later
-	UNUSED static f64 delta;
+	class SDLWindow
+	{
+	public:
+		SDLWindow();
 
-	void CreateWindow();
-	void MainLoop();
-	bool PollEvents();
-	void CalculateFPS();
-	void CleanUp();
+		void MainLoop();
+		bool PollEvents();
+		void CalculateFPS();
+		void CleanUp();
+
+		// This is a surprise tool that will help up later
+		f64 delta;
+
+	private:
+		u64 startTime, endTime;
+		f64 FPS;
+
+		SDL_Window* window = nullptr;
+		SDL_GLContext glContext = nullptr;
+		SDL_Event event;	
+	};
 
 }
 

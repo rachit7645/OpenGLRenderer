@@ -6,8 +6,12 @@
 
 namespace Renderer
 {
-	void Prepare();
-	void Render(Model model);
+	class GLRenderer
+	{
+	public:
+		void Prepare();
+		void Render(const Model& model);
+	};
 }
 
 #endif

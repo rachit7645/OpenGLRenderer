@@ -1,18 +1,10 @@
 #include "Window.h"
 
-// Global definitions
-
-SDL_Window* window = nullptr;
-SDL_GLContext glContext = nullptr;
-SDL_Event event;
-
-u64 startTime, endTime;
-f64 FPS;
+using namespace Window;
 
 // Main loop for the engine
-void Window::MainLoop()
+void SDLWindow::MainLoop()
 {
-
 	// Test Vertices
 	std::vector<f32> vertices = 
 	{
@@ -21,13 +13,11 @@ void Window::MainLoop()
     	-0.5f, -0.5f, 0.0f,  // bottom left
     	-0.5f,  0.5f, 0.0f   // top left
 	};
-
 	std::vector<u32> indices =
 	{
 		0, 1, 3,   // first triangle
     	1, 2, 3    // second triangle
 	};
-
 	std::vector<f32> textureCoords =
 	{
     	0, 0,
@@ -37,14 +27,15 @@ void Window::MainLoop()
 	};
 
 	Renderer::Model model(vertices, indices, textureCoords, "res/textures/stone.png");
+	Renderer::GLRenderer renderer;
 	Shader::StaticShader shader("res/shaders/vertexShader.glsl", "res/shaders/fragmentShader.glsl"); 
 	startTime = SDL_GetTicks64();
 
 	while (true)
 	{
-		Renderer::Prepare();
+		renderer.Prepare();
 		shader.Start();
-		Renderer::Render(model);
+		renderer.Render(model);
 		shader.Stop();
 
 		SDL_GL_SwapWindow(window);
@@ -52,10 +43,11 @@ void Window::MainLoop()
 			
 		if (PollEvents()) break;
 	}
+	CleanUp();
 }
 
 // Creates a SDL window, gets an opengl context and jumps to the main loop
-void Window::CreateWindow()
+SDLWindow::SDLWindow()
 {
 	Logger::Log("Initializing SDL2\n", Logger::INFO);
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -114,31 +106,24 @@ void Window::CreateWindow()
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	glEnable(GL_MULTISAMPLE);
 
-	MainLoop();
-
-	Logger::Log("\nQuiting SDL2", Logger::INFO);
-	CleanUp();
-
 }
 
 // Calculates the FPS and the the frame delta
-void Window::CalculateFPS()
+void SDLWindow::CalculateFPS()
 {
 	if ( (endTime = SDL_GetTicks64()) >= startTime + 1000 )
 	{
 		std::cout << "\rFPS: " << FPS;
 		FPS = 0;
-		Window::delta = (endTime - startTime) / 1000;
+		delta = (endTime - startTime) / 1000;
 		startTime = endTime;
+		return;
 	}
-	else
-	{
-		FPS++;
-	}
+	FPS++;
 }
 
 // Function to process SDL Events
-bool Window::PollEvents()
+bool SDLWindow::PollEvents()
 {
 	if (SDL_PollEvent(&event))
 	{
@@ -149,8 +134,9 @@ bool Window::PollEvents()
 }
 
 // Free memory resources before exiting
-void Window::CleanUp()
+void SDLWindow::CleanUp()
 {
+	Logger::Log("\nQuiting SDL2", Logger::INFO);
 	SDL_GL_DeleteContext(glContext);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
