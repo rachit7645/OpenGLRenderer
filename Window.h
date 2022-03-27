@@ -11,6 +11,7 @@
 #include "GLRenderer.h"
 #include "StaticShader.h"
 #include "Model.h"
+#include "Entity.h"
 
 namespace Window
 {

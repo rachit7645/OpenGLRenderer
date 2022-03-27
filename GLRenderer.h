@@ -2,7 +2,7 @@
 #define GL_RENDERER_H
 
 #include <GL/glew.h>
-#include "Model.h"
+#include "Entity.h"
 
 namespace Renderer
 {
@@ -13,7 +13,7 @@ namespace Renderer
 	{
 	public:
 		void Prepare();
-		void Render(const Model& model);
+		void Render(const Entities::Entity& entity);
 	};
 }
 

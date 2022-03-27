@@ -1,6 +1,7 @@
 #include "GLRenderer.h"
 
 using namespace Renderer;
+using namespace Entities;
 
 // Clear framebuffer for renderering
 void GLRenderer::Prepare()
@@ -10,8 +11,9 @@ void GLRenderer::Prepare()
 }
 
 // Draw Models
-void GLRenderer::Render(const Model& model)
+void GLRenderer::Render(const Entity& entity)
 {
+	const Model& model = entity.model;
 	glBindVertexArray(model.vao.id);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);

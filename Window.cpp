@@ -27,6 +27,8 @@ void SDLWindow::MainLoop()
 	};
 
 	Renderer::Model model(vertices, indices, textureCoords, "res/textures/stone.png");
+	Entities::Entity entity(model, glm::vec3(0.0f), glm::vec3(0.0f), 1.0f);
+
 	Renderer::GLRenderer renderer;
 	Shader::StaticShader shader("res/shaders/vertexShader.glsl", "res/shaders/fragmentShader.glsl"); 
 	startTime = SDL_GetTicks64();
@@ -35,7 +37,7 @@ void SDLWindow::MainLoop()
 	{
 		renderer.Prepare();
 		shader.Start();
-		renderer.Render(model);
+		renderer.Render(entity);
 		shader.Stop();
 
 		SDL_GL_SwapWindow(window);
