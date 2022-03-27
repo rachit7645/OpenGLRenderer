@@ -1,4 +1,9 @@
+#ifndef CAMERA_H
+#define CAMERA_H
+
+#include <SDL2/SDL.h>
 #include <glm/glm.hpp>
+
 #include "Util.h"
 
 namespace Entities
@@ -6,7 +11,8 @@ namespace Entities
 	class Camera
 	{
 	public:
-		Camera() { position = glm::vec3(0.0f); }
+		Camera(const glm::vec3 &pos) : position{ pos } {}
+		void Move();
 
 		glm::vec3 position;
 		f32 pitch;
@@ -14,3 +20,5 @@ namespace Entities
 		f32 roll;
 	};
 }
+
+#endif

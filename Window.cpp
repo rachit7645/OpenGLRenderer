@@ -30,15 +30,24 @@ void SDLWindow::MainLoop()
 	Entities::Entity entity(model, glm::vec3(0.0f, 0.0f, -1.5f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
 	Shader::StaticShader shader("res/shaders/vertexShader.glsl", "res/shaders/fragmentShader.glsl"); 
-	Renderer::GLRenderer renderer(shader);
+	Renderer::GLRenderer renderer;
+
+	Entities::Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
+
+	CreateProjectionMatrix();
+	shader.Start();
+	shader.LoadProjectionMatrix(projectionMatrix);
+	shader.Stop();
 
 	startTime = SDL_GetTicks64();
 
 	while (true)
 	{
 		entity.rotation.y += 0.1f;
+		camera.Move();
 		renderer.Prepare();
 		shader.Start();
+		shader.LoadViewMatrix(camera);
 		renderer.Render(entity, shader);
 		shader.Stop();
 
@@ -109,6 +118,7 @@ SDLWindow::SDLWindow()
 	// GL Defs
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	glEnable(GL_MULTISAMPLE);
+	glEnable(GL_DEPTH_TEST);
 }
 
 // Calculates the FPS and the the frame delta
@@ -125,15 +135,28 @@ void SDLWindow::CalculateFPS()
 	FPS++;
 }
 
+SDL_Keycode key;
 // Function to process SDL Events
 bool SDLWindow::PollEvents()
 {
-	if (SDL_PollEvent(&event))
+	while (SDL_PollEvent(&event))
 	{
-		if (event.type == SDL_QUIT)
+		switch (event.type)
+		{
+		case SDL_QUIT:
 			return true;
+		case SDL_KEYDOWN:	
+			key = event.key.keysym.sym;
+		default:
+			break;
+		}
 	}
 	return false;
+}
+
+void SDLWindow::CreateProjectionMatrix()
+{
+	projectionMatrix = glm::perspective(glm::radians(FOV), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
 }
 
 // Free memory resources before exiting

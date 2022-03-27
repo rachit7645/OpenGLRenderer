@@ -1,6 +1,7 @@
 #include "StaticShader.h"
 
 using namespace Shader;
+using namespace Entities;
 
 StaticShader::StaticShader(const std::string& vertexPath, const std::string& fragmentPath)
 						   : ShaderProgram(vertexPath, fragmentPath)
@@ -21,6 +22,7 @@ void StaticShader::GetUniformLocations()
 {
 	uniforms["modelMatrix"] = GetUniformLocation("modelMatrix");
 	uniforms["projectionMatrix"] = GetUniformLocation("projectionMatrix");
+	uniforms["viewMatrix"] = GetUniformLocation("viewMatrix");
 }
 
 void StaticShader::LoadTransformationMatrix(glm::mat4 matrix)
@@ -31,4 +33,10 @@ void StaticShader::LoadTransformationMatrix(glm::mat4 matrix)
 void StaticShader::LoadProjectionMatrix(glm::mat4 matrix)
 {
 	LoadMatrix(uniforms["projectionMatrix"], matrix);
+}
+
+void StaticShader::LoadViewMatrix(Camera &camera)
+{
+	glm::mat4 viewMatrix = Maths::CreateViewMatrix(camera);
+	LoadMatrix(uniforms["viewMatrix"], viewMatrix);
 }
