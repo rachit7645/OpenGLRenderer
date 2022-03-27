@@ -2,7 +2,11 @@
 #define GL_RENDERER_H
 
 #include <GL/glew.h>
+#include <glm/glm.hpp>
+
+#include "Maths.h"
 #include "Entity.h"
+#include "StaticShader.h"
 
 namespace Renderer
 {
@@ -13,7 +17,7 @@ namespace Renderer
 	{
 	public:
 		void Prepare();
-		void Render(const Entities::Entity& entity);
+		void Render(const Entities::Entity &entity, Shader::StaticShader &shader);
 	};
 }
 

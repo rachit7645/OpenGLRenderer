@@ -2,7 +2,7 @@
 #define UTIL_H
 
 // Utility header file
-// Contains utility macros and usings
+// Contains utility macros and defines
 
 #include <cstdint>
 #include <cstddef>

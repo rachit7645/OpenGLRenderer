@@ -17,4 +17,12 @@ void StaticShader::BindAttributes()
 	BindAttribute(1, "textureCoords");
 }
 
-void StaticShader::GetUniformLocations() {}
+void StaticShader::GetUniformLocations() 
+{
+	uniforms["modelMatrix"] = GetUniformLocation("modelMatrix");
+}
+
+void StaticShader::LoadTransformationMatrix(glm::mat4 matrix)
+{
+	LoadMatrix(uniforms["modelMatrix"], matrix);
+}

@@ -14,7 +14,8 @@ namespace Entities
 		Entity(const Renderer::Model &p_model, const glm::vec3 &pos, const glm::vec3 &rot, f32 sc);
 
 		Renderer::Model model;
-		glm::vec3 position, rotation;
+		glm::vec3 position;
+		glm::vec3 rotation;
 		f32 scale;
 	};
 }

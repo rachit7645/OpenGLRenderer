@@ -27,7 +27,7 @@ void SDLWindow::MainLoop()
 	};
 
 	Renderer::Model model(vertices, indices, textureCoords, "res/textures/stone.png");
-	Entities::Entity entity(model, glm::vec3(0.0f), glm::vec3(0.0f), 1.0f);
+	Entities::Entity entity(model, glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
 	Renderer::GLRenderer renderer;
 	Shader::StaticShader shader("res/shaders/vertexShader.glsl", "res/shaders/fragmentShader.glsl"); 
@@ -35,9 +35,12 @@ void SDLWindow::MainLoop()
 
 	while (true)
 	{
+		entity.position.x += 0.001f;
+		if (entity.position.x > 1.0f) entity.position.x = -1.5f;
+		entity.rotation.y += 0.2f;
 		renderer.Prepare();
 		shader.Start();
-		renderer.Render(entity);
+		renderer.Render(entity, shader);
 		shader.Stop();
 
 		SDL_GL_SwapWindow(window);

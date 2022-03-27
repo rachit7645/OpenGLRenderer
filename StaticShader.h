@@ -2,6 +2,8 @@
 #define STATIC_SHADER_H
 
 #include <map>
+#include <glm/glm.hpp>
+
 #include "Shader.h"
 
 namespace Shader
@@ -10,6 +12,7 @@ namespace Shader
 	{
 	public:
 		StaticShader(const std::string& vertexPath, const std::string& fragmentPath);
+		void LoadTransformationMatrix(glm::mat4 matrix);
 		void BindAttributes() override;
 		void GetUniformLocations() override;
 	private:

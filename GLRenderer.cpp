@@ -2,6 +2,7 @@
 
 using namespace Renderer;
 using namespace Entities;
+using namespace Shader;
 
 // Clear framebuffer for renderering
 void GLRenderer::Prepare()
@@ -11,12 +12,14 @@ void GLRenderer::Prepare()
 }
 
 // Draw Models
-void GLRenderer::Render(const Entity& entity)
+void GLRenderer::Render(const Entity& entity, StaticShader& shader)
 {
 	const Model& model = entity.model;
 	glBindVertexArray(model.vao.id);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glm::mat4 trans_matrix = Maths::CreateTransformationMatrix(entity.position, entity.rotation, entity.scale);
+	shader.LoadTransformationMatrix(trans_matrix);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, model.texture.textureID);
 	glDrawElements(GL_TRIANGLES, model.indices.size(), GL_UNSIGNED_INT, 0);
