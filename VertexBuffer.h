@@ -2,6 +2,7 @@
 #define VERTEX_BUFFER_H
 
 #include <vector>
+#include <map>
 #include <GL/glew.h>
 #include "Util.h"
 
@@ -17,22 +18,19 @@ namespace Renderer
 		VertexBuffer();
 		~VertexBuffer();
 
-		VertexBuffer(const VertexBuffer&) = delete;
-		VertexBuffer &operator=(const VertexBuffer&) = delete;
-		VertexBuffer &operator=(VertexBuffer &&other)
+		VertexBuffer(const VertexBuffer& other);
+		VertexBuffer(VertexBuffer&& other);
+		VertexBuffer operator = (const VertexBuffer& other)
 		{
-			if (this != &other)
-			{
-				Delete();
+			if (id != other.id) {
 				id = other.id;
-				other.id = 0;
-			}
+				IncRefCount();
+			}	
 			return *this;
 		}
-		VertexBuffer(VertexBuffer&& other);
 
 	private:
-		void Delete();		
+		void IncRefCount();	
 	};
 }
 

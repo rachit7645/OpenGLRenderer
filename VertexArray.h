@@ -19,22 +19,19 @@ namespace Renderer
 		VertexArray(std::vector<f32>& vert, std::vector<u32>& indi, std::vector<f32>& txCoords);
 		~VertexArray();
 
-		VertexArray(const VertexArray&) = delete;
-		VertexArray &operator=(const VertexArray&) = delete;
-		VertexArray &operator=(VertexArray &&other)
+		VertexArray(const VertexArray& other);
+		VertexArray(VertexArray&& other);
+		VertexArray operator = (const VertexArray& other)
 		{
-			if (this != &other)
-			{
-				Delete();
+			if (id != other.id) {
 				id = other.id;
-				other.id = 0;
-			}
+				IncRefCount();
+			}	
 			return *this;
 		}
-		VertexArray(VertexArray&& other);
 
 	private:
-		void Delete();	
+		void IncRefCount();	
 	};
 }
 
