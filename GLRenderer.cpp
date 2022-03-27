@@ -4,6 +4,19 @@ using namespace Renderer;
 using namespace Entities;
 using namespace Shader;
 
+GLRenderer::GLRenderer(StaticShader &shader)
+{
+	projectionMatrix = CreateProjectionMatrix();
+	shader.Start();
+	shader.LoadProjectionMatrix(projectionMatrix);
+	shader.Stop();
+}
+
+glm::mat4 GLRenderer::CreateProjectionMatrix()
+{
+	return glm::perspective(glm::radians(FOV), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
+}
+
 // Clear framebuffer for renderering
 void GLRenderer::Prepare()
 {

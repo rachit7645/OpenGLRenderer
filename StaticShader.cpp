@@ -20,9 +20,15 @@ void StaticShader::BindAttributes()
 void StaticShader::GetUniformLocations() 
 {
 	uniforms["modelMatrix"] = GetUniformLocation("modelMatrix");
+	uniforms["projectionMatrix"] = GetUniformLocation("projectionMatrix");
 }
 
 void StaticShader::LoadTransformationMatrix(glm::mat4 matrix)
 {
 	LoadMatrix(uniforms["modelMatrix"], matrix);
+}
+
+void StaticShader::LoadProjectionMatrix(glm::mat4 matrix)
+{
+	LoadMatrix(uniforms["projectionMatrix"], matrix);
 }

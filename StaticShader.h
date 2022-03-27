@@ -13,6 +13,7 @@ namespace Shader
 	public:
 		StaticShader(const std::string& vertexPath, const std::string& fragmentPath);
 		void LoadTransformationMatrix(glm::mat4 matrix);
+		void LoadProjectionMatrix(glm::mat4 matrix);
 		void BindAttributes() override;
 		void GetUniformLocations() override;
 	private:
