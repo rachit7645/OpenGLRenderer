@@ -2,13 +2,13 @@
 
 using namespace Renderer;
 
-VertexArray::VertexArray(std::vector<f32>& m_vertices, std::vector<u32>& m_indices, std::vector<f32>& m_textureCoords)
+VertexArray::VertexArray(std::vector<f32>& vert, std::vector<u32>& indi, std::vector<f32>& txCoords)
 {
 	glGenVertexArrays(1, &id);
 	glBindVertexArray(id);
-	buffers["vertices"] = VertexBuffer(0, 3, m_vertices);
-	buffers["textureCoords"] = VertexBuffer(1, 2, m_textureCoords);
-	buffers["indices"] = VertexBuffer(m_indices);
+	buffers["vertices"] = VertexBuffer(0, 3, vert);
+	buffers["textureCoords"] = VertexBuffer(1, 2, txCoords);
+	buffers["indices"] = VertexBuffer(indi);
 	glBindVertexArray(0);
 }
 

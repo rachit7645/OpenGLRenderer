@@ -7,6 +7,8 @@
 
 namespace Renderer
 {
+	constexpr f32 LOD_BIAS = -0.5f;
+	
 	struct Texture
 	{
 		Texture(const std::string& path);

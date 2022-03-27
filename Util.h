@@ -2,24 +2,34 @@
 #define UTIL_H
 
 // Utility header file
-// Contains utility macros and typedefs
+// Contains utility macros and usings
 
 #include <cstdint>
 #include <cstddef>
 
 #define UNUSED __attribute__((unused))
 
-typedef std::int8_t s8;
-typedef std::int16_t s16;
-typedef std::int32_t s32;
-typedef std::int64_t s64;
+using s8 = std::int8_t;
+using s16 = std::int16_t;
+using s32 = std::int32_t;
+using s64 = std::int64_t;
 
-typedef std::uint8_t u8;
-typedef std::uint16_t u16;
-typedef std::uint32_t u32;
-typedef std::uint64_t u64;
+using u8 = std::uint8_t;
+using u16 = std::uint16_t;
+using u32 = std::uint32_t;
+using u64 = std::uint64_t;
 
-typedef float f32;
-typedef	double f64;
+using f32 = float;
+using f64 = double;
+
+enum ERRORS
+{
+	SDL_INIT_FAILED = 1,
+	SDL_CREATE_WINDOW_FAILED = 2,
+	SDL_GL_CREATE_CONTEXT_FAILED = 3,
+	GLEW_INIT_FAILED = 4,
+	SHADER_FILE_OPEN_FAILED = 5,
+	SHADER_COMPILATION_FAILED = 6,
+};
 
 #endif // UTIL_H

@@ -46,13 +46,13 @@ void SDLWindow::MainLoop()
 	CleanUp();
 }
 
-// Creates a SDL window, gets an opengl context and jumps to the main loop
+// Creates a SDL window, gets an opengl context, and sets up GL values
 SDLWindow::SDLWindow()
 {
 	Logger::Log("Initializing SDL2\n", Logger::INFO);
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
-		Logger::LogAndExit_SDL("SDL_Init Failed\n", 1);
+		Logger::LogAndExit_SDL("SDL_Init Failed\n", SDL_INIT_FAILED);
 	}
 
 	Logger::Log("Setting up OpenGL context\n", Logger::INFO);
@@ -81,7 +81,7 @@ SDLWindow::SDLWindow()
 	);
 	if (window == nullptr)
 	{
-		Logger::LogAndExit_SDL("SDL_CreateWindow Failed\n", 2);
+		Logger::LogAndExit_SDL("SDL_CreateWindow Failed\n", SDL_CREATE_WINDOW_FAILED);
 	}
 	// For sanity, raise window
 	SDL_RaiseWindow(window);
@@ -91,13 +91,13 @@ SDLWindow::SDLWindow()
 	glContext = SDL_GL_CreateContext(window);
 	if (glContext == nullptr)
 	{
-		Logger::LogAndExit_SDL("SDL_GL_CreateContext Failed\n", 3);
+		Logger::LogAndExit_SDL("SDL_GL_CreateContext Failed\n", SDL_GL_CREATE_CONTEXT_FAILED);
 	}
 
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
 	{
-		Logger::LogAndExit("glewInit() Failed\n", 4);
+		Logger::LogAndExit("glewInit() Failed\n", GLEW_INIT_FAILED);
 	}
 
 	SDL_GL_SetSwapInterval(0);

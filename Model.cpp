@@ -2,12 +2,7 @@
 
 using namespace Renderer;
 
-Model::Model(std::vector<f32>& m_vertices,
-			 std::vector<u32>& m_indices,
-			 std::vector<f32>& m_textureCoords,
-			 const std::string& texturePath) 
-			: vertices{m_vertices},
-			 indices{m_indices},
-			 textureCoords{m_textureCoords},
-			 vao(vertices, indices, textureCoords),
-			 texture(texturePath) {}
+Model::Model(std::vector<f32>& vert, std::vector<u32>& indi,
+			 std::vector<f32>& txCoords, const std::string& txPath)
+			 : vertices{ vert }, indices{ indi }, textureCoords{ txCoords },
+			   vao(vertices, indices, textureCoords), texture(txPath) {}

@@ -12,7 +12,7 @@ namespace Renderer
 {
 	struct Model
 	{
-		Model(std::vector<f32>& m_vertices, std::vector<u32>& m_indices, std::vector<f32>& m_textureCoords, const std::string& texturePath);
+		Model(std::vector<f32>& vert, std::vector<u32>& indi, std::vector<f32>& txCoords, const std::string& txPath);
 		std::vector<f32> vertices;				 // Vertices
 		std::vector<u32> indices;				 // Indices
 		std::vector<f32> textureCoords;			 // Texture Coordinates

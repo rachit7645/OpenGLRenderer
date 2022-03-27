@@ -18,15 +18,14 @@ void Logger::LogAndExit(std::string message, int exitCode)
 // Log message with formatting
 void Logger::Log(std::string message, Type type)
 {
-	std::string m_type;
-
+	const char* str_type;
 	if (type == INFO) 
-		m_type = "INFO: "; 
+		str_type = INFO_STR; 
 	else if (type == WARNING) 
-		m_type = "WARNING: ";
+		str_type = WARNING_STR;
 	else if (type == ERROR)
-		m_type = "ERROR: ";
+		str_type = ERROR_STR;
 
-	std::cerr << m_type << message;	
+	std::cerr << str_type << message;	
 	 
 }

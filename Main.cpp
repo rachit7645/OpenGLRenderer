@@ -5,7 +5,7 @@
 #include "Window.h"
 #include "Util.h"
 
-int main(UNUSED int argc, UNUSED char **argv)
+int main(UNUSED int argc, UNUSED char** argv)
 {
 	// Create Window and start main loop
 	Window::SDLWindow window; 

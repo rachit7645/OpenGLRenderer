@@ -16,7 +16,7 @@ namespace Renderer
 		GLuint id;
 		std::map<const std::string, VertexBuffer> buffers;
 
-		VertexArray(std::vector<f32>& m_vertices, std::vector<u32>& m_indices, std::vector<f32>& m_textureCoords);
+		VertexArray(std::vector<f32>& vert, std::vector<u32>& indi, std::vector<f32>& txCoords);
 		~VertexArray();
 
 		VertexArray(const VertexArray&) = delete;

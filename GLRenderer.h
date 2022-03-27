@@ -6,6 +6,9 @@
 
 namespace Renderer
 {
+	constexpr GLbitfield GL_CLEAR_FLAGS = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
+	constexpr GLclampf RED = 0.25f, GREEN = 0.25f, BLUE = 0.25f, ALPHA = 1.0f;
+
 	class GLRenderer
 	{
 	public:

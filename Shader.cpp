@@ -59,7 +59,7 @@ u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
 	#endif
     if (!fileStream.is_open())
 	{
-       Logger::LogAndExit("Unable to open file" + path, 5);
+       Logger::LogAndExit("Unable to open file" + path, SHADER_FILE_OPEN_FAILED);
     }
 
     std::string line;
@@ -79,7 +79,7 @@ u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
 		std::vector<char> v;
 		v.reserve(length);
 		glGetShaderInfoLog(shaderID, length, NULL, v.data());
-		Logger::LogAndExit(v.data(), 6);
+		Logger::LogAndExit(v.data(), SHADER_COMPILATION_FAILED);
 	}
 
 	return shaderID;
