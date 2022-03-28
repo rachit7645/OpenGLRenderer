@@ -42,7 +42,8 @@ namespace Window
 		glm::mat4 projectionMatrix;
 
 	private:
-		void CreateProjectionMatrix();
+		inline void CreateProjectionMatrix();
+		void InitGL();
 
 		u64 startTime, endTime;
 		f64 FPS;

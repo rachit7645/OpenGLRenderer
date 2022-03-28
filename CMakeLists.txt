@@ -24,7 +24,7 @@ find_package(GLEW REQUIRED)
 find_package(glm REQUIRED)
 
 add_executable(engine Main.cpp Log.cpp Window.cpp GLRenderer.cpp Model.cpp Shader.cpp StaticShader.cpp Texture.cpp VertexArray.cpp
-VertexBuffer.cpp Entity.cpp Maths.cpp Camera.cpp)
+VertexBuffer.cpp Entity.cpp Maths.cpp Camera.cpp MainLoop.cpp)
 
 target_link_libraries(engine OpenGL::GL GLEW::GLEW SDL2::SDL2 glm)
 
