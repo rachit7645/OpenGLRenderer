@@ -1,19 +1,18 @@
 #include "Camera.h"
+#include "Window.h"
 
 using namespace Entities;
-
-#include "Window.h"
+using namespace Window;
 
 void Camera::Move()
 {
 	constexpr f32 MOVE_CONSTANT = 0.002f;
-	if (key == SDLK_w)
+	if (g_Keys[SDL_SCANCODE_W])
 		position.z -= MOVE_CONSTANT;
-	if (key == SDLK_a)
+	if (g_Keys[SDL_SCANCODE_A])
 		position.x -= MOVE_CONSTANT;
-	if (key == SDLK_s)
+	if (g_Keys[SDL_SCANCODE_S])
 		position.z += MOVE_CONSTANT;
-	if (key == SDLK_d)
-		position.x += MOVE_CONSTANT;
-	key == 0;	 	 	 	 
+	if (g_Keys[SDL_SCANCODE_D])
+		position.x += MOVE_CONSTANT;	 	 	 	 
 }

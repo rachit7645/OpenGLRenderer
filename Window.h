@@ -14,7 +14,7 @@
 #include "Entity.h"
 #include "Camera.h"
 
-extern SDL_Keycode key;
+inline const u8* g_Keys;
 
 namespace Window
 {

@@ -8,22 +8,79 @@ void SDLWindow::MainLoop()
 	// Test Vertices
 	std::vector<f32> vertices = 
 	{
-		 0.5f,  0.5f, 0.0f,  // top right
-    	 0.5f, -0.5f, 0.0f,  // bottom right
-    	-0.5f, -0.5f, 0.0f,  // bottom left
-    	-0.5f,  0.5f, 0.0f   // top left
+		 -0.5f,0.5f,-0.5f,	
+		-0.5f,-0.5f,-0.5f,	
+		0.5f,-0.5f,-0.5f,	
+		0.5f,0.5f,-0.5f,		
+		
+		-0.5f,0.5f,0.5f,	
+		-0.5f,-0.5f,0.5f,	
+		0.5f,-0.5f,0.5f,	
+		0.5f,0.5f,0.5f,
+				
+		0.5f,0.5f,-0.5f,	
+		0.5f,-0.5f,-0.5f,	
+		0.5f,-0.5f,0.5f,	
+		0.5f,0.5f,0.5f,
+				
+		-0.5f,0.5f,-0.5f,	
+		-0.5f,-0.5f,-0.5f,	
+		-0.5f,-0.5f,0.5f,	
+		-0.5f,0.5f,0.5f,
+
+		-0.5f,0.5f,0.5f,
+		-0.5f,0.5f,-0.5f,
+		0.5f,0.5f,-0.5f,
+		0.5f,0.5f,0.5f,
+		
+		-0.5f,-0.5f,0.5f,
+		-0.5f,-0.5f,-0.5f,
+		0.5f,-0.5f,-0.5f,
+		0.5f,-0.5f,0.5f
 	};
+
 	std::vector<u32> indices =
 	{
-		0, 1, 3,   // first triangle
-    	1, 2, 3    // second triangle
+		0,1,3,	
+		3,1,2,	
+		4,5,7,
+		7,5,6,
+		8,9,11,
+		11,9,10,
+		12,13,15,
+		15,13,14,	
+		16,17,19,
+		19,17,18,
+		20,21,23,
+		23,21,22
 	};
+
 	std::vector<f32> textureCoords =
 	{
-    	0, 0,
-		0, 1,
-		1, 1,
-		1, 0
+    	0,0,
+		0,1,
+		1,1,
+		1,0,			
+		0,0,
+		0,1,
+		1,1,
+		1,0,			
+		0,0,
+		0,1,
+		1,1,
+		1,0,
+		0,0,
+		0,1,
+		1,1,
+		1,0,
+		0,0,
+		0,1,
+		1,1,
+		1,0,
+		0,0,
+		0,1,
+		1,1,
+		1,0
 	};
 
 	Renderer::Model model(vertices, indices, textureCoords, "res/textures/stone.png");
@@ -114,6 +171,7 @@ SDLWindow::SDLWindow()
 	}
 
 	SDL_GL_SetSwapInterval(0);
+	g_Keys = SDL_GetKeyboardState(NULL);
 
 	// GL Defs
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -135,7 +193,6 @@ void SDLWindow::CalculateFPS()
 	FPS++;
 }
 
-SDL_Keycode key;
 // Function to process SDL Events
 bool SDLWindow::PollEvents()
 {
@@ -145,8 +202,6 @@ bool SDLWindow::PollEvents()
 		{
 		case SDL_QUIT:
 			return true;
-		case SDL_KEYDOWN:	
-			key = event.key.keysym.sym;
 		default:
 			break;
 		}
