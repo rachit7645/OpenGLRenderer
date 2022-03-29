@@ -56,7 +56,6 @@ SDLWindow::SDLWindow()
 		Logger::LogAndExit("glewInit() Failed\n", GLEW_INIT_FAILED);
 	}
 
-	SDL_GL_SetSwapInterval(0);
 	g_Keys = SDL_GetKeyboardState(NULL);
 }
 
@@ -73,6 +72,35 @@ bool SDLWindow::PollEvents()
 			break;
 		}
 	}
+
+	if (g_Keys[SDL_SCANCODE_F1])
+	{
+		if (!wireframe)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			wireframe = true;
+		}
+		else
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			wireframe = false;
+		}
+	}
+
+	if (g_Keys[SDL_SCANCODE_F2])
+	{
+		if (vsync)
+		{
+			SDL_GL_SetSwapInterval(0);
+			vsync = false;
+		}
+		else
+		{
+			SDL_GL_SetSwapInterval(1);
+			vsync = true;
+		}
+	}
+
 	return false;
 }
 

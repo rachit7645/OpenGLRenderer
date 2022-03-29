@@ -7,91 +7,13 @@ void SDLWindow::MainLoop()
 {
 	InitGL();
 
-	// Test Vertices
-	std::vector<f32> vertices = 
-	{
-		 -0.5f,0.5f,-0.5f,	
-		-0.5f,-0.5f,-0.5f,	
-		0.5f,-0.5f,-0.5f,	
-		0.5f,0.5f,-0.5f,		
-		
-		-0.5f,0.5f,0.5f,	
-		-0.5f,-0.5f,0.5f,	
-		0.5f,-0.5f,0.5f,	
-		0.5f,0.5f,0.5f,
-				
-		0.5f,0.5f,-0.5f,	
-		0.5f,-0.5f,-0.5f,	
-		0.5f,-0.5f,0.5f,	
-		0.5f,0.5f,0.5f,
-				
-		-0.5f,0.5f,-0.5f,	
-		-0.5f,-0.5f,-0.5f,	
-		-0.5f,-0.5f,0.5f,	
-		-0.5f,0.5f,0.5f,
-
-		-0.5f,0.5f,0.5f,
-		-0.5f,0.5f,-0.5f,
-		0.5f,0.5f,-0.5f,
-		0.5f,0.5f,0.5f,
-		
-		-0.5f,-0.5f,0.5f,
-		-0.5f,-0.5f,-0.5f,
-		0.5f,-0.5f,-0.5f,
-		0.5f,-0.5f,0.5f
-	};
-
-	std::vector<u32> indices =
-	{
-		0,1,3,	
-		3,1,2,	
-		4,5,7,
-		7,5,6,
-		8,9,11,
-		11,9,10,
-		12,13,15,
-		15,13,14,	
-		16,17,19,
-		19,17,18,
-		20,21,23,
-		23,21,22
-	};
-
-	std::vector<f32> textureCoords =
-	{
-    	0,0,
-		0,1,
-		1,1,
-		1,0,			
-		0,0,
-		0,1,
-		1,1,
-		1,0,			
-		0,0,
-		0,1,
-		1,1,
-		1,0,
-		0,0,
-		0,1,
-		1,1,
-		1,0,
-		0,0,
-		0,1,
-		1,1,
-		1,0,
-		0,0,
-		0,1,
-		1,1,
-		1,0
-	};
-
-	Renderer::Model model(vertices, indices, textureCoords, "res/textures/stone.png");
-	Entities::Entity entity(model, glm::vec3(0.0f, 0.0f, -1.5f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+	Renderer::Model model = Renderer::LoadModel("res/models/stall.obj", "res/textures/stallTexture.png");
+	Entities::Entity entity(model, glm::vec3(0.0f, 0.0f, -12.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
 	Shader::StaticShader shader("res/shaders/vertexShader.glsl", "res/shaders/fragmentShader.glsl"); 
 	Renderer::GLRenderer renderer;
 
-	Entities::Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
+	Entities::Camera camera(glm::vec3(0.0f, 3.0f, 0.0f));
 
 	CreateProjectionMatrix();
 	shader.Start();
@@ -102,7 +24,7 @@ void SDLWindow::MainLoop()
 
 	while (true)
 	{
-		entity.rotation.y += 0.1f;
+		entity.rotation.y += 1.0f * g_Delta;
 		camera.Move();
 		renderer.Prepare();
 		shader.Start();
@@ -125,7 +47,7 @@ void SDLWindow::CalculateFPS()
 	{
 		std::cout << "\rFPS: " << FPS;
 		FPS = 0;
-		delta = (endTime - startTime) / 1000;
+		g_Delta = (endTime - startTime) / 1000;
 		startTime = endTime;
 		return;
 	}
@@ -138,6 +60,8 @@ void SDLWindow::InitGL()
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 }
 
 inline void SDLWindow::CreateProjectionMatrix()

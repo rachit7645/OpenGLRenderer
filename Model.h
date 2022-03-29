@@ -2,10 +2,14 @@
 #define MODEL_H
 
 #include <vector>
-#include <map>
-#include <GL/glew.h>
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 #include "VertexArray.h"
 #include "Texture.h"
+#include "Log.h"
 #include "Util.h"
 
 namespace Renderer
@@ -19,6 +23,9 @@ namespace Renderer
 		VertexArray vao;
 		Texture texture;						 // Texture
 	};
+
+	constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs;
+	Model LoadModel(const std::string& mPath, const std::string& txPath);
 }
 
 #endif // MODEL_H

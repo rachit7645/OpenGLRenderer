@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include <cstddef>
+#include <cassert>
 
 #define UNUSED __attribute__((unused))
 
@@ -30,6 +31,7 @@ enum ERRORS
 	GLEW_INIT_FAILED = 4,
 	SHADER_FILE_OPEN_FAILED = 5,
 	SHADER_COMPILATION_FAILED = 6,
+	ASSIMP_LOAD_FAILED = 7,
 };
 
 #endif // UTIL_H

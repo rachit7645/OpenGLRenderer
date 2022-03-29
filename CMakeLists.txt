@@ -22,11 +22,12 @@ find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm REQUIRED)
+find_package(assimp REQUIRED)
 
 add_executable(engine Main.cpp Log.cpp Window.cpp GLRenderer.cpp Model.cpp Shader.cpp StaticShader.cpp Texture.cpp VertexArray.cpp
 VertexBuffer.cpp Entity.cpp Maths.cpp Camera.cpp MainLoop.cpp)
 
-target_link_libraries(engine OpenGL::GL GLEW::GLEW SDL2::SDL2 glm)
+target_link_libraries(engine OpenGL::GL GLEW::GLEW SDL2::SDL2 glm assimp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

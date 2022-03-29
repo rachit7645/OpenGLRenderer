@@ -15,6 +15,7 @@
 #include "Camera.h"
 
 inline const u8* g_Keys;
+inline f64 g_Delta = 1.0f;
 
 namespace Window
 {
@@ -38,7 +39,6 @@ namespace Window
 		void CleanUp();
 
 		// This is a surprise tool that will help up later
-		f64 delta;
 		glm::mat4 projectionMatrix;
 
 	private:
@@ -47,6 +47,9 @@ namespace Window
 
 		u64 startTime, endTime;
 		f64 FPS;
+
+		bool wireframe = false;
+		bool vsync = true;
 
 		SDL_Window* window = nullptr;
 		SDL_GLContext glContext = nullptr;
