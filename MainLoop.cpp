@@ -7,7 +7,8 @@ void SDLWindow::MainLoop()
 {
 	InitGL();
 
-	Renderer::Model model = Renderer::LoadModel("res/models/stall.obj", "res/textures/stallTexture.png");
+	Renderer::Texture texture("res/textures/stallTexture.png");
+	Renderer::Model model = Renderer::LoadModel("res/models/stall.obj", texture);
 	Entities::Entity entity(model, glm::vec3(0.0f, 0.0f, -12.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
 	Shader::StaticShader shader("res/shaders/vertexShader.glsl", "res/shaders/fragmentShader.glsl"); 

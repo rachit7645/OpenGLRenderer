@@ -3,11 +3,11 @@
 using namespace Renderer;
 
 Model::Model(std::vector<f32> &vert, std::vector<u32> &indi,
-	std::vector<f32> &txCoords, const std::string &txPath)
+	std::vector<f32> &txCoords, Texture& tx)
 	: vertices{ vert }, indices{ indi }, textureCoords{ txCoords },
-	vao(vertices, indices, textureCoords), texture(txPath) {}
+	vao(vertices, indices, textureCoords), texture(tx) {}
 
-Model Renderer::LoadModel(const std::string& mPath, const std::string& txPath)
+Model Renderer::LoadModel(const std::string& mPath, Texture& tx)
 {
 	std::string newPath;
 	#ifdef _DEBUG
@@ -53,5 +53,5 @@ Model Renderer::LoadModel(const std::string& mPath, const std::string& txPath)
 		indices.push_back(face.mIndices[2]);
 	}
 
-	return Model(vertices, indices, txCoords, txPath);
+	return Model(vertices, indices, txCoords, tx);
 }

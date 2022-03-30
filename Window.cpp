@@ -27,7 +27,7 @@ SDLWindow::SDLWindow()
 
 	// 4x MSAA Anti-Aliasing
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
 	Logger::Log("Creating a window\n", Logger::INFO);
 	window = SDL_CreateWindow
@@ -68,36 +68,40 @@ bool SDLWindow::PollEvents()
 		{
 		case SDL_QUIT:
 			return true;
+
+		case SDL_KEYDOWN:
+		#ifdef _DEBUG
+			if (event.key.keysym.scancode == SDL_SCANCODE_F1)
+			{
+				if (!wireframe)
+				{
+					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+					wireframe = true;
+				}
+				else
+				{
+					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+					wireframe = false;
+				}
+			}
+
+			if (event.key.keysym.scancode == SDL_SCANCODE_F2)
+			{
+				if (vsync)
+				{
+					SDL_GL_SetSwapInterval(0);
+					vsync = false;
+				}
+				else
+				{
+					SDL_GL_SetSwapInterval(1);
+					vsync = true;
+				}
+			}
+		#endif
+
 		default:
 			break;
-		}
-	}
-
-	if (g_Keys[SDL_SCANCODE_F1])
-	{
-		if (!wireframe)
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			wireframe = true;
-		}
-		else
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			wireframe = false;
-		}
-	}
-
-	if (g_Keys[SDL_SCANCODE_F2])
-	{
-		if (vsync)
-		{
-			SDL_GL_SetSwapInterval(0);
-			vsync = false;
-		}
-		else
-		{
-			SDL_GL_SetSwapInterval(1);
-			vsync = true;
 		}
 	}
 

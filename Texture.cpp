@@ -5,9 +5,13 @@
 
 using namespace Renderer;
 
+std::map<u32, u32> texture_ref_count;
+
 // Loads a texture into memory, then an OpenGL object
 Texture::Texture(const std::string& path)
 {
+	texture_ref_count[textureID] = 1;
+
 	#ifdef _DEBUG
 		std::string newPath = "../" + path;
 		u8* data = stbi_load(newPath.c_str(), &width, &height, &channels, 4);
@@ -29,5 +33,29 @@ Texture::Texture(const std::string& path)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	stbi_image_free(data);
+}
+
+Texture::Texture(const Texture &other) : textureID(other.textureID)
+{
+	texture_ref_count[textureID]++;
+}
+
+Texture::Texture(Texture &&other) : textureID(other.textureID)
+{
+	texture_ref_count[textureID]++;
+}
+
+Texture::~Texture()
+{
+	texture_ref_count[textureID]--;
+	if (texture_ref_count[textureID] <= 0)
+		glDeleteTextures(1, &textureID);
+}
+
+void Texture::IncRefCount()
+{
+	texture_ref_count[textureID]++;
 }

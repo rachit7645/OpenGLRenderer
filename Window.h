@@ -48,8 +48,10 @@ namespace Window
 		u64 startTime, endTime;
 		f64 FPS;
 
-		bool wireframe = false;
-		bool vsync = true;
+		#ifdef _DEBUG
+			bool wireframe = false;
+			bool vsync = true;
+		#endif
 
 		SDL_Window* window = nullptr;
 		SDL_GLContext glContext = nullptr;
