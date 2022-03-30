@@ -4,13 +4,14 @@ using namespace Renderer;
 
 std::map<u32, u32> vao_ref_count;
 
-VertexArray::VertexArray(std::vector<f32>& vert, std::vector<u32>& indi, std::vector<f32>& txCoords)
+VertexArray::VertexArray(std::vector<f32>& vert, std::vector<u32>& indi, std::vector<f32>& txCoords, std::vector<f32> &norms)
 {
 	glGenVertexArrays(1, &id);
 	vao_ref_count[id] = 1;
 	glBindVertexArray(id);
 	buffers["vertices"] = VertexBuffer(0, 3, vert);
 	buffers["textureCoords"] = VertexBuffer(1, 2, txCoords);
+	buffers["normals"] = VertexBuffer(2, 3, norms);
 	buffers["indices"] = VertexBuffer(indi);
 	glBindVertexArray(0);
 }

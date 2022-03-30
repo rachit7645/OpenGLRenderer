@@ -2,6 +2,7 @@
 
 in vec3 position;
 in vec2 textureCoords;
+in vec3 normals;
 
 uniform mat4 modelMatrix;
 uniform mat4 projectionMatrix;

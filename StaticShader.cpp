@@ -16,6 +16,7 @@ void StaticShader::BindAttributes()
 {
 	BindAttribute(0, "position");
 	BindAttribute(1, "textureCoords");
+	BindAttribute(2, "normals");
 }
 
 void StaticShader::GetUniformLocations() 

@@ -3,11 +3,11 @@
 using namespace Renderer;
 
 Model::Model(std::vector<f32> &vert, std::vector<u32> &indi,
-	std::vector<f32> &txCoords, Texture& tx)
-	: vertices{ vert }, indices{ indi }, textureCoords{ txCoords },
-	vao(vertices, indices, textureCoords), texture(tx) {}
+	std::vector<f32> &txCoords, std::vector<f32> &norms, Texture &tx)
+	: vertices(vert), indices(indi), textureCoords(txCoords), normals(norms),
+	vao(vertices, indices, textureCoords, normals), texture(tx) {}
 
-Model Renderer::LoadModel(const std::string& mPath, Texture& tx)
+Model Renderer::LoadModel(const std::string &mPath, Texture &texture)
 {
 	std::string newPath;
 	#ifdef _DEBUG
@@ -28,12 +28,13 @@ Model Renderer::LoadModel(const std::string& mPath, Texture& tx)
 	std::vector<f32> vertices;
 	std::vector<u32> indices;
 	std::vector<f32> txCoords;
+	std::vector<f32> normals;
 
 	const aiVector3D aiZeroVector(0.0f, 0.0f, 0.0f);
 	for (u32 i = 0; i < ai_model->mNumVertices; i++)
 	{
 		const aiVector3D *pPos = &(ai_model->mVertices[i]);
-		UNUSED const aiVector3D *pNormal = &(ai_model->mNormals[i]);
+		const aiVector3D *pNormal = &(ai_model->mNormals[i]);
 		const aiVector3D *pTexCoord = ai_model->HasTextureCoords(0) ? &(ai_model->mTextureCoords[0][i]) : &aiZeroVector;
 
 		vertices.push_back(pPos->x);
@@ -42,6 +43,10 @@ Model Renderer::LoadModel(const std::string& mPath, Texture& tx)
 
 		txCoords.push_back(pTexCoord->x);
 		txCoords.push_back(pTexCoord->y);
+
+		normals.push_back(pNormal->x);
+		normals.push_back(pNormal->y);
+		normals.push_back(pNormal->z);
 	}
 
 	for (u32 i = 0; i < ai_model->mNumFaces; i++)
@@ -53,5 +58,5 @@ Model Renderer::LoadModel(const std::string& mPath, Texture& tx)
 		indices.push_back(face.mIndices[2]);
 	}
 
-	return Model(vertices, indices, txCoords, tx);
+	return Model(vertices, indices, txCoords, normals, texture);
 }
