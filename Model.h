@@ -25,7 +25,7 @@ namespace Renderer
 		Texture& texture;						// Texture
 	};
 
-	constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs;
+	constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs;
 	Model LoadModel(const std::string& mPath, Texture& texture);
 }
 

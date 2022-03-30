@@ -13,6 +13,7 @@
 #include "Model.h"
 #include "Entity.h"
 #include "Camera.h"
+#include "Light.h"
 
 inline const u8* g_Keys;
 inline f64 g_Delta = 1.0f;

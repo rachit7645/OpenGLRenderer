@@ -7,6 +7,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "Maths.h"
+#include "Light.h"
 
 namespace Shader
 {
@@ -14,9 +15,12 @@ namespace Shader
 	{
 	public:
 		StaticShader(const std::string &vertexPath, const std::string &fragmentPath);
-		void LoadTransformationMatrix(glm::mat4 matrix);
-		void LoadProjectionMatrix(glm::mat4 matrix);
+
+		void LoadTransformationMatrix(glm::mat4& matrix);
+		void LoadProjectionMatrix(glm::mat4& matrix);
 		void LoadViewMatrix(Entities::Camera& camera);
+
+		void LoadLight(Entities::Light& light);
 
 		void BindAttributes() override;
 		void GetUniformLocations() override;

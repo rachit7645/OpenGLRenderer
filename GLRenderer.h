@@ -18,7 +18,7 @@ namespace Renderer
 	{
 	public:
 		void Prepare();
-		void Render(const Entities::Entity& entity, Shader::StaticShader& shader);
+		void Render(Entities::Entity& entity, Shader::StaticShader& shader);
 	};
 }
 

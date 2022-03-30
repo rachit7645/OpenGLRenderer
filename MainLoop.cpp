@@ -7,9 +7,10 @@ void SDLWindow::MainLoop()
 {
 	InitGL();
 
-	Renderer::Texture texture("res/textures/stallTexture.png");
-	Renderer::Model model = Renderer::LoadModel("res/models/stall.obj", texture);
-	Entities::Entity entity(model, glm::vec3(0.0f, 0.0f, -12.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+	Renderer::Texture texture("res/textures/blue.png");
+	Renderer::Model model = Renderer::LoadModel("res/models/dragon.obj", texture);
+	Entities::Entity entity(model, glm::vec3(0.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+	Entities::Light light(glm::vec3(0.0f, 0.0f, -25.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 	Shader::StaticShader shader("res/shaders/vertexShader.glsl", "res/shaders/fragmentShader.glsl"); 
 	Renderer::GLRenderer renderer;
@@ -30,6 +31,7 @@ void SDLWindow::MainLoop()
 		renderer.Prepare();
 		shader.Start();
 		shader.LoadViewMatrix(camera);
+		shader.LoadLight(light);
 		renderer.Render(entity, shader);
 		shader.Stop();
 

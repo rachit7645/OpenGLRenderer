@@ -12,12 +12,13 @@ void GLRenderer::Prepare()
 }
 
 // Draw Models
-void GLRenderer::Render(const Entity& entity, StaticShader& shader)
+void GLRenderer::Render(Entity& entity, StaticShader& shader)
 {
-	const Model& model = entity.model;
+	Model& model = entity.model;
 	glBindVertexArray(model.vao.id);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 	glm::mat4 trans_matrix = Maths::CreateTransformationMatrix(entity.position, entity.rotation, entity.scale);
 	shader.LoadTransformationMatrix(trans_matrix);
 	glActiveTexture(GL_TEXTURE0);
@@ -25,5 +26,6 @@ void GLRenderer::Render(const Entity& entity, StaticShader& shader)
 	glDrawElements(GL_TRIANGLES, model.indices.size(), GL_UNSIGNED_INT, 0);
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
 	glBindVertexArray(0);
 }
