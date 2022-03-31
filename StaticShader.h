@@ -21,6 +21,7 @@ namespace Shader
 		void LoadViewMatrix(Entities::Camera& camera);
 
 		void LoadLight(Entities::Light& light);
+		void LoadShineVariables(f32 shineDamper, f32 reflectivity);
 
 		void BindAttributes() override;
 		void GetUniformLocations() override;

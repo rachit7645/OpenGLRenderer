@@ -23,6 +23,8 @@ namespace Renderer
 		std::vector<f32> normals;				// Normals
 		VertexArray vao;						// Vertex Attribute Objects
 		Texture& texture;						// Texture
+		f32 shineDamper = 1.0f;
+		f32 reflectivity = 0.0f;
 	};
 
 	constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs;

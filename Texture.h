@@ -32,7 +32,6 @@ namespace Renderer
 		int width;
 		int height;
 		int channels;
-
 		
 	private:
 		void IncRefCount();

@@ -26,6 +26,8 @@ void StaticShader::GetUniformLocations()
 	uniforms["viewMatrix"] = GetUniformLocation("viewMatrix");
 	uniforms["lightPosition"] = GetUniformLocation("lightPosition");
 	uniforms["lightColour"] = GetUniformLocation("lightColour");
+	uniforms["shineDamper"] = GetUniformLocation("shineDamper");
+	uniforms["reflectivity"] = GetUniformLocation("reflectivity");
 }
 
 void StaticShader::LoadTransformationMatrix(glm::mat4 &matrix)
@@ -48,4 +50,10 @@ void StaticShader::LoadLight(Entities::Light& light)
 {
 	LoadVector(uniforms["lightPosition"], light.position);
 	LoadVector(uniforms["lightColour"], light.colour);
+}
+
+void StaticShader::LoadShineVariables(f32 shineDamper, f32 reflectivity)
+{
+	LoadFloat(uniforms["shineDamper"], shineDamper);
+	LoadFloat(uniforms["reflectivity"], reflectivity);
 }

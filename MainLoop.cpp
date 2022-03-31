@@ -9,8 +9,11 @@ void SDLWindow::MainLoop()
 
 	Renderer::Texture texture("res/textures/blue.png");
 	Renderer::Model model = Renderer::LoadModel("res/models/dragon.obj", texture);
+	model.shineDamper = 10.0f;
+	model.reflectivity = 1.0f;
+	
 	Entities::Entity entity(model, glm::vec3(0.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
-	Entities::Light light(glm::vec3(0.0f, 0.0f, -25.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	Entities::Light light(glm::vec3(0.0f, 10.0f, -25.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 	Shader::StaticShader shader("res/shaders/vertexShader.glsl", "res/shaders/fragmentShader.glsl"); 
 	Renderer::GLRenderer renderer;

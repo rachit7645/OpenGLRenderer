@@ -21,6 +21,7 @@ void GLRenderer::Render(Entity& entity, StaticShader& shader)
 	glEnableVertexAttribArray(2);
 	glm::mat4 trans_matrix = Maths::CreateTransformationMatrix(entity.position, entity.rotation, entity.scale);
 	shader.LoadTransformationMatrix(trans_matrix);
+	shader.LoadShineVariables(model.shineDamper, model.reflectivity);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, model.texture.textureID);
 	glDrawElements(GL_TRIANGLES, model.indices.size(), GL_UNSIGNED_INT, 0);
