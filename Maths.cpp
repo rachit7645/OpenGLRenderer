@@ -22,3 +22,8 @@ glm::mat4 Maths::CreateViewMatrix(const Camera& camera)
 	matrix = glm::translate(matrix, negativeCameraPos);
 	return matrix;
 }
+
+glm::mat4 Maths::CreateProjectionMatrix()
+{
+	return glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
+}

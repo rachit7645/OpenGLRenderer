@@ -20,7 +20,7 @@ VertexArray::~VertexArray()
 {
 	vao_ref_count[id]--;
 	if (vao_ref_count[id] <= 0)
-		glDeleteBuffers(1, &id);
+		glDeleteVertexArrays(1, &id);
 }
 
 VertexArray::VertexArray(const VertexArray &other) : id(other.id)

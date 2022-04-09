@@ -1,6 +1,7 @@
 #include "Window.h"
 
 using namespace Window;
+using namespace Entities;
 
 // Main loop for the engine
 void SDLWindow::MainLoop()
@@ -8,34 +9,35 @@ void SDLWindow::MainLoop()
 	InitGL();
 
 	Renderer::Texture texture("res/textures/stallTexture.png");
+	Renderer::Texture texture2("res/textures/tree.png");
+
 	Renderer::Model model = Renderer::LoadModel("res/models/stall.obj", texture);
 	model.shineDamper = 10.0f;
 	model.reflectivity = 1.0f;
+	Renderer::Model model2 = Renderer::LoadModel("res/models/tree.obj", texture2);
 	
-	Entities::Entity entity(model, glm::vec3(0.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+	std::vector<Entity> entities;
+	entities.push_back(Entity(model, glm::vec3(0.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f));
+	entities.push_back(Entity(model, glm::vec3(15.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f));
+	entities.push_back(Entity(model2, glm::vec3(30.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 3.0f));
+	entities.push_back(Entity(model2, glm::vec3(45.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 3.0f));
+
 	Entities::Light light(glm::vec3(0.0f, 10.0f, -25.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 	Entities::Camera camera(glm::vec3(0.0f, 3.0f, 0.0f));
-
-	Shader::StaticShader shader("res/shaders/vertexShader.glsl", "res/shaders/fragmentShader.glsl"); 
-	Renderer::GLRenderer renderer;
-
-	CreateProjectionMatrix();
-	shader.Start();
-	shader.LoadProjectionMatrix(projectionMatrix);
-	shader.Stop();
+	Renderer::MasterRenderer renderer;
 
 	startTime = SDL_GetTicks64();
 
 	while (true)
 	{
-		entity.rotation.y += 1.0f * g_Delta;
 		camera.Move();
-		renderer.Prepare();
-		shader.Start();
-		shader.LoadViewMatrix(camera);
-		shader.LoadLight(light);
-		renderer.Render(entity, shader);
-		shader.Stop();
+		
+		for (auto& entity : entities)
+		{
+			entity.rotation.y += 1.0f * g_Delta;
+			renderer.ProcessEntity(entity);
+		}	
+		renderer.Render(light, camera);
 
 		SDL_GL_SwapWindow(window);
 		CalculateFPS();
@@ -66,9 +68,4 @@ void SDLWindow::InitGL()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-}
-
-inline void SDLWindow::CreateProjectionMatrix()
-{
-	projectionMatrix = glm::perspective(glm::radians(FOV), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
 }
