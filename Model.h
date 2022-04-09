@@ -3,10 +3,6 @@
 
 #include <vector>
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
 #include "VertexArray.h"
 #include "Texture.h"
 #include "Log.h"
@@ -27,7 +23,6 @@ namespace Renderer
 		f32 reflectivity = 0.0f;
 	};
 
-	constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs;
 	Model LoadModel(const std::string& mPath, Texture& texture);
 }
 

@@ -2,7 +2,7 @@
 
 using namespace Renderer;
 
-std::map<u32, u32> vbo_ref_count;
+std::map<u32, s64> vbo_ref_count;
 
 VertexBuffer::VertexBuffer(u32 slot, u32 coordSize, std::vector<f32> &data)
 {

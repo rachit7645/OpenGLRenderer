@@ -33,11 +33,11 @@ namespace Window
 	{
 	public:
 		SDLWindow();
+		~SDLWindow();
 
 		void MainLoop();
 		bool PollEvents();
 		void CalculateFPS();
-		void CleanUp();
 
 		// This is a surprise tool that will help up later
 		glm::mat4 projectionMatrix;

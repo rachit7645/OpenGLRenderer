@@ -21,14 +21,14 @@ namespace Renderer
 		Texture(Texture&& other);
 		Texture operator=(const Texture& other)
 		{
-			if (textureID != other.textureID) {
-				textureID = other.textureID;
+			if (id != other.id) {
+				id = other.id;
 				IncRefCount();
 			}	
 			return *this;
 		}
 
-		u32 textureID;
+		u32 id;
 		int width;
 		int height;
 		int channels;

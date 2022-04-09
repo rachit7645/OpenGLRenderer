@@ -109,7 +109,7 @@ bool SDLWindow::PollEvents()
 }
 
 // Free memory resources before exiting
-void SDLWindow::CleanUp()
+SDLWindow::~SDLWindow()
 {
 	Logger::Log("\nQuiting SDL2", Logger::INFO);
 	SDL_GL_DeleteContext(glContext);

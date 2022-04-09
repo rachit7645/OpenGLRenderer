@@ -5,12 +5,12 @@
 
 using namespace Renderer;
 
-std::map<u32, u32> texture_ref_count;
+std::map<u32, s64> texture_ref_count;
 
 // Loads a texture into memory, then an OpenGL object
 Texture::Texture(const std::string& path)
 {
-	texture_ref_count[textureID] = 1;
+	texture_ref_count[id] = 1;
 
 	#ifdef _DEBUG
 		std::string newPath = "../" + path;
@@ -20,8 +20,8 @@ Texture::Texture(const std::string& path)
 	#endif
 	assert(data != NULL);
 
-	glGenTextures(1, &textureID);
-	glBindTexture(GL_TEXTURE_2D, textureID);
+	glGenTextures(1, &id);
+	glBindTexture(GL_TEXTURE_2D, id);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -38,24 +38,24 @@ Texture::Texture(const std::string& path)
 	stbi_image_free(data);
 }
 
-Texture::Texture(const Texture &other) : textureID(other.textureID)
+Texture::Texture(const Texture &other) : id(other.id)
 {
-	texture_ref_count[textureID]++;
+	texture_ref_count[id]++;
 }
 
-Texture::Texture(Texture &&other) : textureID(other.textureID)
+Texture::Texture(Texture &&other) : id(other.id)
 {
-	texture_ref_count[textureID]++;
+	texture_ref_count[id]++;
 }
 
 Texture::~Texture()
 {
-	texture_ref_count[textureID]--;
-	if (texture_ref_count[textureID] <= 0)
-		glDeleteTextures(1, &textureID);
+	texture_ref_count[id]--;
+	if (texture_ref_count[id] <= 0)
+		glDeleteTextures(1, &id);
 }
 
 void Texture::IncRefCount()
 {
-	texture_ref_count[textureID]++;
+	texture_ref_count[id]++;
 }

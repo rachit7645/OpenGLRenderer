@@ -1,41 +1,48 @@
 #include "Model.h"
 
+// Avoid Global Namespace Corruption
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 using namespace Renderer;
 
 Model::Model(std::vector<f32> &vert, std::vector<u32> &indi,
 	std::vector<f32> &txCoords, std::vector<f32> &norms, Texture &tx)
-	: vertices(vert), indices(indi), textureCoords(txCoords), normals(norms),
-	vao(vertices, indices, textureCoords, normals), texture(tx) {}
+	: vertices{ vert }, indices{ indi }, textureCoords{ txCoords }, normals{ norms },
+	vao{ vertices, indices, textureCoords, normals }, texture{ tx } {}
 
 Model Renderer::LoadModel(const std::string &mPath, Texture &texture)
 {
 	std::string newPath;
-	#ifdef _DEBUG
-		newPath = "../" + mPath;
-	#else
-		newPath = mPath;
-	#endif
+#ifdef _DEBUG
+	newPath = "../" + mPath;
+#else
+	newPath = mPath;
+#endif
 
 	Assimp::Importer importer;
-	const aiScene *scene = importer.ReadFile(newPath.c_str(), ASSIMP_FLAGS);
+	constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs;
+	const auto *scene = importer.ReadFile(newPath.c_str(), ASSIMP_FLAGS);
 
 	if (!scene)
 	{
 		Logger::LogAndExit("Model Load Failed: ", ASSIMP_LOAD_FAILED);
 	}
 
-	const aiMesh *ai_model = scene->mMeshes[0];
+	const auto *ai_mesh = scene->mMeshes[0];
 	std::vector<f32> vertices;
 	std::vector<u32> indices;
 	std::vector<f32> txCoords;
 	std::vector<f32> normals;
 
 	const aiVector3D aiZeroVector(0.0f, 0.0f, 0.0f);
-	for (u32 i = 0; i < ai_model->mNumVertices; i++)
+	for (u32 i = 0; i < ai_mesh->mNumVertices; ++i)
 	{
-		const aiVector3D *pPos = &(ai_model->mVertices[i]);
-		const aiVector3D *pNormal = &(ai_model->mNormals[i]);
-		const aiVector3D *pTexCoord = ai_model->HasTextureCoords(0) ? &(ai_model->mTextureCoords[0][i]) : &aiZeroVector;
+		const aiVector3D *pPos = &(ai_mesh->mVertices[i]);
+		const aiVector3D *pNormal = &(ai_mesh->mNormals[i]);
+		const aiVector3D *pTexCoord = ai_mesh->HasTextureCoords(0) ? &(ai_mesh->mTextureCoords[0][i]) : &aiZeroVector;
 
 		vertices.push_back(pPos->x);
 		vertices.push_back(pPos->y);
@@ -49,14 +56,14 @@ Model Renderer::LoadModel(const std::string &mPath, Texture &texture)
 		normals.push_back(pNormal->z);
 	}
 
-	for (u32 i = 0; i < ai_model->mNumFaces; i++)
+	for (u32 i = 0; i < ai_mesh->mNumFaces; ++i)
 	{
-		const aiFace &face = ai_model->mFaces[i];
+		const aiFace &face = ai_mesh->mFaces[i];
 		assert(face.mNumIndices == 3);
 		indices.push_back(face.mIndices[0]);
 		indices.push_back(face.mIndices[1]);
 		indices.push_back(face.mIndices[2]);
 	}
 
-	return Model(vertices, indices, txCoords, normals, texture);
+	return { vertices, indices, txCoords, normals, texture };
 }

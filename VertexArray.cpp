@@ -2,7 +2,7 @@
 
 using namespace Renderer;
 
-std::map<u32, u32> vao_ref_count;
+std::map<u32, s64> vao_ref_count;
 
 VertexArray::VertexArray(std::vector<f32>& vert, std::vector<u32>& indi, std::vector<f32>& txCoords, std::vector<f32> &norms)
 {

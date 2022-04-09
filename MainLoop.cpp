@@ -7,18 +7,17 @@ void SDLWindow::MainLoop()
 {
 	InitGL();
 
-	Renderer::Texture texture("res/textures/blue.png");
-	Renderer::Model model = Renderer::LoadModel("res/models/dragon.obj", texture);
+	Renderer::Texture texture("res/textures/stallTexture.png");
+	Renderer::Model model = Renderer::LoadModel("res/models/stall.obj", texture);
 	model.shineDamper = 10.0f;
 	model.reflectivity = 1.0f;
 	
 	Entities::Entity entity(model, glm::vec3(0.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 	Entities::Light light(glm::vec3(0.0f, 10.0f, -25.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	Entities::Camera camera(glm::vec3(0.0f, 3.0f, 0.0f));
 
 	Shader::StaticShader shader("res/shaders/vertexShader.glsl", "res/shaders/fragmentShader.glsl"); 
 	Renderer::GLRenderer renderer;
-
-	Entities::Camera camera(glm::vec3(0.0f, 3.0f, 0.0f));
 
 	CreateProjectionMatrix();
 	shader.Start();
@@ -43,7 +42,6 @@ void SDLWindow::MainLoop()
 			
 		if (PollEvents()) break;
 	}
-	CleanUp();
 }
 
 // Calculates the FPS and the the frame delta
@@ -53,7 +51,7 @@ void SDLWindow::CalculateFPS()
 	{
 		std::cout << "\rFPS: " << FPS;
 		FPS = 0;
-		g_Delta = (endTime - startTime) / 1000;
+		g_Delta = (endTime - startTime) / 1000.0f;
 		startTime = endTime;
 		return;
 	}
