@@ -8,19 +8,14 @@ void SDLWindow::MainLoop()
 {
 	InitGL();
 
-	Renderer::Texture texture("res/textures/stallTexture.png");
-	Renderer::Texture texture2("res/textures/tree.png");
-
-	Renderer::Model model = Renderer::LoadModel("res/models/stall.obj", texture);
-	model.shineDamper = 10.0f;
-	model.reflectivity = 1.0f;
-	Renderer::Model model2 = Renderer::LoadModel("res/models/tree.obj", texture2);
+	Renderer::Texture stallTexture("res/textures/stallTexture.png");
+	Renderer::Model stall = Renderer::LoadModel("res/models/stall.obj", stallTexture);
 	
 	std::vector<Entity> entities;
-	entities.push_back(Entity(model, glm::vec3(0.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f));
-	entities.push_back(Entity(model, glm::vec3(15.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f));
-	entities.push_back(Entity(model2, glm::vec3(30.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 3.0f));
-	entities.push_back(Entity(model2, glm::vec3(45.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 3.0f));
+	for (auto i = 0; i <= 5; i++)
+	{
+		entities.push_back(Entity(stall, glm::vec3(15.0f * i, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f));
+	}
 
 	Entities::Light light(glm::vec3(0.0f, 10.0f, -25.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 	Entities::Camera camera(glm::vec3(0.0f, 3.0f, 0.0f));
@@ -31,7 +26,6 @@ void SDLWindow::MainLoop()
 	while (true)
 	{
 		camera.Move();
-		
 		for (auto& entity : entities)
 		{
 			entity.rotation.y += 1.0f * g_Delta;
@@ -63,7 +57,7 @@ void SDLWindow::CalculateFPS()
 void SDLWindow::InitGL()
 {
 	// GL Defs
-	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+	glViewport(0, 0, DIMENSIONS.x, DIMENSIONS.y);
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);

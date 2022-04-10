@@ -12,15 +12,12 @@ namespace Renderer
 {
 	struct Model
 	{
-		Model(std::vector<f32>& vert, std::vector<u32>& indi, std::vector<f32>& txCoords, std::vector<f32> &norms, Texture& tx);
-		std::vector<f32> vertices;				// Vertices
-		std::vector<u32> indices;				// Indices
-		std::vector<f32> textureCoords;			// Texture Coordinates
-		std::vector<f32> normals;				// Normals
+		Model(VertexArray vao, Texture& tx, const size_t vertex_count);
 		VertexArray vao;						// Vertex Attribute Objects
 		Texture texture;						// Texture
 		f32 shineDamper = 1.0f;
 		f32 reflectivity = 0.0f;
+		size_t vertex_count;
 	};
 
 	Model LoadModel(const std::string& mPath, Texture& texture);

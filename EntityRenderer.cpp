@@ -19,7 +19,7 @@ void EntityRenderer::Prepare()
 	glClear(GL_CLEAR_FLAGS);
 }
 
-void EntityRenderer::Render(std::unordered_map<Model*, std::vector<Entities::Entity>> entities)
+void EntityRenderer::Render(std::unordered_map<Model*, std::vector<Entities::Entity>>& entities)
 {
 	for (auto& [model, batch] : entities)
 	{
@@ -27,7 +27,7 @@ void EntityRenderer::Render(std::unordered_map<Model*, std::vector<Entities::Ent
 		for (auto& entity : batch)
 		{
 			PrepareInstance(entity);
-			glDrawElements(GL_TRIANGLES, entity.model.indices.size(), GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, entity.model.vertex_count, GL_UNSIGNED_INT, 0);
 		}
 		UnbindModel();
 	}

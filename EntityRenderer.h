@@ -24,7 +24,7 @@ namespace Renderer
 		Shader::StaticShader& shader;
 
 		void Prepare();
-		void Render(std::unordered_map<Model*, std::vector<Entities::Entity>> entities);
+		void Render(std::unordered_map<Model*, std::vector<Entities::Entity>>& entities);
 		void PrepareModel(Model* model);
 		void UnbindModel();
 		void PrepareInstance(Entities::Entity& entity);

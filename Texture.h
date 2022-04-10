@@ -9,7 +9,7 @@
 
 namespace Renderer
 {
-	constexpr f32 LOD_BIAS = -0.5f;
+	constexpr auto LOD_BIAS = -0.5f;
 	
 	class Texture
 	{

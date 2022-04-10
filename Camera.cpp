@@ -6,7 +6,7 @@ using namespace Window;
 
 void Camera::Move()
 {
-	constexpr f32 MOVE_CONSTANT = 0.2f;
+	constexpr auto MOVE_CONSTANT = 0.2f;
 	if (g_Keys[SDL_SCANCODE_W])
 		position.z -= MOVE_CONSTANT * g_Delta;
 	if (g_Keys[SDL_SCANCODE_A])

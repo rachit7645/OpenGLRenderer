@@ -8,10 +8,8 @@
 
 using namespace Renderer;
 
-Model::Model(std::vector<f32> &vert, std::vector<u32> &indi,
-	std::vector<f32> &txCoords, std::vector<f32> &norms, Texture &tx)
-	: vertices{ vert }, indices{ indi }, textureCoords{ txCoords }, normals{ norms },
-	vao{ vertices, indices, textureCoords, normals }, texture{ tx } {}
+Model::Model(VertexArray vao, Texture &tx, const size_t vertex_count)
+	: vao{ vao }, texture{ tx }, vertex_count{vertex_count} {}
 
 Model Renderer::LoadModel(const std::string &mPath, Texture &texture)
 {
@@ -65,5 +63,5 @@ Model Renderer::LoadModel(const std::string &mPath, Texture &texture)
 		indices.push_back(face.mIndices[2]);
 	}
 
-	return { vertices, indices, txCoords, normals, texture };
+	return { VertexArray(vertices, indices, txCoords, normals) , texture, indices.size()};
 }

@@ -22,7 +22,7 @@ inline f64 g_Delta = 1.0f;
 namespace Window
 {
 	// Choosing a 16:9 Resolution
-	constexpr s32 WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 576;
+	constexpr glm::vec2 DIMENSIONS = { 1024, 576 };
 	constexpr u32 WINDOW_FLAGS = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
 	class SDLWindow

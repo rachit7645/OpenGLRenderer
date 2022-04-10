@@ -14,6 +14,8 @@
 
 namespace Renderer
 {
+	constexpr auto VERTEX_SHADER_PATH = "res/shaders/vertexShader.glsl", FRAGMENT_SHADER_PATH = "res/shaders/fragmentShader.glsl";
+
 	class MasterRenderer
 	{
 		public:

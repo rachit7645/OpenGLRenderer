@@ -3,7 +3,7 @@
 using namespace Renderer;
 using namespace Entities;
 
-MasterRenderer::MasterRenderer() : shader{ "res/shaders/vertexShader.glsl", "res/shaders/fragmentShader.glsl" }, renderer{ shader } {}
+MasterRenderer::MasterRenderer() : shader{ VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH }, renderer{ shader } {}
 
 void MasterRenderer::Render(Light &light, Camera &camera)
 {
@@ -20,6 +20,7 @@ void MasterRenderer::ProcessEntity(Entities::Entity& entity)
 {
 	Model* entityModel = &entity.model;
 	auto iter = entities.find(entityModel);
+	
 	if (iter != entities.end())
 	{	
 		iter->second.push_back(entity);
