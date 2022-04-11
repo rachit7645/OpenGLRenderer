@@ -17,6 +17,7 @@ namespace Shader
 	class ShaderProgram
 	{
 	public:
+		// Creates a vertex and fragment shader and links em' into a program
 		ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath);
 		~ShaderProgram();
 
@@ -32,6 +33,7 @@ namespace Shader
 		virtual void BindAttributes() = 0;
 		virtual void GetUniformLocations() = 0;
 
+		// Uniform loading functions 
 		void LoadInt(u32 location, u32 value) const;
 		void LoadFloat(u32 location, f32 value) const;
 		void LoadBool(u32 location, bool value) const;
@@ -39,6 +41,7 @@ namespace Shader
 		void LoadMatrix(u32 location, const glm::mat4& matrix) const;
 
 	private:
+		// Function to load shaders from file
 		u32 LoadShader(GLenum type, const std::string& path);
 	};
 }

@@ -1,22 +1,19 @@
 #include "Log.h"
 
-// Log message with SDL error and exit with specified exit code
-void Logger::LogAndExit_SDL(std::string message, int exitCode)
+void Logger::LogAndExit_SDL(const std::string& message, int exitCode)
 {
-	std::string SDLError(SDL_GetError());
+	std::string SDLError = SDL_GetError();
 	Log(message + SDLError, ERROR);
 	std::exit(exitCode);
 }
 
-//Log message and exit with specified exit code
-void Logger::LogAndExit(std::string message, int exitCode)
+void Logger::LogAndExit(const std::string& message, int exitCode)
 {
 	Log(message, ERROR);
 	std::exit(exitCode);
 }
 
-// Log message with formatting
-void Logger::Log(std::string message, Type type)
+void Logger::Log(const std::string& message, Type type)
 {
 	const char* str_type;
 	if (type == INFO) 

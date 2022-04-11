@@ -16,9 +16,12 @@ namespace Logger
 	};
 	constexpr auto INFO_STR = "INFO: ", WARNING_STR = "WARNING: ", ERROR_STR = "ERROR: ";
 
-	void LogAndExit_SDL(std::string message, int exitCode);
-	void LogAndExit(std::string message, int exitCode);
-	void Log(std::string message, Type type);
+	// Log message with SDL error and exit with specified exit code
+	void LogAndExit_SDL(const std::string& message, int exitCode);
+	// Log message and exit with specified exit code
+	void LogAndExit(const std::string& message, int exitCode);
+	// Log message with formatting
+	void Log(const std::string& message, Type type);
 
 }
 

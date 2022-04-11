@@ -12,14 +12,15 @@ namespace Renderer
 {
 	struct Model
 	{
-		Model(VertexArray vao, Texture& tx, const size_t vertex_count);
-		VertexArray vao;						// Vertex Attribute Objects
+		Model(VertexArray vao, Texture& tx, size_t vertex_count);
+		VertexArray vao;						// Vertex Attribute Object
 		Texture texture;						// Texture
-		f32 shineDamper = 1.0f;
-		f32 reflectivity = 0.0f;
-		size_t vertex_count;
+		f32 shineDamper = 1.0f;					// Shine Dampner
+		f32 reflectivity = 0.0f;				// Reflectivity
+		size_t vertex_count;					// Vertex Count
 	};
 
+	// Load a model with Assimp
 	Model LoadModel(const std::string& mPath, Texture& texture);
 }
 

@@ -18,15 +18,20 @@ namespace Renderer
 
 	class MasterRenderer
 	{
-		public:
-			MasterRenderer();
+	public:
+		MasterRenderer();
 
-			Shader::StaticShader shader;
-			Renderer::EntityRenderer renderer;
-			std::unordered_map<Model*, std::vector<Entities::Entity>> entities;
+		// All shaders and renderers here 
+		Shader::StaticShader shader;
+		Renderer::EntityRenderer renderer;
 
-			void Render(Entities::Light& light, Entities::Camera& camera);
-			void ProcessEntity(Entities::Entity& entity);
+		// Main render function
+		void Render(Entities::Light &light, Entities::Camera &camera);
+		// Process entities into THE MAP
+		void ProcessEntity(Entities::Entity &entity);
+	private:
+		// THE MAP
+		std::unordered_map<Model*, std::vector<Entities::Entity>> entities;
 	};
 }
 

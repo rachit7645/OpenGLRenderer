@@ -2,7 +2,6 @@
 
 using namespace Shader;
 
-// Creates a vertex and fragment shader and links em' into a program
 ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath)
 {
 	programID = glCreateProgram();
@@ -48,7 +47,6 @@ void ShaderProgram::LoadMatrix(u32 location, const glm::mat4& matrix) const
 	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
-// Util function to load shaders
 u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
 {
 	std::string content;

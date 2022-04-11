@@ -13,7 +13,8 @@ namespace Renderer
 	
 	class Texture
 	{
-	public:	
+	public:
+		// Loads a texture into memory, then an OpenGL object
 		Texture(const std::string& path);
 		~Texture();
 

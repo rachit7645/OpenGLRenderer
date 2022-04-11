@@ -2,7 +2,6 @@
 
 using namespace Window;
 
-// Creates a SDL window, gets an opengl context, and sets up GL values
 SDLWindow::SDLWindow()
 {
 	Logger::Log("Initializing SDL2\n", Logger::INFO);
@@ -33,7 +32,7 @@ SDLWindow::SDLWindow()
 	window = SDL_CreateWindow
 	(
 		"Rachit's Engine", SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED, DIMENSIONS.x, DIMENSIONS.y, WINDOW_FLAGS
+		SDL_WINDOWPOS_UNDEFINED, DIMENSIONS.x, DIMENSIONS.y, SDL_WINDOW_FLAGS
 	);
 	if (window == nullptr)
 	{
@@ -50,6 +49,7 @@ SDLWindow::SDLWindow()
 		Logger::LogAndExit_SDL("SDL_GL_CreateContext Failed\n", SDL_GL_CREATE_CONTEXT_FAILED);
 	}
 
+	// Initialize the REAL OpenGL context
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
 	{
@@ -59,7 +59,6 @@ SDLWindow::SDLWindow()
 	g_Keys = SDL_GetKeyboardState(NULL);
 }
 
-// Function to process SDL Events
 bool SDLWindow::PollEvents()
 {
 	while (SDL_PollEvent(&event))
@@ -108,7 +107,6 @@ bool SDLWindow::PollEvents()
 	return false;
 }
 
-// Free memory resources before exiting
 SDLWindow::~SDLWindow()
 {
 	Logger::Log("\nQuiting SDL2", Logger::INFO);

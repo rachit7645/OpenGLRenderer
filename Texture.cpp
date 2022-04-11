@@ -7,7 +7,6 @@ using namespace Renderer;
 
 std::map<u32, s64> texture_ref_count;
 
-// Loads a texture into memory, then an OpenGL object
 Texture::Texture(const std::string& path)
 {
 	texture_ref_count[id] = 1;
