@@ -2,6 +2,7 @@
 #define MODEL_H
 
 #include <vector>
+#include <memory>
 
 #include "VertexArray.h"
 #include "Texture.h"
@@ -12,16 +13,16 @@ namespace Renderer
 {
 	struct Model
 	{
-		Model(VertexArray vao, Texture& tx, size_t vertex_count);
-		VertexArray vao;						// Vertex Attribute Object
-		Texture texture;						// Texture
-		f32 shineDamper = 1.0f;					// Shine Dampner
-		f32 reflectivity = 0.0f;				// Reflectivity
-		size_t vertex_count;					// Vertex Count
+		Model(VertexArray vao, std::shared_ptr<Renderer::Texture> tx, size_t vertex_count);
+		VertexArray vao;							// Vertex Attribute Object
+		std::shared_ptr<Renderer::Texture> texture;	// Texture
+		f32 shineDamper = 1.0f;						// Shine Dampner
+		f32 reflectivity = 0.0f;					// Reflectivity
+		size_t vertex_count;						// Vertex Count
 	};
 
 	// Load a model with Assimp
-	Model LoadModel(const std::string& mPath, Texture& texture);
+	Model LoadModel(const std::string& mPath, std::shared_ptr<Renderer::Texture> texture);
 }
 
 #endif // MODEL_H

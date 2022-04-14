@@ -8,10 +8,10 @@
 
 using namespace Renderer;
 
-Model::Model(VertexArray vao, Texture &tx, size_t vertex_count)
+Model::Model(VertexArray vao, std::shared_ptr<Renderer::Texture> tx, size_t vertex_count)
 	: vao{ vao }, texture{ tx }, vertex_count{vertex_count} {}
 
-Model Renderer::LoadModel(const std::string &mPath, Texture &texture)
+Model Renderer::LoadModel(const std::string &mPath, std::shared_ptr<Renderer::Texture> texture)
 {
 	std::string newPath;
 #ifdef _DEBUG

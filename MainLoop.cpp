@@ -8,11 +8,14 @@ void SDLWindow::MainLoop()
 	InitGL();
 
 	// Put Models and Textures here 
-	Renderer::Texture texture("res/textures/blue.png"); 
-	std::shared_ptr<Renderer::Model> model =
-		std::make_shared<Renderer::Model>(Renderer::LoadModel("res/models/dragon.obj", texture));
-	model->shineDamper = 10.0f;
-	model->reflectivity = 1.0f;
+	std::shared_ptr<Renderer::Texture> texture = std::make_shared<Renderer::Texture>("res/textures/stallTexture.png");
+	std::shared_ptr<Renderer::Texture> texture2 = std::make_shared<Renderer::Texture>("res/textures/tree.png");
+	std::shared_ptr<Renderer::Model> model = std::make_shared<Renderer::Model>(Renderer::LoadModel("res/models/stall.obj", texture));
+	{
+		model->shineDamper = 10.0f;
+		model->reflectivity = 1.0f;
+	}
+	std::shared_ptr<Renderer::Model> model2 = std::make_shared<Renderer::Model>(Renderer::LoadModel("res/models/tree.obj", texture2));
 
 	// All objects go here
 	std::vector<Entity> entities;
@@ -20,6 +23,9 @@ void SDLWindow::MainLoop()
 		entities.push_back(Entity(model, glm::vec3(-15.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f));
 		entities.push_back(Entity(model, glm::vec3(0.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f));
 		entities.push_back(Entity(model, glm::vec3(15.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f));
+		entities.push_back(Entity(model2, glm::vec3(30.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 3.0f));
+		entities.push_back(Entity(model2, glm::vec3(45.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 3.0f));
+		entities.push_back(Entity(model2, glm::vec3(60.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 3.0f));
 	}
 	Entities::Light light(glm::vec3(-30.0f, 10.0f, -25.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 	Entities::Camera camera(glm::vec3(0.0f, 3.0f, 0.0f));

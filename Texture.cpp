@@ -5,12 +5,8 @@
 
 using namespace Renderer;
 
-std::map<u32, s64> texture_ref_count;
-
 Texture::Texture(const std::string& path)
 {
-	texture_ref_count[id] = 1;
-
 	#ifdef _DEBUG
 		std::string newPath = "../" + path;
 		u8* data = stbi_load(newPath.c_str(), &width, &height, &channels, 4);
@@ -37,24 +33,7 @@ Texture::Texture(const std::string& path)
 	stbi_image_free(data);
 }
 
-Texture::Texture(const Texture &other) : id(other.id)
-{
-	texture_ref_count[id]++;
-}
-
-Texture::Texture(Texture &&other) : id(other.id)
-{
-	texture_ref_count[id]++;
-}
-
 Texture::~Texture()
 {
-	texture_ref_count[id]--;
-	if (texture_ref_count[id] <= 0)
-		glDeleteTextures(1, &id);
-}
-
-void Texture::IncRefCount()
-{
-	texture_ref_count[id]++;
+	glDeleteTextures(1, &id);
 }

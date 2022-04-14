@@ -40,7 +40,7 @@ void EntityRenderer::PrepareModel(std::shared_ptr<Model> model)
 	glEnableVertexAttribArray(2);
 	shader.LoadShineVariables(model->shineDamper, model->reflectivity);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, model->texture.id);
+	glBindTexture(GL_TEXTURE_2D, model->texture->id);
 }
 
 void EntityRenderer::PrepareInstance(const Entity& entity)
