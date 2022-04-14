@@ -34,4 +34,10 @@ enum ERRORS
 	ASSIMP_LOAD_FAILED = 7,
 };
 
+template<typename T>
+T Rand_Range(T min, T max)
+{
+	return min + static_cast<T> (std::rand() / static_cast<T>(RAND_MAX / ( max - min )));
+} 
+
 #endif // UTIL_H

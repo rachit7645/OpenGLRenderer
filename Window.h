@@ -1,20 +1,12 @@
 #ifndef SDL_WINDOW_H
 #define SDL_WINDOW_H
 
-#include <vector>
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
 #include "Log.h"
 #include "Util.h"
-#include "EntityRenderer.h"
-#include "StaticShader.h"
-#include "Model.h"
-#include "Entity.h"
-#include "Camera.h"
-#include "Light.h"
-#include "MasterRenderer.h"
 
 // Handy global variables
 inline const u8* g_Keys;

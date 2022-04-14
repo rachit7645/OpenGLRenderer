@@ -4,19 +4,7 @@ using namespace Renderer;
 using namespace Entities;
 using namespace Shader;
 
-EntityRenderer::EntityRenderer(StaticShader& sh) : shader { sh } 
-{
-	shader.Start();
-	glm::mat4 projection = glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
-	shader.LoadProjectionMatrix(projection);
-	shader.Stop();
-}
-
-void EntityRenderer::Prepare()
-{
-	glClearColor(RED, GREEN, BLUE, ALPHA);
-	glClear(GL_CLEAR_FLAGS);
-}
+EntityRenderer::EntityRenderer(StaticShader& sh) : shader { sh } {}
 
 void EntityRenderer::Render(std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>> entities)
 {
@@ -26,7 +14,7 @@ void EntityRenderer::Render(std::unordered_map<std::shared_ptr<Model>, std::vect
 		for (auto& entity : batch)
 		{
 			PrepareInstance(entity);
-			glDrawElements(GL_TRIANGLES, model->vertex_count, GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, model->vertex_count, GL_UNSIGNED_INT, static_cast<const void*>(0));
 		}
 		UnbindModel();
 	}
@@ -43,7 +31,7 @@ void EntityRenderer::PrepareModel(std::shared_ptr<Model> model)
 	glBindTexture(GL_TEXTURE_2D, model->texture->id);
 }
 
-void EntityRenderer::PrepareInstance(const Entity& entity)
+void EntityRenderer::PrepareInstance(Entity& entity)
 {
 	glm::mat4 trans_matrix = Maths::CreateTransformationMatrix(entity.position, entity.rotation, entity.scale);
 	shader.LoadTransformationMatrix(trans_matrix);

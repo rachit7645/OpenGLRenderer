@@ -11,8 +11,9 @@ namespace Renderer
 {
 	constexpr auto LOD_BIAS = -0.5f;
 
-	struct Texture
+	class Texture
 	{
+	public:	
 		// Loads a texture into memory, then an OpenGL object
 		Texture(const std::string &path);
 		~Texture();
