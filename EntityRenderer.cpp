@@ -18,7 +18,7 @@ void EntityRenderer::Prepare()
 	glClear(GL_CLEAR_FLAGS);
 }
 
-void EntityRenderer::Render(std::unordered_map<Model*, std::vector<Entities::Entity>> entities)
+void EntityRenderer::Render(std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>> entities)
 {
 	for (auto& [model, batch] : entities)
 	{
@@ -32,7 +32,7 @@ void EntityRenderer::Render(std::unordered_map<Model*, std::vector<Entities::Ent
 	}
 }
 
-void EntityRenderer::PrepareModel(Model* model)
+void EntityRenderer::PrepareModel(std::shared_ptr<Model> model)
 {
 	glBindVertexArray(model->vao.id);
 	glEnableVertexAttribArray(0);

@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <vector>
+#include <memory>
 
 #include <GL/glew.h>
 
@@ -31,7 +32,7 @@ namespace Renderer
 		void ProcessEntity(Entities::Entity &entity);
 	private:
 		// THE MAP
-		std::unordered_map<Model*, std::vector<Entities::Entity>> entities;
+		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>> entities;
 	};
 }
 

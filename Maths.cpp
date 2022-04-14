@@ -2,7 +2,7 @@
 
 using namespace Entities;
 
-constexpr glm::mat4 Maths::CreateTransformationMatrix(const glm::vec3& translation, const glm::vec3& rotation, f32 scale)
+glm::mat4 Maths::CreateTransformationMatrix(const glm::vec3& translation, const glm::vec3& rotation, f32 scale)
 {
 	// 1. Create a identity matrix
 	glm::mat4 matrix(1.0f);
@@ -17,7 +17,7 @@ constexpr glm::mat4 Maths::CreateTransformationMatrix(const glm::vec3& translati
 	return matrix;
 }
 
-constexpr glm::mat4 Maths::CreateViewMatrix(const Camera& camera)
+glm::mat4 Maths::CreateViewMatrix(const Camera& camera)
 {
 	glm::vec3 negativeCameraPos = -camera.position;
 	// 1. Create an identity matrix

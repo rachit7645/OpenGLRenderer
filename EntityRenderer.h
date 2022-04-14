@@ -2,6 +2,7 @@
 #define ENTITY_RENDERER_H
 
 #include <unordered_map>
+#include <memory>
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -26,9 +27,9 @@ namespace Renderer
 		// Prepare framebuffer for drawing
 		void Prepare();
 		// Render THE MAP
-		void Render(std::unordered_map<Model*, std::vector<Entities::Entity>> entities);
+		void Render(std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>> entities);
 		// Prepare each model for render
-		void PrepareModel(Model* model);
+		void PrepareModel(std::shared_ptr<Model> model);
 		// Prepare each instance
 		void PrepareInstance(const Entities::Entity& entity);
 		// Unbind the model

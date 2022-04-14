@@ -18,8 +18,7 @@ void MasterRenderer::Render(Light &light, Camera &camera)
 
 void MasterRenderer::ProcessEntity(Entities::Entity& entity)
 {
-	Model* entityModel = &entity.model;
-	auto iter = entities.find(entityModel);
+	auto iter = entities.find(entity.model);
 	
 	if (iter != entities.end())
 	{	
@@ -29,6 +28,6 @@ void MasterRenderer::ProcessEntity(Entities::Entity& entity)
 	{
 		std::vector<Entity> newBatch;
 		newBatch.push_back(entity);
-		entities[entityModel] = newBatch;
+		entities[entity.model] = newBatch;
 	}
 }

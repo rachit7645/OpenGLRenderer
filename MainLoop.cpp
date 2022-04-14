@@ -8,15 +8,20 @@ void SDLWindow::MainLoop()
 	InitGL();
 
 	// Put Models and Textures here 
-	Renderer::Texture texture("res/textures/blue.png");
-	Renderer::Model model = Renderer::LoadModel("res/models/dragon.obj", texture);
-	
+	Renderer::Texture texture("res/textures/blue.png"); 
+	std::shared_ptr<Renderer::Model> model =
+		std::make_shared<Renderer::Model>(Renderer::LoadModel("res/models/dragon.obj", texture));
+	model->shineDamper = 10.0f;
+	model->reflectivity = 1.0f;
+
 	// All objects go here
 	std::vector<Entity> entities;
 	{
+		entities.push_back(Entity(model, glm::vec3(-15.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f));
 		entities.push_back(Entity(model, glm::vec3(0.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f));
+		entities.push_back(Entity(model, glm::vec3(15.0f, 0.0f, -20.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f));
 	}
-	Entities::Light light(glm::vec3(0.0f, 10.0f, -25.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	Entities::Light light(glm::vec3(-30.0f, 10.0f, -25.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 	Entities::Camera camera(glm::vec3(0.0f, 3.0f, 0.0f));
 
 	Renderer::MasterRenderer renderer;
@@ -27,6 +32,7 @@ void SDLWindow::MainLoop()
 		camera.Move();
 		for (auto& entity : entities)
 		{
+			entity.rotation.y += 2 * g_Delta;
 			renderer.ProcessEntity(entity);
 		}	
 		renderer.Render(light, camera);
