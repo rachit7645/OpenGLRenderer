@@ -2,8 +2,9 @@
 #include "MainLoop.h"
 
 using namespace Window;
-using namespace Entities;
-using namespace Terrains;
+
+using Entities::Entity;
+using Terrains::Terrain;
 
 void SDLWindow::MainLoop()
 {

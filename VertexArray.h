@@ -2,7 +2,7 @@
 #define VERTEX_ARRAY_H
 
 #include <string>
-#include <map>
+#include <memory>
 #include <GL/glew.h>
 
 #include "VertexBuffer.h"
@@ -14,24 +14,11 @@ namespace Renderer
 	{
 	public:
 		GLuint id;
-		std::map<const std::string, VertexBuffer> buffers;
+		std::map<const std::string, std::shared_ptr<VertexBuffer>> buffers;
 
 		VertexArray(std::vector<f32>& vert, std::vector<u32>& indi, std::vector<f32>& txCoords, std::vector<f32> &norms);
-		~VertexArray();
-
-		VertexArray(const VertexArray& other);
-		VertexArray(VertexArray&& other);
-		VertexArray operator = (const VertexArray& other)
-		{
-			if (id != other.id) {
-				id = other.id;
-				IncRefCount();
-			}	
-			return *this;
-		}
-
-	private:
-		void IncRefCount();	
+		VertexArray();
+		~VertexArray();	
 	};
 }
 

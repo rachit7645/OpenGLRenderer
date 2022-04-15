@@ -6,7 +6,7 @@ using namespace Shader;
 
 EntityRenderer::EntityRenderer(StaticShader& sh) : shader { sh } {}
 
-void EntityRenderer::Render(std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>> entities)
+void EntityRenderer::Render(std::unordered_map<std::shared_ptr<Model>, std::vector<Entity>> entities)
 {
 	for (auto& [model, batch] : entities)
 	{
@@ -22,7 +22,7 @@ void EntityRenderer::Render(std::unordered_map<std::shared_ptr<Model>, std::vect
 
 void EntityRenderer::PrepareModel(std::shared_ptr<Model> model)
 {
-	glBindVertexArray(model->vao.id);
+	glBindVertexArray(model->vao->id);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);

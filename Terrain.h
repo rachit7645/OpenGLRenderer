@@ -17,10 +17,10 @@ namespace Terrains
 	class Terrain
 	{
 	public:
-		Terrain(const glm::vec2& grid_pos, Renderer::VertexArray vao, std::shared_ptr<Renderer::Texture> texture, size_t vertex_count);
+		Terrain(const glm::vec2& grid_pos, std::shared_ptr<Renderer::VertexArray> vao, std::shared_ptr<Renderer::Texture> texture, size_t vertex_count);
 
 		glm::vec2 grid_position;
-		Renderer::VertexArray vao;
+		std::shared_ptr<Renderer::VertexArray> vao;
 		std::shared_ptr<Renderer::Texture> texture;
 		f32 shineDamper = 1.0f;
 		f32 reflectivity = 0.0f;

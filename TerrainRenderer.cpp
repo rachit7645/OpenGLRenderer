@@ -19,7 +19,7 @@ void TerrainRenderer::Render(std::vector<Terrain>& terrains)
 
 void TerrainRenderer::PrepareTerrain(Terrain& terrain)
 {
-	glBindVertexArray(terrain.vao.id);
+	glBindVertexArray(terrain.vao->id);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);

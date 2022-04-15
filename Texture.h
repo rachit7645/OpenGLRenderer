@@ -18,7 +18,7 @@ namespace Renderer
 		Texture(const std::string &path);
 		~Texture();
 
-		u32 id;
+		GLuint id;
 		int width;
 		int height;
 		int channels;

@@ -13,8 +13,8 @@ namespace Renderer
 {
 	struct Model
 	{
-		Model(VertexArray vao, std::shared_ptr<Renderer::Texture> tx, size_t vertex_count);
-		VertexArray vao;							// Vertex Attribute Object
+		Model(std::shared_ptr<VertexArray> vao, std::shared_ptr<Renderer::Texture> tx, size_t vertex_count);
+		std::shared_ptr<Renderer::VertexArray> vao;	// Vertex Attribute Object
 		std::shared_ptr<Renderer::Texture> texture;	// Texture
 		f32 shineDamper = 1.0f;						// Shine Dampner
 		f32 reflectivity = 0.0f;					// Reflectivity

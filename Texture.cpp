@@ -13,7 +13,7 @@ Texture::Texture(const std::string& path)
 	#else
 		u8* data = stbi_load(path.c_str(), &width, &height, &channels, 4);
 	#endif
-	assert(data != NULL);
+	assert(data != nullptr);
 
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);

@@ -34,6 +34,7 @@ enum ERRORS
 	ASSIMP_LOAD_FAILED = 7,
 };
 
+// Random number between a range
 template<typename T>
 T Rand_Range(T min, T max)
 {

@@ -3,12 +3,12 @@
 using namespace Terrains;
 using namespace Renderer;
 
-Terrain::Terrain(const glm::vec2 &grid_pos, VertexArray vao,
+Terrain::Terrain(const glm::vec2 &grid_pos, std::shared_ptr<VertexArray> vao,
 	std::shared_ptr<Texture> texture, size_t vertex_count)
 	: grid_position{ grid_pos.x * SIZE, grid_pos.y * SIZE },
 	vao{ vao }, texture{ texture }, vertex_count{ vertex_count } {}
 
-Terrain Terrains::GenerateTerrain(const glm::vec2 &grid_pos, std::shared_ptr<Renderer::Texture> texture)
+Terrain Terrains::GenerateTerrain(const glm::vec2 &grid_pos, std::shared_ptr<Texture> texture)
 {
 	constexpr auto COUNT = VERTEX_COUNT * VERTEX_COUNT;
 	std::vector<f32> vertices;
@@ -56,5 +56,5 @@ Terrain Terrains::GenerateTerrain(const glm::vec2 &grid_pos, std::shared_ptr<Ren
 		}
 	}
 
-	return { grid_pos, VertexArray(vertices, indices, txCoords, normals), texture, indices.size()};
+	return { grid_pos, std::make_shared<VertexArray>(vertices, indices, txCoords, normals), texture, indices.size()};
 }

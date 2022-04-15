@@ -2,7 +2,6 @@
 #define VERTEX_BUFFER_H
 
 #include <vector>
-#include <map>
 #include <GL/glew.h>
 #include "Util.h"
 
@@ -17,20 +16,6 @@ namespace Renderer
 		VertexBuffer(std::vector<u32>& data);
 		VertexBuffer();
 		~VertexBuffer();
-
-		VertexBuffer(const VertexBuffer& other);
-		VertexBuffer(VertexBuffer&& other);
-		VertexBuffer operator = (const VertexBuffer& other)
-		{
-			if (id != other.id) {
-				id = other.id;
-				IncRefCount();
-			}	
-			return *this;
-		}
-
-	private:
-		void IncRefCount();	
 	};
 }
 

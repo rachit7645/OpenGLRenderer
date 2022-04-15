@@ -17,12 +17,11 @@ void Logger::Log(const std::string& message, Type type)
 {
 	const char* str_type;
 	if (type == INFO) 
-		str_type = INFO_STR; 
-	else if (type == WARNING) 
+		str_type = INFO_STR;
+	else if (type == WARNING)
 		str_type = WARNING_STR;
 	else if (type == ERROR)
 		str_type = ERROR_STR;
 
-	std::cerr << str_type << message;	
-	 
+	std::cerr << '\n' << str_type << message;
 }
