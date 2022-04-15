@@ -2,11 +2,10 @@
 #include "Window.h"
 
 using namespace Entities;
-using namespace Window;
 
 void Camera::Move()
 {
-	constexpr auto MOVE_CONSTANT = 0.2f;
+	constexpr auto MOVE_CONSTANT = 1.0f;
 	if (g_Keys[SDL_SCANCODE_W])
 		position.z -= MOVE_CONSTANT * g_Delta;
 	if (g_Keys[SDL_SCANCODE_A])
@@ -18,5 +17,17 @@ void Camera::Move()
 	if (g_Keys[SDL_SCANCODE_SPACE])
 		position.y += MOVE_CONSTANT * g_Delta;
 	if (g_Keys[SDL_SCANCODE_LSHIFT])
-		position.y -= MOVE_CONSTANT * g_Delta;	  	 	 	 	 
+		position.y -= MOVE_CONSTANT * g_Delta;
+
+// Debug camera rotation
+#ifdef _DEBUG
+	if (g_Keys[SDL_SCANCODE_KP_4])
+		yaw -= MOVE_CONSTANT * g_Delta;	
+	if (g_Keys[SDL_SCANCODE_KP_6])
+		yaw += MOVE_CONSTANT * g_Delta;
+	if (g_Keys[SDL_SCANCODE_KP_8])
+		pitch -= MOVE_CONSTANT * g_Delta;	
+	if (g_Keys[SDL_SCANCODE_KP_2])
+		pitch += MOVE_CONSTANT * g_Delta;
+#endif
 }

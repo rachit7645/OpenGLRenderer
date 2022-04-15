@@ -1,7 +1,9 @@
 #include "StaticShader.h"
 
 using namespace Shader;
-using namespace Entities;
+
+using Entities::Light;
+using Entities::Camera;
 
 StaticShader::StaticShader(const std::string &vertexPath, const std::string &fragmentPath)
 	: ShaderProgram(vertexPath, fragmentPath)
@@ -46,7 +48,7 @@ void StaticShader::LoadViewMatrix(Camera &camera)
 	LoadMatrix(uniforms["viewMatrix"], viewMatrix);
 }
 
-void StaticShader::LoadLight(Entities::Light& light)
+void StaticShader::LoadLight(Light& light)
 {
 	LoadVector(uniforms["lightPosition"], light.position);
 	LoadVector(uniforms["lightColour"], light.colour);

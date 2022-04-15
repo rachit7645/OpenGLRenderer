@@ -1,7 +1,9 @@
 #include "Terrain.h"
 
 using namespace Terrains;
-using namespace Renderer;
+
+using Renderer::VertexArray;
+using Renderer::Texture;
 
 Terrain::Terrain(const glm::vec2 &grid_pos, std::shared_ptr<VertexArray> vao,
 	std::shared_ptr<Texture> texture, size_t vertex_count)

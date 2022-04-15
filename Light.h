@@ -6,8 +6,9 @@
 
 namespace Entities
 {
-	struct Light
+	class Light
 	{
+	public:	
 		Light(const glm::vec3& p_position, const glm::vec3& p_colour) : position(p_position), colour(p_colour) {}
 		glm::vec3 position;
 		glm::vec3 colour;

@@ -1,6 +1,6 @@
 #include "Maths.h"
 
-using namespace Entities;
+using Entities::Camera;
 
 glm::mat4 Maths::CreateTransformationMatrix(const glm::vec3& translation, const glm::vec3& rotation, f32 scale)
 {

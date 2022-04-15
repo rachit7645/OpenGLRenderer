@@ -5,15 +5,17 @@ using namespace Window;
 
 using Entities::Entity;
 using Terrains::Terrain;
+using Renderer::Texture;
+using Renderer::Model;
 
 void SDLWindow::MainLoop()
 {
 	InitGL();
 
 	// Put Models and Textures here 
-	std::shared_ptr<Renderer::Texture> texture = std::make_shared<Renderer::Texture>("res/textures/tree.png");
-	std::shared_ptr<Renderer::Texture> terrainTexture = std::make_shared<Renderer::Texture>("res/textures/grass.png");
-	std::shared_ptr<Renderer::Model> model = std::make_shared<Renderer::Model>(Renderer::LoadModel("res/models/tree.obj", texture));
+	std::shared_ptr<Texture> texture = std::make_shared<Texture>("res/textures/tree.png");
+	std::shared_ptr<Texture> terrainTexture = std::make_shared<Texture>("res/textures/grass.png");
+	std::shared_ptr<Model> model = std::make_shared<Model>(Renderer::LoadModel("res/models/tree.obj", texture));
 
 	// All objects go here
 	std::vector<Entity> entities;
@@ -22,7 +24,8 @@ void SDLWindow::MainLoop()
 		std::srand('r' + 'a' + 'c' + 'h' + 'i' + 't');
 		for (size_t i = 0; i < 100; i++)
 		{
-			entities.push_back(Entity(model, glm::vec3(Rand_Range<f32>(0.0f, 1.0f) * 400 - 200, 0, Rand_Range<f32>(0.0f, 1.0f) * -300), glm::vec3(0.0f, 0.0f, 0.0f), 3.0f));
+			entities.push_back(Entity(model, glm::vec3(Rand_Range<f32>(0.0f, 1.0f) * 400 - 200,
+				0, Rand_Range<f32>(0.0f, 1.0f) * -300), glm::vec3(0.0f, 0.0f, 0.0f), 3.0f));
 		}
 	}
 	std::vector<Terrain> terrains;

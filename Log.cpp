@@ -23,5 +23,5 @@ void Logger::Log(const std::string& message, Type type)
 	else if (type == ERROR)
 		str_type = ERROR_STR;
 
-	std::cerr << '\n' << str_type << message;
+	std::cerr << str_type << message;
 }

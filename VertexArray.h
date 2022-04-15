@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include <map>
 #include <GL/glew.h>
 
 #include "VertexBuffer.h"

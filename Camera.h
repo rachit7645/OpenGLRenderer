@@ -8,8 +8,9 @@
 
 namespace Entities
 {
-	struct Camera
+	class Camera
 	{
+	public:	
 		Camera(const glm::vec3 &pos) : position{ pos } {}
 		void Move();
 

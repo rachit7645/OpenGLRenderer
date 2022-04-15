@@ -1,7 +1,9 @@
 #include "TerrainShader.h"
 
 using namespace Shader;
-using namespace Entities;
+
+using Entities::Light;
+using Entities::Camera;
 
 TerrainShader::TerrainShader(const std::string &vertexPath, const std::string &fragmentPath)
 	: ShaderProgram(vertexPath, fragmentPath)
@@ -46,7 +48,7 @@ void TerrainShader::LoadViewMatrix(Camera &camera)
 	LoadMatrix(uniforms["viewMatrix"], viewMatrix);
 }
 
-void TerrainShader::LoadLight(Entities::Light& light)
+void TerrainShader::LoadLight(Light& light)
 {
 	LoadVector(uniforms["lightPosition"], light.position);
 	LoadVector(uniforms["lightColour"], light.colour);

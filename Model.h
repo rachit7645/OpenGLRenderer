@@ -11,8 +11,9 @@
 
 namespace Renderer
 {
-	struct Model
+	class Model
 	{
+	public:	
 		Model(std::shared_ptr<VertexArray> vao, std::shared_ptr<Renderer::Texture> tx, size_t vertex_count);
 		std::shared_ptr<Renderer::VertexArray> vao;	// Vertex Attribute Object
 		std::shared_ptr<Renderer::Texture> texture;	// Texture

@@ -1,10 +1,11 @@
 #include "TerrainRenderer.h"
 
 using namespace Renderer;
-using namespace Shader;
-using namespace Terrains;
 
-TerrainRenderer::TerrainRenderer(Shader::TerrainShader& sh) : shader { sh } {}
+using Shader::TerrainShader;
+using Terrains::Terrain;
+
+TerrainRenderer::TerrainRenderer(TerrainShader& sh) : shader { sh } {}
 
 void TerrainRenderer::Render(std::vector<Terrain>& terrains)
 {

@@ -1,10 +1,14 @@
 #include "MasterRenderer.h"
 
 using namespace Renderer;
-using namespace Entities;
+
+using Entities::Entity;
+using Entities::Light;
+using Entities::Camera;
+using Terrains::Terrain;
 
 MasterRenderer::MasterRenderer() : shader{ VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH }, renderer{ shader },
-	terrainShader{ TERRAIN_VERTEX_SHADER_PATH, TERRAIN_FRAGMENT_SHADER_PATH }, terrainRenderer{ terrainShader }
+terrainShader{ TERRAIN_VERTEX_SHADER_PATH, TERRAIN_FRAGMENT_SHADER_PATH }, terrainRenderer{ terrainShader }
 {
 	glm::mat4 projection = glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
 	shader.Start();
@@ -38,7 +42,7 @@ void MasterRenderer::Render(Light &light, Camera &camera)
 	terrains.clear();
 }
 
-void MasterRenderer::ProcessEntity(Entities::Entity &entity)
+void MasterRenderer::ProcessEntity(Entity &entity)
 {
 	auto iter = entities.find(entity.model);
 	if (iter != entities.end())
@@ -47,13 +51,11 @@ void MasterRenderer::ProcessEntity(Entities::Entity &entity)
 	}
 	else
 	{
-		std::vector<Entity> newBatch;
-		newBatch.push_back(entity);
-		entities[entity.model] = newBatch;
+		entities[entity.model] = { entity };
 	}
 }
 
-void MasterRenderer::ProcessTerrain(Terrains::Terrain &terrain)
+void MasterRenderer::ProcessTerrain(Terrain &terrain)
 {
 	terrains.push_back(terrain);
 }

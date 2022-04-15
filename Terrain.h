@@ -12,7 +12,7 @@
 
 namespace Terrains
 {
-	constexpr auto SIZE = 300, VERTEX_COUNT = 128;
+	constexpr auto SIZE = 300, VERTEX_COUNT = 64;
 
 	class Terrain
 	{

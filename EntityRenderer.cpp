@@ -1,8 +1,8 @@
 #include "EntityRenderer.h"
 
 using namespace Renderer;
-using namespace Entities;
-using namespace Shader;
+using Entities::Entity;
+using Shader::StaticShader;
 
 EntityRenderer::EntityRenderer(StaticShader& sh) : shader { sh } {}
 
