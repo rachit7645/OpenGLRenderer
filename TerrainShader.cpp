@@ -32,23 +32,23 @@ void TerrainShader::GetUniformLocations()
 	uniforms["reflectivity"] = GetUniformLocation("reflectivity");
 }
 
-void TerrainShader::LoadTransformationMatrix(glm::mat4 &matrix)
+void TerrainShader::LoadTransformationMatrix(const glm::mat4 &matrix)
 {
 	LoadMatrix(uniforms["modelMatrix"], matrix);
 }
 
-void TerrainShader::LoadProjectionMatrix(glm::mat4 &matrix)
+void TerrainShader::LoadProjectionMatrix(const glm::mat4 &matrix)
 {
 	LoadMatrix(uniforms["projectionMatrix"], matrix);
 }
 
-void TerrainShader::LoadViewMatrix(Camera &camera)
+void TerrainShader::LoadViewMatrix(const Camera &camera)
 {
 	glm::mat4 viewMatrix = Maths::CreateViewMatrix(camera);
 	LoadMatrix(uniforms["viewMatrix"], viewMatrix);
 }
 
-void TerrainShader::LoadLight(Light& light)
+void TerrainShader::LoadLight(const Light& light)
 {
 	LoadVector(uniforms["lightPosition"], light.position);
 	LoadVector(uniforms["lightColour"], light.colour);

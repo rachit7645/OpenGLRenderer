@@ -25,7 +25,7 @@ void MasterRenderer::Prepare()
 	glClear(GL_CLEAR_FLAGS);
 }
 
-void MasterRenderer::Render(Light &light, Camera &camera)
+void MasterRenderer::Render(const Light &light, const Camera &camera)
 {
 	Prepare();
 	shader.Start();
@@ -42,7 +42,7 @@ void MasterRenderer::Render(Light &light, Camera &camera)
 	terrains.clear();
 }
 
-void MasterRenderer::ProcessEntity(Entity &entity)
+void MasterRenderer::ProcessEntity(const Entity &entity)
 {
 	auto iter = entities.find(entity.model);
 	if (iter != entities.end())
@@ -55,7 +55,7 @@ void MasterRenderer::ProcessEntity(Entity &entity)
 	}
 }
 
-void MasterRenderer::ProcessTerrain(Terrain &terrain)
+void MasterRenderer::ProcessTerrain(const Terrain &terrain)
 {
 	terrains.push_back(terrain);
 }

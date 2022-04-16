@@ -21,7 +21,7 @@ void SDLWindow::MainLoop()
 	std::vector<Entity> entities;
 	{
 		// Epic seed, I know
-		std::srand('r' + 'a' + 'c' + 'h' + 'i' + 't');
+		std::srand(144);
 		for (size_t i = 0; i < 100; i++)
 		{
 			entities.push_back(Entity(model, glm::vec3(Rand_Range<f32>(0.0f, 1.0f) * 400 - 200,
@@ -38,18 +38,18 @@ void SDLWindow::MainLoop()
 	
 	Entities::Light light(glm::vec3(20000.0f, 20000.0f, 2000.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 	Entities::Camera camera(glm::vec3(0.0f, 6.0f, 0.0f));
-
 	Renderer::MasterRenderer renderer;
+
 	startTime = SDL_GetTicks64();
 
 	while (true)
 	{
 		camera.Move();
-		for (auto& entity : entities)
+		for (const auto& entity : entities)
 		{
 			renderer.ProcessEntity(entity);
 		}
-		for (auto& terrain : terrains)
+		for (const auto& terrain : terrains)
 		{
 			renderer.ProcessTerrain(terrain);
 		}
@@ -66,7 +66,7 @@ void SDLWindow::CalculateFPS()
 {
 	if ( (endTime = SDL_GetTicks64()) >= startTime + 1000 )
 	{
-		std::cout << "\rFPS: " << FPS;
+		std::cerr << "\rFPS: " << FPS;
 		FPS = 0;
 		g_Delta = (endTime - startTime) / 1000.0f;
 		startTime = endTime;

@@ -17,9 +17,9 @@ namespace Renderer
 		GLuint id;
 		std::map<const std::string, std::shared_ptr<VertexBuffer>> buffers;
 
-		VertexArray(std::vector<f32>& vert, std::vector<u32>& indi, std::vector<f32>& txCoords, std::vector<f32> &norms);
+		VertexArray(const std::vector<f32>& vert, const std::vector<u32>& indi, const std::vector<f32>& txCoords, const std::vector<f32> &norms);
 		VertexArray();
-		~VertexArray();	
+		~VertexArray();
 	};
 }
 

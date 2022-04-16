@@ -6,7 +6,7 @@ using Shader::StaticShader;
 
 EntityRenderer::EntityRenderer(StaticShader& sh) : shader { sh } {}
 
-void EntityRenderer::Render(std::unordered_map<std::shared_ptr<Model>, std::vector<Entity>> entities)
+void EntityRenderer::Render(const std::unordered_map<std::shared_ptr<Model>, std::vector<Entity>>& entities)
 {
 	for (auto& [model, batch] : entities)
 	{
@@ -20,7 +20,7 @@ void EntityRenderer::Render(std::unordered_map<std::shared_ptr<Model>, std::vect
 	}
 }
 
-void EntityRenderer::PrepareModel(std::shared_ptr<Model> model)
+void EntityRenderer::PrepareModel(const std::shared_ptr<Model>& model)
 {
 	glBindVertexArray(model->vao->id);
 	glEnableVertexAttribArray(0);
@@ -31,7 +31,7 @@ void EntityRenderer::PrepareModel(std::shared_ptr<Model> model)
 	glBindTexture(GL_TEXTURE_2D, model->texture->id);
 }
 
-void EntityRenderer::PrepareInstance(Entity& entity)
+void EntityRenderer::PrepareInstance(const Entity& entity)
 {
 	glm::mat4 trans_matrix = Maths::CreateTransformationMatrix(entity.position, entity.rotation, entity.scale);
 	shader.LoadTransformationMatrix(trans_matrix);

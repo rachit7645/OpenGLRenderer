@@ -2,7 +2,7 @@
 
 using namespace Renderer;
 
-VertexBuffer::VertexBuffer(u32 slot, u32 coordSize, std::vector<f32> &data)
+VertexBuffer::VertexBuffer(u32 slot, u32 coordSize, const std::vector<f32> &data)
 {
 	glGenBuffers(1, &id);
 	glBindBuffer(GL_ARRAY_BUFFER, id);
@@ -11,7 +11,7 @@ VertexBuffer::VertexBuffer(u32 slot, u32 coordSize, std::vector<f32> &data)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-VertexBuffer::VertexBuffer(std::vector<u32> &data)
+VertexBuffer::VertexBuffer(const std::vector<u32> &data)
 {
 	glGenBuffers(1, &id);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);

@@ -7,7 +7,7 @@ using Terrains::Terrain;
 
 TerrainRenderer::TerrainRenderer(TerrainShader& sh) : shader { sh } {}
 
-void TerrainRenderer::Render(std::vector<Terrain>& terrains)
+void TerrainRenderer::Render(const std::vector<Terrain>& terrains)
 {
 	for (auto& terrain : terrains)
 	{
@@ -18,7 +18,7 @@ void TerrainRenderer::Render(std::vector<Terrain>& terrains)
 	}
 }
 
-void TerrainRenderer::PrepareTerrain(Terrain& terrain)
+void TerrainRenderer::PrepareTerrain(const Terrain& terrain)
 {
 	glBindVertexArray(terrain.vao->id);
 	glEnableVertexAttribArray(0);
@@ -29,7 +29,7 @@ void TerrainRenderer::PrepareTerrain(Terrain& terrain)
 	glBindTexture(GL_TEXTURE_2D, terrain.texture->id);
 }
 
-void TerrainRenderer::LoadModelMatrix(Terrain& terrain)
+void TerrainRenderer::LoadModelMatrix(const Terrain& terrain)
 {
 	glm::mat4 trans_matrix = Maths::CreateTransformationMatrix(
 		glm::vec3(terrain.grid_position.x, 0.0f, terrain.grid_position.y),

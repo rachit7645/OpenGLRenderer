@@ -21,11 +21,11 @@ namespace Renderer
 		Shader::StaticShader& shader;
 
 		// Render THE MAP
-		void Render(std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>> entities);
+		void Render(const std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>>& entities);
 		// Prepare each model for render
-		void PrepareModel(std::shared_ptr<Model> model);
+		void PrepareModel(const std::shared_ptr<Model>& model);
 		// Prepare each instance
-		void PrepareInstance(Entities::Entity& entity);
+		void PrepareInstance(const Entities::Entity& entity);
 		// Unbind the model
 		void UnbindModel();
 	};

@@ -32,23 +32,23 @@ void StaticShader::GetUniformLocations()
 	uniforms["reflectivity"] = GetUniformLocation("reflectivity");
 }
 
-void StaticShader::LoadTransformationMatrix(glm::mat4 &matrix)
+void StaticShader::LoadTransformationMatrix(const glm::mat4 &matrix)
 {
 	LoadMatrix(uniforms["modelMatrix"], matrix);
 }
 
-void StaticShader::LoadProjectionMatrix(glm::mat4 &matrix)
+void StaticShader::LoadProjectionMatrix(const glm::mat4 &matrix)
 {
 	LoadMatrix(uniforms["projectionMatrix"], matrix);
 }
 
-void StaticShader::LoadViewMatrix(Camera &camera)
+void StaticShader::LoadViewMatrix(const Camera &camera)
 {
 	glm::mat4 viewMatrix = Maths::CreateViewMatrix(camera);
 	LoadMatrix(uniforms["viewMatrix"], viewMatrix);
 }
 
-void StaticShader::LoadLight(Light& light)
+void StaticShader::LoadLight(const Light &light)
 {
 	LoadVector(uniforms["lightPosition"], light.position);
 	LoadVector(uniforms["lightColour"], light.colour);

@@ -17,12 +17,12 @@ namespace Shader
 		StaticShader(const std::string &vertexPath, const std::string &fragmentPath);
 
 		// Matrix loading functions
-		void LoadTransformationMatrix(glm::mat4& matrix);
-		void LoadProjectionMatrix(glm::mat4& matrix);
-		void LoadViewMatrix(Entities::Camera& camera);
+		void LoadTransformationMatrix(const glm::mat4& matrix);
+		void LoadProjectionMatrix(const glm::mat4& matrix);
+		void LoadViewMatrix(const Entities::Camera& camera);
 
 		// Material and object loading functions
-		void LoadLight(Entities::Light& light);
+		void LoadLight(const Entities::Light& light);
 		void LoadShineVariables(f32 shineDamper, f32 reflectivity);
 
 		void BindAttributes() override;

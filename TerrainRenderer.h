@@ -18,9 +18,9 @@ namespace Renderer
 		TerrainRenderer(Shader::TerrainShader& sh);
 		Shader::TerrainShader& shader;
 
-		void Render(std::vector<Terrains::Terrain>& terrains);
-		void PrepareTerrain(Terrains::Terrain& terrain);
-		void LoadModelMatrix(Terrains::Terrain& terrain);
+		void Render(const std::vector<Terrains::Terrain>& terrains);
+		void PrepareTerrain(const Terrains::Terrain& terrain);
+		void LoadModelMatrix(const Terrains::Terrain& terrain);
 		void UnbindTerrain();
 	};
 }
