@@ -6,9 +6,11 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 
+#include "Util.h"
+
 namespace Logger
 {
-	enum Type
+	enum LogType
 	{
 		INFO = 0,
 		WARNING = 1,
@@ -17,11 +19,11 @@ namespace Logger
 	constexpr auto INFO_STR = "INFO: ", WARNING_STR = "WARNING: ", ERROR_STR = "ERROR: ";
 
 	// Log message with SDL error and exit with specified exit code
-	void LogAndExit_SDL(const std::string& message, int exitCode);
+	void LogAndExit_SDL(const std::string& message, Error error);
 	// Log message and exit with specified exit code
-	void LogAndExit(const std::string& message, int exitCode);
+	void LogAndExit(const std::string& message, Error error);
 	// Log message with formatting
-	void Log(const std::string& message, Type type);
+	void Log(const std::string& message, LogType type);
 
 }
 

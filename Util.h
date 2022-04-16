@@ -23,7 +23,7 @@ using u64 = std::uint64_t;
 using f32 = float;
 using f64 = double;
 
-enum ERRORS
+enum Error
 {
 	SDL_INIT_FAILED = 1,
 	SDL_CREATE_WINDOW_FAILED = 2,
@@ -32,6 +32,8 @@ enum ERRORS
 	SHADER_FILE_OPEN_FAILED = 5,
 	SHADER_COMPILATION_FAILED = 6,
 	ASSIMP_LOAD_FAILED = 7,
+	SHADER_VALIDATION_FAILED = 8,
+	SHADER_LINK_FAILED = 9,
 };
 
 // Random number between a range

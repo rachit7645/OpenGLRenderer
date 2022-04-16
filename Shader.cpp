@@ -2,22 +2,28 @@
 
 using namespace Shader;
 
-ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath)
+ShaderProgram::ShaderProgram(const std::string &vertexPath, const std::string &fragmentPath)
 {
 	programID = glCreateProgram();
-	vertexShaderID = LoadShader(GL_VERTEX_SHADER, vertexPath);
-	fragmentShaderID = LoadShader(GL_FRAGMENT_SHADER, fragmentPath);
+	u32 vertexShaderID = LoadShader(GL_VERTEX_SHADER, vertexPath);
+	u32 fragmentShaderID = LoadShader(GL_FRAGMENT_SHADER, fragmentPath);
 
 	glAttachShader(programID, vertexShaderID);
 	glAttachShader(programID, fragmentShaderID);
+	glLinkProgram(programID);
+	CheckProgram(programID, GL_LINK_STATUS, SHADER_LINK_FAILED);
+	glDeleteShader(vertexShaderID);
+	glDeleteShader(fragmentShaderID);
+	glValidateProgram(programID);
+	CheckProgram(programID, GL_VALIDATE_STATUS, SHADER_VALIDATION_FAILED);
 }
 
-void ShaderProgram::BindAttribute(u32 attribute, const char* name) const
+void ShaderProgram::BindAttribute(u32 attribute, const char *name) const
 {
 	glBindAttribLocation(programID, attribute, name);
 }
 
-u32 ShaderProgram::GetUniformLocation(const char* name) const
+u32 ShaderProgram::GetUniformLocation(const char *name) const
 {
 	return glGetUniformLocation(programID, name);
 }
@@ -34,58 +40,68 @@ void ShaderProgram::LoadFloat(u32 location, f32 value) const
 
 void ShaderProgram::LoadBool(u32 location, bool value) const
 {
-	glUniform1f(location, value ? 1 : 0);
+	glUniform1i(location, value ? 1 : 0);
 }
 
-void ShaderProgram::LoadVector(u32 location, const glm::vec3& vector) const
+void ShaderProgram::LoadVector(u32 location, const glm::vec3 &vector) const
 {
 	glUniform3fv(location, 1, &vector[0]);
 }
 
-void ShaderProgram::LoadMatrix(u32 location, const glm::mat4& matrix) const
+void ShaderProgram::LoadMatrix(u32 location, const glm::mat4 &matrix) const
 {
-	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+	glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
 }
 
-u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
+u32 ShaderProgram::LoadShader(GLenum type, const std::string &path)
 {
-	std::string content;
 	#ifdef _DEBUG
-    	std::ifstream fileStream("../" + path, std::ios::in);
+		std::ifstream fileStream("../" + path, std::ios::in);
 	#else
 		std::ifstream fileStream(path, std::ios::in);
 	#endif
-    if (!fileStream.is_open())
+	if (!fileStream.is_open())
 	{
-       Logger::LogAndExit("Unable to open file" + path, SHADER_FILE_OPEN_FAILED);
-    }
+		Logger::LogAndExit("Unable to open file" + path, SHADER_FILE_OPEN_FAILED);
+	}
+	std::string content = std::string(std::istreambuf_iterator<char>(fileStream), std::istreambuf_iterator<char>());
 
-    std::string line;
-    while (std::getline(fileStream, line)) content.append(line + "\n");
-	fileStream.close();
-	
 	u32 shaderID = glCreateShader(type);
-	const GLchar* cstr = content.c_str();
+	const GLchar *cstr = content.c_str();
 	glShaderSource(shaderID, 1, &cstr, NULL);
 	glCompileShader(shaderID);
-
-	GLint status;
-	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &status);
-	if (status == GL_FALSE)
-	{
-		constexpr GLint length = 200;
-		std::vector<char> v;
-		v.reserve(length);
-		glGetShaderInfoLog(shaderID, length, NULL, v.data());
-		Logger::LogAndExit(v.data(), SHADER_COMPILATION_FAILED);
-	}
+	CheckShader(shaderID, GL_COMPILE_STATUS, SHADER_COMPILATION_FAILED);
 
 	return shaderID;
 }
 
+void ShaderProgram::CheckShader(u32 shaderID, GLenum type, Error error)
+{
+	GLint status;
+	glGetShaderiv(shaderID, type, &status);
+	if (status == GL_FALSE)
+	{
+		std::vector<char> v(512);
+		glGetShaderInfoLog(shaderID, 512, NULL, v.data());
+		Logger::LogAndExit(v.data(), error);
+	}
+}
+
+void ShaderProgram::CheckProgram(u32 programID, GLenum type, Error error)
+{
+	GLint status;
+	glGetProgramiv(programID, type, &status);
+	if (status == GL_FALSE)
+	{
+		std::vector<char> v(512);
+		glGetProgramInfoLog(programID, 512, NULL, v.data());
+		Logger::LogAndExit(v.data(), error);
+	}
+}
+
 void ShaderProgram::Start()
 {
-	glUseProgram(this->programID);
+	glUseProgram(programID);
 }
 
 void ShaderProgram::Stop()
@@ -97,9 +113,5 @@ void ShaderProgram::Stop()
 ShaderProgram::~ShaderProgram()
 {
 	Stop();
-	glDetachShader(programID, vertexShaderID);
-	glDetachShader(programID, fragmentShaderID);
-	glDeleteShader(vertexShaderID);
-	glDeleteShader(fragmentShaderID);
 	glDeleteProgram(programID);
 }

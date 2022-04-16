@@ -25,7 +25,6 @@ namespace Shader
 		void LoadLight(const Entities::Light& light);
 		void LoadShineVariables(f32 shineDamper, f32 reflectivity);
 
-		void BindAttributes() override;
 		void GetUniformLocations() override;
 	private:
 		std::map<const std::string, u32> uniforms;

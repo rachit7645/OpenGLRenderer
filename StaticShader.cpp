@@ -8,17 +8,7 @@ using Entities::Camera;
 StaticShader::StaticShader(const std::string &vertexPath, const std::string &fragmentPath)
 	: ShaderProgram(vertexPath, fragmentPath)
 {
-	BindAttributes();
-	glLinkProgram(programID);
-	glValidateProgram(programID);
 	GetUniformLocations();
-}
-
-void StaticShader::BindAttributes()
-{
-	BindAttribute(0, "position");
-	BindAttribute(1, "textureCoords");
-	BindAttribute(2, "normals");
 }
 
 void StaticShader::GetUniformLocations()

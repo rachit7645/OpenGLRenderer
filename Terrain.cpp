@@ -13,14 +13,10 @@ Terrain::Terrain(const glm::vec2 &grid_pos, std::shared_ptr<VertexArray> vao,
 Terrain Terrains::GenerateTerrain(const glm::vec2 &grid_pos, std::shared_ptr<Texture> texture)
 {
 	constexpr auto COUNT = VERTEX_COUNT * VERTEX_COUNT;
-	std::vector<f32> vertices;
-	vertices.resize(COUNT * 3);
-	std::vector<f32> normals;
-	normals.resize(COUNT * 3);
-	std::vector<f32> txCoords;
-	txCoords.resize(COUNT * 2);
-	std::vector<u32> indices;
-	indices.resize(6 * (VERTEX_COUNT - 1) * (VERTEX_COUNT - 1));
+	std::vector<f32> vertices(COUNT * 3);
+	std::vector<f32> normals(COUNT * 3);
+	std::vector<f32> txCoords(COUNT * 2);
+	std::vector<u32> indices(6 * (VERTEX_COUNT - 1) * (VERTEX_COUNT - 1));
 
 	size_t vertexPointer = 0;
 	for (size_t i = 0; i < VERTEX_COUNT; i++)

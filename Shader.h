@@ -3,12 +3,12 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include "Util.h"
 #include "Log.h"
 
@@ -22,15 +22,12 @@ namespace Shader
 		~ShaderProgram();
 
 		u32 programID;
-		u32 vertexShaderID;
-		u32 fragmentShaderID;
 
 		void Start();
 		void Stop();
 
 		void BindAttribute(u32 attribute, const char* name) const;
 		u32 GetUniformLocation(const char* name) const;
-		virtual void BindAttributes() = 0;
 		virtual void GetUniformLocations() = 0;
 
 		// Uniform loading functions 
@@ -43,6 +40,8 @@ namespace Shader
 	private:
 		// Function to load shaders from file
 		u32 LoadShader(GLenum type, const std::string& path);
+		void CheckShader(u32 shaderID, GLenum type, Error error);
+		void CheckProgram(u32 programID, GLenum type, Error error);
 	};
 }
 

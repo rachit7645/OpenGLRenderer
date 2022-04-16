@@ -8,17 +8,7 @@ using Entities::Camera;
 TerrainShader::TerrainShader(const std::string &vertexPath, const std::string &fragmentPath)
 	: ShaderProgram(vertexPath, fragmentPath)
 {
-	BindAttributes();
-	glLinkProgram(programID);
-	glValidateProgram(programID);
 	GetUniformLocations();
-}
-
-void TerrainShader::BindAttributes()
-{
-	BindAttribute(0, "position");
-	BindAttribute(1, "textureCoords");
-	BindAttribute(2, "normals");
 }
 
 void TerrainShader::GetUniformLocations()
