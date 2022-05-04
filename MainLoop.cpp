@@ -15,7 +15,7 @@ void SDLWindow::MainLoop()
 	// Put Models and Textures here 
 	std::shared_ptr<Texture> texture = std::make_shared<Texture>("res/textures/tree.png");
 	std::shared_ptr<Texture> terrainTexture = std::make_shared<Texture>("res/textures/grass.png");
-	std::shared_ptr<Model> model = std::make_shared<Model>(Renderer::LoadModel("res/models/tree.obj", texture));
+	std::shared_ptr<Model> model = std::make_shared<Model>("res/models/tree.obj", texture);
 
 	// All objects go here
 	std::vector<Entity> entities;
@@ -30,10 +30,10 @@ void SDLWindow::MainLoop()
 	}
 	std::vector<Terrain> terrains;
 	{
-		terrains.push_back(Terrains::GenerateTerrain(glm::vec2(0.0f, -1.0f), terrainTexture));
-		terrains.push_back(Terrains::GenerateTerrain(glm::vec2(-1.0f, -1.0f), terrainTexture));
-		terrains.push_back(Terrains::GenerateTerrain(glm::vec2(0.0f, 0.0f), terrainTexture));
-		terrains.push_back(Terrains::GenerateTerrain(glm::vec2(-1.0f, 0.0f), terrainTexture));
+		terrains.push_back(Terrain(glm::vec2(0.0f, -1.0f), terrainTexture));
+		terrains.push_back(Terrain(glm::vec2(-1.0f, -1.0f), terrainTexture));
+		terrains.push_back(Terrain(glm::vec2(0.0f, 0.0f), terrainTexture));
+		terrains.push_back(Terrain(glm::vec2(-1.0f, 0.0f), terrainTexture));
 	}
 	
 	Entities::Light light(glm::vec3(20000.0f, 20000.0f, 2000.0f), glm::vec3(1.0f, 1.0f, 1.0f));

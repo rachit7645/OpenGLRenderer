@@ -8,20 +8,17 @@
 
 using namespace Renderer;
 
-Model::Model(std::shared_ptr<VertexArray> vao, std::shared_ptr<Texture> tx, size_t vertex_count)
-	: vao{ vao }, texture{ tx }, vertex_count{vertex_count} {}
-
-Model Renderer::LoadModel(const std::string &mPath, std::shared_ptr<Texture> texture)
+constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs;
+Model::Model(const std::string& path, std::shared_ptr<Texture> texture) : texture{ texture }
 {
 	std::string newPath;
-#ifdef _DEBUG
-	newPath = "../" + mPath;
-#else
-	newPath = mPath;
-#endif
+	#ifdef _DEBUG
+		newPath = "../" + path;
+	#else
+		newPath = path;
+	#endif
 
 	Assimp::Importer importer;
-	constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs;
 	const auto *scene = importer.ReadFile(newPath.c_str(), ASSIMP_FLAGS);
 
 	if (!scene)
@@ -64,5 +61,6 @@ Model Renderer::LoadModel(const std::string &mPath, std::shared_ptr<Texture> tex
 		indices.push_back(face.mIndices[2]);
 	}
 
-	return { std::make_shared<VertexArray>(vertices, indices, txCoords, normals) , texture, indices.size()};
-}
+	vao = std::make_shared<VertexArray>(vertices, indices, txCoords, normals);
+	vertexCount = indices.size();
+}	

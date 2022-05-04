@@ -5,8 +5,7 @@ using namespace Shader;
 using Entities::Light;
 using Entities::Camera;
 
-StaticShader::StaticShader(const std::string &vertexPath, const std::string &fragmentPath)
-	: ShaderProgram(vertexPath, fragmentPath)
+StaticShader::StaticShader() : ShaderProgram(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH)
 {
 	GetUniformLocations();
 }

@@ -11,10 +11,13 @@
 
 namespace Shader
 {
+	constexpr auto TERRAIN_VERTEX_SHADER_PATH = "res/shaders/terrainVertexShader.glsl",
+		TERRAIN_FRAGMENT_SHADER_PATH = "res/shaders/terrainFragmentShader.glsl";
+
 	class TerrainShader : public ShaderProgram
 	{
 	public:
-		TerrainShader(const std::string &vertexPath, const std::string &fragmentPath);
+		TerrainShader();
 
 		// Matrix loading functions
 		void LoadTransformationMatrix(const glm::mat4& matrix);
@@ -27,7 +30,7 @@ namespace Shader
 
 		void GetUniformLocations() override;
 	private:
-		std::map<const std::string, u32> uniforms;
+		std::map<const char*, u32> uniforms;
 	};
 }
 

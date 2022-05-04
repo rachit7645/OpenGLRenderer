@@ -5,8 +5,7 @@ using namespace Shader;
 using Entities::Light;
 using Entities::Camera;
 
-TerrainShader::TerrainShader(const std::string &vertexPath, const std::string &fragmentPath)
-	: ShaderProgram(vertexPath, fragmentPath)
+TerrainShader::TerrainShader() : ShaderProgram(TERRAIN_VERTEX_SHADER_PATH, TERRAIN_FRAGMENT_SHADER_PATH)
 {
 	GetUniformLocations();
 }

@@ -18,14 +18,9 @@
 
 namespace Renderer
 {
-	constexpr auto VERTEX_SHADER_PATH = "res/shaders/vertexShader.glsl",
-		FRAGMENT_SHADER_PATH = "res/shaders/fragmentShader.glsl";
-	constexpr auto TERRAIN_VERTEX_SHADER_PATH = "res/shaders/terrainVertexShader.glsl",
-		TERRAIN_FRAGMENT_SHADER_PATH = "res/shaders/terrainFragmentShader.glsl";
-
-	constexpr f32 FOV = 70.0f, ASPECT_RATIO = 16.0f / 9.0f, NEAR_PLANE = 0.1f, FAR_PLANE = 1000.0f;
 	constexpr GLbitfield GL_CLEAR_FLAGS = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
-	constexpr GLclampf RED = 0.49f, GREEN = 89.0f, BLUE = 0.98f, ALPHA = 1.0f;
+	constexpr glm::vec4 GL_CLEAR_COLOR = { 0.49, 89.0f, 0.98f, 1.0f };
+	constexpr f32 FOV = 70.0f, ASPECT_RATIO = 16.0f / 9.0f, NEAR_PLANE = 0.1f, FAR_PLANE = 1000.0f;
 
 	class MasterRenderer
 	{
@@ -43,12 +38,14 @@ namespace Renderer
 		void Prepare();		
 		// Main render function
 		void Render(const Entities::Light &light, const Entities::Camera &camera);
-		// Process entities into THE MAP
+		// Process entities into the entitiy map
 		void ProcessEntity(const Entities::Entity &entity);
+		// Process terrains into a vector
 		void ProcessTerrain(const Terrains::Terrain &terrain);
 	private:
-		// THE MAP
+		// The entitiy map
 		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>> entities;
+		// The terrain vector
 		std::vector<Terrains::Terrain> terrains;
 	};
 }

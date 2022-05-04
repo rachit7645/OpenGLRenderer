@@ -7,8 +7,7 @@ using Entities::Light;
 using Entities::Camera;
 using Terrains::Terrain;
 
-MasterRenderer::MasterRenderer() : shader{ VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH }, renderer{ shader },
-terrainShader{ TERRAIN_VERTEX_SHADER_PATH, TERRAIN_FRAGMENT_SHADER_PATH }, terrainRenderer{ terrainShader }
+MasterRenderer::MasterRenderer() : renderer{ shader }, terrainRenderer{ terrainShader }
 {
 	glm::mat4 projection = glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
 	shader.Start();
@@ -21,7 +20,7 @@ terrainShader{ TERRAIN_VERTEX_SHADER_PATH, TERRAIN_FRAGMENT_SHADER_PATH }, terra
 
 void MasterRenderer::Prepare()
 {
-	glClearColor(RED, GREEN, BLUE, ALPHA);
+	glClearColor(GL_CLEAR_COLOR.r, GL_CLEAR_COLOR.g, GL_CLEAR_COLOR.b, GL_CLEAR_COLOR.a);
 	glClear(GL_CLEAR_FLAGS);
 }
 

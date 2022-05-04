@@ -11,10 +11,13 @@
 
 namespace Shader
 {
+	constexpr auto VERTEX_SHADER_PATH = "res/shaders/vertexShader.glsl",
+		FRAGMENT_SHADER_PATH = "res/shaders/fragmentShader.glsl";
+
 	class StaticShader : public ShaderProgram
 	{
 	public:
-		StaticShader(const std::string &vertexPath, const std::string &fragmentPath);
+		StaticShader();
 
 		// Matrix loading functions
 		void LoadTransformationMatrix(const glm::mat4& matrix);
@@ -27,7 +30,7 @@ namespace Shader
 
 		void GetUniformLocations() override;
 	private:
-		std::map<const std::string, u32> uniforms;
+		std::map<const char*, u32> uniforms;
 	};
 }
 

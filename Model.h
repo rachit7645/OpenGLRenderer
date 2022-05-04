@@ -13,17 +13,15 @@ namespace Renderer
 {
 	class Model
 	{
-	public:	
-		Model(std::shared_ptr<VertexArray> vao, std::shared_ptr<Renderer::Texture> tx, size_t vertex_count);
+	public:
+		Model(const std::string& path, std::shared_ptr<Texture> texture);
+
 		std::shared_ptr<Renderer::VertexArray> vao;	// Vertex Attribute Object
 		std::shared_ptr<Renderer::Texture> texture;	// Texture
 		f32 shineDamper = 1.0f;						// Shine Dampner
 		f32 reflectivity = 0.0f;					// Reflectivity
-		size_t vertex_count;						// Vertex Count
+		size_t vertexCount;							// Vertex Count
 	};
-
-	// Load a model with Assimp
-	Model LoadModel(const std::string& mPath, std::shared_ptr<Renderer::Texture> texture);
 }
 
 #endif // MODEL_H

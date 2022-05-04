@@ -5,7 +5,7 @@ using namespace Renderer;
 using Shader::TerrainShader;
 using Terrains::Terrain;
 
-TerrainRenderer::TerrainRenderer(TerrainShader& sh) : shader { sh } {}
+TerrainRenderer::TerrainRenderer(TerrainShader& shaderRef) : shader { shaderRef } {}
 
 void TerrainRenderer::Render(const std::vector<Terrain>& terrains)
 {
@@ -13,7 +13,7 @@ void TerrainRenderer::Render(const std::vector<Terrain>& terrains)
 	{
 		PrepareTerrain(terrain);
 		LoadModelMatrix(terrain);
-		glDrawElements(GL_TRIANGLES, terrain.vertex_count, GL_UNSIGNED_INT, static_cast<const void*>(0));
+		glDrawElements(GL_TRIANGLES, terrain.vertexCount, GL_UNSIGNED_INT, static_cast<const void*>(0));
 		UnbindTerrain();
 	}
 }
@@ -32,7 +32,7 @@ void TerrainRenderer::PrepareTerrain(const Terrain& terrain)
 void TerrainRenderer::LoadModelMatrix(const Terrain& terrain)
 {
 	glm::mat4 trans_matrix = Maths::CreateTransformationMatrix(
-		glm::vec3(terrain.grid_position.x, 0.0f, terrain.grid_position.y),
+		glm::vec3(terrain.gridPosition.x, 0.0f, terrain.gridPosition.y),
 		glm::vec3(0.0f, 0.0f, 0.0f), 1.0f
 	);
 	shader.LoadTransformationMatrix(trans_matrix);

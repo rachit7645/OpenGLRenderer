@@ -4,17 +4,17 @@ using namespace Renderer;
 using Entities::Entity;
 using Shader::StaticShader;
 
-EntityRenderer::EntityRenderer(StaticShader& sh) : shader { sh } {}
+EntityRenderer::EntityRenderer(StaticShader& shaderRef) : shader { shaderRef } {}
 
 void EntityRenderer::Render(const std::unordered_map<std::shared_ptr<Model>, std::vector<Entity>>& entities)
 {
-	for (auto& [model, batch] : entities)
+	for (const auto& [model, batch] : entities)
 	{
 		PrepareModel(model);
-		for (auto& entity : batch)
+		for (const auto& entity : batch)
 		{
 			PrepareInstance(entity);
-			glDrawElements(GL_TRIANGLES, model->vertex_count, GL_UNSIGNED_INT, static_cast<const void*>(0));
+			glDrawElements(GL_TRIANGLES, model->vertexCount, GL_UNSIGNED_INT, static_cast<const void*>(0));
 		}
 		UnbindModel();
 	}
