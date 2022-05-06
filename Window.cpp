@@ -56,7 +56,7 @@ SDLWindow::SDLWindow()
 		Logger::LogAndExit("glewInit() Failed\n", GLEW_INIT_FAILED);
 	}
 
-	g_Keys = SDL_GetKeyboardState(NULL);
+	g_Keys = SDL_GetKeyboardState(nullptr);
 }
 
 bool SDLWindow::PollEvents()
@@ -75,12 +75,12 @@ bool SDLWindow::PollEvents()
 				if (!wireframe)
 				{
 					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-					wireframe = true;
+					wireframe = !wireframe;
 				}
 				else
 				{
 					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-					wireframe = false;
+					wireframe = !wireframe;
 				}
 			}
 
@@ -89,12 +89,12 @@ bool SDLWindow::PollEvents()
 				if (vsync)
 				{
 					SDL_GL_SetSwapInterval(0);
-					vsync = false;
+					vsync = !vsync;
 				}
 				else
 				{
 					SDL_GL_SetSwapInterval(1);
-					vsync = true;
+					vsync = !vsync;
 				}
 			}
 		#endif

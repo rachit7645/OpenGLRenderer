@@ -1,5 +1,7 @@
 #version 330 core
 
+#define TILING	40.0f
+
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 textureCoords;
 layout(location = 2) in vec3 normals;
@@ -7,7 +9,6 @@ layout(location = 2) in vec3 normals;
 uniform mat4 modelMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
-
 uniform vec3 lightPosition;
 
 out vec2 pass_textureCoords;
@@ -19,7 +20,7 @@ void main()
 {
 	vec4 worldPosition = modelMatrix * vec4(position, 1.0f);
 	gl_Position = projectionMatrix * viewMatrix * worldPosition;
-	pass_textureCoords = textureCoords * 40.0f;
+	pass_textureCoords = textureCoords * TILING;
 	
 	surfaceNormal = (modelMatrix * vec4(normals, 0.0f)).xyz;
 	toLightVector = lightPosition - worldPosition.xyz;

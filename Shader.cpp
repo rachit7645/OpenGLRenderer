@@ -68,7 +68,7 @@ u32 ShaderProgram::LoadShader(GLenum type, const std::string &path)
 
 	u32 shaderID = glCreateShader(type);
 	const GLchar *cstr = content.c_str();
-	glShaderSource(shaderID, 1, &cstr, NULL);
+	glShaderSource(shaderID, 1, &cstr, nullptr);
 	glCompileShader(shaderID);
 	CheckShader(shaderID, GL_COMPILE_STATUS, SHADER_COMPILATION_FAILED);
 
@@ -82,7 +82,7 @@ void ShaderProgram::CheckShader(u32 shaderID, GLenum type, Error error)
 	if (status == GL_FALSE)
 	{
 		std::vector<char> v(512);
-		glGetShaderInfoLog(shaderID, 512, NULL, v.data());
+		glGetShaderInfoLog(shaderID, 512, nullptr, v.data());
 		Logger::LogAndExit(v.data(), error);
 	}
 }
@@ -94,7 +94,7 @@ void ShaderProgram::CheckProgram(u32 programID, GLenum type, Error error)
 	if (status == GL_FALSE)
 	{
 		std::vector<char> v(512);
-		glGetProgramInfoLog(programID, 512, NULL, v.data());
+		glGetProgramInfoLog(programID, 512, nullptr, v.data());
 		Logger::LogAndExit(v.data(), error);
 	}
 }

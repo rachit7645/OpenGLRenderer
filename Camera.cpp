@@ -5,7 +5,6 @@ using namespace Entities;
 
 void Camera::Move()
 {
-	constexpr auto MOVE_CONSTANT = 1.0f;
 	if (g_Keys[SDL_SCANCODE_W])
 		position.z -= MOVE_CONSTANT * g_Delta;
 	if (g_Keys[SDL_SCANCODE_A])

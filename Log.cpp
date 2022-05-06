@@ -21,6 +21,8 @@ void Logger::Log(const std::string& message, LogType type)
 		str_type = WARNING_STR;
 	else if (type == ERROR)
 		str_type = ERROR_STR;
+	else if (type == DEBUG)
+		str_type = DEBUG_STR;
 
 	std::cerr << str_type << message;
 }

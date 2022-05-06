@@ -30,22 +30,22 @@ Terrain::Terrain(const glm::vec2& gridPosition, std::shared_ptr<Renderer::Textur
 		}
 	}
 
-	size_t pointer = 0;
-	for (size_t gz = 0; gz < VERTEX_COUNT - 1; ++gz)
+	vertexPointer = 0;
+	for (size_t i = 0; i < VERTEX_COUNT - 1; ++i)
 	{
-		for (size_t gx = 0; gx < VERTEX_COUNT - 1; ++gx)
+		for (size_t j = 0; j < VERTEX_COUNT - 1; ++j)
 		{
-			auto topLeft = (gz * VERTEX_COUNT) + gx;
+			auto topLeft = (i * VERTEX_COUNT) + j;
 			auto topRight = topLeft + 1;
-			auto bottomLeft = ((gz + 1) * VERTEX_COUNT) + gx;
+			auto bottomLeft = ((i + 1) * VERTEX_COUNT) + j;
 			auto bottomRight = bottomLeft + 1;
 
-			indices[pointer++] = topLeft;
-			indices[pointer++] = bottomLeft;
-			indices[pointer++] = topRight;
-			indices[pointer++] = topRight;
-			indices[pointer++] = bottomLeft;
-			indices[pointer++] = bottomRight;
+			indices[vertexPointer++] = topLeft;
+			indices[vertexPointer++] = bottomLeft;
+			indices[vertexPointer++] = topRight;
+			indices[vertexPointer++] = topRight;
+			indices[vertexPointer++] = bottomLeft;
+			indices[vertexPointer++] = bottomRight;
 		}
 	}
 

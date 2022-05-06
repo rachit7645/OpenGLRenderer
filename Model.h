@@ -20,7 +20,7 @@ namespace Renderer
 		std::shared_ptr<Renderer::Texture> texture;	// Texture
 		f32 shineDamper = 1.0f;						// Shine Dampner
 		f32 reflectivity = 0.0f;					// Reflectivity
-		size_t vertexCount;							// Vertex Count
+		s32 vertexCount;							// Vertex Count
 	};
 }
 

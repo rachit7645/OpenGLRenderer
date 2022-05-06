@@ -7,7 +7,6 @@ layout(location = 2) in vec3 normals;
 uniform mat4 modelMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
-
 uniform vec3 lightPosition;
 
 out vec2 pass_textureCoords;
