@@ -43,8 +43,8 @@ void TerrainShader::LoadLight(const Light& light)
 	LoadVector(uniforms["lightColour"], light.colour);
 }
 
-void TerrainShader::LoadShineVariables(f32 shineDamper, f32 reflectivity)
+void TerrainShader::LoadMaterials(const Renderer::Material& material)
 {
-	LoadFloat(uniforms["shineDamper"], shineDamper);
-	LoadFloat(uniforms["reflectivity"], reflectivity);
+	LoadFloat(uniforms["shineDamper"], material.shineDamper);
+	LoadFloat(uniforms["reflectivity"], material.reflectivity);
 }

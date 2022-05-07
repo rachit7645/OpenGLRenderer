@@ -7,8 +7,9 @@
 #include <glm/glm.hpp>
 
 #include "Util.h"
-#include "Model.h"
 #include "VertexArray.h"
+#include "Material.h"
+#include "Texture.h"
 
 namespace Terrains
 {
@@ -18,14 +19,15 @@ namespace Terrains
 	class Terrain
 	{
 	public:
-		Terrain(const glm::vec2& gridPosition, std::shared_ptr<Renderer::Texture> texture);
+		Terrain(const glm::vec2& gridPosition, const Renderer::Material& material, std::shared_ptr<Renderer::Texture> texture);
 
 		glm::vec2 gridPosition;
+		Renderer::Material material;
+
 		std::shared_ptr<Renderer::VertexArray> vao;
 		std::shared_ptr<Renderer::Texture> texture;
-		f32 shineDamper = 1.0f;
-		f32 reflectivity = 0.0f;
-		size_t vertexCount;
+
+		s32 vertexCount;
 	};
 }
 

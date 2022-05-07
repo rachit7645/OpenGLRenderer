@@ -6,6 +6,7 @@
 
 #include "VertexArray.h"
 #include "Texture.h"
+#include "Material.h"
 #include "Log.h"
 #include "Util.h"
 
@@ -14,17 +15,13 @@ namespace Renderer
 	class Model
 	{
 	public:
-		Model(const std::string& path, std::shared_ptr<Texture> texture);
+		Model(const std::string& path, const Material& material, std::shared_ptr<Texture> texture);
 
-		std::shared_ptr<Renderer::VertexArray> vao;	// Vertex Attribute Object
-		std::shared_ptr<Renderer::Texture> texture;	// Texture
+		Renderer::Material material;					// Material information for the model
+		s32 vertexCount;								// Vertex Count
 
-		f32 shineDamper = 1.0f;						// Shine Dampner
-		f32 reflectivity = 0.0f;					// Reflectivity
-		s32 vertexCount;							// Vertex Count
-
-		bool isTransparent = false;					// Is Transparent or not
-		bool useFakeLighting = false;				// Use fake lighting or not
+		std::shared_ptr<Renderer::VertexArray> vao;		// Vertex Attribute Object
+		std::shared_ptr<Renderer::Texture> texture;		// Texture
 	};
 }
 

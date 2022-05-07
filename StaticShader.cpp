@@ -4,6 +4,7 @@ using namespace Shader;
 
 using Entities::Light;
 using Entities::Camera;
+using Renderer::Material;
 
 StaticShader::StaticShader() : ShaderProgram(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH)
 {
@@ -44,13 +45,9 @@ void StaticShader::LoadLight(const Light &light)
 	LoadVector(uniforms["lightColour"], light.colour);
 }
 
-void StaticShader::LoadShineVariables(f32 shineDamper, f32 reflectivity)
+void StaticShader::LoadMaterials(const Material& material)
 {
-	LoadFloat(uniforms["shineDamper"], shineDamper);
-	LoadFloat(uniforms["reflectivity"], reflectivity);
-}
-
-void StaticShader::LoadFakeLighting(bool useFakeLighting)
-{
-	LoadBool(uniforms["useFakeLighting"], useFakeLighting);
+	LoadFloat(uniforms["shineDamper"], material.shineDamper);
+	LoadFloat(uniforms["reflectivity"], material.reflectivity);
+	LoadBool(uniforms["useFakeLighting"], material.useFakeLighting);
 }

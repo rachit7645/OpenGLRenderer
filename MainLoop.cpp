@@ -7,6 +7,7 @@ using Entities::Entity;
 using Terrains::Terrain;
 using Renderer::Texture;
 using Renderer::Model;
+using Renderer::Material;
 
 void SDLWindow::MainLoop()
 {
@@ -18,17 +19,9 @@ void SDLWindow::MainLoop()
 	std::shared_ptr<Texture> grassTexture = std::make_shared<Texture>("res/textures/grassTexture.png");
 	std::shared_ptr<Texture> fernTexture = std::make_shared<Texture>("res/textures/fern.png");
 
-	std::shared_ptr<Model> treeModel = std::make_shared<Model>("res/models/tree.obj", treeTexture);
-	std::shared_ptr<Model> grassModel = std::make_shared<Model>("res/models/grassModel.obj", grassTexture);
-	{
-		grassModel->isTransparent = true;
-		grassModel->useFakeLighting = true;
-	}
-	std::shared_ptr<Model> fernModel = std::make_shared<Model>("res/models/fern.obj", fernTexture);
-	{
-		fernModel->isTransparent = true;
-		fernModel->useFakeLighting = true;
-	}
+	std::shared_ptr<Model> treeModel = std::make_shared<Model>("res/models/tree.obj", Material(), treeTexture);
+	std::shared_ptr<Model> grassModel = std::make_shared<Model>("res/models/grassModel.obj", Material(true, true), grassTexture);
+	std::shared_ptr<Model> fernModel = std::make_shared<Model>("res/models/fern.obj", Material(true, true), fernTexture);
 
 	// All objects go here
 	std::vector<Entity> entities;
@@ -47,10 +40,10 @@ void SDLWindow::MainLoop()
 	}
 	std::vector<Terrain> terrains;
 	{
-		terrains.push_back(Terrain(glm::vec2(0.0f, -1.0f), terrainTexture));
-		terrains.push_back(Terrain(glm::vec2(-1.0f, -1.0f), terrainTexture));
-		terrains.push_back(Terrain(glm::vec2(0.0f, 0.0f), terrainTexture));
-		terrains.push_back(Terrain(glm::vec2(-1.0f, 0.0f), terrainTexture));
+		terrains.push_back(Terrain(glm::vec2(0.0f, -1.0f), Material(), terrainTexture));
+		terrains.push_back(Terrain(glm::vec2(-1.0f, -1.0f), Material(), terrainTexture));
+		terrains.push_back(Terrain(glm::vec2(0.0f, 0.0f), Material(), terrainTexture));
+		terrains.push_back(Terrain(glm::vec2(-1.0f, 0.0f), Material(), terrainTexture));
 	}
 	
 	Entities::Light light(glm::vec3(20000.0f, 20000.0f, 2000.0f), glm::vec3(1.0f, 1.0f, 1.0f));

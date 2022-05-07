@@ -9,14 +9,16 @@
 using namespace Renderer;
 
 constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs;
-Model::Model(const std::string& path, std::shared_ptr<Texture> texture) : texture{ texture }
+
+Model::Model(const std::string &path, const Material &material, std::shared_ptr<Texture> texture)
+	: material{ material }, texture{ texture }
 {
 	std::string newPath;
-	#ifdef _DEBUG
-		newPath = "../" + path;
-	#else
-		newPath = path;
-	#endif
+#ifdef _DEBUG
+	newPath = "../" + path;
+#else
+	newPath = path;
+#endif
 
 	Assimp::Importer importer;
 	const auto *scene = importer.ReadFile(newPath.c_str(), ASSIMP_FLAGS);
@@ -24,7 +26,7 @@ Model::Model(const std::string& path, std::shared_ptr<Texture> texture) : textur
 	if (!scene)
 	{
 		Logger::LogAndExit(static_cast<std::string>("Model Load Failed: ") +
-		static_cast<std::string>(importer.GetErrorString()) , ASSIMP_LOAD_FAILED);
+			static_cast<std::string>(importer.GetErrorString()), ASSIMP_LOAD_FAILED);
 	}
 
 	const auto *ai_mesh = scene->mMeshes[0];
@@ -62,5 +64,5 @@ Model::Model(const std::string& path, std::shared_ptr<Texture> texture) : textur
 	}
 
 	vao = std::make_shared<VertexArray>(vertices, indices, txCoords, normals);
-	vertexCount = indices.size();
-}	
+	vertexCount = static_cast<s32>(indices.size());
+}

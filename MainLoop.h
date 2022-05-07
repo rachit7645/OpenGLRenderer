@@ -15,5 +15,6 @@
 #include "Light.h"
 #include "MasterRenderer.h"
 #include "Terrain.h"
+#include "Material.h"
 
 #endif

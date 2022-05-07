@@ -16,7 +16,7 @@ void EntityRenderer::Render(const std::unordered_map<std::shared_ptr<Model>, std
 			PrepareInstance(entity);
 			glDrawElements(GL_TRIANGLES, model->vertexCount, GL_UNSIGNED_INT, static_cast<const void*>(0));
 		}
-		UnbindModel(model);
+		UnbindModel(model->material);
 	}
 }
 
@@ -28,9 +28,8 @@ void EntityRenderer::PrepareModel(const std::shared_ptr<Model>& model)
 	glEnableVertexAttribArray(2);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, model->texture->id);
-	shader.LoadShineVariables(model->shineDamper, model->reflectivity);
-	shader.LoadFakeLighting(model->useFakeLighting);
-	if (model->isTransparent)
+	shader.LoadMaterials(model->material);
+	if (model->material.isTransparent)
 		DisableCulling();
 }
 
@@ -40,9 +39,9 @@ void EntityRenderer::PrepareInstance(const Entity& entity)
 	shader.LoadTransformationMatrix(trans_matrix);
 }
 
-void EntityRenderer::UnbindModel(const std::shared_ptr<Model>& model) 
+void EntityRenderer::UnbindModel(const Material& modelMaterial) 
 {
-	if (model->isTransparent)
+	if (modelMaterial.isTransparent)
 		EnableCulling();
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);

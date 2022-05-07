@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Maths.h"
 #include "Light.h"
+#include "Material.h"
 
 namespace Shader
 {
@@ -26,7 +27,7 @@ namespace Shader
 
 		// Material and object loading functions
 		void LoadLight(const Entities::Light& light);
-		void LoadShineVariables(f32 shineDamper, f32 reflectivity);
+		void LoadMaterials(const Renderer::Material& material);
 
 		void GetUniformLocations() override;
 	private:

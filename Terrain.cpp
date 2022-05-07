@@ -4,9 +4,10 @@ using namespace Terrains;
 
 using Renderer::VertexArray;
 using Renderer::Texture;
+using Renderer::Material;
 
-Terrain::Terrain(const glm::vec2& gridPosition, std::shared_ptr<Renderer::Texture> texture)
-	: gridPosition{ gridPosition.x * SIZE, gridPosition.y * SIZE }, texture{ texture }
+Terrain::Terrain(const glm::vec2 &gridPosition, const Material &material, std::shared_ptr<Renderer::Texture> texture)
+	: gridPosition{ gridPosition.x * SIZE, gridPosition.y * SIZE }, material{ material }, texture{ texture }
 {
 	std::vector<f32> vertices(COUNT * 3);
 	std::vector<f32> normals(COUNT * 3);
@@ -50,5 +51,5 @@ Terrain::Terrain(const glm::vec2& gridPosition, std::shared_ptr<Renderer::Textur
 	}
 
 	vao = std::make_shared<VertexArray>(vertices, indices, txCoords, normals);
-	vertexCount = indices.size();
+	vertexCount = static_cast<s32>(indices.size());
 }

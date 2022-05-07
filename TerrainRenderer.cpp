@@ -24,14 +24,15 @@ void TerrainRenderer::PrepareTerrain(const Terrain& terrain)
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
-	shader.LoadShineVariables(terrain.shineDamper, terrain.reflectivity);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, terrain.texture->id);
+	shader.LoadMaterials(terrain.material);
 }
 
 void TerrainRenderer::LoadModelMatrix(const Terrain& terrain)
 {
-	glm::mat4 trans_matrix = Maths::CreateTransformationMatrix(
+	glm::mat4 trans_matrix = Maths::CreateTransformationMatrix
+	(
 		glm::vec3(terrain.gridPosition.x, 0.0f, terrain.gridPosition.y),
 		glm::vec3(0.0f, 0.0f, 0.0f), 1.0f
 	);
