@@ -45,6 +45,7 @@ namespace Window
 		#ifdef _DEBUG
 			bool wireframe = false;
 			bool vsync = true;
+			bool fullscreen = false;
 		#endif
 
 		// SDL Resources

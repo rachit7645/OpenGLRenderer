@@ -21,16 +21,16 @@ vec3 CalculateSpecular(vec3 unitNormal, vec3 unitLightVector, vec3 unitCameraVec
 
 void main()
 {
+	vec4 textureColour = texture(modelTexture, pass_textureCoords);
+	if (textureColour.a < 0.5f)
+		discard;
+
 	vec3 unitNormal = normalize(surfaceNormal);
 	vec3 unitLightVector = normalize(toLightVector);
 	vec3 unitCameraVector = normalize(toCameraVector);
 
 	vec3 diffuse = CalculateDiffuse(unitNormal, unitLightVector);
 	vec3 finalSpecular = CalculateSpecular(unitNormal, unitLightVector, unitCameraVector);
-
-	vec4 textureColour = texture(modelTexture, pass_textureCoords);
-	if (textureColour.a < 0.5f)
-		discard;
 
 	out_color = vec4(diffuse, 1.0f) * textureColour + vec4(finalSpecular, 1.0f);
 }

@@ -69,9 +69,10 @@ bool SDLWindow::PollEvents()
 			return true;
 
 		case SDL_KEYDOWN:
-		#ifdef _DEBUG
-			if (event.key.keysym.scancode == SDL_SCANCODE_F1)
+			switch (event.key.keysym.scancode)
 			{
+#ifdef _DEBUG
+			case SDL_SCANCODE_F1:
 				if (!wireframe)
 				{
 					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -82,10 +83,9 @@ bool SDLWindow::PollEvents()
 					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 					wireframe = !wireframe;
 				}
-			}
+				break;
 
-			if (event.key.keysym.scancode == SDL_SCANCODE_F2)
-			{
+			case SDL_SCANCODE_F2:
 				if (vsync)
 				{
 					SDL_GL_SetSwapInterval(0);
@@ -96,8 +96,28 @@ bool SDLWindow::PollEvents()
 					SDL_GL_SetSwapInterval(1);
 					vsync = !vsync;
 				}
+				break;
+
+			case SDL_SCANCODE_F3:
+				if (!fullscreen)
+				{
+					SDL_SetWindowSize(window, 1366, 768);
+					SDL_SetWindowFullscreen(window, SDL_WINDOW_FLAGS | SDL_WINDOW_FULLSCREEN_DESKTOP);
+					glViewport(0, 0, 1366, 768);
+					fullscreen = !fullscreen;
+				}
+				else
+				{
+					SDL_SetWindowSize(window, DIMENSIONS.x, DIMENSIONS.y);
+					SDL_SetWindowFullscreen(window, SDL_WINDOW_FLAGS | 0);
+					glViewport(0, 0, DIMENSIONS.x, DIMENSIONS.y);
+					fullscreen = !fullscreen;
+				}
+				break;
+#endif
+			default:
+				break;
 			}
-		#endif
 
 		default:
 			break;
