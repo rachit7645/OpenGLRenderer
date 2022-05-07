@@ -13,19 +13,36 @@ void SDLWindow::MainLoop()
 	InitGL();
 
 	// Put Models and Textures here 
-	std::shared_ptr<Texture> texture = std::make_shared<Texture>("res/textures/tree.png");
+	std::shared_ptr<Texture> treeTexture = std::make_shared<Texture>("res/textures/tree.png");
 	std::shared_ptr<Texture> terrainTexture = std::make_shared<Texture>("res/textures/grass.png");
-	std::shared_ptr<Model> model = std::make_shared<Model>("res/models/tree.obj", texture);
+	std::shared_ptr<Texture> grassTexture = std::make_shared<Texture>("res/textures/grassTexture.png");
+	std::shared_ptr<Texture> fernTexture = std::make_shared<Texture>("res/textures/fern.png");
+
+	std::shared_ptr<Model> treeModel = std::make_shared<Model>("res/models/tree.obj", treeTexture);
+	std::shared_ptr<Model> grassModel = std::make_shared<Model>("res/models/grassModel.obj", grassTexture);
+	{
+		grassModel->isTransparent = true;
+		grassModel->useFakeLighting = true;
+	}
+	std::shared_ptr<Model> fernModel = std::make_shared<Model>("res/models/fern.obj", fernTexture);
+	{
+		fernModel->isTransparent = true;
+		fernModel->useFakeLighting = true;
+	}
 
 	// All objects go here
 	std::vector<Entity> entities;
 	{
 		// Epic seed, I know
 		std::srand(144);
-		for (size_t i = 0; i < 100; i++)
+		for (size_t i = 0; i < 40; i++)
 		{
-			entities.push_back(Entity(model, glm::vec3(Rand_Range<f32>(0.0f, 1.0f) * 400 - 200,
+			entities.push_back(Entity(treeModel, glm::vec3(Rand_Range<f32>(0.0f, 1.0f) * 400 - 200,
 				0, Rand_Range<f32>(0.0f, 1.0f) * -300), glm::vec3(0.0f, 0.0f, 0.0f), 3.0f));
+			entities.push_back(Entity(grassModel, glm::vec3(Rand_Range<f32>(0.0f, 1.0f) * 400 - 200,
+				0, Rand_Range<f32>(0.0f, 1.0f) * -300), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f));
+			entities.push_back(Entity(fernModel, glm::vec3(Rand_Range<f32>(0.0f, 1.0f) * 400 - 200,
+				0, Rand_Range<f32>(0.0f, 1.0f) * -300), glm::vec3(0.0f, 0.0f, 0.0f), 0.6f));
 		}
 	}
 	std::vector<Terrain> terrains;

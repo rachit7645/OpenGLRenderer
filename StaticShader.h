@@ -27,6 +27,7 @@ namespace Shader
 		// Material and object loading functions
 		void LoadLight(const Entities::Light& light);
 		void LoadShineVariables(f32 shineDamper, f32 reflectivity);
+		void LoadFakeLighting(bool useFakeLighting);
 
 		void GetUniformLocations() override;
 	private:

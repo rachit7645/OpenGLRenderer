@@ -27,7 +27,9 @@ namespace Renderer
 		// Prepare each instance
 		void PrepareInstance(const Entities::Entity& entity);
 		// Unbind the model
-		void UnbindModel();
+		void UnbindModel(const std::shared_ptr<Model>& model);
+		void EnableCulling();
+		void DisableCulling();
 	};
 }
 
