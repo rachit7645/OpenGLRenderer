@@ -28,6 +28,7 @@ namespace Shader
 		// Material and object loading functions
 		void LoadLight(const Entities::Light& light);
 		void LoadMaterials(const Renderer::Material& material);
+		void LoadSkyColour(const glm::vec4& skyColour);
 
 		void GetUniformLocations() override;
 	private:

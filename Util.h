@@ -4,6 +4,8 @@
 // Utility header file
 // Contains utility macros and defines
 
+#include <random>
+
 #include <cstdint>
 #include <cstddef>
 #include <cassert>
@@ -40,7 +42,20 @@ enum Error
 template<typename T>
 T Rand_Range(T min, T max)
 {
-	return min + static_cast<T> (std::rand() / static_cast<T>(RAND_MAX / ( max - min )));
-} 
+	static thread_local std::mt19937_64 generator(777);
+	std::uniform_real_distribution<T> distributer(min, max);
+	return distributer(generator);
+}
+
+// Truely random number between a range
+template<typename T>
+T True_Rand_Range(T min, T max)
+{
+	std::random_device rd;
+	std::seed_seq ss{rd(), rd()};
+	static thread_local std::mt19937_64 generator(ss);
+	std::uniform_real_distribution<T> distributer(min, max);
+	return distributer(generator);
+}
 
 #endif // UTIL_H

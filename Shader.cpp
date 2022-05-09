@@ -28,7 +28,7 @@ u32 ShaderProgram::GetUniformLocation(const char *name) const
 	return glGetUniformLocation(programID, name);
 }
 
-void ShaderProgram::LoadInt(u32 location, u32 value) const
+void ShaderProgram::LoadInt(u32 location, s32 value) const
 {
 	glUniform1i(location, value);
 }
@@ -46,6 +46,11 @@ void ShaderProgram::LoadBool(u32 location, bool value) const
 void ShaderProgram::LoadVector(u32 location, const glm::vec3 &vector) const
 {
 	glUniform3fv(location, 1, &vector[0]);
+}
+
+void ShaderProgram::LoadVector(u32 location, const glm::vec4& vector) const
+{
+	glUniform4fv(location, 1, &vector[0]);
 }
 
 void ShaderProgram::LoadMatrix(u32 location, const glm::mat4 &matrix) const
@@ -70,12 +75,12 @@ u32 ShaderProgram::LoadShader(GLenum type, const std::string &path)
 	const GLchar *cstr = content.c_str();
 	glShaderSource(shaderID, 1, &cstr, nullptr);
 	glCompileShader(shaderID);
-	CheckShader(shaderID, GL_COMPILE_STATUS, SHADER_COMPILATION_FAILED);
+	CheckShader("Shader Compilation Failed: " + path + "\n", shaderID, GL_COMPILE_STATUS, SHADER_COMPILATION_FAILED);
 
 	return shaderID;
 }
 
-void ShaderProgram::CheckShader(u32 shaderID, GLenum type, Error error)
+void ShaderProgram::CheckShader(const std::string &message, u32 shaderID, GLenum type, Error error)
 {
 	GLint status;
 	glGetShaderiv(shaderID, type, &status);
@@ -83,7 +88,7 @@ void ShaderProgram::CheckShader(u32 shaderID, GLenum type, Error error)
 	{
 		std::vector<char> v(512);
 		glGetShaderInfoLog(shaderID, 512, nullptr, v.data());
-		Logger::LogAndExit(v.data(), error);
+		Logger::LogAndExit(message + v.data(), error);
 	}
 }
 

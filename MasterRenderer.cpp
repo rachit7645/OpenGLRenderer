@@ -30,11 +30,13 @@ void MasterRenderer::Render(const Light &light, const Camera &camera)
 	shader.Start();
 	shader.LoadLight(light);
 	shader.LoadViewMatrix(camera);
+	shader.LoadSkyColour(GL_CLEAR_COLOR);
 	renderer.Render(entities);
 	shader.Stop();
 	terrainShader.Start();
 	terrainShader.LoadLight(light);
 	terrainShader.LoadViewMatrix(camera);
+	terrainShader.LoadSkyColour(GL_CLEAR_COLOR);
 	terrainRenderer.Render(terrains);
 	terrainShader.Stop();
 	entities.clear();

@@ -19,6 +19,7 @@ void TerrainShader::GetUniformLocations()
 	uniforms["lightColour"] = GetUniformLocation("lightColour");
 	uniforms["shineDamper"] = GetUniformLocation("shineDamper");
 	uniforms["reflectivity"] = GetUniformLocation("reflectivity");
+	uniforms["skyColour"] = GetUniformLocation("skyColour");
 }
 
 void TerrainShader::LoadTransformationMatrix(const glm::mat4 &matrix)
@@ -47,4 +48,9 @@ void TerrainShader::LoadMaterials(const Renderer::Material& material)
 {
 	LoadFloat(uniforms["shineDamper"], material.shineDamper);
 	LoadFloat(uniforms["reflectivity"], material.reflectivity);
+}
+
+void TerrainShader::LoadSkyColour(const glm::vec4& skyColour)
+{
+	LoadVector(uniforms["skyColour"], skyColour);
 }

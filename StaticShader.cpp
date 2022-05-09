@@ -21,6 +21,7 @@ void StaticShader::GetUniformLocations()
 	uniforms["shineDamper"] = GetUniformLocation("shineDamper");
 	uniforms["reflectivity"] = GetUniformLocation("reflectivity");
 	uniforms["useFakeLighting"] = GetUniformLocation("useFakeLighting");
+	uniforms["skyColour"] = GetUniformLocation("skyColour");
 }
 
 void StaticShader::LoadTransformationMatrix(const glm::mat4 &matrix)
@@ -50,4 +51,9 @@ void StaticShader::LoadMaterials(const Material& material)
 	LoadFloat(uniforms["shineDamper"], material.shineDamper);
 	LoadFloat(uniforms["reflectivity"], material.reflectivity);
 	LoadBool(uniforms["useFakeLighting"], material.useFakeLighting);
+}
+
+void StaticShader::LoadSkyColour(const glm::vec4& skyColour)
+{
+	LoadVector(uniforms["skyColour"], skyColour);
 }

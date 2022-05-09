@@ -1,20 +1,21 @@
 #version 330 core
 
-#define MAX_BRIGHTNESS	0.15f
-#define MAX_SPECULAR	0.0f
+const float MIN_BRIGHTNESS = 0.15f;
+const float MIN_SPECULAR   = 0.0f;
 
 in vec2 pass_textureCoords;
 in vec3 surfaceNormal;
 in vec3 toLightVector;
 in vec3 toCameraVector;
+in float visibility;
 
 uniform sampler2D modelTexture;
-
+uniform vec4 skyColour;
 uniform vec3 lightColour;
 uniform float shineDamper;
 uniform float reflectivity;
 
-out vec4 out_color;
+out vec4 outColor;
 
 vec3 CalculateDiffuse(vec3 unitNormal, vec3 unitLightVector);
 vec3 CalculateSpecular(vec3 unitNormal, vec3 unitLightVector, vec3 unitCameraVector);
@@ -32,13 +33,14 @@ void main()
 	vec3 diffuse = CalculateDiffuse(unitNormal, unitLightVector);
 	vec3 finalSpecular = CalculateSpecular(unitNormal, unitLightVector, unitCameraVector);
 
-	out_color = vec4(diffuse, 1.0f) * textureColour + vec4(finalSpecular, 1.0f);
+	outColor = vec4(diffuse, 1.0f) * textureColour + vec4(finalSpecular, 1.0f);
+	outColor = mix(skyColour, outColor, visibility);
 }
 
 vec3 CalculateDiffuse(vec3 unitNormal, vec3 unitLightVector)
 {
 	float nDot1 = dot(unitNormal, unitLightVector);
-	float brightness = max(nDot1, MAX_BRIGHTNESS);
+	float brightness = max(nDot1, MIN_BRIGHTNESS);
 	return brightness * lightColour;
 }
 
@@ -47,7 +49,7 @@ vec3 CalculateSpecular(vec3 unitNormal, vec3 unitLightVector, vec3 unitCameraVec
 	vec3 lightDirection = -unitLightVector;
 	vec3 reflectedLightDirection = reflect(lightDirection, unitNormal);
 	float specularFactor = dot(reflectedLightDirection, unitCameraVector);
-	specularFactor = max(specularFactor, MAX_SPECULAR);
+	specularFactor = max(specularFactor, MIN_SPECULAR);
 	float dampedFactor = pow(specularFactor, shineDamper);
 	return dampedFactor * reflectivity * lightColour;
 }

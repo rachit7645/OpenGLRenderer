@@ -26,8 +26,6 @@ void SDLWindow::MainLoop()
 	// All objects go here
 	std::vector<Entity> entities;
 	{
-		// Epic seed, I know
-		std::srand(144);
 		for (size_t i = 0; i < 40; i++)
 		{
 			entities.push_back(Entity(treeModel, glm::vec3(Rand_Range<f32>(0.0f, 1.0f) * 400 - 200,
