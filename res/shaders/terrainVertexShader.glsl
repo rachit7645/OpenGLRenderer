@@ -2,7 +2,6 @@
 
 const float FOG_DENSITY	   = 0.0035f;
 const float FOG_GRADIENT   = 1.5f;
-const float TEXTURE_TILING = 40.0f;
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 textureCoords;
@@ -27,7 +26,7 @@ void main()
 	vec4 worldPosition = modelMatrix * vec4(position, 1.0f);
 	vec4 positionRelativeToCamera = viewMatrix * worldPosition;
 	gl_Position = projectionMatrix * positionRelativeToCamera;
-	pass_textureCoords = textureCoords * TEXTURE_TILING;
+	pass_textureCoords = textureCoords;
 	
 	CalculateLighting(worldPosition);
 	CalculateVisibility(positionRelativeToCamera);

@@ -4,6 +4,7 @@ using namespace Shader;
 
 using Entities::Light;
 using Entities::Camera;
+using Terrains::Terrain;
 
 TerrainShader::TerrainShader() : ShaderProgram(TERRAIN_VERTEX_SHADER_PATH, TERRAIN_FRAGMENT_SHADER_PATH)
 {
@@ -20,6 +21,12 @@ void TerrainShader::GetUniformLocations()
 	uniforms["shineDamper"] = GetUniformLocation("shineDamper");
 	uniforms["reflectivity"] = GetUniformLocation("reflectivity");
 	uniforms["skyColour"] = GetUniformLocation("skyColour");
+
+	uniforms["backgroundTexture"] = GetUniformLocation("backgroundTexture");
+	uniforms["rTexture"] = GetUniformLocation("rTexture");
+	uniforms["gTexture"] = GetUniformLocation("gTexture");
+	uniforms["bTexture"] = GetUniformLocation("bTexture");
+	uniforms["blendMap"] = GetUniformLocation("blendMap");
 }
 
 void TerrainShader::LoadTransformationMatrix(const glm::mat4 &matrix)
@@ -53,4 +60,13 @@ void TerrainShader::LoadMaterials(const Renderer::Material& material)
 void TerrainShader::LoadSkyColour(const glm::vec4& skyColour)
 {
 	LoadVector(uniforms["skyColour"], skyColour);
+}
+
+void TerrainShader::ConnectTextureUnits()
+{
+	LoadInt(uniforms["backgroundTexture"], 0);
+	LoadInt(uniforms["rTexture"], 1);
+	LoadInt(uniforms["bTexture"], 2);
+	LoadInt(uniforms["gTexture"], 3);
+	LoadInt(uniforms["blendMap"], 4);
 }

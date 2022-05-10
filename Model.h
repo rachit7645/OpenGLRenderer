@@ -15,7 +15,7 @@ namespace Renderer
 	class Model
 	{
 	public:
-		Model(const std::string& path, const Material& material, std::shared_ptr<Texture> texture);
+		Model(const std::string& path, const Material& material, std::shared_ptr<Texture>& texture);
 
 		Renderer::Material material;					// Material information for the model
 		s32 vertexCount;								// Vertex Count

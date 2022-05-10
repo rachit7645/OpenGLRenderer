@@ -10,7 +10,7 @@ using namespace Renderer;
 
 constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs;
 
-Model::Model(const std::string &path, const Material &material, std::shared_ptr<Texture> texture)
+Model::Model(const std::string &path, const Material &material, std::shared_ptr<Texture>& texture)
 	: material{ material }, texture{ texture }
 {
 	std::string newPath;

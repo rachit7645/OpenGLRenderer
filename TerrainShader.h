@@ -9,6 +9,7 @@
 #include "Maths.h"
 #include "Light.h"
 #include "Material.h"
+#include "Terrain.h"
 
 namespace Shader
 {
@@ -29,6 +30,7 @@ namespace Shader
 		void LoadLight(const Entities::Light& light);
 		void LoadMaterials(const Renderer::Material& material);
 		void LoadSkyColour(const glm::vec4& skyColour);
+		void ConnectTextureUnits();
 
 		void GetUniformLocations() override;
 	private:

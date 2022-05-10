@@ -14,6 +14,7 @@ MasterRenderer::MasterRenderer() : renderer{ shader }, terrainRenderer{ terrainS
 	shader.LoadProjectionMatrix(projection);
 	shader.Stop();
 	terrainShader.Start();
+	terrainShader.ConnectTextureUnits();
 	terrainShader.LoadProjectionMatrix(projection);
 	terrainShader.Stop();
 }

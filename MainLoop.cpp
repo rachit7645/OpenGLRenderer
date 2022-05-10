@@ -15,9 +15,14 @@ void SDLWindow::MainLoop()
 
 	// Put Models and Textures here 
 	std::shared_ptr<Texture> treeTexture = std::make_shared<Texture>("res/textures/tree.png");
-	std::shared_ptr<Texture> terrainTexture = std::make_shared<Texture>("res/textures/grass.png");
 	std::shared_ptr<Texture> grassTexture = std::make_shared<Texture>("res/textures/grassTexture.png");
 	std::shared_ptr<Texture> fernTexture = std::make_shared<Texture>("res/textures/fern.png");
+
+	std::shared_ptr<Texture> backgroundTexture = std::make_shared<Texture>("res/textures/grass.png");
+	std::shared_ptr<Texture> rTexture = std::make_shared<Texture>("res/textures/mud.png");
+	std::shared_ptr<Texture> gTexture = std::make_shared<Texture>("res/textures/path.png");
+	std::shared_ptr<Texture> bTexture = std::make_shared<Texture>("res/textures/pinkFlowers.png");
+	std::shared_ptr<Texture> blendMap = std::make_shared<Texture>("res/textures/blendMap.png");
 
 	std::shared_ptr<Model> treeModel = std::make_shared<Model>("res/models/tree.obj", Material(), treeTexture);
 	std::shared_ptr<Model> grassModel = std::make_shared<Model>("res/models/grassModel.obj", Material(true, true), grassTexture);
@@ -38,12 +43,14 @@ void SDLWindow::MainLoop()
 	}
 	std::vector<Terrain> terrains;
 	{
-		terrains.push_back(Terrain(glm::vec2(0.0f, -1.0f), Material(), terrainTexture));
-		terrains.push_back(Terrain(glm::vec2(-1.0f, -1.0f), Material(), terrainTexture));
-		terrains.push_back(Terrain(glm::vec2(0.0f, 0.0f), Material(), terrainTexture));
-		terrains.push_back(Terrain(glm::vec2(-1.0f, 0.0f), Material(), terrainTexture));
+		std::array<std::shared_ptr<Texture>, Terrains::TEXTURE_COUNT> textures 
+			= { backgroundTexture, rTexture, gTexture, bTexture, blendMap };
+		terrains.push_back(Terrain(glm::vec2(0.0f, -1.0f), Material(), textures));
+		terrains.push_back(Terrain(glm::vec2(-1.0f, -1.0f), Material(), textures));
+		terrains.push_back(Terrain(glm::vec2(0.0f, 0.0f), Material(), textures));
+		terrains.push_back(Terrain(glm::vec2(-1.0f, 0.0f), Material(), textures));
 	}
-	
+
 	Entities::Light light(glm::vec3(20000.0f, 20000.0f, 2000.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 	Entities::Camera camera(glm::vec3(0.0f, 6.0f, 0.0f));
 	Renderer::MasterRenderer renderer;
@@ -53,11 +60,11 @@ void SDLWindow::MainLoop()
 	while (true)
 	{
 		camera.Move();
-		for (const auto& entity : entities)
+		for (const auto &entity : entities)
 		{
 			renderer.ProcessEntity(entity);
 		}
-		for (const auto& terrain : terrains)
+		for (const auto &terrain : terrains)
 		{
 			renderer.ProcessTerrain(terrain);
 		}
@@ -65,14 +72,14 @@ void SDLWindow::MainLoop()
 
 		SDL_GL_SwapWindow(window);
 		CalculateFPS();
-			
+
 		if (PollEvents()) break;
 	}
 }
 
 void SDLWindow::CalculateFPS()
 {
-	if ( (endTime = SDL_GetTicks64()) >= startTime + 1000 )
+	if ((endTime = SDL_GetTicks64()) >= startTime + 1000)
 	{
 		std::cerr << "\rFPS: " << FPS;
 		FPS = 0;

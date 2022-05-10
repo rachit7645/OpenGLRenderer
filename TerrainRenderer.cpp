@@ -24,9 +24,22 @@ void TerrainRenderer::PrepareTerrain(const Terrain& terrain)
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, terrain.texture->id);
+	BindTextures(terrain);
 	shader.LoadMaterials(terrain.material);
+}
+
+void TerrainRenderer::BindTextures(const Terrain& terrain)
+{
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, terrain.textures[0]->id);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, terrain.textures[1]->id);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, terrain.textures[2]->id);
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, terrain.textures[3]->id);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, terrain.textures[4]->id);
 }
 
 void TerrainRenderer::LoadModelMatrix(const Terrain& terrain)
