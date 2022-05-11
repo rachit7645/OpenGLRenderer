@@ -2,8 +2,6 @@
 #define TEXTURE_H
 
 #include <string>
-#include <map>
-
 #include <GL/glew.h>
 #include "Util.h"
 

@@ -2,8 +2,8 @@
 #define TERRAIN_SHADER_H
 
 #include <map>
-#include <glm/glm.hpp>
 
+#include "GLM.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "Maths.h"

@@ -2,8 +2,8 @@
 #define CAMERA_H
 
 #include <SDL2/SDL.h>
-#include <glm/glm.hpp>
 
+#include "GLM.h"
 #include "Util.h"
 
 namespace Entities

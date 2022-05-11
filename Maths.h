@@ -1,10 +1,7 @@
 #ifndef MATHS_H
 #define MATHS_H
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform.hpp>
-
+#include "GLM.h"
 #include "Camera.h"
 #include "Util.h"
 

@@ -3,8 +3,8 @@
 
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
-#include <glm/glm.hpp>
 
+#include "GLM.h"
 #include "Log.h"
 #include "Util.h"
 

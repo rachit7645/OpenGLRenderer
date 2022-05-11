@@ -2,9 +2,8 @@
 #define ENTITY_H
 
 #include <memory>
-#include <glm/glm.hpp>
 
-#include "Util.h"
+#include "GLM.h"
 #include "Model.h"
 
 namespace Entities

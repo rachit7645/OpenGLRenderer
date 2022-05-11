@@ -4,7 +4,6 @@
 #include <unordered_map>
 #include <vector>
 #include <memory>
-
 #include <GL/glew.h>
 
 #include "EntityRenderer.h"

@@ -5,8 +5,7 @@
 #include <vector>
 #include <array>
 
-#include <glm/glm.hpp>
-
+#include "GLM.h"
 #include "Util.h"
 #include "VertexArray.h"
 #include "Material.h"
@@ -28,7 +27,7 @@ namespace Terrains
 		Renderer::Material material;
 
 		std::shared_ptr<Renderer::VertexArray> vao;
-		std::array<std::shared_ptr<Renderer::Texture>, 5> textures;
+		std::array<std::shared_ptr<Renderer::Texture>, TEXTURE_COUNT> textures;
 
 		s32 vertexCount;
 	};

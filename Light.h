@@ -1,7 +1,7 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
-#include <glm/glm.hpp>
+#include "GLM.h"
 #include "Util.h"
 
 namespace Entities

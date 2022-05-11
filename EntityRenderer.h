@@ -3,10 +3,9 @@
 
 #include <unordered_map>
 #include <memory>
-
 #include <GL/glew.h>
-#include <glm/glm.hpp>
 
+#include "GLM.h"
 #include "Util.h"
 #include "Maths.h"
 #include "Entity.h"

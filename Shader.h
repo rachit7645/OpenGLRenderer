@@ -6,9 +6,9 @@
 #include <sstream>
 #include <string>
 #include <vector>
-
 #include <GL/glew.h>
-#include <glm/glm.hpp>
+
+#include "GLM.h"
 #include "Util.h"
 #include "Log.h"
 
