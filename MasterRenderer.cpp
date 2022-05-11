@@ -14,7 +14,6 @@ MasterRenderer::MasterRenderer() : renderer{ shader }, terrainRenderer{ terrainS
 	shader.LoadProjectionMatrix(projection);
 	shader.Stop();
 	terrainShader.Start();
-	terrainShader.ConnectTextureUnits();
 	terrainShader.LoadProjectionMatrix(projection);
 	terrainShader.Stop();
 }
@@ -28,20 +27,32 @@ void MasterRenderer::Prepare()
 void MasterRenderer::Render(const Light &light, const Camera &camera)
 {
 	Prepare();
+	
+	DrawEntities(light, camera);
+	DrawTerrains(light, camera);
+	
+	entities.clear();
+	terrains.clear();
+}
+
+void MasterRenderer::DrawEntities(const Light &light, const Camera &camera)
+{
 	shader.Start();
-	shader.LoadLight(light);
 	shader.LoadViewMatrix(camera);
+	shader.LoadLight(light);
 	shader.LoadSkyColour(GL_CLEAR_COLOR);
 	renderer.Render(entities);
 	shader.Stop();
+}
+
+void MasterRenderer::DrawTerrains(const Light &light, const Camera &camera)
+{
 	terrainShader.Start();
-	terrainShader.LoadLight(light);
 	terrainShader.LoadViewMatrix(camera);
+	terrainShader.LoadLight(light);
 	terrainShader.LoadSkyColour(GL_CLEAR_COLOR);
 	terrainRenderer.Render(terrains);
 	terrainShader.Stop();
-	entities.clear();
-	terrains.clear();
 }
 
 void MasterRenderer::ProcessEntity(const Entity &entity)

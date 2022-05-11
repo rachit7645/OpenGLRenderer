@@ -5,7 +5,12 @@ using namespace Renderer;
 using Shader::TerrainShader;
 using Terrains::Terrain;
 
-TerrainRenderer::TerrainRenderer(TerrainShader& shaderRef) : shader { shaderRef } {}
+TerrainRenderer::TerrainRenderer(TerrainShader& shaderRef) : shader { shaderRef }
+{
+	shader.Start();
+	shader.ConnectTextureUnits();
+	shader.Stop();
+}
 
 void TerrainRenderer::Render(const std::vector<Terrain>& terrains)
 {
