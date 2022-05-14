@@ -10,7 +10,7 @@
 
 // Handy global variables
 inline const u8* g_Keys;
-inline f64 g_Delta = 1.0f;
+inline f32 g_Delta = 1.0f;
 
 namespace Window
 {
@@ -38,8 +38,10 @@ namespace Window
 		void InitGL();
 
 		// FPS Counting Variables
-		u64 startTime, endTime;
-		f64 FPS;
+		u64 startTime = 0;
+		u64 frameStartTime = 0;
+		u64 endTime = 0;
+		f32 FPS = 0.0f;
 
 		// Debug variables
 		#ifdef _DEBUG

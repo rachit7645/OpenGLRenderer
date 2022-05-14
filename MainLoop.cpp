@@ -8,6 +8,7 @@ using Terrains::Terrain;
 using Renderer::Texture;
 using Renderer::Model;
 using Renderer::Material;
+using Terrains::TerrainTextures;
 
 void SDLWindow::MainLoop()
 {
@@ -18,11 +19,13 @@ void SDLWindow::MainLoop()
 	std::shared_ptr<Texture> grassTexture = std::make_shared<Texture>("res/textures/grassTexture.png");
 	std::shared_ptr<Texture> fernTexture = std::make_shared<Texture>("res/textures/fern.png");
 
-	std::shared_ptr<Texture> backgroundTexture = std::make_shared<Texture>("res/textures/grass.png");
-	std::shared_ptr<Texture> rTexture = std::make_shared<Texture>("res/textures/mud.png");
-	std::shared_ptr<Texture> gTexture = std::make_shared<Texture>("res/textures/path.png");
-	std::shared_ptr<Texture> bTexture = std::make_shared<Texture>("res/textures/pinkFlowers.png");
-	std::shared_ptr<Texture> blendMap = std::make_shared<Texture>("res/textures/blendMap.png");
+	TerrainTextures textures = TerrainTextures(
+		std::make_shared<Texture>("res/textures/grass.png"),
+		std::make_shared<Texture>("res/textures/mud.png"), 
+		std::make_shared<Texture>("res/textures/path.png"),
+		std::make_shared<Texture>("res/textures/pinkFlowers.png"),
+		std::make_shared<Texture>("res/textures/blendMap.png")
+	);
 
 	std::shared_ptr<Model> treeModel = std::make_shared<Model>("res/models/tree.obj", Material(), treeTexture);
 	std::shared_ptr<Model> grassModel = std::make_shared<Model>("res/models/grassModel.obj", Material(true, true), grassTexture);
@@ -43,8 +46,6 @@ void SDLWindow::MainLoop()
 	}
 	std::vector<Terrain> terrains;
 	{
-		std::array<std::shared_ptr<Texture>, Terrains::TEXTURE_COUNT> textures 
-			= { backgroundTexture, rTexture, gTexture, bTexture, blendMap };
 		terrains.push_back(Terrain(glm::vec2(0.0f, -1.0f), Material(), textures));
 		terrains.push_back(Terrain(glm::vec2(-1.0f, -1.0f), Material(), textures));
 		terrains.push_back(Terrain(glm::vec2(0.0f, 0.0f), Material(), textures));
@@ -55,7 +56,7 @@ void SDLWindow::MainLoop()
 	Entities::Camera camera(glm::vec3(0.0f, 6.0f, 0.0f));
 	Renderer::MasterRenderer renderer;
 
-	startTime = SDL_GetTicks64();
+	startTime = frameStartTime = SDL_GetTicks64();
 
 	while (true)
 	{
@@ -79,13 +80,15 @@ void SDLWindow::MainLoop()
 
 void SDLWindow::CalculateFPS()
 {
-	if ((endTime = SDL_GetTicks64()) >= startTime + 1000)
+	endTime = SDL_GetTicks64();
+	g_Delta = (endTime - frameStartTime) / 1000.0f;
+	frameStartTime = endTime;
+
+	if (endTime >= startTime + 1000)
 	{
 		std::cerr << "\rFPS: " << FPS;
-		FPS = 0;
-		g_Delta = (endTime - startTime) / 1000.0f;
 		startTime = endTime;
-		return;
+		FPS = 0.0f;
 	}
 	FPS++;
 }

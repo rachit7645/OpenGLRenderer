@@ -3,6 +3,7 @@
 using namespace Renderer;
 
 using Shader::TerrainShader;
+using Terrains::TerrainTextures;
 using Terrains::Terrain;
 
 TerrainRenderer::TerrainRenderer(TerrainShader& shaderRef) : shader { shaderRef }
@@ -35,16 +36,17 @@ void TerrainRenderer::PrepareTerrain(const Terrain& terrain)
 
 void TerrainRenderer::BindTextures(const Terrain& terrain)
 {
+	const TerrainTextures& textures = terrain.textures;
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, terrain.textures[0]->id);
+	glBindTexture(GL_TEXTURE_2D, textures.background->id);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, terrain.textures[1]->id);
+	glBindTexture(GL_TEXTURE_2D, textures.rTexture->id);
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, terrain.textures[2]->id);
+	glBindTexture(GL_TEXTURE_2D, textures.gTexture->id);
 	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, terrain.textures[3]->id);
+	glBindTexture(GL_TEXTURE_2D, textures.bTexture->id);
 	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, terrain.textures[4]->id);
+	glBindTexture(GL_TEXTURE_2D, textures.blendMap->id);
 }
 
 void TerrainRenderer::LoadModelMatrix(const Terrain& terrain)

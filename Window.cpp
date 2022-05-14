@@ -128,7 +128,7 @@ bool SDLWindow::PollEvents()
 
 SDLWindow::~SDLWindow()
 {
-	Logger::Log("\nQuiting SDL2", Logger::INFO);
+	Logger::Log("Quiting SDL2", Logger::INFO);
 	SDL_GL_DeleteContext(glContext);
 	SDL_DestroyWindow(window);
 	SDL_Quit();

@@ -40,10 +40,12 @@ namespace Renderer
 		// Process terrains into a vector
 		void ProcessTerrain(const Terrains::Terrain &terrain);
 	private:
-		// Prepare framebuffer for drawing
+		// Prepare framebuffer for render
 		void Prepare();
-		void DrawEntities(const Entities::Light &light, const Entities::Camera &camera);
-		void DrawTerrains(const Entities::Light &light, const Entities::Camera &camera);
+		// Render entities
+		void RenderEntities(const Entities::Light &light, const Entities::Camera &camera);
+		// Render Terrains
+		void RenderTerrains(const Entities::Light &light, const Entities::Camera &camera);
 
 		// The entitiy map
 		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>> entities;

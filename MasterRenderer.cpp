@@ -28,14 +28,14 @@ void MasterRenderer::Render(const Light &light, const Camera &camera)
 {
 	Prepare();
 	
-	DrawEntities(light, camera);
-	DrawTerrains(light, camera);
+	RenderEntities(light, camera);
+	RenderTerrains(light, camera);
 	
 	entities.clear();
 	terrains.clear();
 }
 
-void MasterRenderer::DrawEntities(const Light &light, const Camera &camera)
+void MasterRenderer::RenderEntities(const Light &light, const Camera &camera)
 {
 	shader.Start();
 	shader.LoadViewMatrix(camera);
@@ -45,7 +45,7 @@ void MasterRenderer::DrawEntities(const Light &light, const Camera &camera)
 	shader.Stop();
 }
 
-void MasterRenderer::DrawTerrains(const Light &light, const Camera &camera)
+void MasterRenderer::RenderTerrains(const Light &light, const Camera &camera)
 {
 	terrainShader.Start();
 	terrainShader.LoadViewMatrix(camera);

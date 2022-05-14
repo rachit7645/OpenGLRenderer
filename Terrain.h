@@ -3,13 +3,12 @@
 
 #include <memory>
 #include <vector>
-#include <array>
 
 #include "GLM.h"
 #include "Util.h"
 #include "VertexArray.h"
 #include "Material.h"
-#include "Texture.h"
+#include "TerrainTextures.h"
 
 namespace Terrains
 {
@@ -21,14 +20,12 @@ namespace Terrains
 	{
 	public:
 		Terrain(const glm::vec2& gridPosition, const Renderer::Material& material,
-			std::array<std::shared_ptr<Renderer::Texture>, TEXTURE_COUNT>& textures);
+			TerrainTextures& textures);
 
 		glm::vec2 gridPosition;
 		Renderer::Material material;
-
 		std::shared_ptr<Renderer::VertexArray> vao;
-		std::array<std::shared_ptr<Renderer::Texture>, TEXTURE_COUNT> textures;
-
+		TerrainTextures textures;
 		s32 vertexCount;
 	};
 }
