@@ -53,7 +53,7 @@ namespace Window
 		// SDL Resources
 		SDL_Window* window = nullptr;
 		SDL_GLContext glContext = nullptr;
-		SDL_Event event;	
+		SDL_Event event;
 	};
 
 }

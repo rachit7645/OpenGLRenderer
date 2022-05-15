@@ -12,7 +12,7 @@ namespace Entities
 
 	class Camera
 	{
-	public:	
+	public:
 		Camera(const glm::vec3 &position) : position{ position } {}
 		void Move();
 

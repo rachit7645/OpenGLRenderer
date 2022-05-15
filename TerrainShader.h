@@ -1,7 +1,7 @@
 #ifndef TERRAIN_SHADER_H
 #define TERRAIN_SHADER_H
 
-#include <map>
+#include <unordered_map>
 
 #include "GLM.h"
 #include "Shader.h"
@@ -34,7 +34,7 @@ namespace Shader
 
 		void GetUniformLocations() override;
 	private:
-		std::map<const char*, u32> uniforms;
+		std::unordered_map<const char*, u32> uniforms;
 	};
 }
 

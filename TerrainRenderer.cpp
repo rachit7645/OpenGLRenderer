@@ -15,7 +15,7 @@ TerrainRenderer::TerrainRenderer(TerrainShader& shaderRef) : shader { shaderRef 
 
 void TerrainRenderer::Render(const std::vector<Terrain>& terrains)
 {
-	for (auto& terrain : terrains)
+	for (const auto& terrain : terrains)
 	{
 		PrepareTerrain(terrain);
 		LoadModelMatrix(terrain);
@@ -51,12 +51,12 @@ void TerrainRenderer::BindTextures(const Terrain& terrain)
 
 void TerrainRenderer::LoadModelMatrix(const Terrain& terrain)
 {
-	glm::mat4 trans_matrix = Maths::CreateTransformationMatrix
+	glm::mat4 transformation = Maths::CreateTransformationMatrix
 	(
 		glm::vec3(terrain.gridPosition.x, 0.0f, terrain.gridPosition.y),
 		glm::vec3(0.0f, 0.0f, 0.0f), 1.0f
 	);
-	shader.LoadTransformationMatrix(trans_matrix);
+	shader.LoadTransformationMatrix(transformation);
 }
 
 void TerrainRenderer::UnbindTerrain()

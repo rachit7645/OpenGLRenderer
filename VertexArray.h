@@ -1,9 +1,8 @@
 #ifndef VERTEX_ARRAY_H
 #define VERTEX_ARRAY_H
 
-#include <string>
 #include <memory>
-#include <map>
+#include <unordered_map>
 #include <GL/glew.h>
 
 #include "VertexBuffer.h"
@@ -15,7 +14,7 @@ namespace Renderer
 	{
 	public:
 		GLuint id;
-		std::map<const char*, std::shared_ptr<VertexBuffer>> buffers;
+		std::unordered_map<const char*, std::shared_ptr<VertexBuffer>> buffers;
 
 		VertexArray(const std::vector<f32>& vertices, const std::vector<u32>& indices, const std::vector<f32>& txCoords, const std::vector<f32> &normals);
 		VertexArray();

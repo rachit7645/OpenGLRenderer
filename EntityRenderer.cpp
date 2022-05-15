@@ -35,8 +35,8 @@ void EntityRenderer::PrepareModel(const std::shared_ptr<Model>& model)
 
 void EntityRenderer::PrepareInstance(const Entity& entity)
 {
-	glm::mat4 trans_matrix = Maths::CreateTransformationMatrix(entity.position, entity.rotation, entity.scale);
-	shader.LoadTransformationMatrix(trans_matrix);
+	glm::mat4 transformation = Maths::CreateTransformationMatrix(entity.position, entity.rotation, entity.scale);
+	shader.LoadTransformationMatrix(transformation);
 }
 
 void EntityRenderer::UnbindModel(const Material& modelMaterial) 
