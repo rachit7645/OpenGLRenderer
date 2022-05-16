@@ -18,7 +18,7 @@ void SDLWindow::MainLoop()
 	std::shared_ptr<Texture> treeTexture = std::make_shared<Texture>("res/gfx/tree.png");
 	std::shared_ptr<Texture> grassTexture = std::make_shared<Texture>("res/gfx/grassTexture.png");
 	std::shared_ptr<Texture> fernTexture = std::make_shared<Texture>("res/gfx/fern.png");
-	std::shared_ptr<Texture> linkTexture = std::make_shared<Texture>("res/gfx/dragon.png");
+	std::shared_ptr<Texture> defaultTexture = std::make_shared<Texture>("res/gfx/dragon.png");
 
 	TerrainTextures textures = TerrainTextures(
 		std::make_shared<Texture>("res/gfx/grass.png"),
@@ -32,7 +32,7 @@ void SDLWindow::MainLoop()
 	std::shared_ptr<Model> treeModel = std::make_shared<Model>("res/gfx/tree.obj", Material(), treeTexture);
 	std::shared_ptr<Model> grassModel = std::make_shared<Model>("res/gfx/grassModel.obj", Material(true, true), grassTexture);
 	std::shared_ptr<Model> fernModel = std::make_shared<Model>("res/gfx/fern.obj", Material(true, true), fernTexture);
-	std::shared_ptr<Model> linkModel = std::make_shared<Model>("res/gfx/Link/LinkCTM.obj", Material(), linkTexture);
+	std::shared_ptr<Model> linkModel = std::make_shared<Model>("res/gfx/Link/Link.obj", Material(), defaultTexture);
 
 	// All objects go here
 	std::vector<Entity> entities;

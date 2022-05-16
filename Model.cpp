@@ -32,7 +32,7 @@ void Model::ProcessNode(aiNode *node, const aiScene *scene, std::shared_ptr<Text
 	// Iterate over all the node's meshes
 	for (u32 i = 0; i < node->mNumMeshes; i++)
 	{
-		meshes.push_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], texture));
+		meshes.push_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], scene, texture));
 	}
 
 	// Iterate over all the child meshes
@@ -42,7 +42,7 @@ void Model::ProcessNode(aiNode *node, const aiScene *scene, std::shared_ptr<Text
 	}
 }
 
-Mesh Model::ProcessMesh(aiMesh *mesh, std::shared_ptr<Texture>& texture)
+Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene, std::shared_ptr<Texture>& texture)
 {
 	std::vector<f32> vertices;
 	std::vector<u32> indices;
@@ -76,6 +76,12 @@ Mesh Model::ProcessMesh(aiMesh *mesh, std::shared_ptr<Texture>& texture)
 		indices.push_back(face.mIndices[1]);
 		indices.push_back(face.mIndices[2]);
 	}
+
+	aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
+	aiString path;
+	mat->GetTexture(aiTextureType_DIFFUSE, 0, &path);
+	if (path.length > 0)
+		texture = std::make_shared<Texture>(path.C_Str(), PathType::ABSOLUTE);
 
 	return Mesh(vertices, indices, txCoords, normals, texture);
 }

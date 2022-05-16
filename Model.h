@@ -26,7 +26,7 @@ namespace Renderer
 		Renderer::Material material;
 	private:
 		void ProcessNode(aiNode *node, const aiScene *scene, std::shared_ptr<Texture> &texture);
-		Mesh ProcessMesh(aiMesh *mesh, std::shared_ptr<Texture> &texture);
+		Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene, std::shared_ptr<Texture> &texture); 
 	};
 }
 
