@@ -15,21 +15,24 @@ void SDLWindow::MainLoop()
 	InitGL();
 
 	// Put Models and Textures here 
-	std::shared_ptr<Texture> treeTexture = std::make_shared<Texture>("res/textures/tree.png");
-	std::shared_ptr<Texture> grassTexture = std::make_shared<Texture>("res/textures/grassTexture.png");
-	std::shared_ptr<Texture> fernTexture = std::make_shared<Texture>("res/textures/fern.png");
+	std::shared_ptr<Texture> treeTexture = std::make_shared<Texture>("res/gfx/tree.png");
+	std::shared_ptr<Texture> grassTexture = std::make_shared<Texture>("res/gfx/grassTexture.png");
+	std::shared_ptr<Texture> fernTexture = std::make_shared<Texture>("res/gfx/fern.png");
+	std::shared_ptr<Texture> linkTexture = std::make_shared<Texture>("res/gfx/dragon.png");
 
 	TerrainTextures textures = TerrainTextures(
-		std::make_shared<Texture>("res/textures/grass.png"),
-		std::make_shared<Texture>("res/textures/mud.png"), 
-		std::make_shared<Texture>("res/textures/path.png"),
-		std::make_shared<Texture>("res/textures/pinkFlowers.png"),
-		std::make_shared<Texture>("res/textures/blendMap.png")
+		std::make_shared<Texture>("res/gfx/grass.png"),
+		std::make_shared<Texture>("res/gfx/mud.png"), 
+		std::make_shared<Texture>("res/gfx/path.png"),
+		std::make_shared<Texture>("res/gfx/pinkFlowers.png"),
+		std::make_shared<Texture>("res/gfx/blendMap.png")
 	);
 
-	std::shared_ptr<Model> treeModel = std::make_shared<Model>("res/models/tree.obj", Material(), treeTexture);
-	std::shared_ptr<Model> grassModel = std::make_shared<Model>("res/models/grassModel.obj", Material(true, true), grassTexture);
-	std::shared_ptr<Model> fernModel = std::make_shared<Model>("res/models/fern.obj", Material(true, true), fernTexture);
+	
+	std::shared_ptr<Model> treeModel = std::make_shared<Model>("res/gfx/tree.obj", Material(), treeTexture);
+	std::shared_ptr<Model> grassModel = std::make_shared<Model>("res/gfx/grassModel.obj", Material(true, true), grassTexture);
+	std::shared_ptr<Model> fernModel = std::make_shared<Model>("res/gfx/fern.obj", Material(true, true), fernTexture);
+	std::shared_ptr<Model> linkModel = std::make_shared<Model>("res/gfx/Link/LinkCTM.obj", Material(), linkTexture);
 
 	// All objects go here
 	std::vector<Entity> entities;
@@ -44,6 +47,8 @@ void SDLWindow::MainLoop()
 				0, Rand_Range<f32>(0.0f, 1.0f) * -300), glm::vec3(0.0f, 0.0f, 0.0f), 0.6f));
 		}
 	}
+	Entity link(linkModel, glm::vec3(0.0f, 0.0f, -17.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+
 	std::vector<Terrain> terrains;
 	{
 		terrains.push_back(Terrain(glm::vec2(0.0f, -1.0f), Material(), textures));
@@ -61,10 +66,13 @@ void SDLWindow::MainLoop()
 	while (true)
 	{
 		camera.Move();
+
 		for (const auto &entity : entities)
 		{
 			renderer.ProcessEntity(entity);
 		}
+		renderer.ProcessEntity(link);
+
 		for (const auto &terrain : terrains)
 		{
 			renderer.ProcessTerrain(terrain);

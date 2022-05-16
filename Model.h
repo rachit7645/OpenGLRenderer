@@ -3,25 +3,30 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 
-#include "VertexArray.h"
-#include "Texture.h"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 #include "Material.h"
 #include "Log.h"
 #include "Util.h"
+#include "Mesh.h"
 
 namespace Renderer
 {
 	class Model
 	{
 	public:
-		Model(const std::string& path, const Material& material, std::shared_ptr<Texture>& texture);
+		Model(const std::string &path, const Material &material, std::shared_ptr<Texture> &texture);
 
-		Renderer::Material material;					// Material information for the model
-		s32 vertexCount;								// Vertex Count
-
-		std::shared_ptr<Renderer::VertexArray> vao;		// Vertex Attribute Object
-		std::shared_ptr<Renderer::Texture> texture;		// Texture
+		std::string directory;
+		std::vector<Mesh> meshes;
+		Renderer::Material material;
+	private:
+		void ProcessNode(aiNode *node, const aiScene *scene, std::shared_ptr<Texture> &texture);
+		Mesh ProcessMesh(aiMesh *mesh, std::shared_ptr<Texture> &texture);
 	};
 }
 

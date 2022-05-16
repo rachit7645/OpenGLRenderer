@@ -1,17 +1,10 @@
 #include "Model.h"
 
-// Avoid Global Namespace Corruption
-
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
 using namespace Renderer;
 
-constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs;
+constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_OptimizeMeshes;
 
-Model::Model(const std::string &path, const Material &material, std::shared_ptr<Texture>& texture)
-	: material{ material }, texture{ texture }
+Model::Model(const std::string &path, const Material &material, std::shared_ptr<Texture> &texture) : material{ material }
 {
 	std::string newPath;
 #ifdef _DEBUG
@@ -21,26 +14,47 @@ Model::Model(const std::string &path, const Material &material, std::shared_ptr<
 #endif
 
 	Assimp::Importer importer;
-	const auto *scene = importer.ReadFile(newPath.c_str(), ASSIMP_FLAGS);
+	const aiScene *scene = importer.ReadFile(newPath.c_str(), ASSIMP_FLAGS);
 
-	if (!scene)
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
 		Logger::LogAndExit(static_cast<std::string>("Model Load Failed: ") +
 			static_cast<std::string>(importer.GetErrorString()), ASSIMP_LOAD_FAILED);
 	}
 
-	const auto *ai_mesh = scene->mMeshes[0];
+	directory = newPath.substr(0, path.find_last_of('/'));
+
+	ProcessNode(scene->mRootNode, scene, texture);
+}
+
+void Model::ProcessNode(aiNode *node, const aiScene *scene, std::shared_ptr<Texture>& texture)
+{
+	// Iterate over all the node's meshes
+	for (u32 i = 0; i < node->mNumMeshes; i++)
+	{
+		meshes.push_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], texture));
+	}
+
+	// Iterate over all the child meshes
+	for (u32 i = 0; i < node->mNumChildren; i++)
+	{
+		ProcessNode(node->mChildren[i], scene, texture);
+	}
+}
+
+Mesh Model::ProcessMesh(aiMesh *mesh, std::shared_ptr<Texture>& texture)
+{
 	std::vector<f32> vertices;
 	std::vector<u32> indices;
 	std::vector<f32> txCoords;
 	std::vector<f32> normals;
 
 	const aiVector3D aiZeroVector(0.0f, 0.0f, 0.0f);
-	for (u32 i = 0; i < ai_mesh->mNumVertices; ++i)
+	for (u32 i = 0; i < mesh->mNumVertices; i++)
 	{
-		const aiVector3D *pPos = &(ai_mesh->mVertices[i]);
-		const aiVector3D *pNormal = &(ai_mesh->mNormals[i]);
-		const aiVector3D *pTexCoord = ai_mesh->HasTextureCoords(0) ? &(ai_mesh->mTextureCoords[0][i]) : &aiZeroVector;
+		const aiVector3D *pPos = &(mesh->mVertices[i]);
+		const aiVector3D *pNormal = &(mesh->mNormals[i]);
+		const aiVector3D *pTexCoord = mesh->HasTextureCoords(0) ? &(mesh->mTextureCoords[0][i]) : &aiZeroVector;
 
 		vertices.push_back(pPos->x);
 		vertices.push_back(pPos->y);
@@ -54,15 +68,14 @@ Model::Model(const std::string &path, const Material &material, std::shared_ptr<
 		normals.push_back(pNormal->z);
 	}
 
-	for (u32 i = 0; i < ai_mesh->mNumFaces; ++i)
+	for (u32 i = 0; i < mesh->mNumFaces; ++i)
 	{
-		const aiFace &face = ai_mesh->mFaces[i];
+		const aiFace &face = mesh->mFaces[i];
 		assert(face.mNumIndices == 3);
 		indices.push_back(face.mIndices[0]);
 		indices.push_back(face.mIndices[1]);
 		indices.push_back(face.mIndices[2]);
 	}
 
-	vao = std::make_shared<VertexArray>(vertices, indices, txCoords, normals);
-	vertexCount = static_cast<s32>(indices.size());
+	return Mesh(vertices, indices, txCoords, normals, texture);
 }
