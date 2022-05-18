@@ -19,11 +19,11 @@ namespace Renderer
 	class Model
 	{
 	public:
-		Model(const std::string &path, const Material &material, std::shared_ptr<Texture> &texture);
+		Model(const std::string &path, std::shared_ptr<Texture> &texture, const Material &material = Material());
 
 		std::string directory;
 		std::vector<Mesh> meshes;
-		Renderer::Material material;
+		Material material;
 	private:
 		void ProcessNode(aiNode *node, const aiScene *scene, std::shared_ptr<Texture> &texture);
 		Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene, std::shared_ptr<Texture> &texture); 

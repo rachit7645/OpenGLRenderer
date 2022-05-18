@@ -14,18 +14,16 @@ namespace Terrains
 {
 	constexpr auto SIZE = 300, VERTEX_COUNT = 16;
 	constexpr auto COUNT = VERTEX_COUNT * VERTEX_COUNT;
-	constexpr auto TEXTURE_COUNT = 5;
 
 	class Terrain
 	{
 	public:
-		Terrain(const glm::vec2& gridPosition, const Renderer::Material& material,
-			TerrainTextures& textures);
+		Terrain(const glm::vec2& gridPosition, const TerrainTextures& textures, const Renderer::Material& material = Renderer::Material());
 
-		glm::vec2 gridPosition;
+		glm::vec2 position;
+		TerrainTextures textures;
 		Renderer::Material material;
 		std::shared_ptr<Renderer::VertexArray> vao;
-		TerrainTextures textures;
 		s32 vertexCount;
 	};
 }

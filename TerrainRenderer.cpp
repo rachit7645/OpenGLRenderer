@@ -53,7 +53,7 @@ void TerrainRenderer::LoadModelMatrix(const Terrain& terrain)
 {
 	glm::mat4 transformation = Maths::CreateTransformationMatrix
 	(
-		glm::vec3(terrain.gridPosition.x, 0.0f, terrain.gridPosition.y),
+		glm::vec3(terrain.position.x, 0.0f, terrain.position.y),
 		glm::vec3(0.0f, 0.0f, 0.0f), 1.0f
 	);
 	shader.LoadTransformationMatrix(transformation);

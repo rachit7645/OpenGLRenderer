@@ -3,11 +3,11 @@
 
 using namespace Window;
 
-using Entities::Entity;
-using Terrains::Terrain;
 using Renderer::Texture;
 using Renderer::Model;
 using Renderer::Material;
+using Entities::Entity;
+using Terrains::Terrain;
 using Terrains::TerrainTextures;
 
 void SDLWindow::MainLoop()
@@ -29,10 +29,10 @@ void SDLWindow::MainLoop()
 	);
 
 	
-	std::shared_ptr<Model> treeModel = std::make_shared<Model>("res/gfx/tree.obj", Material(), treeTexture);
-	std::shared_ptr<Model> grassModel = std::make_shared<Model>("res/gfx/grassModel.obj", Material(true, true), grassTexture);
-	std::shared_ptr<Model> fernModel = std::make_shared<Model>("res/gfx/fern.obj", Material(true, true), fernTexture);
-	std::shared_ptr<Model> linkModel = std::make_shared<Model>("res/gfx/Link/Link.obj", Material(), defaultTexture);
+	std::shared_ptr<Model> treeModel = std::make_shared<Model>("res/gfx/tree.obj", treeTexture);
+	std::shared_ptr<Model> playerModel = std::make_shared<Model>("res/gfx/Link/Link.obj", defaultTexture);
+	std::shared_ptr<Model> grassModel = std::make_shared<Model>("res/gfx/grassModel.obj", grassTexture, Material(true, true));
+	std::shared_ptr<Model> fernModel = std::make_shared<Model>("res/gfx/fern.obj", fernTexture, Material(true, true));
 
 	// All objects go here
 	std::vector<Entity> entities;
@@ -47,14 +47,14 @@ void SDLWindow::MainLoop()
 				0, Rand_Range<f32>(0.0f, 1.0f) * -300), glm::vec3(0.0f, 0.0f, 0.0f), 0.6f));
 		}
 	}
-	Entity link(linkModel, glm::vec3(0.0f, 0.0f, -17.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+	Entity link(playerModel, glm::vec3(0.0f, 0.0f, -17.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
 	std::vector<Terrain> terrains;
 	{
-		terrains.push_back(Terrain(glm::vec2(0.0f, -1.0f), Material(), textures));
-		terrains.push_back(Terrain(glm::vec2(-1.0f, -1.0f), Material(), textures));
-		terrains.push_back(Terrain(glm::vec2(0.0f, 0.0f), Material(), textures));
-		terrains.push_back(Terrain(glm::vec2(-1.0f, 0.0f), Material(), textures));
+		terrains.push_back(Terrain(glm::vec2(0.0f, -1.0f), textures));
+		terrains.push_back(Terrain(glm::vec2(-1.0f, -1.0f), textures));
+		terrains.push_back(Terrain(glm::vec2(0.0f, 0.0f), textures));
+		terrains.push_back(Terrain(glm::vec2(-1.0f, 0.0f), textures));
 	}
 
 	Entities::Light light(glm::vec3(20000.0f, 20000.0f, 2000.0f), glm::vec3(1.0f, 1.0f, 1.0f));

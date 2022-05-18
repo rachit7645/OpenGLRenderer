@@ -4,7 +4,7 @@ using namespace Renderer;
 
 constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_OptimizeMeshes;
 
-Model::Model(const std::string &path, const Material &material, std::shared_ptr<Texture> &texture) : material{ material }
+Model::Model(const std::string &path, std::shared_ptr<Texture> &texture, const Material &material) : material{ material }
 {
 	std::string newPath;
 #ifdef _DEBUG
@@ -27,7 +27,7 @@ Model::Model(const std::string &path, const Material &material, std::shared_ptr<
 	ProcessNode(scene->mRootNode, scene, texture);
 }
 
-void Model::ProcessNode(aiNode *node, const aiScene *scene, std::shared_ptr<Texture>& texture)
+void Model::ProcessNode(aiNode *node, const aiScene *scene, std::shared_ptr<Texture> &texture)
 {
 	// Iterate over all the node's meshes
 	for (u32 i = 0; i < node->mNumMeshes; i++)
@@ -42,7 +42,7 @@ void Model::ProcessNode(aiNode *node, const aiScene *scene, std::shared_ptr<Text
 	}
 }
 
-Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene, std::shared_ptr<Texture>& texture)
+Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene, std::shared_ptr<Texture> &texture)
 {
 	std::vector<f32> vertices;
 	std::vector<u32> indices;
@@ -77,7 +77,7 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene, std::shared_ptr<Text
 		indices.push_back(face.mIndices[2]);
 	}
 
-	aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
+	aiMaterial *mat = scene->mMaterials[mesh->mMaterialIndex];
 	aiString path;
 	mat->GetTexture(aiTextureType_DIFFUSE, 0, &path);
 	if (path.length > 0)

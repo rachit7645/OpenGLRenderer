@@ -6,8 +6,8 @@ using Renderer::VertexArray;
 using Renderer::Texture;
 using Renderer::Material;
 
-Terrain::Terrain(const glm::vec2 &gridPosition, const Material &material, TerrainTextures& textures)
-	: gridPosition{ gridPosition.x * SIZE, gridPosition.y * SIZE }, material{ material }, textures{ textures }
+Terrain::Terrain(const glm::vec2 &gridPosition, const TerrainTextures &textures, const Material &material)
+	: position{ gridPosition.x * SIZE, gridPosition.y * SIZE }, textures{ textures }, material{ material }
 {
 	std::vector<f32> vertices(COUNT * 3);
 	std::vector<f32> normals(COUNT * 3);

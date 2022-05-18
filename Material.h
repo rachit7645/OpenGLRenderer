@@ -8,10 +8,8 @@ namespace Renderer
 	class Material
 	{
 	public:
-		Material(f32 shineDamper, f32 reflectivity, bool isTransparent, bool useFakeLighting);
-		Material(f32 shineDamper, f32 reflectivity);
+		Material(f32 shineDamper = 1.0f, f32 reflectivity = 0.0f, bool isTransparent = false, bool useFakeLighting = false);
 		Material(bool isTransparent, bool useFakeLighting);
-		Material();
 
 		f32 shineDamper = 1.0f;						// Shine Dampner
 		f32 reflectivity = 0.0f;					// Reflectivity
