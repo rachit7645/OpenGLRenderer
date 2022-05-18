@@ -8,10 +8,6 @@
 #include "Log.h"
 #include "Util.h"
 
-// Handy global variables
-inline const u8* g_Keys;
-inline f32 g_Delta = 1.0f;
-
 namespace Window
 {
 	// Choosing a 16:9 Resolution

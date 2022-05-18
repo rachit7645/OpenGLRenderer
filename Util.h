@@ -25,6 +25,10 @@ using u64 = std::uint64_t;
 using f32 = float;
 using f64 = double;
 
+// Handy global variables
+inline const u8* g_Keys;
+inline f32 g_Delta = 1.0f;
+
 enum Error
 {
 	SDL_INIT_FAILED = 1,

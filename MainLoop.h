@@ -5,7 +5,6 @@
 
 #include <memory>
 #include <vector>
-#include <random>
 
 #include "EntityRenderer.h"
 #include "StaticShader.h"
@@ -16,5 +15,6 @@
 #include "MasterRenderer.h"
 #include "Terrain.h"
 #include "Material.h"
+#include "Player.h"
 
 #endif

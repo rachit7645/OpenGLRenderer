@@ -7,6 +7,7 @@ using Renderer::Texture;
 using Renderer::Model;
 using Renderer::Material;
 using Entities::Entity;
+using Entities::Player;
 using Terrains::Terrain;
 using Terrains::TerrainTextures;
 
@@ -47,7 +48,7 @@ void SDLWindow::MainLoop()
 				0, Rand_Range<f32>(0.0f, 1.0f) * -300), glm::vec3(0.0f, 0.0f, 0.0f), 0.6f));
 		}
 	}
-	Entity link(playerModel, glm::vec3(0.0f, 0.0f, -17.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+	Player player(playerModel, glm::vec3(0.0f, 0.0f, -17.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
 	std::vector<Terrain> terrains;
 	{
@@ -66,12 +67,13 @@ void SDLWindow::MainLoop()
 	while (true)
 	{
 		camera.Move();
+		player.Move();
 
 		for (const auto &entity : entities)
 		{
 			renderer.ProcessEntity(entity);
 		}
-		renderer.ProcessEntity(link);
+		renderer.ProcessEntity(player);
 
 		for (const auto &terrain : terrains)
 		{

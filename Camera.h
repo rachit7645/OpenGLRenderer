@@ -8,7 +8,7 @@
 
 namespace Entities
 {
-	constexpr auto MOVE_CONSTANT = 65.0f;
+	constexpr auto CAMERA_SPEED = 45.0f;
 
 	class Camera
 	{
