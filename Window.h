@@ -7,12 +7,13 @@
 #include "GLM.h"
 #include "Log.h"
 #include "Util.h"
+#include "Camera.h"
 
 namespace Window
 {
 	// Choosing a 16:9 Resolution
 	constexpr glm::vec2 DIMENSIONS = { 1024, 576 };
-	constexpr u32 SDL_WINDOW_FLAGS = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
+	constexpr u32 SDL_WINDOW_FLAGS = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_INPUT_GRABBED;
 
 	class SDLWindow
 	{

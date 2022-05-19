@@ -2,30 +2,52 @@
 
 using namespace Entities;
 
+Camera::Camera(Player &playerRef) : player{ playerRef } {}
+
 void Camera::Move()
 {
-	if (g_Keys[SDL_SCANCODE_UP])
-		position.z -= CAMERA_SPEED * g_Delta;
-	if (g_Keys[SDL_SCANCODE_LEFT])
-		position.x -= CAMERA_SPEED * g_Delta;
-	if (g_Keys[SDL_SCANCODE_DOWN])
-		position.z += CAMERA_SPEED * g_Delta;
-	if (g_Keys[SDL_SCANCODE_RIGHT])
-		position.x += CAMERA_SPEED * g_Delta;
-	if (g_Keys[SDL_SCANCODE_SPACE])
-		position.y += CAMERA_SPEED * g_Delta;
-	if (g_Keys[SDL_SCANCODE_LSHIFT])
-		position.y -= CAMERA_SPEED * g_Delta;
+	if (g_ToZoomCamera)
+	{
+		CalculateZoom();
+		g_ToZoomCamera = false;
+	}
 
-	// Debug camera rotation
-#ifdef _DEBUG
-	if (g_Keys[SDL_SCANCODE_KP_4])
-		yaw -= CAMERA_SPEED * g_Delta;
-	if (g_Keys[SDL_SCANCODE_KP_6])
-		yaw += CAMERA_SPEED * g_Delta;
-	if (g_Keys[SDL_SCANCODE_KP_8])
-		pitch -= CAMERA_SPEED * g_Delta;
-	if (g_Keys[SDL_SCANCODE_KP_2])
-		pitch += CAMERA_SPEED * g_Delta;
-#endif
+	if (g_ToMoveCamera)
+	{
+		CalculatePitch();
+		CalculateAngleAroundPlayer();
+		g_ToMoveCamera = false;
+	}
+
+	f32 hDistance = distanceFromPlayer * std::cos(glm::radians(rotation.x));
+	f32 vDistance = distanceFromPlayer * std::sin(glm::radians(rotation.x));
+	CalculatePosition(hDistance, vDistance);
+}
+
+void Camera::CalculatePosition(f32 hDistance, f32 vDistance)
+{
+	f32 theta = player.rotation.y + angleAroundPlayer;
+	f32 offsetX = hDistance * std::sin(glm::radians(theta));
+	f32 offsetZ = hDistance * std::cos(glm::radians(theta));
+	position.x = player.position.x - offsetX;
+	position.z = player.position.z - offsetZ;
+	position.y = player.position.y + vDistance;
+	rotation.y = 180 - (player.rotation.y + angleAroundPlayer);
+}
+
+void Camera::CalculateZoom()
+{
+	distanceFromPlayer -= g_MouseScrollY * 0.9f;
+}
+
+void Camera::CalculatePitch()
+{
+	rotation.x -= g_MousePos.y * 0.1f;
+	if (rotation.x <= 5.0f) rotation.x = 5.0f;
+	if (rotation.x >= 85.0f) rotation.x = 85.0f;
+}
+
+void Camera::CalculateAngleAroundPlayer()
+{
+	angleAroundPlayer -= g_MousePos.x * 0.3f;
 }

@@ -48,7 +48,7 @@ void SDLWindow::MainLoop()
 				0, Rand_Range<f32>(0.0f, 1.0f) * -300), glm::vec3(0.0f, 0.0f, 0.0f), 0.6f));
 		}
 	}
-	Player player(playerModel, glm::vec3(0.0f, 0.0f, -17.0f), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+	Player player(playerModel, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 180.0f, 0.0f), 1.0f);
 
 	std::vector<Terrain> terrains;
 	{
@@ -59,15 +59,15 @@ void SDLWindow::MainLoop()
 	}
 
 	Entities::Light light(glm::vec3(20000.0f, 20000.0f, 2000.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-	Entities::Camera camera(glm::vec3(0.0f, 6.0f, 0.0f));
+	Entities::Camera camera(player);
 	Renderer::MasterRenderer renderer;
 
 	startTime = frameStartTime = SDL_GetTicks64();
 
 	while (true)
 	{
-		camera.Move();
 		player.Move();
+		camera.Move();
 
 		for (const auto &entity : entities)
 		{

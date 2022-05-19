@@ -15,12 +15,11 @@ namespace Entities
 	{
 	public:
 		Player(std::shared_ptr<Renderer::Model>& model, const glm::vec3 &position, const glm::vec3 &rotation, f32 scale);
-
+		void Move();
+	private:
 		f32 runSpeed = 0.0f;
 		f32 turnSpeed = 0.0f;
 
-		void Move();
-	private:
 		void CheckInputs();
 	};
 }

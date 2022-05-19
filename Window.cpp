@@ -40,6 +40,8 @@ SDLWindow::SDLWindow()
 	}
 	// For sanity, raise window
 	SDL_RaiseWindow(window);
+	SDL_ShowCursor(SDL_FALSE);
+	SDL_SetRelativeMouseMode(SDL_TRUE);
 
 	// Basically useless GLContext
 	// You don't get more than GL 1.1 for compatibilty reasons (Windows YOU SUCK)
@@ -118,6 +120,18 @@ bool SDLWindow::PollEvents()
 			default:
 				break;
 			}
+			break;
+
+		case SDL_MOUSEWHEEL:
+			g_MouseScrollY = event.wheel.y;
+			g_ToZoomCamera = true;
+			break;
+
+		case SDL_MOUSEMOTION:
+			g_MousePos.x = event.motion.xrel;
+			g_MousePos.y = event.motion.yrel;
+			g_ToMoveCamera = true;
+			break;
 
 		default:
 			break;

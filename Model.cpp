@@ -2,8 +2,6 @@
 
 using namespace Renderer;
 
-constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_OptimizeMeshes;
-
 Model::Model(const std::string &path, std::shared_ptr<Texture> &texture, const Material &material) : material{ material }
 {
 	std::string newPath;

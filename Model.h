@@ -16,6 +16,8 @@
 
 namespace Renderer
 {
+	constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_OptimizeMeshes;
+
 	class Model
 	{
 	public:
