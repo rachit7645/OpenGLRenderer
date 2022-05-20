@@ -21,7 +21,7 @@ void EntityRenderer::Render(const std::unordered_map<std::shared_ptr<Model>, std
 			}
 			UnbindMesh();
 		}
-		UnbindModel(model->material);
+		UnbindModel(model);
 	}
 }
 
@@ -56,9 +56,9 @@ void EntityRenderer::UnbindMesh()
 	glBindVertexArray(0);
 }
 
-void EntityRenderer::UnbindModel(const Material &modelMaterial)
+void EntityRenderer::UnbindModel(const std::shared_ptr<Model> &model)
 {
-	if (modelMaterial.isTransparent)
+	if (model->material.isTransparent)
 		EnableCulling();
 }
 

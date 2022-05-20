@@ -3,7 +3,9 @@
 
 #include <string>
 #include <GL/glew.h>
+
 #include "Util.h"
+#include "Log.h"
 
 namespace Renderer
 {

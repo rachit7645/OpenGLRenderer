@@ -1,5 +1,6 @@
 #include "Texture.h"
 
+// This needs to be in a .cpp file so that it works (why tho?)
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
@@ -7,17 +8,22 @@ using namespace Renderer;
 
 Texture::Texture(const std::string &path, PathType pathType)
 {
+	// FIXME: Paths from assimp can be weird
 #ifdef _DEBUG
-	std::string newPath;
+	std::string newPath = path;
 	if (pathType == PathType::RELATIVE)
+	{
 		newPath = "../" + path;
-	else
-		newPath = path;
+	}
 	u8 *data = stbi_load(newPath.c_str(), &width, &height, &channels, 4);
 #else
 	u8 *data = stbi_load(path.c_str(), &width, &height, &channels, 4);
 #endif
-	assert(data != nullptr);
+
+	if (data == nullptr)
+	{
+		Logger::LogAndExit("Unable to open file: " + path, TEXTURE_LOAD_FAILED);
+	}
 
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);

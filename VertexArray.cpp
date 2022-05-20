@@ -2,8 +2,8 @@
 
 using namespace Renderer;
 
-VertexArray::VertexArray(const std::vector<f32>& vertices, const std::vector<u32>& indices,
-	const std::vector<f32>& txCoords, const std::vector<f32> &normals)
+VertexArray::VertexArray(const std::vector<f32> &vertices, const std::vector<u32> &indices,
+	const std::vector<f32> &txCoords, const std::vector<f32> &normals)
 {
 	glGenVertexArrays(1, &id);
 	glBindVertexArray(id);

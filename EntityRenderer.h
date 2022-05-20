@@ -29,7 +29,7 @@ namespace Renderer
 		// Prepare each instance
 		void PrepareInstance(const Entities::Entity &entity);
 		// Unbind the model
-		void UnbindModel(const Material &modelMaterial);
+		void UnbindModel(const std::shared_ptr<Model> &model);
 		// Unbind the mesh
 		void UnbindMesh();		
 		// Enable GL_BACK culling

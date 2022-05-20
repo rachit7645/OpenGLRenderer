@@ -26,23 +26,23 @@ namespace Shader
 		void Start();
 		void Stop();
 
-		void BindAttribute(u32 attribute, const char* name) const;
-		u32 GetUniformLocation(const char* name) const;
+		void BindAttribute(u32 attribute, const char* name);
+		u32 GetUniformLocation(const char* name);
 		virtual void GetUniformLocations() = 0;
 
 		// Uniform loading functions 
-		void LoadInt(u32 location, s32 value) const;
-		void LoadFloat(u32 location, f32 value) const;
-		void LoadBool(u32 location, bool value) const;
-		void LoadVector(u32 location, const glm::vec3& vector) const;
-		void LoadVector(u32 location, const glm::vec4& vector) const;		
-		void LoadMatrix(u32 location, const glm::mat4& matrix) const;
+		void LoadUniform(u32 location, s32 value);
+		void LoadUniform(u32 location, f32 value);
+		void LoadUniform(u32 location, bool value);
+		void LoadUniform(u32 location, const glm::vec3& vector);
+		void LoadUniform(u32 location, const glm::vec4& vector);		
+		void LoadUniform(u32 location, const glm::mat4& matrix);
 
 	private:
 		// Function to load shaders from file
 		u32 LoadShader(GLenum type, const std::string& path);
 		void CheckShader(const std::string &message, u32 shaderID, GLenum type, Error error);
-		void CheckProgram(u32 programID, GLenum type, Error error);
+		void CheckProgram(const std::string &message, u32 programID, GLenum type, Error error);
 	};
 }
 

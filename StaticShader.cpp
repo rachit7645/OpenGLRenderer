@@ -26,34 +26,34 @@ void StaticShader::GetUniformLocations()
 
 void StaticShader::LoadTransformationMatrix(const glm::mat4 &matrix)
 {
-	LoadMatrix(uniforms["modelMatrix"], matrix);
+	LoadUniform(uniforms["modelMatrix"], matrix);
 }
 
 void StaticShader::LoadProjectionMatrix(const glm::mat4 &matrix)
 {
-	LoadMatrix(uniforms["projectionMatrix"], matrix);
+	LoadUniform(uniforms["projectionMatrix"], matrix);
 }
 
 void StaticShader::LoadViewMatrix(const Camera &camera)
 {
 	glm::mat4 viewMatrix = Maths::CreateViewMatrix(camera);
-	LoadMatrix(uniforms["viewMatrix"], viewMatrix);
+	LoadUniform(uniforms["viewMatrix"], viewMatrix);
 }
 
 void StaticShader::LoadLight(const Light &light)
 {
-	LoadVector(uniforms["lightPosition"], light.position);
-	LoadVector(uniforms["lightColour"], light.colour);
+	LoadUniform(uniforms["lightPosition"], light.position);
+	LoadUniform(uniforms["lightColour"], light.colour);
 }
 
 void StaticShader::LoadMaterials(const Material& material)
 {
-	LoadFloat(uniforms["shineDamper"], material.shineDamper);
-	LoadFloat(uniforms["reflectivity"], material.reflectivity);
-	LoadBool(uniforms["useFakeLighting"], material.useFakeLighting);
+	LoadUniform(uniforms["shineDamper"], material.shineDamper);
+	LoadUniform(uniforms["reflectivity"], material.reflectivity);
+	LoadUniform(uniforms["useFakeLighting"], material.useFakeLighting);
 }
 
 void StaticShader::LoadSkyColour(const glm::vec4& skyColour)
 {
-	LoadVector(uniforms["skyColour"], skyColour);
+	LoadUniform(uniforms["skyColour"], skyColour);
 }

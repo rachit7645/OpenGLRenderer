@@ -40,12 +40,12 @@ void SDLWindow::MainLoop()
 	{
 		for (size_t i = 0; i < 40; i++)
 		{
-			entities.push_back(Entity(treeModel, glm::vec3(Rand_Range<f32>(0.0f, 1.0f) * 400 - 200,
-				0, Rand_Range<f32>(0.0f, 1.0f) * -300), glm::vec3(0.0f, 0.0f, 0.0f), 3.0f));
-			entities.push_back(Entity(grassModel, glm::vec3(Rand_Range<f32>(0.0f, 1.0f) * 400 - 200,
-				0, Rand_Range<f32>(0.0f, 1.0f) * -300), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f));
-			entities.push_back(Entity(fernModel, glm::vec3(Rand_Range<f32>(0.0f, 1.0f) * 400 - 200,
-				0, Rand_Range<f32>(0.0f, 1.0f) * -300), glm::vec3(0.0f, 0.0f, 0.0f), 0.6f));
+			entities.push_back(Entity(treeModel, glm::vec3(Util::Rand_Range<f32>(0.0f, 1.0f) * 400 - 200,
+				0, Util::Rand_Range<f32>(0.0f, 1.0f) * -300), glm::vec3(0.0f, 0.0f, 0.0f), 3.0f));
+			entities.push_back(Entity(grassModel, glm::vec3(Util::Rand_Range<f32>(0.0f, 1.0f) * 400 - 200,
+				0, Util::Rand_Range<f32>(0.0f, 1.0f) * -300), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f));
+			entities.push_back(Entity(fernModel, glm::vec3(Util::Rand_Range<f32>(0.0f, 1.0f) * 400 - 200,
+				0, Util::Rand_Range<f32>(0.0f, 1.0f) * -300), glm::vec3(0.0f, 0.0f, 0.0f), 0.6f));
 		}
 	}
 	Player player(playerModel, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 180.0f, 0.0f), 1.0f);

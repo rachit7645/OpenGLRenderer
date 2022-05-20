@@ -26,7 +26,7 @@ using f32 = float;
 using f64 = double;
 
 // Handy global variables
-inline const u8* g_Keys;
+inline const u8 *g_Keys;
 inline f32 g_Delta = 1.0f;
 
 enum Error
@@ -40,26 +40,38 @@ enum Error
 	ASSIMP_LOAD_FAILED = 7,
 	SHADER_VALIDATION_FAILED = 8,
 	SHADER_LINK_FAILED = 9,
+	TEXTURE_LOAD_FAILED = 10,
 };
 
-// Random number between a range
-template<typename T>
-T Rand_Range(T min, T max)
+namespace Util
 {
-	static thread_local std::mt19937_64 generator(777);
-	std::uniform_real_distribution<T> distributer(min, max);
-	return distributer(generator);
-}
+	// Random number between a range
+	template<typename T>
+	T Rand_Range(T min, T max)
+	{
+		static thread_local std::mt19937_64 generator(777);
+		std::uniform_real_distribution<T> distributer(min, max);
+		return distributer(generator);
+	}
 
-// Truely random number between a range
-template<typename T>
-T True_Rand_Range(T min, T max)
-{
-	std::random_device rd;
-	std::seed_seq ss{rd(), rd()};
-	static thread_local std::mt19937_64 generator(ss);
-	std::uniform_real_distribution<T> distributer(min, max);
-	return distributer(generator);
+	// Truely random number between a range
+	template<typename T>
+	T True_Rand_Range(T min, T max)
+	{
+		std::random_device rd;
+		std::seed_seq ss{ rd(), rd() };
+		static thread_local std::mt19937_64 generator(ss);
+		std::uniform_real_distribution<T> distributer(min, max);
+		return distributer(generator);
+	}
+
+	// Clamp a number between two other numbers
+	template<typename T>
+	void Clamp(T &value, T min, T max)
+	{
+		if (value < min) value = min;
+		if (value > max) value = max;
+	}
 }
 
 #endif // UTIL_H

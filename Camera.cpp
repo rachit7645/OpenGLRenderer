@@ -43,8 +43,7 @@ void Camera::CalculateZoom()
 void Camera::CalculatePitch()
 {
 	rotation.x -= g_MousePos.y * 0.1f;
-	if (rotation.x <= 5.0f) rotation.x = 5.0f;
-	if (rotation.x >= 85.0f) rotation.x = 85.0f;
+	Util::Clamp<f32>(rotation.x, 5.0f, 85.0f);
 }
 
 void Camera::CalculateAngleAroundPlayer()

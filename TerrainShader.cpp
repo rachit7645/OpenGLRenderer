@@ -31,42 +31,42 @@ void TerrainShader::GetUniformLocations()
 
 void TerrainShader::LoadTransformationMatrix(const glm::mat4 &matrix)
 {
-	LoadMatrix(uniforms["modelMatrix"], matrix);
+	LoadUniform(uniforms["modelMatrix"], matrix);
 }
 
 void TerrainShader::LoadProjectionMatrix(const glm::mat4 &matrix)
 {
-	LoadMatrix(uniforms["projectionMatrix"], matrix);
+	LoadUniform(uniforms["projectionMatrix"], matrix);
 }
 
 void TerrainShader::LoadViewMatrix(const Camera &camera)
 {
 	glm::mat4 viewMatrix = Maths::CreateViewMatrix(camera);
-	LoadMatrix(uniforms["viewMatrix"], viewMatrix);
+	LoadUniform(uniforms["viewMatrix"], viewMatrix);
 }
 
 void TerrainShader::LoadLight(const Light& light)
 {
-	LoadVector(uniforms["lightPosition"], light.position);
-	LoadVector(uniforms["lightColour"], light.colour);
+	LoadUniform(uniforms["lightPosition"], light.position);
+	LoadUniform(uniforms["lightColour"], light.colour);
 }
 
 void TerrainShader::LoadMaterials(const Renderer::Material& material)
 {
-	LoadFloat(uniforms["shineDamper"], material.shineDamper);
-	LoadFloat(uniforms["reflectivity"], material.reflectivity);
+	LoadUniform(uniforms["shineDamper"], material.shineDamper);
+	LoadUniform(uniforms["reflectivity"], material.reflectivity);
 }
 
 void TerrainShader::LoadSkyColour(const glm::vec4& skyColour)
 {
-	LoadVector(uniforms["skyColour"], skyColour);
+	LoadUniform(uniforms["skyColour"], skyColour);
 }
 
 void TerrainShader::ConnectTextureUnits()
 {
-	LoadInt(uniforms["backgroundTexture"], 0);
-	LoadInt(uniforms["rTexture"], 1);
-	LoadInt(uniforms["bTexture"], 2);
-	LoadInt(uniforms["gTexture"], 3);
-	LoadInt(uniforms["blendMap"], 4);
+	LoadUniform(uniforms["backgroundTexture"], 0);
+	LoadUniform(uniforms["rTexture"], 1);
+	LoadUniform(uniforms["bTexture"], 2);
+	LoadUniform(uniforms["gTexture"], 3);
+	LoadUniform(uniforms["blendMap"], 4);
 }
