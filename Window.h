@@ -42,7 +42,9 @@ namespace Window
 		u64 startTime = 0;
 		u64 frameStartTime = 0;
 		u64 endTime = 0;
+
 		f32 FPS = 0.0f;
+		f32 finalFPS = 0.0f;
 
 		// Debug variables
 		bool wireframe = false;

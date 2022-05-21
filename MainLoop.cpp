@@ -68,7 +68,10 @@ void SDLWindow::MainLoop()
 		ImGui_ImplSDL2_NewFrame(window);
 		ImGui::NewFrame();
 
-		ImGui::Begin("Flags");
+		ImGui::Begin("Engine");
+		ImGui::SetWindowSize({190, 120});
+		ImGui::Text("FPS: %.2f", finalFPS);
+		ImGui::Text("Frame Delta: %.5f", g_Delta);
 		ImGui::Checkbox("Vsync ", &vsync);
 		ImGui::Checkbox("Wireframe ", &wireframe);
 		ImGui::End();
@@ -106,8 +109,8 @@ void SDLWindow::CalculateFPS()
 
 	if (endTime >= startTime + 1000)
 	{
-		std::cerr << "\rFPS: " << FPS;
 		startTime = endTime;
+		finalFPS = FPS;
 		FPS = 0.0f;
 	}
 	FPS++;
