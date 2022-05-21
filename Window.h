@@ -4,6 +4,10 @@
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 
+#include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_sdl.h"
+#include "imgui/backends/imgui_impl_opengl3.h"
+
 #include "GLM.h"
 #include "Log.h"
 #include "Util.h"
@@ -13,7 +17,7 @@ namespace Window
 {
 	// Choosing a 16:9 Resolution
 	constexpr glm::vec2 DIMENSIONS = { 1024, 576 };
-	constexpr u32 SDL_WINDOW_FLAGS = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_INPUT_GRABBED;
+	constexpr u32 SDL_WINDOW_FLAGS = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
 	class SDLWindow
 	{
@@ -25,12 +29,12 @@ namespace Window
 
 		// Main loop for the engine
 		void MainLoop();
+	private:
+		void ImGuiUpdate();
 		// Function to process SDL Events
 		bool PollEvents();
 		// Calculates the FPS and the the frame delta
 		void CalculateFPS();
-
-	private:
 		// Set OpengGL stuff 
 		void InitGL();
 
@@ -41,11 +45,9 @@ namespace Window
 		f32 FPS = 0.0f;
 
 		// Debug variables
-		#ifdef _DEBUG
-			bool wireframe = false;
-			bool vsync = true;
-			bool fullscreen = false;
-		#endif
+		bool wireframe = false;
+		bool vsync = true;
+		bool isInputCaptured = true;
 
 		// SDL Resources
 		SDL_Window* window = nullptr;

@@ -13,8 +13,6 @@ using Terrains::TerrainTextures;
 
 void SDLWindow::MainLoop()
 {
-	InitGL();
-
 	// Put Models and Textures here 
 	std::shared_ptr<Texture> treeTexture = std::make_shared<Texture>("res/gfx/tree.png");
 	std::shared_ptr<Texture> grassTexture = std::make_shared<Texture>("res/gfx/grassTexture.png");
@@ -23,13 +21,13 @@ void SDLWindow::MainLoop()
 
 	TerrainTextures textures = TerrainTextures(
 		std::make_shared<Texture>("res/gfx/grass.png"),
-		std::make_shared<Texture>("res/gfx/mud.png"), 
+		std::make_shared<Texture>("res/gfx/mud.png"),
 		std::make_shared<Texture>("res/gfx/path.png"),
 		std::make_shared<Texture>("res/gfx/pinkFlowers.png"),
 		std::make_shared<Texture>("res/gfx/blendMap.png")
 	);
 
-	
+
 	std::shared_ptr<Model> treeModel = std::make_shared<Model>("res/gfx/tree.obj", treeTexture);
 	std::shared_ptr<Model> playerModel = std::make_shared<Model>("res/gfx/Link/Link.obj", defaultTexture);
 	std::shared_ptr<Model> grassModel = std::make_shared<Model>("res/gfx/grassModel.obj", grassTexture, Material(true, true));
@@ -66,6 +64,16 @@ void SDLWindow::MainLoop()
 
 	while (true)
 	{
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame(window);
+		ImGui::NewFrame();
+
+		ImGui::Begin("Flags");
+		ImGui::Checkbox("Vsync ", &vsync);
+		ImGui::Checkbox("Wireframe ", &wireframe);
+		ImGui::End();
+
+		ImGuiUpdate();
 		player.Move();
 		camera.Move();
 
@@ -81,9 +89,11 @@ void SDLWindow::MainLoop()
 		}
 		renderer.Render(light, camera);
 
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		SDL_GL_SwapWindow(window);
-		CalculateFPS();
 
+		CalculateFPS();
 		if (PollEvents()) break;
 	}
 }
@@ -103,11 +113,23 @@ void SDLWindow::CalculateFPS()
 	FPS++;
 }
 
-void SDLWindow::InitGL()
+void SDLWindow::ImGuiUpdate()
 {
-	glViewport(0, 0, DIMENSIONS.x, DIMENSIONS.y);
-	glEnable(GL_MULTISAMPLE);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+	if (wireframe)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
+	if (!vsync)
+	{
+		SDL_GL_SetSwapInterval(0);
+	}
+	else
+	{
+		SDL_GL_SetSwapInterval(1);
+	}
 }

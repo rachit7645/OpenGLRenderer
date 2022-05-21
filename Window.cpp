@@ -42,6 +42,7 @@ SDLWindow::SDLWindow()
 	SDL_RaiseWindow(window);
 	SDL_ShowCursor(SDL_FALSE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
+	g_Keys = SDL_GetKeyboardState(nullptr);
 
 	// Basically useless GLContext
 	// You don't get more than GL 1.1 for compatibilty reasons (Windows YOU SUCK)
@@ -55,16 +56,26 @@ SDLWindow::SDLWindow()
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
 	{
-		Logger::LogAndExit("glewInit() Failed\n", GLEW_INIT_FAILED);
+		Logger::LogAndExit("glewInit Failed\n", GLEW_INIT_FAILED);
 	}
 
-	g_Keys = SDL_GetKeyboardState(nullptr);
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	UNUSED ImGuiIO& io = ImGui::GetIO();
+	ImGui::StyleColorsDark();
+
+	ImGui_ImplSDL2_InitForOpenGL(window, glContext);
+	ImGui_ImplOpenGL3_Init("#version 330 core");
+
+	InitGL();
 }
 
 bool SDLWindow::PollEvents()
 {
 	while (SDL_PollEvent(&event))
 	{
+		ImGui_ImplSDL2_ProcessEvent(&event);
+
 		switch (event.type)
 		{
 		case SDL_QUIT:
@@ -73,50 +84,18 @@ bool SDLWindow::PollEvents()
 		case SDL_KEYDOWN:
 			switch (event.key.keysym.scancode)
 			{
-#ifdef _DEBUG
 			case SDL_SCANCODE_F1:
-				if (!wireframe)
+				if (isInputCaptured)
 				{
-					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-					wireframe = !wireframe;
+					SDL_SetRelativeMouseMode(SDL_FALSE);
+					isInputCaptured = !isInputCaptured;
 				}
 				else
 				{
-					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-					wireframe = !wireframe;
+					SDL_SetRelativeMouseMode(SDL_TRUE);
+					isInputCaptured = !isInputCaptured;
 				}
 				break;
-
-			case SDL_SCANCODE_F2:
-				if (vsync)
-				{
-					SDL_GL_SetSwapInterval(0);
-					vsync = !vsync;
-				}
-				else
-				{
-					SDL_GL_SetSwapInterval(1);
-					vsync = !vsync;
-				}
-				break;
-
-			case SDL_SCANCODE_F3:
-				if (!fullscreen)
-				{
-					SDL_SetWindowSize(window, 1366, 768);
-					SDL_SetWindowFullscreen(window, SDL_WINDOW_FLAGS | SDL_WINDOW_FULLSCREEN_DESKTOP);
-					glViewport(0, 0, 1366, 768);
-					fullscreen = !fullscreen;
-				}
-				else
-				{
-					SDL_SetWindowSize(window, DIMENSIONS.x, DIMENSIONS.y);
-					SDL_SetWindowFullscreen(window, SDL_WINDOW_FLAGS | 0);
-					glViewport(0, 0, DIMENSIONS.x, DIMENSIONS.y);
-					fullscreen = !fullscreen;
-				}
-				break;
-#endif
 			default:
 				break;
 			}
@@ -137,12 +116,27 @@ bool SDLWindow::PollEvents()
 			break;
 		}
 	}
+
 	return false;
+}
+
+void SDLWindow::InitGL()
+{
+	glViewport(0, 0, DIMENSIONS.x, DIMENSIONS.y);
+	glEnable(GL_MULTISAMPLE);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 }
 
 SDLWindow::~SDLWindow()
 {
 	Logger::Log("Quiting SDL2", Logger::INFO);
+	
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
+
 	SDL_GL_DeleteContext(glContext);
 	SDL_DestroyWindow(window);
 	SDL_Quit();

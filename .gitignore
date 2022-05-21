@@ -1,4 +1,7 @@
 /build/
 /.vscode/
+/imgui/.github
+/imgui/docs
+/imgui/misc
 /res/gfx/Link
 .editorconfig
