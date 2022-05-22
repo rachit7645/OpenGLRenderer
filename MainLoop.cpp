@@ -1,8 +1,12 @@
 #include "Window.h"
 #include "MainLoop.h"
 
-using namespace std::chrono;
 using namespace Window;
+
+using std::chrono::steady_clock;
+using std::chrono::duration_cast;
+using std::chrono::milliseconds;
+using std::chrono::seconds;
 
 using Renderer::Texture;
 using Renderer::Model;
@@ -71,9 +75,9 @@ void SDLWindow::MainLoop()
 
 		ImGui::Begin("Engine");
 		ImGui::Text("FPS: %.2f", finalFPS);
-		ImGui::Text("Frame time: %.2f", frameTime);
-		ImGui::Checkbox("Vsync ", &vsync);
-		ImGui::Checkbox("Wireframe ", &wireframe);
+		ImGui::Text("Frame time: %.2f ms", frameTime);
+		ImGui::Checkbox("Vsync", &vsync);
+		ImGui::Checkbox("Wireframe", &wireframe);
 		ImGui::End();
 
 		ImGuiUpdate();
