@@ -1,6 +1,7 @@
 #include "Window.h"
 #include "MainLoop.h"
 
+using namespace std::chrono;
 using namespace Window;
 
 using Renderer::Texture;
@@ -60,7 +61,7 @@ void SDLWindow::MainLoop()
 	Entities::Camera camera(player);
 	Renderer::MasterRenderer renderer;
 
-	startTime = frameStartTime = SDL_GetTicks64();
+	startTime = frameStartTime = steady_clock::now();
 
 	while (true)
 	{
@@ -69,9 +70,8 @@ void SDLWindow::MainLoop()
 		ImGui::NewFrame();
 
 		ImGui::Begin("Engine");
-		ImGui::SetWindowSize({190, 120});
 		ImGui::Text("FPS: %.2f", finalFPS);
-		ImGui::Text("Frame Delta: %.5f", g_Delta);
+		ImGui::Text("Frame time: %.2f", frameTime);
 		ImGui::Checkbox("Vsync ", &vsync);
 		ImGui::Checkbox("Wireframe ", &wireframe);
 		ImGui::End();
@@ -103,14 +103,15 @@ void SDLWindow::MainLoop()
 
 void SDLWindow::CalculateFPS()
 {
-	endTime = SDL_GetTicks64();
-	g_Delta = (endTime - frameStartTime) / 1000.0f;
+	endTime = steady_clock::now();
+	g_Delta = duration_cast<milliseconds>(endTime - frameStartTime).count() / 1000.0;
 	frameStartTime = endTime;
 
-	if (endTime >= startTime + 1000)
+	if (endTime - startTime >= seconds(1))
 	{
 		startTime = endTime;
 		finalFPS = FPS;
+		frameTime = 1000.0f / FPS;
 		FPS = 0.0f;
 	}
 	FPS++;

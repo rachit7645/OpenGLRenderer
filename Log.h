@@ -1,9 +1,10 @@
 #ifndef LOG_H
 #define LOG_H
 
+#include <iostream>
 #include <string>
 #include <cstdlib>
-#include <iostream>
+
 #include <SDL2/SDL.h>
 
 #include "Util.h"

@@ -12,7 +12,7 @@ namespace Renderer
 	public:
 		GLuint id;
 
-		VertexBuffer(u32 slot, u32 coordSize, const std::vector<f32>& data);
+		VertexBuffer(GLuint slot, GLuint coordSize, const std::vector<f32>& data);
 		VertexBuffer(const std::vector<u32>& data);
 		VertexBuffer();
 		~VertexBuffer();

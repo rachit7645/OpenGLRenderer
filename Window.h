@@ -1,6 +1,8 @@
 #ifndef SDL_WINDOW_H
 #define SDL_WINDOW_H
 
+#include <chrono>
+
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 
@@ -39,10 +41,8 @@ namespace Window
 		void InitGL();
 
 		// FPS Counting Variables
-		u64 startTime = 0;
-		u64 frameStartTime = 0;
-		u64 endTime = 0;
-
+		std::chrono::time_point<std::chrono::steady_clock> startTime, frameStartTime, endTime;
+		f32 frameTime = 0.0f;
 		f32 FPS = 0.0f;
 		f32 finalFPS = 0.0f;
 
