@@ -62,11 +62,8 @@ void ShaderProgram::LoadUniform(u32 location, const glm::mat4 &matrix)
 
 u32 ShaderProgram::LoadShader(GLenum type, const std::string &path)
 {
-#ifdef _DEBUG
-	std::ifstream fileStream("../" + path, std::ios::in);
-#else
-	std::ifstream fileStream(path, std::ios::in);
-#endif
+	std::ifstream fileStream(Files::GetResourceDirectory() + path, std::ios::in);
+
 	if (!fileStream.is_open())
 	{
 		Logger::LogAndExit("Unable to open shader" + path, SHADER_FILE_OPEN_FAILED);

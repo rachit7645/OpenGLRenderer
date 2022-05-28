@@ -4,12 +4,7 @@ using namespace Renderer;
 
 Model::Model(const std::string &path, std::shared_ptr<Texture> &texture, const Material &material) : material{ material }
 {
-	std::string newPath;
-#ifdef _DEBUG
-	newPath = "../" + path;
-#else
-	newPath = path;
-#endif
+	std::string newPath = Files::GetResourceDirectory() + path;
 
 	Assimp::Importer importer;
 	const aiScene *scene = importer.ReadFile(newPath.c_str(), ASSIMP_FLAGS);

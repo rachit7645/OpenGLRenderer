@@ -14,6 +14,7 @@
 #include "Log.h"
 #include "Util.h"
 #include "Camera.h"
+#include "Files.h"
 
 namespace Window
 {

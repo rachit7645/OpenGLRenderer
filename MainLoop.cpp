@@ -19,24 +19,24 @@ using Terrains::TerrainTextures;
 void SDLWindow::MainLoop()
 {
 	// Put Models and Textures here 
-	std::shared_ptr<Texture> treeTexture = std::make_shared<Texture>("res/gfx/tree.png");
-	std::shared_ptr<Texture> grassTexture = std::make_shared<Texture>("res/gfx/grassTexture.png");
-	std::shared_ptr<Texture> fernTexture = std::make_shared<Texture>("res/gfx/fern.png");
-	std::shared_ptr<Texture> defaultTexture = std::make_shared<Texture>("res/gfx/dragon.png");
+	std::shared_ptr<Texture> treeTexture = std::make_shared<Texture>("gfx/tree.png");
+	std::shared_ptr<Texture> grassTexture = std::make_shared<Texture>("gfx/grassTexture.png");
+	std::shared_ptr<Texture> fernTexture = std::make_shared<Texture>("gfx/fern.png");
+	std::shared_ptr<Texture> defaultTexture = std::make_shared<Texture>("gfx/dragon.png");
 
 	TerrainTextures textures = TerrainTextures(
-		std::make_shared<Texture>("res/gfx/grass.png"),
-		std::make_shared<Texture>("res/gfx/mud.png"),
-		std::make_shared<Texture>("res/gfx/path.png"),
-		std::make_shared<Texture>("res/gfx/pinkFlowers.png"),
-		std::make_shared<Texture>("res/gfx/blendMap.png")
+		std::make_shared<Texture>("gfx/grass.png"),
+		std::make_shared<Texture>("gfx/mud.png"),
+		std::make_shared<Texture>("gfx/path.png"),
+		std::make_shared<Texture>("gfx/pinkFlowers.png"),
+		std::make_shared<Texture>("gfx/blendMap.png")
 	);
 
 
-	std::shared_ptr<Model> treeModel = std::make_shared<Model>("res/gfx/tree.obj", treeTexture);
-	std::shared_ptr<Model> playerModel = std::make_shared<Model>("res/gfx/Link/Link.obj", defaultTexture);
-	std::shared_ptr<Model> grassModel = std::make_shared<Model>("res/gfx/grassModel.obj", grassTexture, Material(true, true));
-	std::shared_ptr<Model> fernModel = std::make_shared<Model>("res/gfx/fern.obj", fernTexture, Material(true, true));
+	std::shared_ptr<Model> treeModel = std::make_shared<Model>("gfx/tree.obj", treeTexture);
+	std::shared_ptr<Model> playerModel = std::make_shared<Model>("gfx/Link/Link.obj", defaultTexture);
+	std::shared_ptr<Model> grassModel = std::make_shared<Model>("gfx/grassModel.obj", grassTexture, Material(true, true));
+	std::shared_ptr<Model> fernModel = std::make_shared<Model>("gfx/fern.obj", fernTexture, Material(true, true));
 
 	// All objects go here
 	std::vector<Entity> entities;

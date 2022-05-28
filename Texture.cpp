@@ -8,17 +8,12 @@ using namespace Renderer;
 
 Texture::Texture(const std::string &path, PathType pathType)
 {
-	// FIXME: Paths from assimp can be weird
-#ifdef _DEBUG
 	std::string newPath = path;
 	if (pathType == PathType::RELATIVE)
 	{
-		newPath = "../" + path;
+		newPath = Files::GetResourceDirectory() + path;
 	}
 	u8 *data = stbi_load(newPath.c_str(), &width, &height, &channels, 4);
-#else
-	u8 *data = stbi_load(path.c_str(), &width, &height, &channels, 4);
-#endif
 
 	if (data == nullptr)
 	{

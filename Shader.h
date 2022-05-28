@@ -11,6 +11,7 @@
 #include "GLM.h"
 #include "Util.h"
 #include "Log.h"
+#include "Files.h"
 
 namespace Shader
 {

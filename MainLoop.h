@@ -16,5 +16,6 @@
 #include "Terrain.h"
 #include "Material.h"
 #include "Player.h"
+#include "Files.h"
 
 #endif

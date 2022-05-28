@@ -13,6 +13,7 @@
 #include "Log.h"
 #include "Util.h"
 #include "Mesh.h"
+#include "Files.h"
 
 namespace Renderer
 {

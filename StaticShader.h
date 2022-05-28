@@ -12,8 +12,8 @@
 
 namespace Shader
 {
-	constexpr auto VERTEX_SHADER_PATH = "res/shaders/vertexShader.glsl",
-		FRAGMENT_SHADER_PATH = "res/shaders/fragmentShader.glsl";
+	constexpr auto VERTEX_SHADER_PATH = "shaders/vertexShader.glsl",
+		FRAGMENT_SHADER_PATH = "shaders/fragmentShader.glsl";
 
 	class StaticShader : public ShaderProgram
 	{

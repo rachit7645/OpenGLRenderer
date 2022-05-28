@@ -13,8 +13,8 @@
 
 namespace Shader
 {
-	constexpr auto TERRAIN_VERTEX_SHADER_PATH = "res/shaders/terrainVertexShader.glsl",
-		TERRAIN_FRAGMENT_SHADER_PATH = "res/shaders/terrainFragmentShader.glsl";
+	constexpr auto TERRAIN_VERTEX_SHADER_PATH = "shaders/terrainVertexShader.glsl",
+		TERRAIN_FRAGMENT_SHADER_PATH = "shaders/terrainFragmentShader.glsl";
 
 	class TerrainShader : public ShaderProgram
 	{
