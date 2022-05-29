@@ -2,7 +2,7 @@
 
 using namespace Renderer;
 
-Model::Model(const std::string &path, std::shared_ptr<Texture> &texture, const Material &material) : material{ material }
+Model::Model(const std::string &path, std::shared_ptr<Texture> &texture, const Material &material) : material(material)
 {
 	std::string newPath = Files::GetResourceDirectory() + path;
 
@@ -14,8 +14,6 @@ Model::Model(const std::string &path, std::shared_ptr<Texture> &texture, const M
 		Logger::LogAndExit(static_cast<std::string>("Model Load Failed: ") +
 			static_cast<std::string>(importer.GetErrorString()), ASSIMP_LOAD_FAILED);
 	}
-
-	directory = newPath.substr(0, path.find_last_of('/'));
 
 	ProcessNode(scene->mRootNode, scene, texture);
 }
@@ -74,7 +72,10 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene, std::shared_ptr<Text
 	aiString path;
 	mat->GetTexture(aiTextureType_DIFFUSE, 0, &path);
 	if (path.length > 0)
-		texture = std::make_shared<Texture>(path.C_Str(), PathType::ABSOLUTE);
+	{
+		std::shared_ptr<Texture> matTexture = std::make_shared<Texture>(path.C_Str(), PathType::ABSOLUTE);
+		return Mesh(vertices, indices, txCoords, normals, matTexture);
+	}
 
 	return Mesh(vertices, indices, txCoords, normals, texture);
 }

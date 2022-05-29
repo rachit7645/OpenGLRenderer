@@ -4,7 +4,7 @@ using namespace Renderer;
 using Entities::Entity;
 using Shader::StaticShader;
 
-EntityRenderer::EntityRenderer(StaticShader &shaderRef) : shader{ shaderRef } {}
+EntityRenderer::EntityRenderer(StaticShader &shaderRef) : shader(shaderRef) {}
 
 void EntityRenderer::Render(const std::unordered_map<std::shared_ptr<Model>, std::vector<Entity>> &entities)
 {

@@ -4,7 +4,7 @@ using namespace Entities;
 using Renderer::Model;
 
 Player::Player(std::shared_ptr<Model> &model, const glm::vec3 &position, const glm::vec3 &rotation, f32 scale)
-	: Entity{ model, position, rotation, scale } {}
+	: Entity(model, position, rotation, scale) {}
 
 void Player::Move()
 {

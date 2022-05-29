@@ -24,7 +24,6 @@ namespace Renderer
 	public:
 		Model(const std::string &path, std::shared_ptr<Texture> &texture, const Material &material = Material());
 
-		std::string directory;
 		std::vector<Mesh> meshes;
 		Material material;
 	private:

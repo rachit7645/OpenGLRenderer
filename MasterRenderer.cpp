@@ -7,7 +7,7 @@ using Entities::Light;
 using Entities::Camera;
 using Terrains::Terrain;
 
-MasterRenderer::MasterRenderer() : renderer{ shader }, terrainRenderer{ terrainShader }
+MasterRenderer::MasterRenderer() : renderer(shader), terrainRenderer(terrainShader)
 {
 	glm::mat4 projection = glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
 	shader.Start();

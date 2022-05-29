@@ -7,8 +7,8 @@ using Renderer::Texture;
 using Renderer::Material;
 using Util::Image2D;
 
-Terrain::Terrain(const std::string& hMapPath, const glm::vec2 &position, const TerrainTextures &textures, const Material &material)
-	: position{ position.x * SIZE, position.y * SIZE }, textures{ textures }, material{ material }
+Terrain::Terrain(const std::string &hMapPath, const glm::vec2 &position, const TerrainTextures &textures, const Material &material)
+	: position(position.x * SIZE, position.y * SIZE), textures(textures), material(material)
 {
 	Image2D hMap(hMapPath);
 
@@ -60,7 +60,7 @@ Terrain::Terrain(const std::string& hMapPath, const glm::vec2 &position, const T
 	vertexCount = static_cast<s32>(indices.size());
 }
 
-f32 Terrain::GetHeight(Image2D& hMap, int x, int y)
+f32 Terrain::GetHeight(Image2D &hMap, int x, int y)
 {
 	f32 height = hMap.GetRGB(x, y);
 	height /= MAX_PIXEL_COLOR;
