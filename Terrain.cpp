@@ -5,22 +5,28 @@ using namespace Terrains;
 using Renderer::VertexArray;
 using Renderer::Texture;
 using Renderer::Material;
+using Util::Image2D;
 
-Terrain::Terrain(const glm::vec2 &gridPosition, const TerrainTextures &textures, const Material &material)
-	: position{ gridPosition.x * SIZE, gridPosition.y * SIZE }, textures{ textures }, material{ material }
+Terrain::Terrain(const std::string& hMapPath, const glm::vec2 &position, const TerrainTextures &textures, const Material &material)
+	: position{ position.x * SIZE, position.y * SIZE }, textures{ textures }, material{ material }
 {
+	Image2D hMap(hMapPath);
+
+	auto VERTEX_COUNT = hMap.height;
+	auto COUNT = VERTEX_COUNT * VERTEX_COUNT;
+
 	std::vector<f32> vertices(COUNT * 3);
 	std::vector<f32> normals(COUNT * 3);
 	std::vector<f32> txCoords(COUNT * 2);
 	std::vector<u32> indices(6 * (VERTEX_COUNT - 1) * (VERTEX_COUNT - 1));
 
 	size_t vertexPointer = 0;
-	for (size_t i = 0; i < VERTEX_COUNT; i++)
+	for (ssize_t i = 0; i < VERTEX_COUNT; ++i)
 	{
-		for (size_t j = 0; j < VERTEX_COUNT; j++)
+		for (ssize_t j = 0; j < VERTEX_COUNT; ++j)
 		{
 			vertices[vertexPointer * 3] = static_cast<f32>(j) / static_cast<f32>(VERTEX_COUNT - 1) * SIZE;
-			vertices[vertexPointer * 3 + 1] = 0;
+			vertices[vertexPointer * 3 + 1] = GetHeight(hMap, static_cast<int>(j), static_cast<int>(i));
 			vertices[vertexPointer * 3 + 2] = static_cast<f32>(i) / static_cast<f32>(VERTEX_COUNT - 1) * SIZE;
 			normals[vertexPointer * 3] = 0;
 			normals[vertexPointer * 3 + 1] = 1;
@@ -32,9 +38,9 @@ Terrain::Terrain(const glm::vec2 &gridPosition, const TerrainTextures &textures,
 	}
 
 	vertexPointer = 0;
-	for (size_t i = 0; i < VERTEX_COUNT - 1; ++i)
+	for (ssize_t i = 0; i < VERTEX_COUNT - 1; ++i)
 	{
-		for (size_t j = 0; j < VERTEX_COUNT - 1; ++j)
+		for (ssize_t j = 0; j < VERTEX_COUNT - 1; ++j)
 		{
 			auto topLeft = (i * VERTEX_COUNT) + j;
 			auto topRight = topLeft + 1;
@@ -52,4 +58,13 @@ Terrain::Terrain(const glm::vec2 &gridPosition, const TerrainTextures &textures,
 
 	vao = std::make_shared<VertexArray>(vertices, indices, txCoords, normals);
 	vertexCount = static_cast<s32>(indices.size());
+}
+
+f32 Terrain::GetHeight(Image2D& hMap, int x, int y)
+{
+	f32 height = hMap.GetRGB(x, y);
+	height /= MAX_PIXEL_COLOR;
+	height = height * 2.0f - 1.0f;
+	height *= MAX_HEIGHT;
+	return height;
 }

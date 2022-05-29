@@ -55,10 +55,10 @@ void SDLWindow::MainLoop()
 
 	std::vector<Terrain> terrains;
 	{
-		terrains.push_back(Terrain(glm::vec2(0.0f, -1.0f), textures));
-		terrains.push_back(Terrain(glm::vec2(-1.0f, -1.0f), textures));
-		terrains.push_back(Terrain(glm::vec2(0.0f, 0.0f), textures));
-		terrains.push_back(Terrain(glm::vec2(-1.0f, 0.0f), textures));
+		terrains.push_back(Terrain("gfx/heightMap.png", glm::vec2(0.0f, -1.0f), textures));
+		terrains.push_back(Terrain("gfx/heightMap.png", glm::vec2(-1.0f, -1.0f), textures));
+		terrains.push_back(Terrain("gfx/heightMap.png", glm::vec2(0.0f, 0.0f), textures));
+		terrains.push_back(Terrain("gfx/heightMap.png", glm::vec2(-1.0f, 0.0f), textures));
 	}
 
 	Entities::Light light(glm::vec3(20000.0f, 20000.0f, 2000.0f), glm::vec3(1.0f, 1.0f, 1.0f));
