@@ -8,7 +8,7 @@ using Renderer::Material;
 using Util::Image2D;
 
 Terrain::Terrain(const std::string &hMapPath, const glm::vec2 &position, const TerrainTextures &textures, const Material &material)
-	: position(position.x * SIZE, position.y * SIZE), textures(textures), material(material)
+	: position(position.x *SIZE, position.y *SIZE), textures(textures), material(material)
 {
 	Image2D hMap(hMapPath);
 
@@ -26,13 +26,17 @@ Terrain::Terrain(const std::string &hMapPath, const glm::vec2 &position, const T
 		for (ssize_t j = 0; j < VERTEX_COUNT; ++j)
 		{
 			vertices[vertexPointer * 3] = static_cast<f32>(j) / static_cast<f32>(VERTEX_COUNT - 1) * SIZE;
-			vertices[vertexPointer * 3 + 1] = GetHeight(hMap, static_cast<int>(j), static_cast<int>(i));
+			vertices[vertexPointer * 3 + 1] = CalculateHeight(hMap, static_cast<int>(j), static_cast<int>(i));
 			vertices[vertexPointer * 3 + 2] = static_cast<f32>(i) / static_cast<f32>(VERTEX_COUNT - 1) * SIZE;
-			normals[vertexPointer * 3] = 0;
-			normals[vertexPointer * 3 + 1] = 1;
-			normals[vertexPointer * 3 + 2] = 0;
+
+			glm::vec3 normal = CalculateNormal(hMap, j, i);
+			normals[vertexPointer * 3] = normal.x;
+			normals[vertexPointer * 3 + 1] = normal.y;
+			normals[vertexPointer * 3 + 2] = normal.z;
+
 			txCoords[vertexPointer * 2] = static_cast<f32>(j) / static_cast<f32>(VERTEX_COUNT - 1);
 			txCoords[vertexPointer * 2 + 1] = static_cast<f32>(i) / static_cast<f32>(VERTEX_COUNT - 1);
+
 			vertexPointer++;
 		}
 	}
@@ -60,11 +64,24 @@ Terrain::Terrain(const std::string &hMapPath, const glm::vec2 &position, const T
 	vertexCount = static_cast<s32>(indices.size());
 }
 
-f32 Terrain::GetHeight(Image2D &hMap, int x, int y)
+f32 Terrain::CalculateHeight(Image2D &hMap, int x, int z)
 {
-	f32 height = hMap.GetRGB(x, y);
+	f32 height = hMap.GetRGB(x, z);
 	height /= MAX_PIXEL_COLOR;
 	height = height * 2.0f - 1.0f;
 	height *= MAX_HEIGHT;
 	return height;
+}
+
+glm::vec3 Terrain::CalculateNormal(Image2D &hMap, int x, int z)
+{
+	auto size = hMap.height;
+	f32 heightL = CalculateHeight(hMap, (x - 1 + size) % size, z);
+	f32 heightR = CalculateHeight(hMap, (x + 1 + size) % size, z);
+	f32 heightD = CalculateHeight(hMap, x, (z - 1 + size) % size);
+	f32 heightU = CalculateHeight(hMap, x, (z + 1 + size) % size);
+
+	glm::vec3 normal(heightL - heightR, 1.5f, heightD - heightU);
+	glm::normalize(normal);
+	return normal;
 }

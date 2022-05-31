@@ -36,6 +36,8 @@ void CalculateLighting(vec4 worldPosition)
 {
 	surfaceNormal = (modelMatrix * vec4(normal, 0.0f)).xyz;
 	toLightVector = lightPosition - worldPosition.xyz;
+	// FIXME: Very expensive calculation ver vertex
+	// Maybe upload inverse viewMatrix from cpu instead?
 	toCameraVector = (inverse(viewMatrix) * vec4(0.0f, 0.0f, 0.0f, 1.0f)).xyz - worldPosition.xyz;
 }
 

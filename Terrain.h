@@ -14,8 +14,8 @@
 
 namespace Terrains
 {
-	constexpr auto SIZE = 300;
-	constexpr f32 MAX_HEIGHT = 30.0f;
+	constexpr auto SIZE = 500;
+	constexpr f32 MAX_HEIGHT = 37.0f;
 	constexpr u32 MAX_PIXEL_COLOR = 0 << 24 | 255 << 16 | 255 << 8 | 255;
 
 	class Terrain
@@ -30,7 +30,8 @@ namespace Terrains
 		std::shared_ptr<Renderer::VertexArray> vao;
 		s32 vertexCount;
 	private:
-		f32 GetHeight(Util::Image2D& hMap, int x, int y);
+		f32 CalculateHeight(Util::Image2D& hMap, int x, int z);
+		glm::vec3 CalculateNormal(Util::Image2D& hMap, int x, int z);
 	};
 }
 
