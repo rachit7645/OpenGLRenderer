@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 
 #include "GLM.h"
+#include "Imgui.h"
 #include "Util.h"
 #include "Player.h"
 
@@ -29,6 +30,7 @@ namespace Entities
 		glm::vec3 rotation;
 
 		void Move();
+		void ImGuiDisplay();
 	private:
 		f32 distanceFromPlayer = 35.0f;
 		f32 angleAroundPlayer = 0.0f;

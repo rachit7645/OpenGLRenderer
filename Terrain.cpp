@@ -1,4 +1,5 @@
 #include "Terrain.h"
+#include "Maths.h"
 
 using namespace Terrains;
 
@@ -8,7 +9,7 @@ using Renderer::Material;
 using Util::Image2D;
 
 Terrain::Terrain(const std::string &hMapPath, const glm::vec2 &position, const TerrainTextures &textures, const Material &material)
-	: position(position.x *SIZE, position.y *SIZE), textures(textures), material(material)
+	: position(position.x *SIZE, position.y *SIZE), gridPosition(position), textures(textures), material(material)
 {
 	Image2D hMap(hMapPath);
 
@@ -19,6 +20,11 @@ Terrain::Terrain(const std::string &hMapPath, const glm::vec2 &position, const T
 	std::vector<f32> normals(COUNT * 3);
 	std::vector<f32> txCoords(COUNT * 2);
 	std::vector<u32> indices(6 * (VERTEX_COUNT - 1) * (VERTEX_COUNT - 1));
+	heights = Array2D<f32>(VERTEX_COUNT);
+	for (auto &row : heights)
+	{
+		row = std::vector<f32>(VERTEX_COUNT);
+	}
 
 	size_t vertexPointer = 0;
 	for (ssize_t i = 0; i < VERTEX_COUNT; ++i)
@@ -26,7 +32,9 @@ Terrain::Terrain(const std::string &hMapPath, const glm::vec2 &position, const T
 		for (ssize_t j = 0; j < VERTEX_COUNT; ++j)
 		{
 			vertices[vertexPointer * 3] = static_cast<f32>(j) / static_cast<f32>(VERTEX_COUNT - 1) * SIZE;
-			vertices[vertexPointer * 3 + 1] = CalculateHeight(hMap, static_cast<int>(j), static_cast<int>(i));
+			f32 height = CalculateHeight(hMap, static_cast<int>(j), static_cast<int>(i));
+			heights[j][i] = height;
+			vertices[vertexPointer * 3 + 1] = height;
 			vertices[vertexPointer * 3 + 2] = static_cast<f32>(i) / static_cast<f32>(VERTEX_COUNT - 1) * SIZE;
 
 			glm::vec3 normal = CalculateNormal(hMap, j, i);
@@ -81,7 +89,58 @@ glm::vec3 Terrain::CalculateNormal(Image2D &hMap, int x, int z)
 	f32 heightD = CalculateHeight(hMap, x, (z - 1 + size) % size);
 	f32 heightU = CalculateHeight(hMap, x, (z + 1 + size) % size);
 
-	glm::vec3 normal(heightL - heightR, 1.5f, heightD - heightU);
+	glm::vec3 normal(heightL - heightR, 2.0f, heightD - heightU);
 	glm::normalize(normal);
 	return normal;
+}
+
+f32 Terrain::GetHeight(glm::vec2 worldPos) const
+{
+	glm::vec2 terrainPos = worldPos - position;
+	f32 gridSize = SIZE / static_cast<f32>(heights.size() - 1);
+	glm::vec2 gridPos = glm::floor(terrainPos / gridSize);
+
+	if (gridPos.x >= heights.size() - 1 || gridPos.y >= heights.size() - 1 || gridPos.x < 0 || gridPos.y < 0)
+	{
+		return 0.0f;
+	}
+
+	glm::vec2 coords(std::fmod(terrainPos.x, gridSize) / gridSize, std::fmod(terrainPos.y, gridSize) / gridSize);
+	f32 height;
+
+	if (coords.x <= (1 - coords.y))
+	{
+		height = Maths::BarryCentric(
+			glm::vec3(0, heights[gridPos.x][gridPos.y], 0),
+			glm::vec3(1, heights[gridPos.x + 1][gridPos.y], 0),
+			glm::vec3(0, heights[gridPos.x][gridPos.y + 1], 1),
+			coords
+		);
+	}
+	else
+	{
+		height = Maths::BarryCentric(
+			glm::vec3(1, heights[gridPos.x + 1][gridPos.y], 0),
+			glm::vec3(1, heights[gridPos.x + 1][gridPos.y + 1], 1),
+			glm::vec3(0, heights[gridPos.x][gridPos.y + 1], 1),
+			coords
+		);
+	}
+
+	return height;
+}
+
+const Terrain *Terrains::GetCurrent(std::vector<Terrain> terrains, glm::vec2 position)
+{
+	glm::vec2 gridPos(glm::floor(position.x / SIZE), glm::floor(position.y / SIZE));
+
+	for (const auto& terrain : terrains)
+	{
+		if (terrain.gridPosition == gridPos)
+		{
+			return &terrain;
+		}
+	}
+	
+	return nullptr;
 }

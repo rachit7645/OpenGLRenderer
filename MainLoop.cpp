@@ -51,7 +51,7 @@ void SDLWindow::MainLoop()
 				0, Util::Rand_Range<f32>(0.0f, 1.0f) * -300), glm::vec3(0.0f, 0.0f, 0.0f), 0.6f));
 		}
 	}
-	Player player(playerModel, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 180.0f, 0.0f), 1.0f);
+	Player player(playerModel, glm::vec3(100.0f, 0.0f, 0.0f), glm::vec3(0.0f, 180.0f, 0.0f), 1.0f);
 
 	std::vector<Terrain> terrains;
 	{
@@ -81,7 +81,7 @@ void SDLWindow::MainLoop()
 		ImGui::End();
 
 		ImGuiUpdate();
-		player.Move();
+		player.Move(Terrains::GetCurrent(terrains, glm::vec2(player.position.x, player.position.z)));
 		camera.Move();
 
 		for (const auto &entity : entities)
