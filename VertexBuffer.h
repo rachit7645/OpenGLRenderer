@@ -12,9 +12,13 @@ namespace Renderer
 	public:
 		GLuint id;
 
+		// Standard vbo
 		VertexBuffer(GLuint slot, GLuint coordSize, const std::vector<f32>& data);
+		// Element buffer object
 		VertexBuffer(const std::vector<u32>& data);
+		// Default constructor
 		VertexBuffer();
+		// Destructor
 		~VertexBuffer();
 	};
 }
