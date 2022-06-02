@@ -30,6 +30,8 @@ glm::mat4 Maths::CreateViewMatrix(const Camera &camera)
 	return matrix;
 }
 
+// No idea how this works
+// But it does work
 f32 Maths::BarryCentric(const glm::vec3 &vec1, const glm::vec3 &vec2, const glm::vec3 &vec3, const glm::vec2 &position)
 {
 	f32 det = (vec2.z - vec3.z) * (vec1.x - vec3.x) + (vec3.x - vec2.x) * (vec1.z - vec3.z);

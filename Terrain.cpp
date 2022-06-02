@@ -7,6 +7,7 @@ using Renderer::VertexArray;
 using Renderer::Texture;
 using Renderer::Material;
 using Util::Image2D;
+using Entities::Entity;
 
 Terrain::Terrain(const std::string &hMapPath, const glm::vec2 &position, const TerrainTextures &textures, const Material &material)
 	: position(position.x *SIZE, position.y *SIZE), gridPosition(position), textures(textures), material(material)
@@ -104,10 +105,9 @@ f32 Terrain::GetHeight(glm::vec2 worldPos) const
 	{
 		return 0.0f;
 	}
-
 	glm::vec2 coords(std::fmod(terrainPos.x, gridSize) / gridSize, std::fmod(terrainPos.y, gridSize) / gridSize);
-	f32 height;
 
+	f32 height;
 	if (coords.x <= (1 - coords.y))
 	{
 		height = Maths::BarryCentric(
@@ -130,7 +130,7 @@ f32 Terrain::GetHeight(glm::vec2 worldPos) const
 	return height;
 }
 
-const Terrain *Terrains::GetCurrent(std::vector<Terrain> terrains, glm::vec2 position)
+const Terrain *Terrains::GetCurrent(const std::vector<Terrain>& terrains, const glm::vec2& position)
 {
 	glm::vec2 gridPos(glm::floor(position.x / SIZE), glm::floor(position.y / SIZE));
 
@@ -141,6 +141,11 @@ const Terrain *Terrains::GetCurrent(std::vector<Terrain> terrains, glm::vec2 pos
 			return &terrain;
 		}
 	}
-	
+
 	return nullptr;
+}
+
+const Terrain* Terrains::GetCurrent(const std::vector<Terrain>& terrains, const Entity& entity)
+{
+	return GetCurrent(terrains, glm::vec2(entity.position.x, entity.position.z));
 }

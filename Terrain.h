@@ -11,6 +11,7 @@
 #include "Material.h"
 #include "TerrainTextures.h"
 #include "Image.h"
+#include "Entity.h"
 
 namespace Terrains
 {
@@ -42,7 +43,8 @@ namespace Terrains
 		glm::vec3 CalculateNormal(Util::Image2D& hMap, int x, int z);
 	};
 
-	const Terrain* GetCurrent(std::vector<Terrain> terrains, glm::vec2 position);
+	const Terrain* GetCurrent(const std::vector<Terrain>& terrains, const glm::vec2& position);
+	const Terrain* GetCurrent(const std::vector<Terrain>& terrains, const Entities::Entity& entity);
 }
 
 #endif // TERRAIN_H
