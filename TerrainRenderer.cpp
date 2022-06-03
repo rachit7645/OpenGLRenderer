@@ -6,7 +6,7 @@ using Shader::TerrainShader;
 using Terrains::TerrainTextures;
 using Terrains::Terrain;
 
-TerrainRenderer::TerrainRenderer(TerrainShader& shaderRef) : shader { shaderRef }
+TerrainRenderer::TerrainRenderer(TerrainShader& shaderRef) : shader{ shaderRef }
 {
 	shader.Start();
 	shader.ConnectTextureUnits();

@@ -13,8 +13,8 @@ namespace Renderer
 	class Mesh
 	{
 	public:
-		Mesh(const std::vector<f32> &vertices, const std::vector<u32> &indices, const std::vector<f32> &txCoords,
-			const std::vector<f32> &normals, std::shared_ptr<Texture>& texture);
+		Mesh(const std::vector<f32>& vertices, const std::vector<u32>& indices, const std::vector<f32>& txCoords,
+			const std::vector<f32>& normals, std::shared_ptr<Texture>& texture);
 
 		std::shared_ptr<VertexArray> vao;
 		std::shared_ptr<Texture> texture;

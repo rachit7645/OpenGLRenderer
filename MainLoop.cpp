@@ -97,13 +97,13 @@ void SDLWindow::MainLoop()
 		player.Move(Terrains::GetCurrent(terrains, player));
 		camera.Move();
 
-		for (const auto &entity : entities)
+		for (const auto& entity : entities)
 		{
 			renderer.ProcessEntity(entity);
 		}
 		renderer.ProcessEntity(player);
 
-		for (const auto &terrain : terrains)
+		for (const auto& terrain : terrains)
 		{
 			renderer.ProcessTerrain(terrain);
 		}

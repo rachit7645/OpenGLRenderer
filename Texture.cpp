@@ -6,14 +6,14 @@
 
 using namespace Renderer;
 
-Texture::Texture(const std::string &path, PathType pathType)
+Texture::Texture(const std::string& path, PathType pathType)
 {
 	std::string newPath = path;
 	if (pathType == PathType::RELATIVE)
 	{
 		newPath = Files::GetResourceDirectory() + path;
 	}
-	u8 *data = stbi_load(newPath.c_str(), &width, &height, &channels, 4);
+	u8* data = stbi_load(newPath.c_str(), &width, &height, &channels, 4);
 
 	if (data == nullptr)
 	{
@@ -27,12 +27,11 @@ Texture::Texture(const std::string &path, PathType pathType)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, LOD_BIAS);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, TEXTURE_LOD_BIAS);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
-
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	stbi_image_free(data);

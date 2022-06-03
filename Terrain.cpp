@@ -9,8 +9,8 @@ using Renderer::Material;
 using Util::Image2D;
 using Entities::Entity;
 
-Terrain::Terrain(const std::string &hMapPath, const glm::vec2 &position, const TerrainTextures &textures, const Material &material)
-	: position(position.x *SIZE, position.y *SIZE), gridPosition(position), textures(textures), material(material)
+Terrain::Terrain(const std::string& hMapPath, const glm::vec2& position, const TerrainTextures& textures, const Material& material)
+	: position(position.x* SIZE, position.y* SIZE), gridPosition(position), textures(textures), material(material)
 {
 	Image2D hMap(hMapPath);
 
@@ -22,7 +22,7 @@ Terrain::Terrain(const std::string &hMapPath, const glm::vec2 &position, const T
 	std::vector<f32> txCoords(COUNT * 2);
 	std::vector<u32> indices(6 * (VERTEX_COUNT - 1) * (VERTEX_COUNT - 1));
 	heights = Array2D<f32>(VERTEX_COUNT);
-	for (auto &row : heights)
+	for (auto& row : heights)
 	{
 		row = std::vector<f32>(VERTEX_COUNT);
 	}
@@ -73,7 +73,7 @@ Terrain::Terrain(const std::string &hMapPath, const glm::vec2 &position, const T
 	vertexCount = static_cast<s32>(indices.size());
 }
 
-f32 Terrain::CalculateHeight(Image2D &hMap, int x, int z)
+f32 Terrain::CalculateHeight(Image2D& hMap, int x, int z)
 {
 	f32 height = hMap.GetRGB(x, z);
 	height /= MAX_PIXEL_COLOR;
@@ -82,7 +82,7 @@ f32 Terrain::CalculateHeight(Image2D &hMap, int x, int z)
 	return height;
 }
 
-glm::vec3 Terrain::CalculateNormal(Image2D &hMap, int x, int z)
+glm::vec3 Terrain::CalculateNormal(Image2D& hMap, int x, int z)
 {
 	auto size = hMap.height;
 	f32 heightL = CalculateHeight(hMap, (x - 1 + size) % size, z);
@@ -130,7 +130,7 @@ f32 Terrain::GetHeight(glm::vec2 worldPos) const
 	return height;
 }
 
-const Terrain *Terrains::GetCurrent(const std::vector<Terrain>& terrains, const glm::vec2& position)
+const Terrain* Terrains::GetCurrent(const std::vector<Terrain>& terrains, const glm::vec2& position)
 {
 	glm::vec2 gridPos(glm::floor(position.x / SIZE), glm::floor(position.y / SIZE));
 

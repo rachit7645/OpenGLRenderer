@@ -24,18 +24,18 @@ void MasterRenderer::Prepare()
 	glClear(GL_CLEAR_FLAGS);
 }
 
-void MasterRenderer::Render(const Light &light, const Camera &camera)
+void MasterRenderer::Render(const Light& light, const Camera& camera)
 {
 	Prepare();
-	
+
 	RenderEntities(light, camera);
 	RenderTerrains(light, camera);
-	
+
 	entities.clear();
 	terrains.clear();
 }
 
-void MasterRenderer::RenderEntities(const Light &light, const Camera &camera)
+void MasterRenderer::RenderEntities(const Light& light, const Camera& camera)
 {
 	shader.Start();
 	shader.LoadViewMatrix(camera);
@@ -45,7 +45,7 @@ void MasterRenderer::RenderEntities(const Light &light, const Camera &camera)
 	shader.Stop();
 }
 
-void MasterRenderer::RenderTerrains(const Light &light, const Camera &camera)
+void MasterRenderer::RenderTerrains(const Light& light, const Camera& camera)
 {
 	terrainShader.Start();
 	terrainShader.LoadViewMatrix(camera);
@@ -55,7 +55,7 @@ void MasterRenderer::RenderTerrains(const Light &light, const Camera &camera)
 	terrainShader.Stop();
 }
 
-void MasterRenderer::ProcessEntity(const Entity &entity)
+void MasterRenderer::ProcessEntity(const Entity& entity)
 {
 	auto iter = entities.find(entity.model);
 	if (iter != entities.end())
@@ -68,7 +68,7 @@ void MasterRenderer::ProcessEntity(const Entity &entity)
 	}
 }
 
-void MasterRenderer::ProcessTerrain(const Terrain &terrain)
+void MasterRenderer::ProcessTerrain(const Terrain& terrain)
 {
 	terrains.push_back(terrain);
 }

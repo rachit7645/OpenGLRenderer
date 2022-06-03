@@ -26,7 +26,6 @@ namespace Window
 		SDLWindow();
 		// Free SDL memory resources
 		~SDLWindow();
-
 		// Main loop for the engine
 		void MainLoop();
 	private:

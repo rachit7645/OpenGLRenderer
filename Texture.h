@@ -10,7 +10,7 @@
 
 namespace Renderer
 {
-	constexpr auto LOD_BIAS = -0.5f;
+	constexpr auto TEXTURE_LOD_BIAS = -0.5f;
 
 	enum PathType
 	{
@@ -20,9 +20,9 @@ namespace Renderer
 
 	class Texture
 	{
-	public:	
+	public:
 		// Loads a texture into memory, then an OpenGL object
-		Texture(const std::string &path, PathType pathType = PathType::RELATIVE);
+		Texture(const std::string& path, PathType pathType = PathType::RELATIVE);
 		~Texture();
 
 		GLuint id;

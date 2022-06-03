@@ -2,7 +2,7 @@
 
 using namespace Entities;
 
-Camera::Camera(Player &playerRef) : player(playerRef) {}
+Camera::Camera(Player& playerRef) : player(playerRef) {}
 
 void Camera::Move()
 {

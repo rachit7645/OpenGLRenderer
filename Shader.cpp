@@ -2,7 +2,7 @@
 
 using namespace Shader;
 
-ShaderProgram::ShaderProgram(const std::string &vertexPath, const std::string &fragmentPath)
+ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath)
 {
 	programID = glCreateProgram();
 	u32 vertexShaderID = LoadShader(GL_VERTEX_SHADER, vertexPath);
@@ -20,12 +20,12 @@ ShaderProgram::ShaderProgram(const std::string &vertexPath, const std::string &f
 		programID, GL_VALIDATE_STATUS, SHADER_VALIDATION_FAILED);
 }
 
-void ShaderProgram::BindAttribute(u32 attribute, const char *name)
+void ShaderProgram::BindAttribute(u32 attribute, const char* name)
 {
 	glBindAttribLocation(programID, attribute, name);
 }
 
-u32 ShaderProgram::GetUniformLocation(const char *name)
+u32 ShaderProgram::GetUniformLocation(const char* name)
 {
 	return glGetUniformLocation(programID, name);
 }
@@ -45,22 +45,22 @@ void ShaderProgram::LoadUniform(u32 location, bool value)
 	glUniform1i(location, value ? 1 : 0);
 }
 
-void ShaderProgram::LoadUniform(u32 location, const glm::vec3 &vector)
+void ShaderProgram::LoadUniform(u32 location, const glm::vec3& vector)
 {
 	glUniform3fv(location, 1, &vector[0]);
 }
 
-void ShaderProgram::LoadUniform(u32 location, const glm::vec4 &vector)
+void ShaderProgram::LoadUniform(u32 location, const glm::vec4& vector)
 {
 	glUniform4fv(location, 1, &vector[0]);
 }
 
-void ShaderProgram::LoadUniform(u32 location, const glm::mat4 &matrix)
+void ShaderProgram::LoadUniform(u32 location, const glm::mat4& matrix)
 {
 	glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
 }
 
-u32 ShaderProgram::LoadShader(GLenum type, const std::string &path)
+u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
 {
 	std::ifstream fileStream(Files::GetResourceDirectory() + path, std::ios::in);
 
@@ -71,7 +71,7 @@ u32 ShaderProgram::LoadShader(GLenum type, const std::string &path)
 	std::string content = std::string(std::istreambuf_iterator<char>(fileStream), std::istreambuf_iterator<char>());
 
 	u32 shaderID = glCreateShader(type);
-	const GLchar *cstr = content.c_str();
+	const GLchar* cstr = content.c_str();
 	glShaderSource(shaderID, 1, &cstr, nullptr);
 	glCompileShader(shaderID);
 	CheckShader("Shader Compilation Failed: " + path, shaderID, GL_COMPILE_STATUS, SHADER_COMPILATION_FAILED);
@@ -79,7 +79,7 @@ u32 ShaderProgram::LoadShader(GLenum type, const std::string &path)
 	return shaderID;
 }
 
-void ShaderProgram::CheckShader(const std::string &message, u32 shaderID, GLenum type, Error error)
+void ShaderProgram::CheckShader(const std::string& message, u32 shaderID, GLenum type, Error error)
 {
 	GLint status;
 	glGetShaderiv(shaderID, type, &status);
@@ -91,7 +91,7 @@ void ShaderProgram::CheckShader(const std::string &message, u32 shaderID, GLenum
 	}
 }
 
-void ShaderProgram::CheckProgram(const std::string &message, u32 programID, GLenum type, Error error)
+void ShaderProgram::CheckProgram(const std::string& message, u32 programID, GLenum type, Error error)
 {
 	GLint status;
 	glGetProgramiv(programID, type, &status);

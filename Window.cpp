@@ -133,7 +133,7 @@ void SDLWindow::InitGL()
 SDLWindow::~SDLWindow()
 {
 	Logger::Log("Quiting SDL2", Logger::INFO);
-	
+
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();

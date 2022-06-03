@@ -2,12 +2,12 @@
 
 using namespace Renderer;
 
-Model::Model(const std::string &path, std::shared_ptr<Texture> &texture, const Material &material) : material(material)
+Model::Model(const std::string& path, std::shared_ptr<Texture>& texture, const Material& material) : material(material)
 {
 	std::string newPath = Files::GetResourceDirectory() + path;
 
 	Assimp::Importer importer;
-	const aiScene *scene = importer.ReadFile(newPath.c_str(), ASSIMP_FLAGS);
+	const aiScene* scene = importer.ReadFile(newPath.c_str(), ASSIMP_FLAGS);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
@@ -18,7 +18,7 @@ Model::Model(const std::string &path, std::shared_ptr<Texture> &texture, const M
 	ProcessNode(scene->mRootNode, scene, texture);
 }
 
-void Model::ProcessNode(aiNode *node, const aiScene *scene, std::shared_ptr<Texture> &texture)
+void Model::ProcessNode(aiNode* node, const aiScene* scene, std::shared_ptr<Texture>& texture)
 {
 	// Iterate over all the node's meshes
 	for (u32 i = 0; i < node->mNumMeshes; i++)
@@ -33,7 +33,7 @@ void Model::ProcessNode(aiNode *node, const aiScene *scene, std::shared_ptr<Text
 	}
 }
 
-Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene, std::shared_ptr<Texture> &texture)
+Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_ptr<Texture>& texture)
 {
 	std::vector<f32> vertices;
 	std::vector<u32> indices;
@@ -43,9 +43,9 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene, std::shared_ptr<Text
 	const aiVector3D aiZeroVector(0.0f, 0.0f, 0.0f);
 	for (u32 i = 0; i < mesh->mNumVertices; i++)
 	{
-		const aiVector3D *pPos = &(mesh->mVertices[i]);
-		const aiVector3D *pNormal = &(mesh->mNormals[i]);
-		const aiVector3D *pTexCoord = mesh->HasTextureCoords(0) ? &(mesh->mTextureCoords[0][i]) : &aiZeroVector;
+		const aiVector3D* pPos = &(mesh->mVertices[i]);
+		const aiVector3D* pNormal = &(mesh->mNormals[i]);
+		const aiVector3D* pTexCoord = mesh->HasTextureCoords(0) ? &(mesh->mTextureCoords[0][i]) : &aiZeroVector;
 
 		vertices.push_back(pPos->x);
 		vertices.push_back(pPos->y);
@@ -61,14 +61,14 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene, std::shared_ptr<Text
 
 	for (u32 i = 0; i < mesh->mNumFaces; ++i)
 	{
-		const aiFace &face = mesh->mFaces[i];
+		const aiFace& face = mesh->mFaces[i];
 		assert(face.mNumIndices == 3);
 		indices.push_back(face.mIndices[0]);
 		indices.push_back(face.mIndices[1]);
 		indices.push_back(face.mIndices[2]);
 	}
 
-	aiMaterial *mat = scene->mMaterials[mesh->mMaterialIndex];
+	aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
 	aiString path;
 	mat->GetTexture(aiTextureType_DIFFUSE, 0, &path);
 	if (path.length > 0)

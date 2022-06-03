@@ -32,20 +32,20 @@ namespace Renderer
 
 		Shader::TerrainShader terrainShader;
 		Renderer::TerrainRenderer terrainRenderer;
-	
+
 		// Main render function
-		void Render(const Entities::Light &light, const Entities::Camera &camera);
+		void Render(const Entities::Light& light, const Entities::Camera& camera);
 		// Process entities into the entitiy map
-		void ProcessEntity(const Entities::Entity &entity);
+		void ProcessEntity(const Entities::Entity& entity);
 		// Process terrains into a vector
-		void ProcessTerrain(const Terrains::Terrain &terrain);
+		void ProcessTerrain(const Terrains::Terrain& terrain);
 	private:
 		// Prepare framebuffer for render
 		void Prepare();
 		// Render entities
-		void RenderEntities(const Entities::Light &light, const Entities::Camera &camera);
+		void RenderEntities(const Entities::Light& light, const Entities::Camera& camera);
 		// Render Terrains
-		void RenderTerrains(const Entities::Light &light, const Entities::Camera &camera);
+		void RenderTerrains(const Entities::Light& light, const Entities::Camera& camera);
 
 		// The entitiy map
 		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>> entities;

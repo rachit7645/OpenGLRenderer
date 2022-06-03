@@ -14,10 +14,10 @@ namespace Renderer
 	{
 	public:
 		GLuint id;
-		std::unordered_map<const char *, std::shared_ptr<VertexBuffer>> buffers;
+		std::unordered_map<const char*, std::shared_ptr<VertexBuffer>> buffers;
 
-		VertexArray(const std::vector<f32> &vertices, const std::vector<u32> &indices,
-			const std::vector<f32> &txCoords, const std::vector<f32> &normals);
+		VertexArray(const std::vector<f32>& vertices, const std::vector<u32>& indices,
+			const std::vector<f32>& txCoords, const std::vector<f32>& normals);
 		VertexArray();
 		~VertexArray();
 	};

@@ -4,20 +4,20 @@ using namespace Renderer;
 using Entities::Entity;
 using Shader::StaticShader;
 
-EntityRenderer::EntityRenderer(StaticShader &shaderRef) : shader(shaderRef) {}
+EntityRenderer::EntityRenderer(StaticShader& shaderRef) : shader(shaderRef) {}
 
-void EntityRenderer::Render(const std::unordered_map<std::shared_ptr<Model>, std::vector<Entity>> &entities)
+void EntityRenderer::Render(const std::unordered_map<std::shared_ptr<Model>, std::vector<Entity>>& entities)
 {
-	for (const auto &[model, batch] : entities)
+	for (const auto& [model, batch] : entities)
 	{
 		PrepareModel(model);
-		for (const auto &mesh : model->meshes)
+		for (const auto& mesh : model->meshes)
 		{
 			PrepareMesh(mesh);
-			for (const auto &entity : batch)
+			for (const auto& entity : batch)
 			{
 				PrepareInstance(entity);
-				glDrawElements(GL_TRIANGLES, mesh.vertexCount, GL_UNSIGNED_INT, static_cast<const void *>(0));
+				glDrawElements(GL_TRIANGLES, mesh.vertexCount, GL_UNSIGNED_INT, static_cast<const void*>(0));
 			}
 			UnbindMesh();
 		}
@@ -25,14 +25,14 @@ void EntityRenderer::Render(const std::unordered_map<std::shared_ptr<Model>, std
 	}
 }
 
-void EntityRenderer::PrepareModel(const std::shared_ptr<Model> &model)
+void EntityRenderer::PrepareModel(const std::shared_ptr<Model>& model)
 {
 	shader.LoadMaterials(model->material);
 	if (model->material.isTransparent)
 		DisableCulling();
 }
 
-void EntityRenderer::PrepareMesh(const Mesh &mesh)
+void EntityRenderer::PrepareMesh(const Mesh& mesh)
 {
 	glBindVertexArray(mesh.vao->id);
 	glEnableVertexAttribArray(0);
@@ -42,7 +42,7 @@ void EntityRenderer::PrepareMesh(const Mesh &mesh)
 	glBindTexture(GL_TEXTURE_2D, mesh.texture->id);
 }
 
-void EntityRenderer::PrepareInstance(const Entity &entity)
+void EntityRenderer::PrepareInstance(const Entity& entity)
 {
 	glm::mat4 transformation = Maths::CreateTransformationMatrix(entity.position, entity.rotation, entity.scale);
 	shader.LoadTransformationMatrix(transformation);
@@ -56,7 +56,7 @@ void EntityRenderer::UnbindMesh()
 	glBindVertexArray(0);
 }
 
-void EntityRenderer::UnbindModel(const std::shared_ptr<Model> &model)
+void EntityRenderer::UnbindModel(const std::shared_ptr<Model>& model)
 {
 	if (model->material.isTransparent)
 		EnableCulling();

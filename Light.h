@@ -9,7 +9,7 @@ namespace Entities
 	class Light
 	{
 	public:
-		Light(const glm::vec3 &position, const glm::vec3 &colour) : position(position), colour(colour) {}
+		Light(const glm::vec3& position, const glm::vec3& colour) : position(position), colour(colour) {}
 		glm::vec3 position;
 		glm::vec3 colour;
 	};

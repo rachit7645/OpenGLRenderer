@@ -27,7 +27,7 @@ using f32 = float;
 using f64 = double;
 
 // Handy global variables
-inline const u8 *g_Keys;
+inline const u8* g_Keys;
 inline f32 g_Delta = 1.0f;
 
 enum Error
@@ -68,7 +68,7 @@ namespace Util
 
 	// Clamp a number between two other numbers
 	template<typename T>
-	void Clamp(T &value, T min, T max)
+	void Clamp(T& value, T min, T max)
 	{
 		if (value < min) value = min;
 		if (value > max) value = max;

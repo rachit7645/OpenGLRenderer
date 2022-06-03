@@ -18,7 +18,7 @@ namespace Renderer
 		Shader::TerrainShader& shader;
 
 		void Render(const std::vector<Terrains::Terrain>& terrains);
-	private:	
+	private:
 		void PrepareTerrain(const Terrains::Terrain& terrain);
 		void BindTextures(const Terrains::Terrain& terrain);
 		void LoadModelMatrix(const Terrains::Terrain& terrain);

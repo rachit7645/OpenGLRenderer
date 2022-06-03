@@ -29,17 +29,17 @@ void TerrainShader::GetUniformLocations()
 	uniforms["blendMap"] = GetUniformLocation("blendMap");
 }
 
-void TerrainShader::LoadTransformationMatrix(const glm::mat4 &matrix)
+void TerrainShader::LoadTransformationMatrix(const glm::mat4& matrix)
 {
 	LoadUniform(uniforms["modelMatrix"], matrix);
 }
 
-void TerrainShader::LoadProjectionMatrix(const glm::mat4 &matrix)
+void TerrainShader::LoadProjectionMatrix(const glm::mat4& matrix)
 {
 	LoadUniform(uniforms["projectionMatrix"], matrix);
 }
 
-void TerrainShader::LoadViewMatrix(const Camera &camera)
+void TerrainShader::LoadViewMatrix(const Camera& camera)
 {
 	glm::mat4 viewMatrix = Maths::CreateViewMatrix(camera);
 	LoadUniform(uniforms["viewMatrix"], viewMatrix);

@@ -16,22 +16,22 @@ namespace Renderer
 	class EntityRenderer
 	{
 	public:
-		EntityRenderer(Shader::StaticShader &shaderRef);
-		Shader::StaticShader &shader;
+		EntityRenderer(Shader::StaticShader& shaderRef);
+		Shader::StaticShader& shader;
 
 		// Render THE MAP
-		void Render(const std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>> &entities);
+		void Render(const std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>>& entities);
 	private:
 		// Prepare each model for render
-		void PrepareModel(const std::shared_ptr<Model> &model);
+		void PrepareModel(const std::shared_ptr<Model>& model);
 		// Prepare each mesh in the model for render
-		void PrepareMesh(const Mesh &mesh);		
+		void PrepareMesh(const Mesh& mesh);
 		// Prepare each instance
-		void PrepareInstance(const Entities::Entity &entity);
+		void PrepareInstance(const Entities::Entity& entity);
 		// Unbind the model
-		void UnbindModel(const std::shared_ptr<Model> &model);
+		void UnbindModel(const std::shared_ptr<Model>& model);
 		// Unbind the mesh
-		void UnbindMesh();		
+		void UnbindMesh();
 		// Enable GL_BACK culling
 		void EnableCulling();
 		// Disable culling

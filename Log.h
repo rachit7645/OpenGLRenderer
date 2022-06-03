@@ -18,7 +18,11 @@ namespace Logger
 		ERROR = 2,
 		DEBUG = 3,
 	};
-	constexpr auto INFO_STR = "INFO: ", WARNING_STR = "WARNING: ", ERROR_STR = "ERROR: ", DEBUG_STR = "DEBUG: ";
+
+	constexpr auto INFO_STR = "INFO: ";
+	constexpr auto WARNING_STR = "WARNING: ";
+	constexpr auto ERROR_STR = "ERROR: ";
+	constexpr auto DEBUG_STR = "DEBUG: ";
 
 	// Log message with SDL error and exit with specified exit code
 	void LogAndExit_SDL(const std::string& message, Error error);

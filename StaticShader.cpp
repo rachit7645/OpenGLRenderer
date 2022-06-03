@@ -24,23 +24,23 @@ void StaticShader::GetUniformLocations()
 	uniforms["skyColour"] = GetUniformLocation("skyColour");
 }
 
-void StaticShader::LoadTransformationMatrix(const glm::mat4 &matrix)
+void StaticShader::LoadTransformationMatrix(const glm::mat4& matrix)
 {
 	LoadUniform(uniforms["modelMatrix"], matrix);
 }
 
-void StaticShader::LoadProjectionMatrix(const glm::mat4 &matrix)
+void StaticShader::LoadProjectionMatrix(const glm::mat4& matrix)
 {
 	LoadUniform(uniforms["projectionMatrix"], matrix);
 }
 
-void StaticShader::LoadViewMatrix(const Camera &camera)
+void StaticShader::LoadViewMatrix(const Camera& camera)
 {
 	glm::mat4 viewMatrix = Maths::CreateViewMatrix(camera);
 	LoadUniform(uniforms["viewMatrix"], viewMatrix);
 }
 
-void StaticShader::LoadLight(const Light &light)
+void StaticShader::LoadLight(const Light& light)
 {
 	LoadUniform(uniforms["lightPosition"], light.position);
 	LoadUniform(uniforms["lightColour"], light.colour);
