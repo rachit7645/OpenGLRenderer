@@ -65,11 +65,13 @@ void MasterRenderer::RenderTerrains(const Light& light, const Camera& camera)
 
 void MasterRenderer::RenderSkybox(const Camera& camera)
 {
+	glDepthMask(GL_FALSE);
 	skyboxShader.Start();
 	skyboxShader.LoadViewMatrix(camera);
 	skyboxShader.LoadFogColor(GL_CLEAR_COLOR);
 	skyboxRenderer.Render(skybox);
 	skyboxShader.Stop();
+	glDepthMask(GL_TRUE);
 }
 
 void MasterRenderer::ProcessEntity(const Entity& entity)
