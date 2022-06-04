@@ -5,17 +5,24 @@ using namespace Renderer;
 using Entities::Entity;
 using Entities::Light;
 using Entities::Camera;
+using Entities::Skybox;
 using Terrains::Terrain;
 
-MasterRenderer::MasterRenderer() : renderer(shader), terrainRenderer(terrainShader)
+MasterRenderer::MasterRenderer() : renderer(shader), terrainRenderer(terrainShader), skyboxRenderer(skyboxShader)
 {
 	glm::mat4 projection = glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
+
 	shader.Start();
 	shader.LoadProjectionMatrix(projection);
 	shader.Stop();
+
 	terrainShader.Start();
 	terrainShader.LoadProjectionMatrix(projection);
 	terrainShader.Stop();
+
+	skyboxShader.Start();
+	skyboxShader.LoadProjectionMatrix(projection);
+	skyboxShader.Stop();
 }
 
 void MasterRenderer::Prepare()
@@ -30,6 +37,7 @@ void MasterRenderer::Render(const Light& light, const Camera& camera)
 
 	RenderEntities(light, camera);
 	RenderTerrains(light, camera);
+	RenderSkybox(camera);
 
 	entities.clear();
 	terrains.clear();
@@ -55,6 +63,15 @@ void MasterRenderer::RenderTerrains(const Light& light, const Camera& camera)
 	terrainShader.Stop();
 }
 
+void MasterRenderer::RenderSkybox(const Camera& camera)
+{
+	skyboxShader.Start();
+	skyboxShader.LoadViewMatrix(camera);
+	skyboxShader.LoadFogColor(GL_CLEAR_COLOR);
+	skyboxRenderer.Render(skybox);
+	skyboxShader.Stop();
+}
+
 void MasterRenderer::ProcessEntity(const Entity& entity)
 {
 	auto iter = entities.find(entity.model);
@@ -71,4 +88,9 @@ void MasterRenderer::ProcessEntity(const Entity& entity)
 void MasterRenderer::ProcessTerrain(const Terrain& terrain)
 {
 	terrains.push_back(terrain);
+}
+
+void MasterRenderer::ProcessSkybox(const Skybox& skybox)
+{
+	this->skybox = skybox;
 }

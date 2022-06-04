@@ -18,6 +18,7 @@ namespace Renderer
 
 		VertexArray(const std::vector<f32>& vertices, const std::vector<u32>& indices,
 			const std::vector<f32>& txCoords, const std::vector<f32>& normals);
+		VertexArray(const std::vector<f32>& vertices);	
 		VertexArray();
 		~VertexArray();
 	};

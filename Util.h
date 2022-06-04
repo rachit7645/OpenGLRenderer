@@ -5,7 +5,6 @@
 // Contains utility macros and defines
 
 #include <random>
-#include <vector>
 
 #include <cstdint>
 #include <cstddef>

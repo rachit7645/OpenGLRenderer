@@ -13,6 +13,7 @@ using Renderer::Model;
 using Renderer::Material;
 using Entities::Entity;
 using Entities::Player;
+using Entities::Skybox;
 using Terrains::Terrain;
 using Terrains::TerrainTextures;
 
@@ -74,6 +75,7 @@ void SDLWindow::MainLoop()
 	}
 	Player player(playerModel, glm::vec3(100.0f, 0.0f, 0.0f), glm::vec3(0.0f, 180.0f, 0.0f), 1.0f);
 
+	Entities::Skybox skybox;
 	Entities::Light light(glm::vec3(20000.0f, 20000.0f, 2000.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 	Entities::Camera camera(player);
 	Renderer::MasterRenderer renderer;
@@ -107,6 +109,8 @@ void SDLWindow::MainLoop()
 		{
 			renderer.ProcessTerrain(terrain);
 		}
+		renderer.ProcessSkybox(skybox);
+
 		renderer.Render(light, camera);
 
 		ImGui::Render();

@@ -14,6 +14,9 @@
 #include "Terrain.h"
 #include "TerrainRenderer.h"
 #include "TerrainShader.h"
+#include "Skybox.h"
+#include "SkyboxRenderer.h"
+#include "SkyboxShader.h"
 
 namespace Renderer
 {
@@ -33,12 +36,17 @@ namespace Renderer
 		Shader::TerrainShader terrainShader;
 		Renderer::TerrainRenderer terrainRenderer;
 
+		Shader::SkyboxShader skyboxShader;
+		Renderer::SkyboxRenderer skyboxRenderer;
+
 		// Main render function
 		void Render(const Entities::Light& light, const Entities::Camera& camera);
 		// Process entities into the entitiy map
 		void ProcessEntity(const Entities::Entity& entity);
 		// Process terrains into a vector
 		void ProcessTerrain(const Terrains::Terrain& terrain);
+		// Process skybox into a class member
+		void ProcessSkybox(const Entities::Skybox& skybox);
 	private:
 		// Prepare framebuffer for render
 		void Prepare();
@@ -46,11 +54,15 @@ namespace Renderer
 		void RenderEntities(const Entities::Light& light, const Entities::Camera& camera);
 		// Render Terrains
 		void RenderTerrains(const Entities::Light& light, const Entities::Camera& camera);
+		// Render the skybox
+		void RenderSkybox(const Entities::Camera& camera);
 
 		// The entitiy map
 		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>> entities;
 		// The terrain vector
 		std::vector<Terrains::Terrain> terrains;
+		// The Skybox
+		Entities::Skybox skybox;
 	};
 }
 

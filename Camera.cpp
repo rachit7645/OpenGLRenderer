@@ -32,6 +32,7 @@ void Camera::ImGuiDisplay()
 	ImGui::Text("Rotation:\nPitch: %.2f\nYaw: %.2f\nRoll: %.2f", rotation.x, rotation.y, rotation.z);
 	ImGui::Text("Distance From Player: %.2f\nAngle Around Player: %.2f\nCamera Speed Constant: %.2f",
 		distanceFromPlayer, angleAroundPlayer, CAMERA_SPEED);
+	ImGui::Checkbox("Cap Pitch", &capPitch);
 	ImGui::End();
 }
 
@@ -54,7 +55,10 @@ void Camera::CalculateZoom()
 void Camera::CalculatePitch()
 {
 	rotation.x -= g_MousePos.y * 0.1f;
-	Util::Clamp<f32>(rotation.x, 5.0f, 85.0f);
+	if (capPitch)
+	{
+		Util::Clamp<f32>(rotation.x, 5.0f, 85.0f);
+	}
 }
 
 void Camera::CalculateAngleAroundPlayer()

@@ -26,12 +26,14 @@ namespace Entities
 		Camera(Player& playerRef);
 
 		Player& player;
-		glm::vec3 position;
-		glm::vec3 rotation;
+		glm::vec3 position = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 rotation = { 5.0f, 0.0f, 0.0f };
 
 		void Move();
 		void ImGuiDisplay();
 	private:
+		bool capPitch = true;
+
 		f32 distanceFromPlayer = 35.0f;
 		f32 angleAroundPlayer = 0.0f;
 

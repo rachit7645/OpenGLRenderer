@@ -14,6 +14,14 @@ VertexArray::VertexArray(const std::vector<f32>& vertices, const std::vector<u32
 	glBindVertexArray(0);
 }
 
+VertexArray::VertexArray(const std::vector<f32>& vertices)
+{
+	glGenVertexArrays(1, &id);
+	glBindVertexArray(id);
+	buffers["vertices"] = std::make_shared<VertexBuffer>(0, 3, vertices);
+	glBindVertexArray(0);
+}
+
 VertexArray::VertexArray()
 {
 	id = 0;
