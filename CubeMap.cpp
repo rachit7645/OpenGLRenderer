@@ -5,7 +5,10 @@ using namespace Renderer;
 
 CubeMap::CubeMap(const std::vector<std::string>& files)
 {
+	// Sanity check
 	assert(files.size() == 6);
+
+	// Temporary variables
 	u8* data;
 	int width;
 	int height;
@@ -18,6 +21,9 @@ CubeMap::CubeMap(const std::vector<std::string>& files)
 
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_LOD_BIAS, TEXTURE_LOD_BIAS);
 
 	for (size_t i = 0; i < files.size(); i++)

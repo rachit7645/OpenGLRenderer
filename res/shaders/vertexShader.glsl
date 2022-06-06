@@ -35,7 +35,7 @@ void main()
 
 void CalculateLighting(vec4 worldPosition)
 {
-	// Remove one if statement with the mix function (which should be a single instruction on the GPU), Gains 20-30 FPS
+	// Remove one if statement with the mix function (which hopefully is a single instruction on the GPU), Gains 20-30 FPS
 	// Original:
 	// vec3 actualNormal = normal;
 	// if (useFakeLighting == 1) actualNormal = vec3(0.0f, 1.0f, 0.0f);

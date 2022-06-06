@@ -65,6 +65,9 @@ void MasterRenderer::RenderTerrains(const Light& light, const Camera& camera)
 
 void MasterRenderer::RenderSkybox(const Camera& camera)
 {
+	// Since z / w will be 1.0f, we need to use GL_LEQUAL to avoid Z fighting
+	glDepthFunc(GL_LEQUAL);
+	// Disable depth writing for performance
 	glDepthMask(GL_FALSE);
 	skyboxShader.Start();
 	skyboxShader.LoadViewMatrix(camera);
@@ -72,6 +75,7 @@ void MasterRenderer::RenderSkybox(const Camera& camera)
 	skyboxRenderer.Render(skybox);
 	skyboxShader.Stop();
 	glDepthMask(GL_TRUE);
+	glDepthFunc(GL_LESS);
 }
 
 void MasterRenderer::ProcessEntity(const Entity& entity)
