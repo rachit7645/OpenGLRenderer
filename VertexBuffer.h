@@ -10,8 +10,6 @@ namespace Renderer
 	class VertexBuffer
 	{
 	public:
-		GLuint id;
-
 		// Standard vbo
 		VertexBuffer(GLuint slot, GLuint coordSize, const std::vector<f32>& data);
 		// Element buffer object
@@ -20,6 +18,8 @@ namespace Renderer
 		VertexBuffer();
 		// Destructor
 		~VertexBuffer();
+
+		GLuint id;
 	};
 }
 

@@ -13,14 +13,19 @@ namespace Renderer
 	class VertexArray
 	{
 	public:
-		GLuint id;
-		std::unordered_map<const char*, std::shared_ptr<VertexBuffer>> buffers;
-
+		// Init default VAO
 		VertexArray(const std::vector<f32>& vertices, const std::vector<u32>& indices,
 			const std::vector<f32>& txCoords, const std::vector<f32>& normals);
-		VertexArray(const std::vector<f32>& vertices);	
+		// Init VAO for glDrawArrays
+		VertexArray(GLuint coordSize, const std::vector<f32>& vertices);
+		// Default constructor
 		VertexArray();
+		// Destructor
 		~VertexArray();
+
+		GLuint id;
+		GLsizei vertexCount;
+		std::unordered_map<const char*, std::shared_ptr<VertexBuffer>> buffers;
 	};
 }
 

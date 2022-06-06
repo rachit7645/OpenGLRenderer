@@ -33,12 +33,12 @@ Terrain::Terrain(const std::string& hMapPath, const glm::vec2& position, const T
 		for (ssize_t j = 0; j < VERTEX_COUNT; ++j)
 		{
 			vertices[vertexPointer * 3] = static_cast<f32>(j) / static_cast<f32>(VERTEX_COUNT - 1) * SIZE;
-			f32 height = CalculateHeight(hMap, static_cast<int>(j), static_cast<int>(i));
+			f32 height = CalculateHeight(static_cast<int>(j), static_cast<int>(i), hMap);
 			heights[j][i] = height;
 			vertices[vertexPointer * 3 + 1] = height;
 			vertices[vertexPointer * 3 + 2] = static_cast<f32>(i) / static_cast<f32>(VERTEX_COUNT - 1) * SIZE;
 
-			glm::vec3 normal = CalculateNormal(hMap, j, i);
+			glm::vec3 normal = CalculateNormal(j, i, hMap);
 			normals[vertexPointer * 3] = normal.x;
 			normals[vertexPointer * 3 + 1] = normal.y;
 			normals[vertexPointer * 3 + 2] = normal.z;
@@ -70,32 +70,31 @@ Terrain::Terrain(const std::string& hMapPath, const glm::vec2& position, const T
 	}
 
 	vao = std::make_shared<VertexArray>(vertices, indices, txCoords, normals);
-	vertexCount = static_cast<s32>(indices.size());
 }
 
-f32 Terrain::CalculateHeight(Image2D& hMap, int x, int z)
+f32 Terrain::CalculateHeight(int x, int z, Image2D& hMap)
 {
-	f32 height = hMap.GetRGB(x, z);
+	f32 height = hMap.GetARGB(x, z);
 	height /= MAX_PIXEL_COLOR;
 	height = height * 2.0f - 1.0f;
 	height *= MAX_HEIGHT;
 	return height;
 }
 
-glm::vec3 Terrain::CalculateNormal(Image2D& hMap, int x, int z)
+glm::vec3 Terrain::CalculateNormal(int x, int z, Image2D& hMap)
 {
 	auto size = hMap.height;
-	f32 heightL = CalculateHeight(hMap, (x - 1 + size) % size, z);
-	f32 heightR = CalculateHeight(hMap, (x + 1 + size) % size, z);
-	f32 heightD = CalculateHeight(hMap, x, (z - 1 + size) % size);
-	f32 heightU = CalculateHeight(hMap, x, (z + 1 + size) % size);
+	f32 heightL = CalculateHeight((x - 1 + size) % size, z, hMap);
+	f32 heightR = CalculateHeight((x + 1 + size) % size, z, hMap);
+	f32 heightD = CalculateHeight(x, (z - 1 + size) % size, hMap);
+	f32 heightU = CalculateHeight(x, (z + 1 + size) % size, hMap);
 
 	glm::vec3 normal(heightL - heightR, 2.0f, heightD - heightU);
 	glm::normalize(normal);
 	return normal;
 }
 
-f32 Terrain::GetHeight(glm::vec2 worldPos) const
+f32 Terrain::GetHeight(const glm::vec2& worldPos) const
 {
 	glm::vec2 terrainPos = worldPos - position;
 	f32 gridSize = SIZE / static_cast<f32>(heights.size() - 1);

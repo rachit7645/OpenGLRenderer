@@ -19,7 +19,7 @@ void TerrainRenderer::Render(const std::vector<Terrain>& terrains)
 	{
 		PrepareTerrain(terrain);
 		LoadModelMatrix(terrain);
-		glDrawElements(GL_TRIANGLES, terrain.vertexCount, GL_UNSIGNED_INT, static_cast<const void*>(0));
+		glDrawElements(GL_TRIANGLES, terrain.vao->vertexCount, GL_UNSIGNED_INT, static_cast<const void*>(0));
 		UnbindTerrain();
 	}
 }

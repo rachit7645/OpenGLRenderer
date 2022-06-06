@@ -34,7 +34,6 @@ CubeMap::CubeMap(const std::vector<std::string>& files)
 		stbi_image_free(data);
 	}
 
-	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 

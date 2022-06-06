@@ -18,9 +18,9 @@ namespace Util
 		int height;
 		int channels;
 
-		// Returns ARGB value with alpha, which is invalidated
+		// Returns ARGB value with alpha = 0, which is invalidated
 		// Tries to emulate java's BufferedImage.getRGB() method
-		u32 GetRGB(int x, int y);
+		u32 GetARGB(int x, int y);
 	private:
 		u8* data;
 	};

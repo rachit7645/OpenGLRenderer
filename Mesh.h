@@ -18,7 +18,6 @@ namespace Renderer
 
 		std::shared_ptr<VertexArray> vao;
 		std::shared_ptr<Texture> texture;
-		s32 vertexCount;
 	};
 }
 

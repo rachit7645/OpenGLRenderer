@@ -17,7 +17,7 @@ void EntityRenderer::Render(const std::unordered_map<std::shared_ptr<Model>, std
 			for (const auto& entity : batch)
 			{
 				PrepareInstance(entity);
-				glDrawElements(GL_TRIANGLES, mesh.vertexCount, GL_UNSIGNED_INT, static_cast<const void*>(0));
+				glDrawElements(GL_TRIANGLES, mesh.vao->vertexCount, GL_UNSIGNED_INT, static_cast<const void*>(0));
 			}
 			UnbindMesh();
 		}

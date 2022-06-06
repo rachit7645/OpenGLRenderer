@@ -15,9 +15,10 @@
 
 namespace Terrains
 {
-	constexpr auto SIZE = 500;
+	constexpr f32 SIZE = 500.0f;
 	constexpr f32 MAX_HEIGHT = 37.0f;
 	constexpr u32 MAX_PIXEL_COLOR = 0 << 24 | 255 << 16 | 255 << 8 | 255;
+
 
 	template<typename T>
 	using Array2D = std::vector<std::vector<T>>;
@@ -35,12 +36,11 @@ namespace Terrains
 		TerrainTextures textures;
 		Renderer::Material material;
 		std::shared_ptr<Renderer::VertexArray> vao;
-		s32 vertexCount;
 
-		f32 GetHeight(glm::vec2 worldPos) const;
+		f32 GetHeight(const glm::vec2& worldPos) const;
 	private:
-		f32 CalculateHeight(Util::Image2D& hMap, int x, int z);
-		glm::vec3 CalculateNormal(Util::Image2D& hMap, int x, int z);
+		f32 CalculateHeight(int x, int z, Util::Image2D& hMap);
+		glm::vec3 CalculateNormal(int x, int z, Util::Image2D& hMap);
 	};
 
 	const Terrain* GetCurrent(const std::vector<Terrain>& terrains, const glm::vec2& position);

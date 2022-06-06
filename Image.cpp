@@ -13,7 +13,7 @@ Image2D::~Image2D()
 	stbi_image_free(data);
 }
 
-u32 Image2D::GetRGB(int x, int y)
+u32 Image2D::GetARGB(int x, int y)
 {
 	if (x < 0 || x >= width || y < 0 || y >= height)
 		return 0;

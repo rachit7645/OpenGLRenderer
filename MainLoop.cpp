@@ -78,7 +78,9 @@ void SDLWindow::MainLoop()
 	Entities::Skybox skybox;
 	Entities::Light light(glm::vec3(20000.0f, 20000.0f, 2000.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 	Entities::Camera camera(player);
+
 	Renderer::MasterRenderer renderer;
+	renderer.ProcessSkybox(skybox);
 
 	startTime = frameStartTime = steady_clock::now();
 
@@ -109,7 +111,6 @@ void SDLWindow::MainLoop()
 		{
 			renderer.ProcessTerrain(terrain);
 		}
-		renderer.ProcessSkybox(skybox);
 
 		renderer.Render(light, camera);
 

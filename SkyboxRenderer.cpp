@@ -18,7 +18,7 @@ void SkyboxRenderer::PrepareSkybox(const Entities::Skybox& skybox)
 void SkyboxRenderer::Render(const Skybox& skybox)
 {
 	PrepareSkybox(skybox);
-	glDrawArrays(GL_TRIANGLES, 0, skybox.vertexCount);
+	glDrawArrays(GL_TRIANGLES, 0, skybox.vao->vertexCount);
 	UnbindSkybox();
 }
 
