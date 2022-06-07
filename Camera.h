@@ -10,8 +10,8 @@
 
 // FIXME: Too many global variables
 
-inline s32 g_MouseScrollY = 0;
 inline glm::ivec2 g_MousePos;
+inline glm::ivec2 g_MouseScroll;
 
 inline bool g_ToMoveCamera = true;
 inline bool g_ToZoomCamera = true;
@@ -19,6 +19,7 @@ inline bool g_ToZoomCamera = true;
 namespace Entities
 {
 	constexpr auto CAMERA_SPEED = 45.0f;
+	constexpr auto CAMERA_ZOOM_SPEED = 1.0f;
 
 	class Camera
 	{

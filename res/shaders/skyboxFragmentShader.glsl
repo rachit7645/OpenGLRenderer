@@ -7,8 +7,8 @@ uniform vec3 fogColor;
 
 out vec4 outColor;
 
-const float LOWER_LIMIT = 0.1f;
-const float UPPER_LIMIT = 30.0f;
+const float LOWER_LIMIT = 0.0f;
+const float UPPER_LIMIT = 25.0f;
 
 void main()
 {

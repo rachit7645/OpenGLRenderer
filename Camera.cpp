@@ -32,6 +32,8 @@ void Camera::ImGuiDisplay()
 	ImGui::Text("Rotation:\nPitch: %.2f\nYaw: %.2f\nRoll: %.2f", rotation.x, rotation.y, rotation.z);
 	ImGui::Text("Distance From Player: %.2f\nAngle Around Player: %.2f\nCamera Speed Constant: %.2f",
 		distanceFromPlayer, angleAroundPlayer, CAMERA_SPEED);
+	ImGui::Text("Mouse Position:\nX: %d\nY: %d\nMouse Scroll:\nX: %d\nY: %d",
+		g_MousePos.x, g_MousePos.y, g_MouseScroll.x, g_MouseScroll.y);
 	ImGui::Checkbox("Cap Pitch", &capPitch);
 	ImGui::End();
 }
@@ -44,20 +46,43 @@ void Camera::CalculatePosition(f32 hDistance, f32 vDistance)
 	position.x = player.position.x - offsetX;
 	position.z = player.position.z - offsetZ;
 	position.y = player.position.y + vDistance;
-	rotation.y = 180 - (player.rotation.y + angleAroundPlayer);
+	rotation.y = 180.0f - (player.rotation.y + angleAroundPlayer);
 }
 
 void Camera::CalculateZoom()
 {
-	distanceFromPlayer -= g_MouseScrollY * 0.9f;
+	// If there is no scrolling input, return
+	if (g_MouseScroll.y == 0) return;
+
+	// If scroll direction is positive, reduce distance from player
+	if (g_MouseScroll.y > 0)
+	{
+		for (ssize_t i = 0; i < g_MouseScroll.y; ++i)
+		{
+			distanceFromPlayer -= CAMERA_ZOOM_SPEED;
+		}
+	}
+	// If scroll direction is negative, increase distance from player
+	else
+	{
+		for (ssize_t i = 0; i < -g_MouseScroll.y; ++i)
+		{
+			distanceFromPlayer += CAMERA_ZOOM_SPEED;
+		}
+	}
 }
 
 void Camera::CalculatePitch()
 {
+	// Pitch clamp values, edit as you like :)
+	// Or disable it in the camera options
+	constexpr auto CAMERA_PITCH_MIN = 0.0f;
+	constexpr auto CAMERA_PITCH_MAX = 90.0f;
+
 	rotation.x -= g_MousePos.y * 0.1f;
 	if (capPitch)
 	{
-		Util::Clamp<f32>(rotation.x, 5.0f, 85.0f);
+		Util::Clamp<f32>(rotation.x, CAMERA_PITCH_MIN, CAMERA_PITCH_MAX);
 	}
 }
 

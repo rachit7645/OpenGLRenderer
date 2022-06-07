@@ -14,7 +14,7 @@ namespace Shader
 	constexpr auto SKYBOX_VERTEX_SHADER_PATH = "shaders/skyboxVertexShader.glsl",
 		SKYBOX_FRAGMENT_SHADER_PATH = "shaders/skyboxFragmentShader.glsl";
 
-	constexpr auto SKYBOX_ROTATION_SPEED = 5.0f;
+	constexpr auto SKYBOX_ROTATION_SPEED = 3.0f;
 
 	class SkyboxShader : public ShaderProgram
 	{

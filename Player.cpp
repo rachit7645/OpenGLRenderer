@@ -31,24 +31,12 @@ void Player::ImGuiDisplay()
 
 void Player::Gravity(const Terrain* terrain)
 {
-	if (terrain == nullptr)
-	{
-		terrainHeight = 0.0f;
-	}
-	else
-	{
-		terrainHeight = terrain->GetHeight(glm::vec2(position.x, position.z));
-	}
-
-	if (position.y > terrainHeight)
-	{
-		position.y += PLAYER_GRAVITY * g_Delta;
-	}
-
-	if (position.y < terrainHeight)
-	{
-		position.y = terrainHeight;
-	}
+	// If a terrain is present below the player, get its height, else set the height to 0.0f
+	terrain != nullptr ? terrainHeight = terrain->GetHeight(*this) : terrainHeight = 0.0f;
+	// If player is above the terrain, apply gravity
+	if (position.y > terrainHeight) position.y += PLAYER_GRAVITY * g_Delta;
+	// If player is below the terrain, snap back to terrain height
+	if (position.y < terrainHeight) position.y = terrainHeight;
 }
 
 void Player::CheckInputs()

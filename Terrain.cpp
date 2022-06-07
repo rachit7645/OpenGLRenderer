@@ -129,19 +129,24 @@ f32 Terrain::GetHeight(const glm::vec2& worldPos) const
 	return height;
 }
 
+f32 Terrain::GetHeight(const Entity& entity) const
+{
+	return GetHeight(glm::vec2(entity.position.x, entity.position.z));
+}
+
 const Terrain* Terrains::GetCurrent(const std::vector<Terrain>& terrains, const glm::vec2& position)
 {
-	glm::vec2 gridPos(glm::floor(position.x / SIZE), glm::floor(position.y / SIZE));
-
-	for (const auto& terrain : terrains)
+	// Find the grid the position lies in
+	glm::vec2 gridPos(std::floor(position.x / SIZE), std::floor(position.y / SIZE));
+	// Lambda to pass to std::find_if
+	auto find_current = [gridPos](const Terrain& terrain)
 	{
-		if (terrain.gridPosition == gridPos)
-		{
-			return &terrain;
-		}
-	}
-
-	return nullptr;
+		return terrain.gridPosition == gridPos;
+	};
+	// Store result of std::find_if
+	auto result = std::find_if(terrains.begin(), terrains.end(), find_current);
+	// Return the item or a nullptr if none was found 
+	return result != terrains.end() ? result.base() : nullptr;
 }
 
 const Terrain* Terrains::GetCurrent(const std::vector<Terrain>& terrains, const Entity& entity)

@@ -18,11 +18,12 @@ SDLWindow::SDLWindow()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
-	// RGBA8888 Framebuffer
+	// RGBA8888 + Depth24 Framebuffer
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
 	// 4x MSAA Anti-Aliasing
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
@@ -51,8 +52,13 @@ SDLWindow::SDLWindow()
 	{
 		Logger::LogAndExit_SDL("SDL_GL_CreateContext Failed\n", SDL_GL_CREATE_CONTEXT_FAILED);
 	}
+	if (SDL_GL_MakeCurrent(window, glContext) != 0)
+	{
+		Logger::LogAndExit_SDL("SDL_GL_MakeCurrent Failed\n", SDL_GL_MAKE_CURRENT_FAILED);
+	}
 
 	// Initialize the REAL OpenGL context
+	// Due to a bug in glew, set it to experimental mode
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
 	{
@@ -103,7 +109,8 @@ bool SDLWindow::PollEvents()
 			break;
 
 		case SDL_MOUSEWHEEL:
-			g_MouseScrollY = event.wheel.y;
+			g_MouseScroll.x = event.wheel.x;
+			g_MouseScroll.y = event.wheel.y;
 			g_ToZoomCamera = true;
 			break;
 

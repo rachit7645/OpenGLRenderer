@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 #include "GLM.h"
 #include "Util.h"
@@ -15,8 +16,8 @@
 
 namespace Terrains
 {
-	constexpr f32 SIZE = 500.0f;
-	constexpr f32 MAX_HEIGHT = 37.0f;
+	constexpr auto SIZE = 500.0f;
+	constexpr auto MAX_HEIGHT = 50.0f;
 	constexpr u32 MAX_PIXEL_COLOR = 0 << 24 | 255 << 16 | 255 << 8 | 255;
 
 
@@ -38,6 +39,7 @@ namespace Terrains
 		std::shared_ptr<Renderer::VertexArray> vao;
 
 		f32 GetHeight(const glm::vec2& worldPos) const;
+		f32 GetHeight(const Entities::Entity& entity) const;
 	private:
 		f32 CalculateHeight(int x, int z, Util::Image2D& hMap);
 		glm::vec3 CalculateNormal(int x, int z, Util::Image2D& hMap);

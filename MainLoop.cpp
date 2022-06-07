@@ -80,6 +80,7 @@ void SDLWindow::MainLoop()
 	Entities::Camera camera(player);
 
 	Renderer::MasterRenderer renderer;
+	// The skybox doesn't really change, so it is loaded once in the start
 	renderer.ProcessSkybox(skybox);
 
 	startTime = frameStartTime = steady_clock::now();
