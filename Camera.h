@@ -29,8 +29,8 @@ namespace Entities
 
 		void Move();
 	private:
-		glm::ivec2 mousePos;
-		glm::ivec2 mouseScroll;
+		const glm::ivec2& mousePos;
+		const glm::ivec2& mouseScroll;
 
 		bool capPitch = true;
 

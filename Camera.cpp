@@ -2,12 +2,10 @@
 
 using namespace Entities;
 
-Camera::Camera(Player& playerRef) : player(playerRef) {}
+Camera::Camera(Player& playerRef) : player(playerRef), mousePos(Inputs::GetMousePos()), mouseScroll(Inputs::GetMouseScroll()) {}
 
 void Camera::Move()
 {
-	CheckInputs();
-
 	if (g_ToZoomCamera)
 	{
 		CalculateZoom();
@@ -25,12 +23,6 @@ void Camera::Move()
 	f32 vDistance = distanceFromPlayer * std::sin(glm::radians(rotation.x));
 	CalculatePosition(hDistance, vDistance);
 	ImGuiDisplay();
-}
-
-void Camera::CheckInputs()
-{
-	mousePos = Inputs::GetMousePos();
-	mouseScroll = Inputs::GetMouseScroll();
 }
 
 void Camera::ImGuiDisplay()
