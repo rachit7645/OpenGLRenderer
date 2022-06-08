@@ -17,7 +17,7 @@
 namespace Terrains
 {
 	constexpr auto SIZE = 500.0f;
-	constexpr auto MAX_HEIGHT = 50.0f;
+	constexpr auto MAX_HEIGHT = 40.0f;
 	constexpr u32 MAX_PIXEL_COLOR = 0 << 24 | 255 << 16 | 255 << 8 | 255;
 
 

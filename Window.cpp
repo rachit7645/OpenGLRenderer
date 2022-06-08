@@ -109,14 +109,12 @@ bool SDLWindow::PollEvents()
 			break;
 
 		case SDL_MOUSEWHEEL:
-			g_MouseScroll.x = event.wheel.x;
-			g_MouseScroll.y = event.wheel.y;
+			Inputs::SetMouseScroll(glm::ivec2(event.wheel.x, event.wheel.y));
 			g_ToZoomCamera = true;
 			break;
 
 		case SDL_MOUSEMOTION:
-			g_MousePos.x = event.motion.xrel;
-			g_MousePos.y = event.motion.yrel;
+			Inputs::SetMousePos(glm::ivec2(event.motion.xrel, event.motion.yrel));
 			g_ToMoveCamera = true;
 			break;
 

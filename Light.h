@@ -6,6 +6,10 @@
 
 namespace Entities
 {
+	// TODO: Support multiple lights at once
+	// TODO: Add a attenuation factor to the lights
+	// TODO: Add an ImGui widget for live editing
+	
 	class Light
 	{
 	public:

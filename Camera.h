@@ -7,12 +7,9 @@
 #include "Imgui.h"
 #include "Util.h"
 #include "Player.h"
+#include "Inputs.h"
 
-// FIXME: Too many global variables
-
-inline glm::ivec2 g_MousePos;
-inline glm::ivec2 g_MouseScroll;
-
+// HACK: Global Flags
 inline bool g_ToMoveCamera = true;
 inline bool g_ToZoomCamera = true;
 
@@ -31,13 +28,16 @@ namespace Entities
 		glm::vec3 rotation = { 5.0f, 0.0f, 0.0f };
 
 		void Move();
-		void ImGuiDisplay();
 	private:
+		glm::ivec2 mousePos;
+		glm::ivec2 mouseScroll;
+
 		bool capPitch = true;
 
 		f32 distanceFromPlayer = 35.0f;
 		f32 angleAroundPlayer = 0.0f;
 
+		void ImGuiDisplay();
 		void CheckInputs();
 		void CalculateZoom();
 		void CalculatePitch();

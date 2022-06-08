@@ -12,6 +12,7 @@
 #include "Util.h"
 #include "Camera.h"
 #include "Files.h"
+#include "Inputs.h"
 
 namespace Window
 {
