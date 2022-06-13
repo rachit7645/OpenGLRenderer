@@ -12,7 +12,7 @@ const std::string& Files::GetResourceDirectory()
 	return resDir;
 }
 
-std::string Files::GetFileName(const std::string& path)
+std::string Files::GetName(const std::string& path)
 {
 	return std::filesystem::path(path).filename().u8string();
 }

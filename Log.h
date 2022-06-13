@@ -19,9 +19,9 @@ namespace Logger
 // Logging macros
 // TODO: Add time to logs
 
-#define LOG_INFO(...)    do { Logger::Log("[INFO] [",    Files::GetFileName(__FILE__), ":", __LINE__, "] ", __VA_ARGS__); }   while (0)
-#define LOG_DEBUG(...)   do { Logger::Log("[DEBUG] [",   Files::GetFileName(__FILE__), ":", __LINE__, "] ", __VA_ARGS__); }   while (0)
-#define LOG_WARNING(...) do { Logger::Log("[WARNING] [", Files::GetFileName(__FILE__), ":", __LINE__, "] ", __VA_ARGS__); }   while (0)
-#define LOG_ERROR(...)   do { Logger::Log("[ERROR] [",   Files::GetFileName(__FILE__), ":", __LINE__, "] ", __VA_ARGS__); std::exit(-1); } while (0)
+#define LOG_INFO(...)    do { Logger::Log("[INFO] [",    Files::GetName(__FILE__), ":", __LINE__, "] ", __VA_ARGS__); }   while (0)
+#define LOG_DEBUG(...)   do { Logger::Log("[DEBUG] [",   Files::GetName(__FILE__), ":", __LINE__, "] ", __VA_ARGS__); }   while (0)
+#define LOG_WARNING(...) do { Logger::Log("[WARNING] [", Files::GetName(__FILE__), ":", __LINE__, "] ", __VA_ARGS__); }   while (0)
+#define LOG_ERROR(...)   do { Logger::Log("[ERROR] [",   Files::GetName(__FILE__), ":", __LINE__, "] ", __VA_ARGS__); std::exit(-1); } while (0)
 
 #endif // LOG_H
