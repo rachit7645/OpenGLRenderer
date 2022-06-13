@@ -1,13 +1,23 @@
 #include "Files.h"
 
-std::string directory = "";
+std::string resDir = "";
 
 void Files::SetResourceDirectory(const std::string& relPath)
 {
-	directory = std::filesystem::absolute(relPath).u8string();
+	resDir = std::filesystem::absolute(relPath).u8string();
 }
 
 const std::string& Files::GetResourceDirectory()
 {
-	return directory;
+	return resDir;
+}
+
+std::string Files::GetFileName(const std::string& path)
+{
+	return std::filesystem::path(path).filename().u8string();
+}
+
+std::string Files::GetRelative(const std::string& path)
+{
+	return std::filesystem::relative(path, resDir).u8string();
 }

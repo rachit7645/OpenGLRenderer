@@ -11,13 +11,11 @@ ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& f
 	glAttachShader(programID, vertexShaderID);
 	glAttachShader(programID, fragmentShaderID);
 	glLinkProgram(programID);
-	CheckProgram("Shader link failed for: " + vertexPath + ", " + fragmentPath,
-		programID, GL_LINK_STATUS, SHADER_LINK_FAILED);
+	CheckProgram("Shader link failed for: " + vertexPath + ", " + fragmentPath, programID, GL_LINK_STATUS);
 	glDeleteShader(vertexShaderID);
 	glDeleteShader(fragmentShaderID);
 	glValidateProgram(programID);
-	CheckProgram("Shader validation failed for: " + vertexPath + ", " + fragmentPath,
-		programID, GL_VALIDATE_STATUS, SHADER_VALIDATION_FAILED);
+	CheckProgram("Shader validation failed for: " + vertexPath + ", " + fragmentPath, programID, GL_VALIDATE_STATUS);
 }
 
 void ShaderProgram::BindAttribute(u32 attribute, const char* name)
@@ -62,11 +60,13 @@ void ShaderProgram::LoadUniform(u32 location, const glm::mat4& matrix)
 
 u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
 {
-	std::ifstream fileStream(Files::GetResourceDirectory() + path, std::ios::in);
+	LOG_INFO("Loading shader: ", path, "\n");
+	std::string newPath = Files::GetResourceDirectory() + path;
+	std::ifstream fileStream(newPath, std::ios::in);
 
 	if (!fileStream.is_open())
 	{
-		Logger::LogAndExit("Unable to open shader" + path, SHADER_FILE_OPEN_FAILED);
+		LOG_ERROR("Unable to open shader: ", path);
 	}
 	std::string content = std::string(std::istreambuf_iterator<char>(fileStream), std::istreambuf_iterator<char>());
 
@@ -74,32 +74,32 @@ u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
 	const GLchar* cstr = content.c_str();
 	glShaderSource(shaderID, 1, &cstr, nullptr);
 	glCompileShader(shaderID);
-	CheckShader("Shader Compilation Failed: " + path, shaderID, GL_COMPILE_STATUS, SHADER_COMPILATION_FAILED);
+	CheckShader("Shader Compilation Failed: " + path, shaderID, GL_COMPILE_STATUS);
 
 	return shaderID;
 }
 
-void ShaderProgram::CheckShader(const std::string& message, u32 shaderID, GLenum type, Error error)
+void ShaderProgram::CheckShader(const std::string& message, u32 shaderID, GLenum type)
 {
 	GLint status;
 	glGetShaderiv(shaderID, type, &status);
 	if (status == GL_FALSE)
 	{
-		std::vector<char> v(512);
-		glGetShaderInfoLog(shaderID, 512, nullptr, v.data());
-		Logger::LogAndExit(message + "\n" + v.data(), error);
+		std::vector<char> v(SHADER_ERROR_BUFFER_SIZE);
+		glGetShaderInfoLog(shaderID, SHADER_ERROR_BUFFER_SIZE, nullptr, v.data());
+		LOG_ERROR(message, "\n", v.data());
 	}
 }
 
-void ShaderProgram::CheckProgram(const std::string& message, u32 programID, GLenum type, Error error)
+void ShaderProgram::CheckProgram(const std::string& message, u32 programID, GLenum type)
 {
 	GLint status;
 	glGetProgramiv(programID, type, &status);
 	if (status == GL_FALSE)
 	{
-		std::vector<char> v(512);
-		glGetProgramInfoLog(programID, 512, nullptr, v.data());
-		Logger::LogAndExit(message + "\n" + v.data(), error);
+		std::vector<char> v(SHADER_ERROR_BUFFER_SIZE);
+		glGetProgramInfoLog(programID, SHADER_ERROR_BUFFER_SIZE, nullptr, v.data());
+		LOG_ERROR(message, "\n", v.data());
 	}
 }
 

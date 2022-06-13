@@ -15,6 +15,8 @@
 
 namespace Shader
 {
+	constexpr auto SHADER_ERROR_BUFFER_SIZE = 4096;
+
 	class ShaderProgram
 	{
 	public:
@@ -42,8 +44,8 @@ namespace Shader
 	private:
 		// Function to load shaders from file
 		u32 LoadShader(GLenum type, const std::string& path);
-		void CheckShader(const std::string& message, u32 shaderID, GLenum type, Error error);
-		void CheckProgram(const std::string& message, u32 programID, GLenum type, Error error);
+		void CheckShader(const std::string& message, u32 shaderID, GLenum type);
+		void CheckProgram(const std::string& message, u32 programID, GLenum type);
 	};
 }
 

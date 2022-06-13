@@ -5,7 +5,15 @@ using namespace Util;
 
 Image2D::Image2D(const std::string& path)
 {
-	data = stbi_load((Files::GetResourceDirectory() + path).c_str(), &width, &height, &channels, STBI_rgb);
+	LOG_INFO("Loading image: ", path, "\n");
+
+	std::string newPath = Files::GetResourceDirectory() + path;
+	data = stbi_load(newPath.c_str(), &width, &height, &channels, STBI_rgb);
+
+	if (data == nullptr)
+	{
+		LOG_ERROR("Failed to load image: ", newPath);
+	}
 }
 
 Image2D::~Image2D()

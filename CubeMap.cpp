@@ -33,7 +33,7 @@ CubeMap::CubeMap(const std::vector<std::string>& files)
 
 		if (data == nullptr)
 		{
-			Logger::LogAndExit("Unable to open file: " + path, TEXTURE_LOAD_FAILED);
+			LOG_ERROR("Unable to open file: ", path);
 		}
 
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);

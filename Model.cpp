@@ -9,10 +9,10 @@ Model::Model(const std::string& path, std::shared_ptr<Texture>& texture, const M
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(newPath.c_str(), ASSIMP_FLAGS);
 
+	LOG_INFO("Loading model: ", path, "\n");
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
-		Logger::LogAndExit(static_cast<std::string>("Model Load Failed: ") +
-			static_cast<std::string>(importer.GetErrorString()), ASSIMP_LOAD_FAILED);
+		LOG_ERROR("Model Load Failed: ", importer.GetErrorString());
 	}
 
 	ProcessNode(scene->mRootNode, scene, texture);

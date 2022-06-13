@@ -5,6 +5,7 @@
 
 #include "Files.h"
 #include "Util.h"
+#include "Log.h"
 
 namespace Util
 {

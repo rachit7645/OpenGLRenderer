@@ -1,6 +1,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <SDL2/SDL.h>
+
 #include "GLM.h"
 #include "Imgui.h"
 #include "Entity.h"

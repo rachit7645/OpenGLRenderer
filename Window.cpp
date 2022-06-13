@@ -4,13 +4,13 @@ using namespace Window;
 
 SDLWindow::SDLWindow()
 {
-	Logger::Log("Initializing SDL2\n", Logger::INFO);
+	LOG_INFO("Initializing SDL2:\n");
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
-		Logger::LogAndExit_SDL("SDL_Init Failed\n", SDL_INIT_FAILED);
+		LOG_ERROR("SDL_Init Failed\n", SDL_GetError(), "\n");
 	}
 
-	Logger::Log("Setting up OpenGL context\n", Logger::INFO);
+	LOG_INFO("Setting up OpenGL context\n");
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
@@ -29,7 +29,7 @@ SDLWindow::SDLWindow()
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-	Logger::Log("Creating a window\n", Logger::INFO);
+	LOG_INFO("Creating a window\n");
 	window = SDL_CreateWindow
 	(
 		"Rachit's Engine", SDL_WINDOWPOS_UNDEFINED,
@@ -37,7 +37,7 @@ SDLWindow::SDLWindow()
 	);
 	if (window == nullptr)
 	{
-		Logger::LogAndExit_SDL("SDL_CreateWindow Failed\n", SDL_CREATE_WINDOW_FAILED);
+		LOG_ERROR("SDL_CreateWindow Failed\n", SDL_GetError(), "\n");
 	}
 	// For sanity, raise window
 	SDL_RaiseWindow(window);
@@ -50,11 +50,11 @@ SDLWindow::SDLWindow()
 	glContext = SDL_GL_CreateContext(window);
 	if (glContext == nullptr)
 	{
-		Logger::LogAndExit_SDL("SDL_GL_CreateContext Failed\n", SDL_GL_CREATE_CONTEXT_FAILED);
+		LOG_ERROR("SDL_GL_CreateContext Failed\n", SDL_GetError(), "\n");
 	}
 	if (SDL_GL_MakeCurrent(window, glContext) != 0)
 	{
-		Logger::LogAndExit_SDL("SDL_GL_MakeCurrent Failed\n", SDL_GL_MAKE_CURRENT_FAILED);
+		LOG_ERROR("SDL_GL_MakeCurrent Failed\n", SDL_GetError(), "\n");
 	}
 
 	// Initialize the REAL OpenGL context
@@ -62,7 +62,7 @@ SDLWindow::SDLWindow()
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
 	{
-		Logger::LogAndExit("glewInit Failed\n", GLEW_INIT_FAILED);
+		LOG_ERROR("glewInit Failed\n");
 	}
 
 	IMGUI_CHECKVERSION();
@@ -137,7 +137,7 @@ void SDLWindow::InitGL()
 
 SDLWindow::~SDLWindow()
 {
-	Logger::Log("Quiting SDL2", Logger::INFO);
+	LOG_INFO("Quiting SDL2\n");
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();

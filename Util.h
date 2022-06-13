@@ -29,21 +29,6 @@ using f64 = double;
 inline const u8* g_Keys;
 inline f32 g_Delta = 1.0f;
 
-enum Error
-{
-	SDL_INIT_FAILED = 1,
-	SDL_CREATE_WINDOW_FAILED = 2,
-	SDL_GL_CREATE_CONTEXT_FAILED = 3,
-	GLEW_INIT_FAILED = 4,
-	SHADER_FILE_OPEN_FAILED = 5,
-	SHADER_COMPILATION_FAILED = 6,
-	ASSIMP_LOAD_FAILED = 7,
-	SHADER_VALIDATION_FAILED = 8,
-	SHADER_LINK_FAILED = 9,
-	TEXTURE_LOAD_FAILED = 10,
-	SDL_GL_MAKE_CURRENT_FAILED = 11,
-};
-
 namespace Util
 {
 	// Random number between a range
