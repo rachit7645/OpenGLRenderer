@@ -14,7 +14,7 @@ void Logger::LogAndExit(const std::string& message, Error error)
 
 void Logger::Log(const std::string& message, LogType type)
 {
-	const char* str_type;
+	const char* str_type = "DEFAULT:";
 	if (type == INFO)
 		str_type = INFO_STR;
 	else if (type == WARNING)
