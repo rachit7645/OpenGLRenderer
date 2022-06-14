@@ -113,7 +113,6 @@ void SDLWindow::MainLoop()
 		{
 			renderer.ProcessTerrain(terrain);
 		}
-
 		renderer.Render(light, camera);
 
 		ImGui::Render();

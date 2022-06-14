@@ -10,25 +10,13 @@ SkyboxShader::SkyboxShader() : ShaderProgram(SKYBOX_VERTEX_SHADER_PATH, SKYBOX_F
 
 void SkyboxShader::GetUniformLocations()
 {
-	uniforms["projectionMatrix"] = GetUniformLocation("projectionMatrix");
-	uniforms["viewMatrix"] = GetUniformLocation("viewMatrix");
+	uniforms["modelMatrix"] = GetUniformLocation("modelMatrix");
 	uniforms["fogColor"] = GetUniformLocation("fogColor");
 }
 
-void SkyboxShader::LoadProjectionMatrix(const glm::mat4& matrix)
+void SkyboxShader::LoadModelMatrix(const glm::mat4& matrix)
 {
-	LoadUniform(uniforms["projectionMatrix"], matrix);
-}
-
-void SkyboxShader::LoadViewMatrix(const Camera& camera)
-{
-	glm::mat4 viewMatrix = Maths::CreateViewMatrix(camera);
-	viewMatrix[3][0] = 0.0f;
-	viewMatrix[3][1] = 0.0f;
-	viewMatrix[3][2] = 0.0f;
-	rotation += SKYBOX_ROTATION_SPEED * g_Delta;
-	viewMatrix = glm::rotate(viewMatrix, glm::radians(rotation), glm::vec3(0, 1, 0));
-	LoadUniform(uniforms["viewMatrix"], viewMatrix);
+	LoadUniform(uniforms["modelMatrix"], matrix);
 }
 
 void SkyboxShader::LoadFogColor(const glm::vec3& color)

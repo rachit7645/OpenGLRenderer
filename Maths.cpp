@@ -17,6 +17,18 @@ glm::mat4 Maths::CreateTransformationMatrix(const glm::vec3& translation, const 
 	return matrix;
 }
 
+glm::mat4 Maths::CreateTransformationMatrix(const glm::vec3& rotation)
+{
+	// 1. Create a identity matrix
+	glm::mat4 matrix(1.0f);
+	// 2. Rotate it by x, y and z
+	matrix = glm::rotate(matrix, glm::radians(rotation.x), glm::vec3(1, 0, 0));
+	matrix = glm::rotate(matrix, glm::radians(rotation.y), glm::vec3(0, 1, 0));
+	matrix = glm::rotate(matrix, glm::radians(rotation.z), glm::vec3(0, 0, 1));
+	// Return
+	return matrix;
+}
+
 glm::mat4 Maths::CreateViewMatrix(const Camera& camera)
 {
 	// 1. Create an identity matrix

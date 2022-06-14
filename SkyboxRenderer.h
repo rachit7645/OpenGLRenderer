@@ -11,6 +11,8 @@
 
 namespace Renderer
 {
+	constexpr auto SKYBOX_ROTATION_SPEED = 3.0f;
+
 	class SkyboxRenderer
 	{
 	public:
@@ -20,7 +22,10 @@ namespace Renderer
 		void Render(const Entities::Skybox& skybox);
 	private:
 		void PrepareSkybox(const Entities::Skybox& skybox);
+		void LoadModelMatrix();
 		void UnbindSkybox();
+
+		f32 rotation = 0.0f;
 	};
 }
 

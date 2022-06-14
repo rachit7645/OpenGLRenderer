@@ -8,21 +8,11 @@ using Entities::Camera;
 using Entities::Skybox;
 using Terrains::Terrain;
 
-MasterRenderer::MasterRenderer() : renderer(shader), terrainRenderer(terrainShader), skyboxRenderer(skyboxShader)
+MasterRenderer::MasterRenderer() :
+	renderer(shader), terrainRenderer(terrainShader),
+	skyboxRenderer(skyboxShader), matrices(std::make_shared<MatrixBuffer>())
 {
-	glm::mat4 projection = glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
-
-	shader.Start();
-	shader.LoadProjectionMatrix(projection);
-	shader.Stop();
-
-	terrainShader.Start();
-	terrainShader.LoadProjectionMatrix(projection);
-	terrainShader.Stop();
-
-	skyboxShader.Start();
-	skyboxShader.LoadProjectionMatrix(projection);
-	skyboxShader.Stop();
+	matrices->projection = glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
 }
 
 void MasterRenderer::Prepare()
@@ -31,46 +21,50 @@ void MasterRenderer::Prepare()
 	glClear(GL_CLEAR_FLAGS);
 }
 
+void MasterRenderer::Update(const Camera& camera)
+{
+	matrices->view = Maths::CreateViewMatrix(camera);
+	matrices->Update();
+}
+
 void MasterRenderer::Render(const Light& light, const Camera& camera)
 {
 	Prepare();
+	Update(camera);
 
-	RenderEntities(light, camera);
-	RenderTerrains(light, camera);
-	RenderSkybox(camera);
+	RenderEntities(light);
+	RenderTerrains(light);
+	RenderSkybox();
 
 	entities.clear();
 	terrains.clear();
 }
 
-void MasterRenderer::RenderEntities(const Light& light, const Camera& camera)
+void MasterRenderer::RenderEntities(const Light& light)
 {
 	shader.Start();
-	shader.LoadViewMatrix(camera);
 	shader.LoadLight(light);
 	shader.LoadSkyColour(GL_CLEAR_COLOR);
 	renderer.Render(entities);
 	shader.Stop();
 }
 
-void MasterRenderer::RenderTerrains(const Light& light, const Camera& camera)
+void MasterRenderer::RenderTerrains(const Light& light)
 {
 	terrainShader.Start();
-	terrainShader.LoadViewMatrix(camera);
 	terrainShader.LoadLight(light);
 	terrainShader.LoadSkyColour(GL_CLEAR_COLOR);
 	terrainRenderer.Render(terrains);
 	terrainShader.Stop();
 }
 
-void MasterRenderer::RenderSkybox(const Camera& camera)
+void MasterRenderer::RenderSkybox()
 {
 	// Since z / w will be 1.0f, we need to use GL_LEQUAL to avoid Z fighting
 	glDepthFunc(GL_LEQUAL);
 	// Disable depth writing for performance
 	glDepthMask(GL_FALSE);
 	skyboxShader.Start();
-	skyboxShader.LoadViewMatrix(camera);
 	skyboxShader.LoadFogColor(GL_CLEAR_COLOR);
 	skyboxRenderer.Render(skybox);
 	skyboxShader.Stop();
