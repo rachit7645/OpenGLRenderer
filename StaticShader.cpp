@@ -14,10 +14,6 @@ StaticShader::StaticShader() : ShaderProgram(VERTEX_SHADER_PATH, FRAGMENT_SHADER
 void StaticShader::GetUniformLocations()
 {
 	uniforms["modelMatrix"] = GetUniformLocation("modelMatrix");
-	uniforms["projectionMatrix"] = GetUniformLocation("projectionMatrix");
-	uniforms["viewMatrix"] = GetUniformLocation("viewMatrix");
-	uniforms["lightPosition"] = GetUniformLocation("lightPosition");
-	uniforms["lightColour"] = GetUniformLocation("lightColour");
 	uniforms["shineDamper"] = GetUniformLocation("shineDamper");
 	uniforms["reflectivity"] = GetUniformLocation("reflectivity");
 	uniforms["useFakeLighting"] = GetUniformLocation("useFakeLighting");
@@ -27,23 +23,6 @@ void StaticShader::GetUniformLocations()
 void StaticShader::LoadTransformationMatrix(const glm::mat4& matrix)
 {
 	LoadUniform(uniforms["modelMatrix"], matrix);
-}
-
-void StaticShader::LoadProjectionMatrix(const glm::mat4& matrix)
-{
-	LoadUniform(uniforms["projectionMatrix"], matrix);
-}
-
-void StaticShader::LoadViewMatrix(const Camera& camera)
-{
-	glm::mat4 viewMatrix = Maths::CreateViewMatrix(camera);
-	LoadUniform(uniforms["viewMatrix"], viewMatrix);
-}
-
-void StaticShader::LoadLight(const Light& light)
-{
-	LoadUniform(uniforms["lightPosition"], light.position);
-	LoadUniform(uniforms["lightColour"], light.colour);
 }
 
 void StaticShader::LoadMaterials(const Material& material)

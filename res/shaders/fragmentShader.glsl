@@ -1,7 +1,13 @@
-#version 330 core
+#version 420 core
 
 const float MIN_BRIGHTNESS = 0.15f;
 const float MIN_SPECULAR   = 0.0f;
+
+layout(std140, binding = 1) uniform Lights
+{
+	uniform vec4 lightPosition;
+	uniform vec4 lightColour;
+};
 
 in vec2 pass_textureCoords;
 in vec3 surfaceNormal;
@@ -11,7 +17,6 @@ in float visibility;
 
 uniform sampler2D modelTexture;
 uniform vec4 skyColour;
-uniform vec3 lightColour;
 uniform float shineDamper;
 uniform float reflectivity;
 
@@ -41,7 +46,7 @@ vec3 CalculateDiffuse(vec3 unitNormal, vec3 unitLightVector)
 {
 	float nDot1 = dot(unitNormal, unitLightVector);
 	float brightness = max(nDot1, MIN_BRIGHTNESS);
-	return brightness * lightColour;
+	return brightness * lightColour.xyz;
 }
 
 vec3 CalculateSpecular(vec3 unitNormal, vec3 unitLightVector, vec3 unitCameraVector)
@@ -51,5 +56,5 @@ vec3 CalculateSpecular(vec3 unitNormal, vec3 unitLightVector, vec3 unitCameraVec
 	float specularFactor = dot(reflectedLightDirection, unitCameraVector);
 	specularFactor = max(specularFactor, MIN_SPECULAR);
 	float dampedFactor = pow(specularFactor, shineDamper);
-	return dampedFactor * reflectivity * lightColour;
+	return dampedFactor * reflectivity * lightColour.xyz;
 }

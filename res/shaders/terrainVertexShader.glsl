@@ -13,8 +13,13 @@ layout(std140, binding = 0) uniform Matrices
 	uniform mat4 viewMatrix;
 };
 
+layout(std140, binding = 1) uniform Lights
+{
+	uniform vec4 lightPosition;
+	uniform vec4 lightColour;
+};
+
 uniform mat4 modelMatrix;
-uniform vec3 lightPosition;
 
 out vec2 pass_textureCoords;
 out vec3 surfaceNormal;
@@ -39,7 +44,7 @@ void main()
 void CalculateLighting(vec4 worldPosition)
 {
 	surfaceNormal = (modelMatrix * vec4(normal, 0.0f)).xyz;
-	toLightVector = lightPosition - worldPosition.xyz;
+	toLightVector = lightPosition.xyz - worldPosition.xyz;
 	// FIXME: Very expensive calculation ver vertex
 	// Maybe upload inverse viewMatrix from cpu instead?
 	toCameraVector = (inverse(viewMatrix) * vec4(0.0f, 0.0f, 0.0f, 1.0f)).xyz - worldPosition.xyz;

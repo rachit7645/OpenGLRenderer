@@ -22,11 +22,8 @@ namespace Shader
 
 		// Matrix loading functions
 		void LoadTransformationMatrix(const glm::mat4& matrix);
-		void LoadProjectionMatrix(const glm::mat4& matrix);
-		void LoadViewMatrix(const Entities::Camera& camera);
 
 		// Material and object loading functions
-		void LoadLight(const Entities::Light& light);
 		void LoadMaterials(const Renderer::Material& material);
 		void LoadSkyColour(const glm::vec4& skyColour);
 

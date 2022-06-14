@@ -9,11 +9,13 @@ namespace Entities
 	// TODO: Support multiple lights at once
 	// TODO: Add a attenuation factor to the lights
 	// TODO: Add an ImGui widget for live editing
-	
+
 	class Light
 	{
 	public:
-		Light(const glm::vec3& position, const glm::vec3& colour) : position(position), colour(colour) {}
+		Light(const glm::vec3& position, const glm::vec3& colour);
+		Light();
+
 		glm::vec3 position;
 		glm::vec3 colour;
 	};

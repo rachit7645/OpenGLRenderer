@@ -9,10 +9,10 @@ using Entities::Skybox;
 using Terrains::Terrain;
 
 MasterRenderer::MasterRenderer() :
-	renderer(shader), terrainRenderer(terrainShader),
-	skyboxRenderer(skyboxShader), matrices(std::make_shared<MatrixBuffer>())
+	renderer(shader), terrainRenderer(terrainShader), skyboxRenderer(skyboxShader),
+	matrices(std::make_shared<MatrixBuffer>()), lights(std::make_shared<LightsBuffer>())
 {
-	matrices->projection = glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
+	matrices->LoadProjection(glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
 }
 
 void MasterRenderer::Prepare()
@@ -21,38 +21,36 @@ void MasterRenderer::Prepare()
 	glClear(GL_CLEAR_FLAGS);
 }
 
-void MasterRenderer::Update(const Camera& camera)
+void MasterRenderer::Update(const Light& light, const Camera& camera)
 {
-	matrices->view = Maths::CreateViewMatrix(camera);
-	matrices->Update();
+	matrices->LoadView(Maths::CreateViewMatrix(camera));
+	lights->LoadLight(light);
 }
 
 void MasterRenderer::Render(const Light& light, const Camera& camera)
 {
 	Prepare();
-	Update(camera);
+	Update(light, camera);
 
-	RenderEntities(light);
-	RenderTerrains(light);
+	RenderEntities();
+	RenderTerrains();
 	RenderSkybox();
 
 	entities.clear();
 	terrains.clear();
 }
 
-void MasterRenderer::RenderEntities(const Light& light)
+void MasterRenderer::RenderEntities()
 {
 	shader.Start();
-	shader.LoadLight(light);
 	shader.LoadSkyColour(GL_CLEAR_COLOR);
 	renderer.Render(entities);
 	shader.Stop();
 }
 
-void MasterRenderer::RenderTerrains(const Light& light)
+void MasterRenderer::RenderTerrains()
 {
 	terrainShader.Start();
-	terrainShader.LoadLight(light);
 	terrainShader.LoadSkyColour(GL_CLEAR_COLOR);
 	terrainRenderer.Render(terrains);
 	terrainShader.Stop();

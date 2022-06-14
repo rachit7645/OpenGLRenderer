@@ -18,6 +18,7 @@
 #include "SkyboxRenderer.h"
 #include "SkyboxShader.h"
 #include "MatrixBuffer.h"
+#include "LightsBuffer.h"
 
 namespace Renderer
 {
@@ -52,11 +53,11 @@ namespace Renderer
 		// Prepare framebuffer for render
 		void Prepare();
 		// Update buffers, etc.
-		void Update(const Entities::Camera& camera);
+		void Update(const Entities::Light& light, const Entities::Camera& camera);
 		// Render entities
-		void RenderEntities(const Entities::Light& light);
+		void RenderEntities();
 		// Render Terrains
-		void RenderTerrains(const Entities::Light& light);
+		void RenderTerrains();
 		// Render the skybox
 		void RenderSkybox();
 
@@ -66,8 +67,9 @@ namespace Renderer
 		std::vector<Terrains::Terrain> terrains;
 		// The Skybox
 		Entities::Skybox skybox;
-		// Matrix uniform buffer object
+		// Uniform buffer objects
 		std::shared_ptr<MatrixBuffer> matrices;
+		std::shared_ptr<LightsBuffer> lights;
 	};
 }
 

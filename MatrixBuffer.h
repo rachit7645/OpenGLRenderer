@@ -5,20 +5,16 @@
 
 #include "GLM.h"
 #include "Util.h"
+#include "UniformBuffer.h"
 
 namespace Renderer
 {
-	class MatrixBuffer
+	class MatrixBuffer : public UniformBuffer
 	{
 	public:
 		MatrixBuffer();
-		~MatrixBuffer();
-
-		GLuint id;
-		glm::mat4 view;
-		glm::mat4 projection;
-
-		void Update();
+		void LoadView(const glm::mat4& view);
+		void LoadProjection(const glm::mat4& projection);
 	};
 }
 
