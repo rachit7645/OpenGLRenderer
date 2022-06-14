@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <limits>
 
 #include "GLM.h"
 #include "Util.h"
@@ -16,10 +17,9 @@
 
 namespace Terrains
 {
-	constexpr auto SIZE = 500.0f;
-	constexpr auto MAX_HEIGHT = 40.0f;
-	constexpr u32 MAX_PIXEL_COLOR = 0 << 24 | 255 << 16 | 255 << 8 | 255;
-
+	constexpr auto TERRAIN_SIZE = 500.0f;
+	constexpr auto TERRAIN_MAX_HEIGHT = 40.0f;
+	constexpr auto IMAGE_MAX_PIXEL_COLOR = std::numeric_limits<u8>::max();
 
 	template<typename T>
 	using Array2D = std::vector<std::vector<T>>;

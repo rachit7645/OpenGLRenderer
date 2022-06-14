@@ -16,9 +16,31 @@ Image2D::Image2D(const std::string& path)
 	}
 }
 
-Image2D::~Image2D()
+u8 Image2D::GetRed(int x, int y)
 {
-	stbi_image_free(data);
+	if (x < 0 || x >= width || y < 0 || y >= height)
+		return 0;
+
+	ssize_t position = (y * width + x) * STBI_rgb;
+	return data[position];
+}
+
+u8 Image2D::GetGreen(int x, int y)
+{
+	if (x < 0 || x >= width || y < 0 || y >= height)
+		return 0;
+
+	ssize_t position = (y * width + x) * STBI_rgb;
+	return data[position + 1];
+}
+
+u8 Image2D::GetBlue(int x, int y)
+{
+	if (x < 0 || x >= width || y < 0 || y >= height)
+		return 0;
+
+	ssize_t position = (y * width + x) * STBI_rgb;
+	return data[position + 2];
 }
 
 u32 Image2D::GetARGB(int x, int y)
@@ -33,4 +55,9 @@ u32 Image2D::GetARGB(int x, int y)
 	u8 alpha = 0;
 
 	return alpha << 24 | red << 16 | green << 8 | blue;
+}
+
+Image2D::~Image2D()
+{
+	stbi_image_free(data);
 }

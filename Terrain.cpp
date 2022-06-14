@@ -10,7 +10,7 @@ using Util::Image2D;
 using Entities::Entity;
 
 Terrain::Terrain(const std::string& hMapPath, const glm::vec2& position, const TerrainTextures& textures, const Material& material)
-	: position(position.x* SIZE, position.y* SIZE), gridPosition(position), textures(textures), material(material)
+	: position(position.x* TERRAIN_SIZE, position.y* TERRAIN_SIZE), gridPosition(position), textures(textures), material(material)
 {
 	Image2D hMap(hMapPath);
 
@@ -32,11 +32,11 @@ Terrain::Terrain(const std::string& hMapPath, const glm::vec2& position, const T
 	{
 		for (ssize_t j = 0; j < VERTEX_COUNT; ++j)
 		{
-			vertices[vertexPointer * 3] = static_cast<f32>(j) / static_cast<f32>(VERTEX_COUNT - 1) * SIZE;
+			vertices[vertexPointer * 3] = static_cast<f32>(j) / static_cast<f32>(VERTEX_COUNT - 1) * TERRAIN_SIZE;
 			f32 height = CalculateHeight(static_cast<int>(j), static_cast<int>(i), hMap);
 			heights[j][i] = height;
 			vertices[vertexPointer * 3 + 1] = height;
-			vertices[vertexPointer * 3 + 2] = static_cast<f32>(i) / static_cast<f32>(VERTEX_COUNT - 1) * SIZE;
+			vertices[vertexPointer * 3 + 2] = static_cast<f32>(i) / static_cast<f32>(VERTEX_COUNT - 1) * TERRAIN_SIZE;
 
 			glm::vec3 normal = CalculateNormal(j, i, hMap);
 			normals[vertexPointer * 3] = normal.x;
@@ -74,10 +74,10 @@ Terrain::Terrain(const std::string& hMapPath, const glm::vec2& position, const T
 
 f32 Terrain::CalculateHeight(int x, int z, Image2D& hMap)
 {
-	f32 height = hMap.GetARGB(x, z);
-	height /= MAX_PIXEL_COLOR;
-	height = height * 2.0f - 1.0f;
-	height *= MAX_HEIGHT;
+	f32 height = hMap.GetRed(x, z);
+	height -= IMAGE_MAX_PIXEL_COLOR / 2.0f;
+	height /= IMAGE_MAX_PIXEL_COLOR / 2.0f;
+	height *= TERRAIN_MAX_HEIGHT;
 	return height;
 }
 
@@ -97,7 +97,7 @@ glm::vec3 Terrain::CalculateNormal(int x, int z, Image2D& hMap)
 f32 Terrain::GetHeight(const glm::vec2& worldPos) const
 {
 	glm::vec2 terrainPos = worldPos - position;
-	f32 gridSize = SIZE / static_cast<f32>(heights.size() - 1);
+	f32 gridSize = TERRAIN_SIZE / static_cast<f32>(heights.size() - 1);
 	glm::vec2 gridPos = glm::floor(terrainPos / gridSize);
 
 	if (gridPos.x >= heights.size() - 1 || gridPos.y >= heights.size() - 1 || gridPos.x < 0 || gridPos.y < 0)
@@ -137,7 +137,7 @@ f32 Terrain::GetHeight(const Entity& entity) const
 const Terrain* Terrains::GetCurrent(const std::vector<Terrain>& terrains, const glm::vec2& position)
 {
 	// Find the grid the position lies in
-	glm::vec2 gridPos(std::floor(position.x / SIZE), std::floor(position.y / SIZE));
+	glm::vec2 gridPos(std::floor(position.x / TERRAIN_SIZE), std::floor(position.y / TERRAIN_SIZE));
 	// Lambda to pass to std::find_if
 	auto find_current = [gridPos](const Terrain& terrain)
 	{

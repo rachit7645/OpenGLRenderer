@@ -25,13 +25,14 @@ void SDLWindow::MainLoop()
 	std::shared_ptr<Texture> fernTexture = std::make_shared<Texture>("gfx/fern.png");
 	std::shared_ptr<Texture> defaultTexture = std::make_shared<Texture>("gfx/dragon.png");
 
-	TerrainTextures textures = TerrainTextures(
+	TerrainTextures textures =
+	{
 		std::make_shared<Texture>("gfx/grass.png"),
 		std::make_shared<Texture>("gfx/mud.png"),
 		std::make_shared<Texture>("gfx/path.png"),
 		std::make_shared<Texture>("gfx/pinkFlowers.png"),
 		std::make_shared<Texture>("gfx/blendMap.png")
-	);
+	};
 
 
 	std::shared_ptr<Model> treeModel = std::make_shared<Model>("gfx/tree.obj", treeTexture);
@@ -54,19 +55,19 @@ void SDLWindow::MainLoop()
 		f32 entityX, entityY, entityZ;
 		for (size_t i = 0; i < 40; ++i)
 		{
-			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::SIZE - Terrains::SIZE / 2;
+			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE - Terrains::TERRAIN_SIZE / 2.0f;
 			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * -300;
 			current = Terrains::GetCurrent(terrains, glm::vec2(entityX, entityZ));
 			entityY = current != nullptr ? current->GetHeight(glm::vec2(entityX, entityZ)) : 0.0f;
 			entities.push_back(Entity(treeModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f, 0.0f, 0.0f), 3.0f));
 
-			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::SIZE - Terrains::SIZE / 2;
+			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE - Terrains::TERRAIN_SIZE / 2.0f;
 			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * -300;
 			current = Terrains::GetCurrent(terrains, glm::vec2(entityX, entityZ));
 			entityY = current != nullptr ? current->GetHeight(glm::vec2(entityX, entityZ)) : 0.0f;
 			entities.push_back(Entity(grassModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f));
 
-			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::SIZE - Terrains::SIZE / 2;
+			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE - Terrains::TERRAIN_SIZE / 2.0f;
 			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * -300;
 			current = Terrains::GetCurrent(terrains, glm::vec2(entityX, entityZ));
 			entityY = current != nullptr ? current->GetHeight(glm::vec2(entityX, entityZ)) : 0.0f;
