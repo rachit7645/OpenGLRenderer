@@ -2,7 +2,7 @@
 
 using namespace Renderer;
 
-UniformBuffer::UniformBuffer(GLuint slot, GLsizeiptr size)
+UniformBuffer::UniformBuffer(GLuint slot, GLsizeiptr size) : size(size)
 {
 	glGenBuffers(1, &id);
 	glBindBuffer(GL_UNIFORM_BUFFER, id);

@@ -13,6 +13,7 @@ namespace Renderer
 		~UniformBuffer();
 
 		GLuint id;
+		GLsizeiptr size;
 	};
 }
 

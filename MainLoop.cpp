@@ -14,6 +14,7 @@ using Renderer::Material;
 using Entities::Entity;
 using Entities::Player;
 using Entities::Skybox;
+using Entities::Light;
 using Terrains::Terrain;
 using Terrains::TerrainTextures;
 
@@ -76,8 +77,14 @@ void SDLWindow::MainLoop()
 	}
 	Player player(playerModel, glm::vec3(100.0f, 0.0f, 0.0f), glm::vec3(0.0f, 180.0f, 0.0f), 1.0f);
 
+	std::vector<Light> lights;
+	{
+		lights.push_back(Light(glm::vec3(20000.0f, 20000.0f, 2000.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
+		lights.push_back(Light(glm::vec3(-200.0f, 10.0f, -200.0f), glm::vec3(10.0f, 0.0f, 0.0f)));
+		lights.push_back(Light(glm::vec3(200.0f, 10.0f, 200.0f), glm::vec3(0.0f, 0.0f, 10.0f)));
+	};
+
 	Entities::Skybox skybox;
-	Entities::Light light(glm::vec3(20000.0f, 20000.0f, 2000.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 	Entities::Camera camera(player);
 
 	Renderer::MasterRenderer renderer;
@@ -113,7 +120,7 @@ void SDLWindow::MainLoop()
 		{
 			renderer.ProcessTerrain(terrain);
 		}
-		renderer.Render(light, camera);
+		renderer.Render(lights, camera);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

@@ -21,16 +21,16 @@ void MasterRenderer::Prepare()
 	glClear(GL_CLEAR_FLAGS);
 }
 
-void MasterRenderer::Update(const Light& light, const Camera& camera)
+void MasterRenderer::Update(const std::vector<Light>& pLights, const Camera& camera)
 {
 	matrices->LoadView(Maths::CreateViewMatrix(camera));
-	lights->LoadLight(light);
+	lights->LoadLight(pLights);
 }
 
-void MasterRenderer::Render(const Light& light, const Camera& camera)
+void MasterRenderer::Render(const std::vector<Light>& lights, const Camera& camera)
 {
 	Prepare();
-	Update(light, camera);
+	Update(lights, camera);
 
 	RenderEntities();
 	RenderTerrains();

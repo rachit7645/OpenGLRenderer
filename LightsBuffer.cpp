@@ -1,20 +1,28 @@
 #include "LightsBuffer.h"
 
 using namespace Renderer;
+
 using Entities::Light;
 
 // HACK: GLSL's alignment is fucking weird, so upload vec4's
 
-LightsBuffer::LightsBuffer() : UniformBuffer(1, sizeof(glm::vec4) * 2) {}
+const Light emptyLight = Light(glm::vec3(0.0f), glm::vec3(0.0f));
 
-void LightsBuffer::LoadLight(const Entities::Light& light)
+LightsBuffer::LightsBuffer() : UniformBuffer(1, sizeof(Light)* SHADER_MAX_LIGHTS) {}
+
+void LightsBuffer::LoadLight(const std::vector<Light>& lights)
 {
-	// Convert to vec4
-	glm::vec4 lightPos = { light.position, 1.0f };
-	glm::vec4 lightCol = { light.colour, 1.0f };
-
 	glBindBuffer(GL_UNIFORM_BUFFER, id);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::vec4), &lightPos);
-	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::vec4), sizeof(glm::vec4), &lightCol);
+	for (size_t i = 0; i < SHADER_MAX_LIGHTS; ++i)
+	{
+		if (i < lights.size())
+		{
+			glBufferSubData(GL_UNIFORM_BUFFER, sizeof(Light) * i, sizeof(Light), reinterpret_cast<const void*>(&lights[i]));
+		}
+		else
+		{
+			glBufferSubData(GL_UNIFORM_BUFFER, sizeof(Light) * i, sizeof(Light), reinterpret_cast<const void*>(&emptyLight));
+		}
+	}
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }

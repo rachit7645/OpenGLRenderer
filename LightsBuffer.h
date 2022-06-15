@@ -10,11 +10,13 @@
 
 namespace Renderer
 {
+	constexpr auto SHADER_MAX_LIGHTS = 4;
+
 	class LightsBuffer : public UniformBuffer
 	{
 	public:
 		LightsBuffer();
-		void LoadLight(const Entities::Light& light);
+		void LoadLight(const std::vector<Entities::Light>& lights);
 	};
 }
 

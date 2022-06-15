@@ -42,7 +42,7 @@ namespace Renderer
 		Renderer::SkyboxRenderer skyboxRenderer;
 
 		// Main render function
-		void Render(const Entities::Light& light, const Entities::Camera& camera);
+		void Render(const std::vector<Entities::Light>& lights, const Entities::Camera& camera);
 		// Process entities into the entitiy map
 		void ProcessEntity(const Entities::Entity& entity);
 		// Process terrains into a vector
@@ -53,7 +53,7 @@ namespace Renderer
 		// Prepare framebuffer for render
 		void Prepare();
 		// Update buffers, etc.
-		void Update(const Entities::Light& light, const Entities::Camera& camera);
+		void Update(const std::vector<Entities::Light>& pLights, const Entities::Camera& camera);
 		// Render entities
 		void RenderEntities();
 		// Render Terrains
