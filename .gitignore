@@ -1,7 +1,4 @@
 /build/
 /.vscode/
-/imgui/.github
-/imgui/docs
-/imgui/misc
+# Not today Nintendo :)
 /res/gfx/Link
-.editorconfig

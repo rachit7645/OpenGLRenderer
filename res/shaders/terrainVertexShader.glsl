@@ -27,11 +27,11 @@ layout(std140, binding = 1) uniform Lights
 
 uniform mat4 modelMatrix;
 
-out vec2 pass_textureCoords;
-out vec3 surfaceNormal;
-out vec3 toLightVector[MAX_LIGHTS];
-out vec3 toCameraVector;
 out float visibility;
+out vec2 pass_textureCoords;
+out vec3 unitNormal;
+out vec3 unitCameraVector;
+out vec3 unitLightVector[MAX_LIGHTS];
 
 void CalculateLighting(vec4 worldPosition);
 void CalculateVisibility(vec4 positionRelativeToCamera);
@@ -49,14 +49,14 @@ void main()
 
 void CalculateLighting(vec4 worldPosition)
 {
-	surfaceNormal = (modelMatrix * vec4(normal, 0.0f)).xyz;
+	unitNormal = normalize((modelMatrix * vec4(normal, 0.0f)).xyz);
 	for (int i = 0; i < MAX_LIGHTS; i++)
 	{
-		toLightVector[i] =  lights[i].position.xyz - worldPosition.xyz;
+		unitLightVector[i] = normalize(lights[i].position.xyz - worldPosition.xyz);
 	}
 	// FIXME: Very expensive calculation ver vertex
 	// Maybe upload inverse viewMatrix from cpu instead?
-	toCameraVector = (inverse(viewMatrix) * vec4(0.0f, 0.0f, 0.0f, 1.0f)).xyz - worldPosition.xyz;
+	unitCameraVector = normalize((inverse(viewMatrix) * vec4(0.0f, 0.0f, 0.0f, 1.0f)).xyz - worldPosition.xyz);
 }
 
 void CalculateVisibility(vec4 positionRelativeToCamera)
