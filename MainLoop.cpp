@@ -44,43 +44,39 @@ void SDLWindow::MainLoop()
 	// All objects go here
 	std::vector<Terrain> terrains;
 	{
-		terrains.push_back(Terrain("gfx/heightMap.png", glm::vec2(0.0f, -1.0f), textures));
-		terrains.push_back(Terrain("gfx/heightMap.png", glm::vec2(-1.0f, -1.0f), textures));
 		terrains.push_back(Terrain("gfx/heightMap.png", glm::vec2(0.0f, 0.0f), textures));
-		terrains.push_back(Terrain("gfx/heightMap.png", glm::vec2(-1.0f, 0.0f), textures));
 	}
 
 	std::vector<Entity> entities;
 	{
 		const Terrain* current = nullptr;
 		f32 entityX, entityY, entityZ;
-		for (size_t i = 0; i < 40; ++i)
+		for (size_t i = 0; i < 100; ++i)
 		{
-			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE - Terrains::TERRAIN_SIZE / 2.0f;
-			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * -300;
+			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
+			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
 			current = Terrains::GetCurrent(terrains, glm::vec2(entityX, entityZ));
 			entityY = current != nullptr ? current->GetHeight(glm::vec2(entityX, entityZ)) : 0.0f;
 			entities.push_back(Entity(treeModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f, 0.0f, 0.0f), 3.0f));
 
-			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE - Terrains::TERRAIN_SIZE / 2.0f;
-			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * -300;
+			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
+			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
 			current = Terrains::GetCurrent(terrains, glm::vec2(entityX, entityZ));
 			entityY = current != nullptr ? current->GetHeight(glm::vec2(entityX, entityZ)) : 0.0f;
 			entities.push_back(Entity(grassModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f));
 
-			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE - Terrains::TERRAIN_SIZE / 2.0f;
-			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * -300;
+			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
+			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
 			current = Terrains::GetCurrent(terrains, glm::vec2(entityX, entityZ));
 			entityY = current != nullptr ? current->GetHeight(glm::vec2(entityX, entityZ)) : 0.0f;
 			entities.push_back(Entity(fernModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f, 0.0f, 0.0f), 0.6f));
 		}
 	}
-	Player player(playerModel, glm::vec3(100.0f, 0.0f, 0.0f), glm::vec3(0.0f, 180.0f, 0.0f), 1.0f);
+	Player player(playerModel, glm::vec3(250.0f, 0.0f, 235.0f), glm::vec3(0.0f, 180.0f, 0.0f), 1.0f);
 
 	std::vector<Light> lights;
 	{
-		lights.push_back(Light(glm::vec3(-200.0f, 10.0f, -200.0f), glm::vec3(4.0f, 0.1f, 0.1f)));
-		lights.push_back(Light(glm::vec3(200.0f, 10.0f, 200.0f), glm::vec3(0.1f, 0.1f, 4.0f)));
+		lights.push_back(Light(glm::vec3(20000.0f, 20000.0f, 2000.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
 	};
 
 	Entities::Skybox skybox;

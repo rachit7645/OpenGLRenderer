@@ -32,8 +32,6 @@ void Camera::ImGuiDisplay()
 	ImGui::Text("Rotation:\nPitch: %.2f\nYaw: %.2f\nRoll: %.2f", rotation.x, rotation.y, rotation.z);
 	ImGui::Text("Distance From Player: %.2f\nAngle Around Player: %.2f\nCamera Speed Constant: %.2f",
 		distanceFromPlayer, angleAroundPlayer, CAMERA_SPEED);
-	ImGui::Text("Mouse Position:\nX: %d\nY: %d\nMouse Scroll:\nX: %d\nY: %d",
-		mousePos.x, mousePos.y, mouseScroll.x, mouseScroll.y);
 	ImGui::Checkbox("Cap Pitch", &capPitch);
 	ImGui::End();
 }
