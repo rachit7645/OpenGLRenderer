@@ -6,7 +6,7 @@ using Entities::Light;
 
 // HACK: GLSL's alignment is fucking weird, so upload vec4's
 
-const Light emptyLight = Light(glm::vec3(0.0f), glm::vec3(0.0f));
+const Light emptyLight;
 
 LightsBuffer::LightsBuffer() : UniformBuffer(1, sizeof(Light)* SHADER_MAX_LIGHTS) {}
 

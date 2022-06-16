@@ -8,6 +8,7 @@ struct Light
 {
 	vec4 position;
 	vec4 colour;
+	vec4 attenuation;
 };
 
 layout(location = 0) in vec3 position;
@@ -32,6 +33,7 @@ out float visibility;
 out vec2  pass_textureCoords;
 out vec3  unitNormal;
 out vec3  unitCameraVector;
+out vec4  worldPosition;
 out vec3  unitLightVector[MAX_LIGHTS];
 
 void CalculateLighting(vec4 worldPosition);
@@ -39,7 +41,7 @@ void CalculateVisibility(vec4 positionRelativeToCamera);
 
 void main() 
 {
-	vec4 worldPosition = modelMatrix * vec4(position, 1.0f);
+	worldPosition = modelMatrix * vec4(position, 1.0f);
 	vec4 positionRelativeToCamera = viewMatrix * worldPosition;
 	gl_Position = projectionMatrix * positionRelativeToCamera;
 	pass_textureCoords = textureCoords;

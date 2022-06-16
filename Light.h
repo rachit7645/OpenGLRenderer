@@ -12,9 +12,13 @@ namespace Entities
 	class Light
 	{
 	public:
+		Light();
 		Light(const glm::vec3& position, const glm::vec3& colour);
+		Light(const glm::vec3& position, const glm::vec3& colour, const glm::vec3& attenuation);
+
 		glm::vec4 position;
 		glm::vec4 colour;
+		glm::vec4 attenuation;
 	};
 }
 

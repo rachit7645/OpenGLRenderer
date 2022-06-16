@@ -8,6 +8,7 @@ struct Light
 {
 	vec4 position;
 	vec4 colour;
+	vec4 attenuation;
 };
 
 layout(std140, binding = 1) uniform Lights
@@ -19,6 +20,7 @@ in float visibility;
 in vec2  pass_textureCoords;
 in vec3  unitNormal;
 in vec3  unitCameraVector;
+in vec4  worldPosition;
 in vec3  unitLightVector[MAX_LIGHTS];
 
 uniform float     shineDamper;
@@ -28,9 +30,10 @@ uniform sampler2D modelTexture;
 
 out vec4 outColor;
 
-vec3 CalculateAmbient(int index);
-vec3 CalculateDiffuse(int index);
-vec3 CalculateSpecular(int index);
+float CalculateAttFactor(int index);
+vec3  CalculateAmbient(int index);
+vec3  CalculateDiffuse(int index);
+vec3  CalculateSpecular(int index);
 
 void main()
 {
@@ -45,9 +48,10 @@ void main()
 
 	for (int i = 0; i < MAX_LIGHTS; i++)
 	{
-		totalDiffuse += CalculateDiffuse(i);
-		totalSpecular += CalculateSpecular(i);
-		totalAmbient += CalculateAmbient(i);
+		float attFactor = CalculateAttFactor(i);
+		totalDiffuse += CalculateDiffuse(i) * attFactor;
+		totalSpecular += CalculateSpecular(i) * attFactor;
+		totalAmbient += CalculateAmbient(i) * attFactor;
 	}
 
 	// Add all lighting
@@ -56,6 +60,14 @@ void main()
 	outColor *= textureColour;
 	// Mix with fog colour
 	outColor = mix(skyColour, outColor, visibility);
+}
+
+float CalculateAttFactor(int index)
+{
+	#define ATT lights[index].attenuation
+	float distance = length(lights[index].position.xyz - worldPosition.xyz);
+	float attFactor = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
+	return 1.0f / attFactor;
 }
 
 vec3 CalculateAmbient(int index)
