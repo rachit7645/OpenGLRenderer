@@ -25,14 +25,14 @@ layout(std140, binding = 1) uniform Lights
 	uniform Light lights[MAX_LIGHTS];
 };
 
+uniform int  useFakeLighting;
 uniform mat4 modelMatrix;
-uniform int useFakeLighting;
 
 out float visibility;
-out vec2 pass_textureCoords;
-out vec3 unitNormal;
-out vec3 unitCameraVector;
-out vec3 unitLightVector[MAX_LIGHTS];
+out vec2  pass_textureCoords;
+out vec3  unitNormal;
+out vec3  unitCameraVector;
+out vec3  unitLightVector[MAX_LIGHTS];
 
 void CalculateLighting(vec4 worldPosition);
 void CalculateVisibility(vec4 positionRelativeToCamera);

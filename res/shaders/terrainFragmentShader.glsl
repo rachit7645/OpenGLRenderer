@@ -1,9 +1,9 @@
 #version 420 core
 
-const float MIN_BRIGHTNESS = 0.2f;
-const float MIN_SPECULAR   = 0.0f;
-const float TEXTURE_TILING = 40.0f;
-const int   MAX_LIGHTS     = 4; 
+const float AMBIENT_STRENGTH = 0.1f;
+const float MIN_SPECULAR     = 0.0f;
+const float TEXTURE_TILING   = 40.0f;
+const int   MAX_LIGHTS       = 4; 
 
 struct Light
 {
@@ -17,10 +17,10 @@ layout(std140, binding = 1) uniform Lights
 };
 
 in float visibility;
-in vec2 pass_textureCoords;
-in vec3 unitNormal;
-in vec3 unitCameraVector;
-in vec3 unitLightVector[MAX_LIGHTS];
+in vec2  pass_textureCoords;
+in vec3  unitNormal;
+in vec3  unitCameraVector;
+in vec3  unitLightVector[MAX_LIGHTS];
 
 uniform sampler2D backgroundTexture;
 uniform sampler2D rTexture;
@@ -28,30 +28,43 @@ uniform sampler2D bTexture;
 uniform sampler2D gTexture;
 uniform sampler2D blendMap;
 
-uniform vec4 skyColour;
 uniform float shineDamper;
 uniform float reflectivity;
+uniform vec4  skyColour;
 
 out vec4 outColor;
 
+vec3 CalculateAmbient(int index);
 vec3 CalculateDiffuse(int index);
 vec3 CalculateSpecular(int index);
 vec4 CalculateTextureColor();
 
 void main()
 {
-	vec3 totalDiffuse = vec3(0.0f); vec3 totalSpecular = vec3(0.0f);
+	vec4 textureColor = CalculateTextureColor();
+
+	vec3 totalDiffuse = vec3(0.0f);
+	vec3 totalSpecular = vec3(0.0f);
+	vec3 totalAmbient = vec3(0.0f);
+
 	for (int i = 0; i < MAX_LIGHTS; i++)
 	{
 		totalDiffuse += CalculateDiffuse(i);
 		totalSpecular += CalculateSpecular(i);
+		totalAmbient += CalculateAmbient(i);
 	}
 
-	totalDiffuse = max(totalDiffuse, vec3(MIN_BRIGHTNESS));
-	vec4 textureColor = CalculateTextureColor();
-
-	outColor = vec4(totalDiffuse, 1.0f) * textureColor + vec4(totalSpecular, 1.0f);
+	// Add all lighting
+	outColor = vec4(totalDiffuse, 1.0f) + vec4(totalSpecular, 1.0f) + vec4(totalAmbient, 1.0f);
+	// Multiply by texture colour
+	outColor *= textureColor;
+	// Mix with fog colour
 	outColor = mix(skyColour, outColor, visibility);
+}
+
+vec3 CalculateAmbient(int index)
+{
+	return AMBIENT_STRENGTH * lights[index].colour.xyz;
 }
 
 vec3 CalculateDiffuse(int index)

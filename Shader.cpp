@@ -28,12 +28,17 @@ u32 ShaderProgram::GetUniformLocation(const char* name)
 	return glGetUniformLocation(programID, name);
 }
 
-void ShaderProgram::LoadUniform(u32 location, s32 value)
+void ShaderProgram::LoadUniform(u32 location, GLint value)
 {
 	glUniform1i(location, value);
 }
 
-void ShaderProgram::LoadUniform(u32 location, f32 value)
+void ShaderProgram::LoadUniform(u32 location, GLuint value)
+{
+	glUniform1ui(location, value);
+}
+
+void ShaderProgram::LoadUniform(u32 location, GLfloat value)
 {
 	glUniform1f(location, value);
 }

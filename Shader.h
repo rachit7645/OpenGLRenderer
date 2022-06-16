@@ -34,8 +34,9 @@ namespace Shader
 		virtual void GetUniformLocations() = 0;
 
 		// Uniform loading functions 
-		void LoadUniform(u32 location, s32 value);
-		void LoadUniform(u32 location, f32 value);
+		void LoadUniform(u32 location, GLint value);
+		void LoadUniform(u32 location, GLuint value);
+		void LoadUniform(u32 location, GLfloat value);
 		void LoadUniform(u32 location, bool value);
 		void LoadUniform(u32 location, const glm::vec3& vector);
 		void LoadUniform(u32 location, const glm::vec4& vector);
