@@ -6,6 +6,8 @@
 #include "GLM.h"
 #include "Util.h"
 #include "UniformBuffer.h"
+#include "Camera.h"
+#include "Maths.h"
 
 namespace Renderer
 {
@@ -13,7 +15,7 @@ namespace Renderer
 	{
 	public:
 		MatrixBuffer();
-		void LoadView(const glm::mat4& view);
+		void LoadView(const Entities::Camera& view);
 		void LoadProjection(const glm::mat4& projection);
 	};
 }

@@ -23,7 +23,7 @@ void MasterRenderer::Prepare()
 
 void MasterRenderer::Update(const std::vector<Light>& pLights, const Camera& camera)
 {
-	matrices->LoadView(Maths::CreateViewMatrix(camera));
+	matrices->LoadView(camera);
 	lights->LoadLight(pLights);
 }
 

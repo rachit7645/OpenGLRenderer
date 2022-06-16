@@ -6,6 +6,7 @@ layout(std140, binding = 0) uniform Matrices
 {
 	uniform mat4 projectionMatrix;
 	uniform mat4 viewMatrix;
+	uniform vec4 cameraPos;	
 };
 uniform mat4 modelMatrix;
 

@@ -18,6 +18,7 @@ layout(std140, binding = 0) uniform Matrices
 {
 	uniform mat4 projectionMatrix;
 	uniform mat4 viewMatrix;
+	uniform vec4 cameraPos;
 };
 
 layout(std140, binding = 1) uniform Lights
@@ -50,13 +51,12 @@ void main()
 void CalculateLighting(vec4 worldPosition)
 {
 	unitNormal = normalize((modelMatrix * vec4(normal, 0.0f)).xyz);
+	unitCameraVector = normalize(cameraPos.xyz - worldPosition.xyz);
+
 	for (int i = 0; i < MAX_LIGHTS; i++)
 	{
 		unitLightVector[i] = normalize(lights[i].position.xyz - worldPosition.xyz);
 	}
-	// FIXME: Very expensive calculation ver vertex
-	// Maybe upload inverse viewMatrix from cpu instead?
-	unitCameraVector = normalize((inverse(viewMatrix) * vec4(0.0f, 0.0f, 0.0f, 1.0f)).xyz - worldPosition.xyz);
 }
 
 void CalculateVisibility(vec4 positionRelativeToCamera)
