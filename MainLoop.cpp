@@ -18,6 +18,9 @@ using Entities::Light;
 using Terrains::Terrain;
 using Terrains::TerrainTextures;
 
+// TODO: Move MainLoop to separate class, move data to said class
+// TODO: Live editing of entities, terrains, lights, etc. with ImGui
+
 void SDLWindow::MainLoop()
 {
 	// Put Models and Textures here 
