@@ -89,14 +89,7 @@ void SDLWindow::MainLoop()
 		ImGui_ImplSDL2_NewFrame(window);
 		ImGui::NewFrame();
 
-		ImGui::Begin("Engine");
-		ImGui::Text("FPS: %.2f", finalFPS);
-		ImGui::Text("Frame time: %.2f ms", frameTime);
-		ImGui::Checkbox("Vsync", &vsync);
-		ImGui::Checkbox("Wireframe", &wireframe);
-		ImGui::End();
-
-		ImGuiUpdate();
+		ImGuiDisplay();
 		player.Move(Terrains::GetCurrent(terrains, player));
 		camera.Move();
 
@@ -135,6 +128,23 @@ void SDLWindow::CalculateFPS()
 		FPS = 0.0f;
 	}
 	FPS++;
+}
+
+void SDLWindow::ImGuiDisplay()
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("Options"))
+		{
+			ImGui::Text("FPS: %.2f", finalFPS);
+			ImGui::Text("Frame time: %.2f ms", frameTime);
+			ImGui::Checkbox("Vsync", &vsync);
+			ImGui::Checkbox("Wireframe", &wireframe);
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+	ImGuiUpdate();
 }
 
 void SDLWindow::ImGuiUpdate()

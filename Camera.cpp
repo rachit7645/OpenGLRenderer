@@ -27,13 +27,23 @@ void Camera::Move()
 
 void Camera::ImGuiDisplay()
 {
-	ImGui::Begin("Camera");
-	ImGui::Text("Position:\nX: %.2f\nY: %.2f\nZ: %.2f", position.x, position.y, position.z);
-	ImGui::Text("Rotation:\nPitch: %.2f\nYaw: %.2f\nRoll: %.2f", rotation.x, rotation.y, rotation.z);
-	ImGui::Text("Distance From Player: %.2f\nAngle Around Player: %.2f\nCamera Speed Constant: %.2f",
-		distanceFromPlayer, angleAroundPlayer, CAMERA_SPEED);
-	ImGui::Checkbox("Cap Pitch", &capPitch);
-	ImGui::End();
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("Camera"))
+		{
+			ImGui::Text("Position:");
+			ImGui::InputFloat3("##cpos", &position[0], "%.1f");
+			ImGui::Text("Rotation:");
+			ImGui::InputFloat3("##crot", &rotation[0], "%.1f");
+			ImGui::Text("Distance From Player:");
+			ImGui::InputFloat("##cdfp", &distanceFromPlayer, 0.0f, 0.0f, "%.1f");
+			ImGui::Text("Angle Around Player:");
+			ImGui::InputFloat("##carp", &angleAroundPlayer, 0.0f, 0.0f, "%.1f");
+			ImGui::Checkbox("Cap Pitch", &capPitch);
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
 }
 
 void Camera::CalculatePosition(f32 hDistance, f32 vDistance)

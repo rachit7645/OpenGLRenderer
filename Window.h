@@ -30,6 +30,9 @@ namespace Window
 		// Main loop for the engine
 		void MainLoop();
 	private:
+		// Display ImGui Widgets
+		void ImGuiDisplay();
+		// Update options menu
 		void ImGuiUpdate();
 		// Function to process SDL Events
 		bool PollEvents();

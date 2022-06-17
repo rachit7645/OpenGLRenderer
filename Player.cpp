@@ -21,12 +21,18 @@ void Player::Move(const Terrain* terrain)
 
 void Player::ImGuiDisplay()
 {
-	ImGui::Begin("Player");
-	ImGui::Text("Position:\nX: %.2f\nY: %.2f\nZ: %.2f", position.x, position.y, position.z);
-	ImGui::Text("Rotation:\nX: %.2f\nY: %.2f\nZ: %.2f", rotation.x, rotation.y, rotation.z);
-	ImGui::Text("Run Speed: %.2f\nTurn Speed: %.2f\nGravity Constant: %.2f", runSpeed, turnSpeed, PLAYER_GRAVITY);
-	ImGui::Text("Terrain Height: %.2f", terrainHeight);
-	ImGui::End();
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("Player"))
+		{
+			ImGui::Text("Position:");
+			ImGui::InputFloat3("##pos", &position[0], "%.1f");
+			ImGui::Text("Rotation:");
+			ImGui::InputFloat3("##rot", &rotation[0], "%.1f");
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
 }
 
 void Player::Gravity(const Terrain* terrain)
