@@ -63,12 +63,6 @@ void SDLWindow::MainLoop()
 			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
 			current = Terrains::GetCurrent(terrains, glm::vec2(entityX, entityZ));
 			entityY = current != nullptr ? current->GetHeight(glm::vec2(entityX, entityZ)) : 0.0f;
-			entities.push_back(Entity(grassModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f, 0.0f, 0.0f), 1.0f));
-
-			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
-			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
-			current = Terrains::GetCurrent(terrains, glm::vec2(entityX, entityZ));
-			entityY = current != nullptr ? current->GetHeight(glm::vec2(entityX, entityZ)) : 0.0f;
 			entities.push_back(Entity(fernModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f, 0.0f, 0.0f), 0.6f));
 		}
 	}
@@ -76,7 +70,8 @@ void SDLWindow::MainLoop()
 
 	std::vector<Light> lights;
 	{
-		lights.push_back(Light(glm::vec3(20000.0f, 20000.0f, 2000.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
+		lights.push_back(Light(glm::vec3(20000.0f, 20000.0f, 2000.0f), glm::vec3(0.3f, 0.3f, 0.3f)));
+		lights.push_back(Light(glm::vec3(250.0f, 5.0f, 235.0f), glm::vec3(0.0f, 2.0f, 2.0f), glm::vec3(1.0f, 0.01f, 0.002f)));
 	};
 
 	Entities::Skybox skybox;
