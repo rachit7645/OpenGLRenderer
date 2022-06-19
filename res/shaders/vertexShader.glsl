@@ -31,13 +31,13 @@ uniform int  useFakeLighting;
 uniform mat4 modelMatrix;
 
 out float visibility;
-out vec2  pass_textureCoords;
+out vec2  txCoords;
 out vec3  unitNormal;
 out vec3  unitCameraVector;
 out vec4  worldPosition;
 out vec3  unitLightVector[MAX_LIGHTS];
 
-void CalculateLighting(vec4 worldPosition);
+void CalculateLighting();
 void CalculateVisibility(vec4 positionRelativeToCamera);
 
 void main()
@@ -45,13 +45,13 @@ void main()
 	worldPosition = modelMatrix * vec4(position, 1.0f);
 	vec4 positionRelativeToCamera = viewMatrix * worldPosition;
 	gl_Position = projectionMatrix * positionRelativeToCamera;
-	pass_textureCoords = textureCoords;
+	txCoords = textureCoords;
 
-	CalculateLighting(worldPosition);
+	CalculateLighting();
 	CalculateVisibility(positionRelativeToCamera);
 }
 
-void CalculateLighting(vec4 worldPosition)
+void CalculateLighting()
 {
 	// Remove one if statement with the mix function
 	// (which hopefully is a single instruction or similar on the GPU)
@@ -59,7 +59,7 @@ void CalculateLighting(vec4 worldPosition)
 	unitNormal = normalize((modelMatrix * vec4(actualNormal, 0.0f)).xyz);
 	unitCameraVector = normalize(cameraPos.xyz - worldPosition.xyz);
 
-	for (int i = 0; i < MAX_LIGHTS; i++)
+	for (int i = 0; i < MAX_LIGHTS; ++i)
 	{
 		unitLightVector[i] = normalize(lights[i].position.xyz - worldPosition.xyz);
 	}

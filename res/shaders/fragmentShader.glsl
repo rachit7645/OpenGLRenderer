@@ -19,7 +19,7 @@ layout(std140, binding = 1) uniform Lights
 };
 
 in float visibility;
-in vec2  pass_textureCoords;
+in vec2  txCoords;
 in vec3  unitNormal;
 in vec3  unitCameraVector;
 in vec4  worldPosition;
@@ -39,21 +39,21 @@ vec4  CalculateSpecular(int index);
 
 void main()
 {
-	vec4 textureColor = texture(modelTexture, pass_textureCoords);
+	vec4 textureColor = texture(modelTexture, txCoords);
 	// HACK: Alpha transparency check, should probably be in a separate shader
 	if (textureColor.a < 0.5f)
 		discard;
 
+	vec4 totalAmbient = vec4(0.0f);	
 	vec4 totalDiffuse = vec4(0.0f);
 	vec4 totalSpecular = vec4(0.0f);
-	vec4 totalAmbient = vec4(0.0f);
 
-	for (int i = 0; i < MAX_LIGHTS; i++)
+	for (int i = 0; i < MAX_LIGHTS; ++i)
 	{
 		float attFactor = CalculateAttFactor(i);
-		totalDiffuse    += CalculateDiffuse(i)  * textureColor * attFactor;
-		totalSpecular   += CalculateSpecular(i) * attFactor;
-		totalAmbient    += CalculateAmbient(i)  * textureColor * attFactor;
+		totalAmbient  += CalculateAmbient(i)  * textureColor * attFactor;
+		totalDiffuse  += CalculateDiffuse(i)  * textureColor * attFactor;
+		totalSpecular += CalculateSpecular(i) * attFactor;
 	}
 
 	// Add all lighting
@@ -72,14 +72,14 @@ float CalculateAttFactor(int index)
 
 vec4 CalculateAmbient(int index)
 {
-	return vec4(AMBIENT_STRENGTH * lights[index].colour.xyz, 1.0f);
+	return vec4(AMBIENT_STRENGTH * lights[index].colour.rgb, 1.0f);
 }
 
 vec4 CalculateDiffuse(int index)
 {
 	float nDot1 = dot(unitNormal, unitLightVector[index]);
 	float brightness = max(nDot1, 0.0f);
-	return vec4(brightness * lights[index].colour.xyz, 1.0f);
+	return vec4(brightness * lights[index].colour.rgb, 1.0f);
 }
 
 vec4 CalculateSpecular(int index)
@@ -89,5 +89,5 @@ vec4 CalculateSpecular(int index)
 	float specularFactor = dot(reflectedLightDirection, unitCameraVector);
 	specularFactor = max(specularFactor, 0.0f);
 	float dampedFactor = pow(specularFactor, shineDamper);
-	return vec4(dampedFactor * reflectivity * lights[index].colour.xyz, 1.0f);
+	return vec4(dampedFactor * reflectivity * lights[index].colour.rgb, 1.0f);
 }
