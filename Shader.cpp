@@ -63,6 +63,21 @@ void ShaderProgram::LoadUniform(u32 location, const glm::mat4& matrix)
 	glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
 }
 
+void ShaderProgram::DumpToFile(const std::string& path)
+{
+	GLint length;
+	glGetProgramiv(programID, GL_PROGRAM_BINARY_LENGTH, &length);
+
+	GLenum format;
+	std::vector<char> binary(length);
+	glGetProgramBinary(programID, binary.size(), &length, &format, reinterpret_cast<void*>(binary.data()));
+
+	std::ofstream file(path);
+	file.write(binary.data(), length);
+
+	LOG_DEBUG("Dumping Shader to: ", path, "\n");
+}
+
 u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
 {
 	LOG_INFO("Loading shader: ", path, "\n");

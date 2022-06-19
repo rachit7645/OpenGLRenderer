@@ -31,7 +31,7 @@ namespace Shader
 
 		void BindAttribute(u32 attribute, const char* name);
 		u32 GetUniformLocation(const char* name);
-		virtual void GetUniformLocations() = 0;
+		void DumpToFile(const std::string& path);
 
 		// Uniform loading functions 
 		void LoadUniform(u32 location, GLint value);
@@ -42,6 +42,7 @@ namespace Shader
 		void LoadUniform(u32 location, const glm::vec4& vector);
 		void LoadUniform(u32 location, const glm::mat4& matrix);
 
+		virtual void GetUniformLocations() = 0;
 	private:
 		// Function to load shaders from file
 		u32 LoadShader(GLenum type, const std::string& path);

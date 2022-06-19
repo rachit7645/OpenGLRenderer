@@ -10,7 +10,7 @@ layout(std140, binding = 0) uniform Matrices
 };
 uniform mat4 modelMatrix;
 
-out vec3 textureCoords;
+out vec3 txCoords;
 
 void main()
 {
@@ -23,5 +23,5 @@ void main()
 	// This makes it so that during perspective division z / w = w / w = 1.0f
 	// This means that the driver will (hopefully) use early depth test
 	gl_Position = (projectionMatrix * editedView * modelMatrix * vec4(position, 1.0f)).xyww;
-	textureCoords = position;
+	txCoords = position;
 }
