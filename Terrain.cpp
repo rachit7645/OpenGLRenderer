@@ -89,9 +89,7 @@ glm::vec3 Terrain::CalculateNormal(int x, int z, Image2D& hMap)
 	f32 heightD = CalculateHeight(x, (z - 1 + size) % size, hMap);
 	f32 heightU = CalculateHeight(x, (z + 1 + size) % size, hMap);
 
-	glm::vec3 normal(heightL - heightR, 2.0f, heightD - heightU);
-	glm::normalize(normal);
-	return normal;
+	return glm::normalize(glm::vec3(heightL - heightR, 2.0f, heightD - heightU));
 }
 
 f32 Terrain::GetHeight(const glm::vec2& worldPos) const
