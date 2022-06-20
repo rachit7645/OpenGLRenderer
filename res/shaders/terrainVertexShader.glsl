@@ -7,7 +7,9 @@ const int   MAX_LIGHTS     = 4;
 struct Light
 {
 	vec4 position;
-	vec4 colour;
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
 	vec4 attenuation;
 };
 

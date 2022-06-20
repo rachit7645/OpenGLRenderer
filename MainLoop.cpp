@@ -73,8 +73,22 @@ void SDLWindow::MainLoop()
 
 	std::vector<Light> lights;
 	{
-		lights.push_back(Light(glm::vec3(20000.0f, 20000.0f, 2000.0f), glm::vec3(0.3f, 0.3f, 0.3f)));
-		lights.push_back(Light(glm::vec3(250.0f, 5.0f, 235.0f), glm::vec3(0.0f, 2.0f, 2.0f), glm::vec3(1.0f, 0.01f, 0.002f)));
+		lights.push_back(Light
+		(
+			glm::vec3(20000.0f, 20000.0f, 2000.0f),
+			glm::vec3(0.2f, 0.2f, 0.2f),
+			glm::vec3(0.3f, 0.3f, 0.3f),
+			glm::vec3(0.0f, 0.0f, 0.0f),
+			glm::vec3(1.0f, 0.0f, 0.0f)
+		));
+		lights.push_back(Light
+		(
+			glm::vec3(250.0f, 5.0f, 235.0f),
+			glm::vec3(0.2f, 0.2f, 0.2f),
+			glm::vec3(0.0f, 2.0f, 2.0f),
+			glm::vec3(0.0f, 0.0f, 0.0f),
+			glm::vec3(1.0f, 0.01f, 0.002f)
+		));
 	};
 
 	Entities::Skybox skybox;

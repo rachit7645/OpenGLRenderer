@@ -2,14 +2,16 @@
 
 // TODO: Add specular mapping
 
-const float AMBIENT_STRENGTH = 0.1f;
+const float AMBIENT_STRENGTH = 0.2f;
 const float MIN_SPECULAR     = 0.0f;
 const int   MAX_LIGHTS       = 4; 
 
 struct Light
 {
 	vec4 position;
-	vec4 colour;
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
 	vec4 attenuation;
 };
 
@@ -72,14 +74,14 @@ float CalculateAttFactor(int index)
 
 vec4 CalculateAmbient(int index)
 {
-	return vec4(AMBIENT_STRENGTH * lights[index].colour.rgb, 1.0f);
+	return vec4(AMBIENT_STRENGTH * lights[index].ambient.rgb, 1.0f);
 }
 
 vec4 CalculateDiffuse(int index)
 {
 	float nDot1 = dot(unitNormal, unitLightVector[index]);
 	float brightness = max(nDot1, 0.0f);
-	return vec4(brightness * lights[index].colour.rgb, 1.0f);
+	return vec4(brightness * lights[index].diffuse.rgb, 1.0f);
 }
 
 vec4 CalculateSpecular(int index)
@@ -89,5 +91,5 @@ vec4 CalculateSpecular(int index)
 	float specularFactor = dot(reflectedLightDirection, unitCameraVector);
 	specularFactor = max(specularFactor, 0.0f);
 	float dampedFactor = pow(specularFactor, shineDamper);
-	return vec4(dampedFactor * reflectivity * lights[index].colour.rgb, 1.0f);
+	return vec4(dampedFactor * reflectivity * lights[index].specular.rgb, 1.0f);
 }
