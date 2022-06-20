@@ -11,6 +11,7 @@ using std::chrono::seconds;
 using Renderer::Texture;
 using Renderer::Model;
 using Renderer::Material;
+using Renderer::MeshTextures;
 using Entities::Entity;
 using Entities::Player;
 using Entities::Skybox;
@@ -24,10 +25,11 @@ using Terrains::TerrainTextures;
 void SDLWindow::MainLoop()
 {
 	// Put Models and Textures here 
-	std::shared_ptr<Texture> treeTexture = std::make_shared<Texture>("gfx/tree.png");
-	std::shared_ptr<Texture> grassTexture = std::make_shared<Texture>("gfx/grassTexture.png");
-	std::shared_ptr<Texture> fernTexture = std::make_shared<Texture>("gfx/fern.png");
-	std::shared_ptr<Texture> defaultTexture = std::make_shared<Texture>("gfx/dragon.png");
+	auto treeTexture = std::make_shared<Texture>("gfx/tree.png");
+	auto grassTexture = std::make_shared<Texture>("gfx/grassTexture.png");
+	auto fernTexture = std::make_shared<Texture>("gfx/fern.png");
+	auto defDiffuse = std::make_shared<Texture>("gfx/dragon.png");
+	auto defSpecular = std::make_shared<Texture>("gfx/dSpec.png");
 
 	TerrainTextures textures =
 	{
@@ -39,10 +41,10 @@ void SDLWindow::MainLoop()
 	};
 
 
-	std::shared_ptr<Model> treeModel = std::make_shared<Model>("gfx/tree.obj", treeTexture);
-	std::shared_ptr<Model> playerModel = std::make_shared<Model>("gfx/Link/Link.obj", defaultTexture);
-	std::shared_ptr<Model> grassModel = std::make_shared<Model>("gfx/grassModel.obj", grassTexture, Material(true, true));
-	std::shared_ptr<Model> fernModel = std::make_shared<Model>("gfx/fern.obj", fernTexture, Material(true, true));
+	auto treeModel = std::make_shared<Model>("gfx/tree.obj", MeshTextures(treeTexture, defSpecular));
+	auto playerModel = std::make_shared<Model>("gfx/Link/Link.obj", MeshTextures(defDiffuse, defSpecular));
+	auto grassModel = std::make_shared<Model>("gfx/grassModel.obj", MeshTextures(grassTexture, defSpecular), Material(true, true));
+	auto fernModel = std::make_shared<Model>("gfx/fern.obj", MeshTextures(fernTexture, defSpecular), Material(true, true));
 
 	// All objects go here
 	std::vector<Terrain> terrains;
@@ -78,7 +80,7 @@ void SDLWindow::MainLoop()
 			glm::vec3(20000.0f, 20000.0f, 2000.0f),
 			glm::vec3(0.2f, 0.2f, 0.2f),
 			glm::vec3(0.3f, 0.3f, 0.3f),
-			glm::vec3(0.0f, 0.0f, 0.0f),
+			glm::vec3(1.0f, 1.0f, 1.0f),
 			glm::vec3(1.0f, 0.0f, 0.0f)
 		));
 		lights.push_back(Light
@@ -86,7 +88,7 @@ void SDLWindow::MainLoop()
 			glm::vec3(250.0f, 5.0f, 235.0f),
 			glm::vec3(0.2f, 0.2f, 0.2f),
 			glm::vec3(0.0f, 2.0f, 2.0f),
-			glm::vec3(0.0f, 0.0f, 0.0f),
+			glm::vec3(1.0f, 1.0f, 1.0f),
 			glm::vec3(1.0f, 0.01f, 0.002f)
 		));
 	};

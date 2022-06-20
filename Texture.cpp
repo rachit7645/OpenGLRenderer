@@ -5,6 +5,8 @@
 
 using namespace Renderer;
 
+// TODO: Please fix this path hell
+
 Texture::Texture(const std::string& path, PathType pathType)
 {
 	std::string newPath;

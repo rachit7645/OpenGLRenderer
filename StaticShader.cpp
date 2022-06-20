@@ -18,6 +18,9 @@ void StaticShader::GetUniformLocations()
 	uniforms["reflectivity"] = GetUniformLocation("reflectivity");
 	uniforms["useFakeLighting"] = GetUniformLocation("useFakeLighting");
 	uniforms["skyColour"] = GetUniformLocation("skyColour");
+
+	uniforms["diffuseTexture"] = GetUniformLocation("diffuseTexture");
+	uniforms["specularTexture"] = GetUniformLocation("specularTexture");
 }
 
 void StaticShader::LoadTransformationMatrix(const glm::mat4& matrix)
@@ -35,4 +38,10 @@ void StaticShader::LoadMaterials(const Material& material)
 void StaticShader::LoadSkyColour(const glm::vec4& skyColour)
 {
 	LoadUniform(uniforms["skyColour"], skyColour);
+}
+
+void StaticShader::ConnectTextureUnits()
+{
+	LoadUniform(uniforms["diffuseTexture"], 0);
+	LoadUniform(uniforms["specularTexture"], 1);
 }

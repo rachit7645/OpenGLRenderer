@@ -1,7 +1,5 @@
 #version 420 core
 
-// TODO: Add specular mapping
-
 const float AMBIENT_STRENGTH = 0.2f;
 const float MIN_SPECULAR     = 0.0f;
 const int   MAX_LIGHTS       = 4; 
@@ -30,7 +28,8 @@ in vec3  unitLightVector[MAX_LIGHTS];
 uniform float     shineDamper;
 uniform float     reflectivity;
 uniform vec4      skyColour;
-uniform sampler2D modelTexture;
+uniform sampler2D diffuseTexture;
+uniform sampler2D specularTexture;
 
 out vec4 outColor;
 
@@ -41,9 +40,10 @@ vec4  CalculateSpecular(int index);
 
 void main()
 {
-	vec4 textureColor = texture(modelTexture, txCoords);
+	vec4 diffuseColor = texture(diffuseTexture, txCoords);
+	vec4 specularColor = texture(specularTexture, txCoords);
 	// HACK: Alpha transparency check, should probably be in a separate shader
-	if (textureColor.a < 0.5f)
+	if (diffuseColor.a < 0.5f)
 		discard;
 
 	vec4 totalAmbient = vec4(0.0f);	
@@ -53,9 +53,9 @@ void main()
 	for (int i = 0; i < MAX_LIGHTS; ++i)
 	{
 		float attFactor = CalculateAttFactor(i);
-		totalAmbient  += CalculateAmbient(i)  * textureColor * attFactor;
-		totalDiffuse  += CalculateDiffuse(i)  * textureColor * attFactor;
-		totalSpecular += CalculateSpecular(i) * attFactor;
+		totalAmbient  += CalculateAmbient(i)  * diffuseColor  * attFactor;
+		totalDiffuse  += CalculateDiffuse(i)  * diffuseColor  * attFactor;
+		totalSpecular += CalculateSpecular(i) * specularColor * attFactor;
 	}
 
 	// Add all lighting

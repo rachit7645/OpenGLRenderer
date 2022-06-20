@@ -2,11 +2,12 @@
 
 using namespace Renderer;
 
-Mesh::Mesh(
+Mesh::Mesh
+(
 	const std::vector<f32>& vertices,
 	const std::vector<u32>& indices,
 	const std::vector<f32>& txCoords,
 	const std::vector<f32>& normals,
-	std::shared_ptr<Texture>& texture
+	const MeshTextures& textures
 )
-	: vao(std::make_shared<VertexArray>(vertices, indices, txCoords, normals)), texture(texture) {}
+	: vao(std::make_shared<VertexArray>(vertices, indices, txCoords, normals)), textures(textures) {}

@@ -2,7 +2,7 @@
 
 using namespace Renderer;
 
-Model::Model(const std::string& path, std::shared_ptr<Texture>& texture, const Material& material) : material(material)
+Model::Model(const std::string& path, const MeshTextures& textures, const Material& material) : material(material)
 {
 	std::string newPath = Files::GetResourceDirectory() + path;
 
@@ -15,25 +15,25 @@ Model::Model(const std::string& path, std::shared_ptr<Texture>& texture, const M
 		LOG_ERROR("Model Load Failed: ", importer.GetErrorString());
 	}
 
-	ProcessNode(scene->mRootNode, scene, texture);
+	ProcessNode(scene->mRootNode, scene, textures);
 }
 
-void Model::ProcessNode(aiNode* node, const aiScene* scene, std::shared_ptr<Texture>& texture)
+void Model::ProcessNode(aiNode* node, const aiScene* scene, const MeshTextures& textures)
 {
 	// Iterate over all the node's meshes
 	for (u32 i = 0; i < node->mNumMeshes; i++)
 	{
-		meshes.push_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], scene, texture));
+		meshes.push_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], scene, textures));
 	}
 
 	// Iterate over all the child meshes
 	for (u32 i = 0; i < node->mNumChildren; i++)
 	{
-		ProcessNode(node->mChildren[i], scene, texture);
+		ProcessNode(node->mChildren[i], scene, textures);
 	}
 }
 
-Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_ptr<Texture>& texture)
+Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene, const MeshTextures& textures)
 {
 	std::vector<f32> vertices;
 	std::vector<u32> indices;
@@ -68,14 +68,27 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene, std::shared_ptr<Text
 		indices.push_back(face.mIndices[2]);
 	}
 
-	aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
+	return Mesh(vertices, indices, txCoords, normals, ProcessMaterial(mesh, scene, textures));
+}
+
+MeshTextures Model::ProcessMaterial(aiMesh* mesh, const aiScene* scene, const MeshTextures& pTextures)
+{
 	aiString path;
+	MeshTextures textures = pTextures;
+
+	aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
 	mat->GetTexture(aiTextureType_DIFFUSE, 0, &path);
 	if (path.length > 0)
 	{
-		std::shared_ptr<Texture> matTexture = std::make_shared<Texture>(path.C_Str(), PathType::ABSOLUTE);
-		return Mesh(vertices, indices, txCoords, normals, matTexture);
+		textures.diffuse = std::make_shared<Texture>(path.C_Str(), PathType::ABSOLUTE);
 	}
 
-	return Mesh(vertices, indices, txCoords, normals, texture);
+	path.Clear();
+	mat->GetTexture(aiTextureType_SPECULAR, 0, &path);
+	if (path.length > 0)
+	{
+		textures.specular = std::make_shared<Texture>(path.C_Str(), PathType::ABSOLUTE);
+	}
+
+	return textures;
 }

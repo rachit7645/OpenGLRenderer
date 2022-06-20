@@ -4,7 +4,12 @@ using namespace Renderer;
 using Entities::Entity;
 using Shader::StaticShader;
 
-EntityRenderer::EntityRenderer(StaticShader& shaderRef) : shader(shaderRef) {}
+EntityRenderer::EntityRenderer(StaticShader& shaderRef) : shader(shaderRef)
+{
+	shader.Start();
+	shader.ConnectTextureUnits();
+	shader.Stop();
+}
 
 void EntityRenderer::Render(const std::unordered_map<std::shared_ptr<Model>, std::vector<Entity>>& entities)
 {
@@ -38,8 +43,11 @@ void EntityRenderer::PrepareMesh(const Mesh& mesh)
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
+	const MeshTextures& textures = mesh.textures;
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, mesh.texture->id);
+	glBindTexture(GL_TEXTURE_2D, textures.diffuse->id);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, textures.specular->id);
 }
 
 void EntityRenderer::PrepareInstance(const Entity& entity)

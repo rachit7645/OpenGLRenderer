@@ -7,17 +7,24 @@
 #include "Util.h"
 #include "Texture.h"
 #include "VertexArray.h"
+#include "MeshTextures.h"
 
 namespace Renderer
 {
 	class Mesh
 	{
 	public:
-		Mesh(const std::vector<f32>& vertices, const std::vector<u32>& indices, const std::vector<f32>& txCoords,
-			const std::vector<f32>& normals, std::shared_ptr<Texture>& texture);
+		Mesh
+		(
+			const std::vector<f32>& vertices,
+			const std::vector<u32>& indices,
+			const std::vector<f32>& txCoords,
+			const std::vector<f32>& normals,
+			const MeshTextures& textures
+		);
 
 		std::shared_ptr<VertexArray> vao;
-		std::shared_ptr<Texture> texture;
+		MeshTextures textures;
 	};
 }
 

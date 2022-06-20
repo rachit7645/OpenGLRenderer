@@ -17,5 +17,6 @@
 #include "Material.h"
 #include "Player.h"
 #include "Files.h"
+#include "MeshTextures.h"
 
 #endif
