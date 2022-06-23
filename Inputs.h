@@ -8,10 +8,10 @@
 namespace Inputs
 {
 	void SetMousePos(const glm::ivec2& position);
-	const glm::ivec2& GetMousePos();
+	glm::ivec2& GetMousePos();
 
 	void SetMouseScroll(const glm::ivec2& scroll);
-	const glm::ivec2& GetMouseScroll();
+	glm::ivec2& GetMouseScroll();
 }
 
 #endif

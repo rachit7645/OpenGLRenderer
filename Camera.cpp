@@ -2,7 +2,7 @@
 
 using namespace Entities;
 
-Camera::Camera(Player& playerRef) : player(playerRef), mousePos(Inputs::GetMousePos()), mouseScroll(Inputs::GetMouseScroll()) {}
+Camera::Camera(Player* player) : player(player), mousePos(&Inputs::GetMousePos()), mouseScroll(&Inputs::GetMouseScroll()) {}
 
 void Camera::Move()
 {
@@ -48,24 +48,24 @@ void Camera::ImGuiDisplay()
 
 void Camera::CalculatePosition(f32 hDistance, f32 vDistance)
 {
-	f32 theta = player.rotation.y + angleAroundPlayer;
+	f32 theta = player->rotation.y + angleAroundPlayer;
 	f32 offsetX = hDistance * std::sin(glm::radians(theta));
 	f32 offsetZ = hDistance * std::cos(glm::radians(theta));
-	position.x = player.position.x - offsetX;
-	position.z = player.position.z - offsetZ;
-	position.y = player.position.y + vDistance;
-	rotation.y = 180.0f - (player.rotation.y + angleAroundPlayer);
+	position.x = player->position.x - offsetX;
+	position.z = player->position.z - offsetZ;
+	position.y = player->position.y + vDistance;
+	rotation.y = 180.0f - (player->rotation.y + angleAroundPlayer);
 }
 
 void Camera::CalculateZoom()
 {
 	// If there is no scrolling input, return
-	if (mouseScroll.y == 0) return;
+	if (mouseScroll->y == 0) return;
 
 	// If scroll direction is positive, reduce distance from player
-	if (mouseScroll.y > 0)
+	if (mouseScroll->y > 0)
 	{
-		for (ssize_t i = 0; i < mouseScroll.y; ++i)
+		for (ssize_t i = 0; i < mouseScroll->y; ++i)
 		{
 			distanceFromPlayer -= CAMERA_ZOOM_SPEED;
 		}
@@ -73,7 +73,7 @@ void Camera::CalculateZoom()
 	// If scroll direction is negative, increase distance from player
 	else
 	{
-		for (ssize_t i = 0; i < -mouseScroll.y; ++i)
+		for (ssize_t i = 0; i < -mouseScroll->y; ++i)
 		{
 			distanceFromPlayer += CAMERA_ZOOM_SPEED;
 		}
@@ -87,7 +87,7 @@ void Camera::CalculatePitch()
 	constexpr auto CAMERA_PITCH_MIN = 0.0f;
 	constexpr auto CAMERA_PITCH_MAX = 90.0f;
 
-	rotation.x -= mousePos.y * 0.1f;
+	rotation.x -= mousePos->y * 0.1f;
 	if (capPitch)
 	{
 		Util::Clamp<f32>(rotation.x, CAMERA_PITCH_MIN, CAMERA_PITCH_MAX);
@@ -96,5 +96,5 @@ void Camera::CalculatePitch()
 
 void Camera::CalculateAngleAroundPlayer()
 {
-	angleAroundPlayer -= mousePos.x * 0.3f;
+	angleAroundPlayer -= mousePos->x * 0.3f;
 }

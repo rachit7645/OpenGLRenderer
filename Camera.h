@@ -21,16 +21,16 @@ namespace Entities
 	class Camera
 	{
 	public:
-		Camera(Player& playerRef);
+		Camera(Player* player);
 
-		Player& player;
+		Player* player;
 		glm::vec3 position = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 rotation = { 5.0f, 0.0f, 0.0f };
 
 		void Move();
 	private:
-		const glm::ivec2& mousePos;
-		const glm::ivec2& mouseScroll;
+		glm::ivec2* mousePos;
+		glm::ivec2* mouseScroll;
 
 		bool capPitch = true;
 

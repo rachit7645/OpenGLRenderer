@@ -41,10 +41,10 @@ vec4  CalculateSpecular(int index);
 void main()
 {
 	vec4 diffuseColor = texture(diffuseTexture, txCoords);
-	vec4 specularColor = texture(specularTexture, txCoords);
 	// HACK: Alpha transparency check, should probably be in a separate shader
 	if (diffuseColor.a < 0.5f)
 		discard;
+	vec4 specularColor = texture(specularTexture, txCoords);
 
 	vec4 totalAmbient = vec4(0.0f);	
 	vec4 totalDiffuse = vec4(0.0f);

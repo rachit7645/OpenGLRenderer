@@ -94,7 +94,7 @@ void SDLWindow::MainLoop()
 	};
 
 	Entities::Skybox skybox;
-	Entities::Camera camera(player);
+	Entities::Camera camera(&player);
 
 	Renderer::MasterRenderer renderer;
 	// The skybox doesn't really change, so it is loaded once in the start
