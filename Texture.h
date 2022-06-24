@@ -24,7 +24,7 @@ namespace Renderer
 	{
 	public:
 		// Loads a texture into memory, then an OpenGL object
-		Texture(const std::string& path, PathType pathType = RELATIVE);
+		Texture(const std::string& path, PathType pathType =  PathType::RELATIVE);
 		~Texture();
 
 		GLuint id;

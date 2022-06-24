@@ -1,7 +1,5 @@
 #version 420 core
 
-// TODO: Add specular mapping
-
 const float AMBIENT_STRENGTH = 0.2f;
 const float MIN_SPECULAR     = 0.0f;
 const float TEXTURE_TILING   = 40.0f;

@@ -18,5 +18,6 @@
 #include "Player.h"
 #include "Files.h"
 #include "MeshTextures.h"
+#include "TextureCache.h"
 
 #endif

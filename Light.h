@@ -6,8 +6,6 @@
 
 namespace Entities
 {
-	// TODO: Add an ImGui widget for live editing
-
 	class Light
 	{
 	public:

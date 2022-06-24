@@ -25,21 +25,20 @@ using Terrains::TerrainTextures;
 void SDLWindow::MainLoop()
 {
 	// Put Models and Textures here 
-	auto treeTexture = std::make_shared<Texture>("gfx/tree.png");
-	auto grassTexture = std::make_shared<Texture>("gfx/grassTexture.png");
-	auto fernTexture = std::make_shared<Texture>("gfx/fern.png");
-	auto defDiffuse = std::make_shared<Texture>("gfx/dragon.png");
-	auto defSpecular = std::make_shared<Texture>("gfx/dSpec.png");
+	auto treeTexture = TextureCache::GetTexture("gfx/tree.png");
+	auto grassTexture = TextureCache::GetTexture("gfx/grassTexture.png");
+	auto fernTexture = TextureCache::GetTexture("gfx/fern.png");
+	auto defDiffuse = TextureCache::GetTexture("gfx/dragon.png");
+	auto defSpecular = TextureCache::GetTexture("gfx/dSpec.png");
 
 	TerrainTextures textures =
 	{
-		std::make_shared<Texture>("gfx/grass.png"),
-		std::make_shared<Texture>("gfx/mud.png"),
-		std::make_shared<Texture>("gfx/path.png"),
-		std::make_shared<Texture>("gfx/pinkFlowers.png"),
-		std::make_shared<Texture>("gfx/blendMap.png")
+		TextureCache::GetTexture("gfx/grass.png"),
+		TextureCache::GetTexture("gfx/mud.png"),
+		TextureCache::GetTexture("gfx/path.png"),
+		TextureCache::GetTexture("gfx/pinkFlowers.png"),
+		TextureCache::GetTexture("gfx/blendMap.png")
 	};
-
 
 	auto treeModel = std::make_shared<Model>("gfx/tree.obj", MeshTextures(treeTexture, defSpecular));
 	auto playerModel = std::make_shared<Model>("gfx/Link/Link.obj", MeshTextures(defDiffuse, defSpecular));
