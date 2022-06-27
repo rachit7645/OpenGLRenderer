@@ -51,3 +51,9 @@ MdPtr Resources::GetModel(const std::string& path, const MeshTextures& textures,
 	// Hello cosmic ray (again)
 	return nullptr;
 }
+
+void Resources::Delete()
+{
+	m_textures.clear();
+	m_models.clear();
+}

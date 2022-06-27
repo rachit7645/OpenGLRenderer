@@ -139,6 +139,8 @@ SDLWindow::~SDLWindow()
 {
 	LOG_INFO("Quiting SDL2\n");
 
+	Resources::Delete();
+
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();

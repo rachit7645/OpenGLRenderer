@@ -13,6 +13,7 @@
 #include "Camera.h"
 #include "Files.h"
 #include "Inputs.h"
+#include "Resources.h"
 
 namespace Window
 {
