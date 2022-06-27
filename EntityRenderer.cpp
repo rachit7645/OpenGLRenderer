@@ -43,6 +43,11 @@ void EntityRenderer::PrepareMesh(const Mesh& mesh)
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
+	BindTextures(mesh);
+}
+
+void EntityRenderer::BindTextures(const Mesh& mesh)
+{
 	const MeshTextures& textures = mesh.textures;
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textures.diffuse->id);

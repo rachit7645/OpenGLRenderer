@@ -26,6 +26,8 @@ namespace Renderer
 		void PrepareModel(const std::shared_ptr<Model>& model);
 		// Prepare each mesh in the model for render
 		void PrepareMesh(const Mesh& mesh);
+		// Bind Textures
+		void BindTextures(const Mesh& mesh);
 		// Prepare each instance
 		void PrepareInstance(const Entities::Entity& entity);
 		// Unbind the model

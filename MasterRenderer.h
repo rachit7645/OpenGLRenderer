@@ -43,17 +43,21 @@ namespace Renderer
 
 		// Main render function
 		void Render(const std::vector<Entities::Light>& lights, const Entities::Camera& camera);
-		// Process entities into the entitiy map
+		// Process entities into the entity map
 		void ProcessEntity(const Entities::Entity& entity);
+		// Process a vector of entities
+		void ProcessEntities(const std::vector<Entities::Entity>& entities);
 		// Process terrains into a vector
 		void ProcessTerrain(const Terrains::Terrain& terrain);
+		// Process a vector of terrains
+		void ProcessTerrains(const std::vector<Terrains::Terrain>& terrains);
 		// Process skybox into a class member
 		void ProcessSkybox(const Entities::Skybox& skybox);
 	private:
 		// Prepare framebuffer for render
 		void Prepare();
 		// Update buffers, etc.
-		void Update(const std::vector<Entities::Light>& pLights, const Entities::Camera& camera);
+		void Update(const std::vector<Entities::Light>& lights, const Entities::Camera& camera);
 		// Render entities
 		void RenderEntities();
 		// Render Terrains
@@ -62,14 +66,15 @@ namespace Renderer
 		void RenderSkybox();
 
 		// The entitiy map
-		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>> entities;
+		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>> m_entities;
 		// The terrain vector
-		std::vector<Terrains::Terrain> terrains;
+		std::vector<Terrains::Terrain> m_terrains;
 		// The Skybox
-		Entities::Skybox skybox;
-		// Uniform buffer objects
-		std::shared_ptr<MatrixBuffer> matrices;
-		std::shared_ptr<LightsBuffer> lights;
+		Entities::Skybox m_skybox;
+		// Matrix Uniform Buffer
+		std::shared_ptr<MatrixBuffer> m_matrices;
+		// Lights uniform Buffer
+		std::shared_ptr<LightsBuffer> m_lights;
 	};
 }
 

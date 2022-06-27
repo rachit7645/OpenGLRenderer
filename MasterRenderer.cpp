@@ -9,10 +9,13 @@ using Entities::Skybox;
 using Terrains::Terrain;
 
 MasterRenderer::MasterRenderer() :
-	renderer(shader), terrainRenderer(terrainShader), skyboxRenderer(skyboxShader),
-	matrices(std::make_shared<MatrixBuffer>()), lights(std::make_shared<LightsBuffer>())
+	renderer(shader),
+	terrainRenderer(terrainShader),
+	skyboxRenderer(skyboxShader),
+	m_matrices(std::make_shared<MatrixBuffer>()),
+	m_lights(std::make_shared<LightsBuffer>())
 {
-	matrices->LoadProjection(glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
+	m_matrices->LoadProjection(glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
 }
 
 void MasterRenderer::Prepare()
@@ -21,10 +24,10 @@ void MasterRenderer::Prepare()
 	glClear(GL_CLEAR_FLAGS);
 }
 
-void MasterRenderer::Update(const std::vector<Light>& pLights, const Camera& camera)
+void MasterRenderer::Update(const std::vector<Light>& lights, const Camera& camera)
 {
-	matrices->LoadView(camera);
-	lights->LoadLight(pLights);
+	m_matrices->LoadView(camera);
+	m_lights->LoadLight(lights);
 }
 
 void MasterRenderer::Render(const std::vector<Light>& lights, const Camera& camera)
@@ -36,15 +39,15 @@ void MasterRenderer::Render(const std::vector<Light>& lights, const Camera& came
 	RenderTerrains();
 	RenderSkybox();
 
-	entities.clear();
-	terrains.clear();
+	m_entities.clear();
+	m_terrains.clear();
 }
 
 void MasterRenderer::RenderEntities()
 {
 	shader.Start();
 	shader.LoadSkyColour(GL_CLEAR_COLOR);
-	renderer.Render(entities);
+	renderer.Render(m_entities);
 	shader.Stop();
 }
 
@@ -52,7 +55,7 @@ void MasterRenderer::RenderTerrains()
 {
 	terrainShader.Start();
 	terrainShader.LoadSkyColour(GL_CLEAR_COLOR);
-	terrainRenderer.Render(terrains);
+	terrainRenderer.Render(m_terrains);
 	terrainShader.Stop();
 }
 
@@ -64,31 +67,44 @@ void MasterRenderer::RenderSkybox()
 	glDepthMask(GL_FALSE);
 	skyboxShader.Start();
 	skyboxShader.LoadFogColor(GL_CLEAR_COLOR);
-	skyboxRenderer.Render(skybox);
+	skyboxRenderer.Render(m_skybox);
 	skyboxShader.Stop();
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);
 }
 
-void MasterRenderer::ProcessEntity(const Entity& entity)
+void MasterRenderer::ProcessEntity(const Entities::Entity& entity)
 {
-	auto iter = entities.find(entity.model);
-	if (iter != entities.end())
+	auto iter = m_entities.find(entity.model);
+	if (iter != m_entities.end())
 	{
 		iter->second.push_back(entity);
 	}
 	else
 	{
-		entities[entity.model] = { entity };
+		m_entities[entity.model] = { entity };
+	}
+}
+
+void MasterRenderer::ProcessEntities(const std::vector<Entity>& entities)
+{
+	for (const auto& entity : entities)
+	{
+		ProcessEntity(entity);
 	}
 }
 
 void MasterRenderer::ProcessTerrain(const Terrain& terrain)
 {
-	terrains.push_back(terrain);
+	m_terrains.push_back(terrain);
+}
+
+void MasterRenderer::ProcessTerrains(const std::vector<Terrain>& terrains)
+{
+	m_terrains = terrains;
 }
 
 void MasterRenderer::ProcessSkybox(const Skybox& skybox)
 {
-	this->skybox = skybox;
+	m_skybox = skybox;
 }
