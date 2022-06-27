@@ -1,4 +1,6 @@
 #include "Model.h"
+// Can't put this in a header due to recursive includes
+#include "Resources.h"
 
 using namespace Renderer;
 
@@ -80,14 +82,14 @@ MeshTextures Model::ProcessMaterial(aiMesh* mesh, const aiScene* scene, const Me
 	mat->GetTexture(aiTextureType_DIFFUSE, 0, &path);
 	if (path.length > 0)
 	{
-		textures.diffuse = TextureCache::GetTexture(path.C_Str(), PathType::ABSOLUTE);
+		textures.diffuse = Resources::GetTexture(path.C_Str(), PathType::ABSOLUTE);
 	}
 
 	path.Clear();
 	mat->GetTexture(aiTextureType_SPECULAR, 0, &path);
 	if (path.length > 0)
 	{
-		textures.specular = TextureCache::GetTexture(path.C_Str(), PathType::ABSOLUTE);
+		textures.specular = Resources::GetTexture(path.C_Str(), PathType::ABSOLUTE);
 	}
 
 	return textures;

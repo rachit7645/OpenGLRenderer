@@ -1,5 +1,5 @@
-#ifndef TEXTURE_CACHE_H
-#define TEXTURE_CACHE_H
+#ifndef RESOURCES_H
+#define RESOURCES_H
 
 #include <unordered_map>
 #include <memory>
@@ -9,10 +9,13 @@
 #include "Util.h"
 #include "Log.h"
 #include "Files.h"
+#include "Model.h"
+#include "Material.h"
 
-namespace TextureCache
+namespace Resources
 {
 	std::shared_ptr<Renderer::Texture> GetTexture(const std::string& path, Renderer::PathType pathType = Renderer::PathType::RELATIVE);
+	std::shared_ptr<Renderer::Model> GetModel(const std::string& path, const Renderer::MeshTextures& textures, const Renderer::Material& material = Renderer::Material());
 }
 
 #endif

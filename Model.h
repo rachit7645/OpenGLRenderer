@@ -15,7 +15,6 @@
 #include "Mesh.h"
 #include "Files.h"
 #include "MeshTextures.h"
-#include "TextureCache.h"
 
 namespace Renderer
 {

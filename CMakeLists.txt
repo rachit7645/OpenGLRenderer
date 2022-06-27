@@ -26,7 +26,7 @@ add_subdirectory(libs/imgui/)
 add_executable(engine Main.cpp Window.cpp EntityRenderer.cpp Model.cpp Shader.cpp StaticShader.cpp Texture.cpp VertexArray.cpp
 VertexBuffer.cpp Entity.cpp Maths.cpp Camera.cpp MainLoop.cpp MasterRenderer.cpp Terrain.cpp TerrainShader.cpp TerrainRenderer.cpp
 Material.cpp Mesh.cpp Player.cpp Files.cpp Image.cpp SkyboxShader.cpp SkyboxRenderer.cpp CubeMap.cpp Skybox.cpp Inputs.cpp
-MatrixBuffer.cpp UniformBuffer.cpp LightsBuffer.cpp Light.cpp TextureCache.cpp)
+MatrixBuffer.cpp UniformBuffer.cpp LightsBuffer.cpp Light.cpp Resources.cpp)
 
 target_include_directories(engine PUBLIC libs/)
 target_link_libraries(engine OpenGL::GL GLEW::GLEW SDL2::SDL2 glm assimp imgui)

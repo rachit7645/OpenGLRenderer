@@ -25,25 +25,25 @@ using Terrains::TerrainTextures;
 void SDLWindow::MainLoop()
 {
 	// Put Models and Textures here 
-	auto treeTexture = TextureCache::GetTexture("gfx/tree.png");
-	auto grassTexture = TextureCache::GetTexture("gfx/grassTexture.png");
-	auto fernTexture = TextureCache::GetTexture("gfx/fern.png");
-	auto defDiffuse = TextureCache::GetTexture("gfx/dragon.png");
-	auto defSpecular = TextureCache::GetTexture("gfx/dSpec.png");
+	auto treeTexture = Resources::GetTexture("gfx/tree.png");
+	auto grassTexture = Resources::GetTexture("gfx/grassTexture.png");
+	auto fernTexture = Resources::GetTexture("gfx/fern.png");
+	auto defDiffuse = Resources::GetTexture("gfx/dragon.png");
+	auto defSpecular = Resources::GetTexture("gfx/dSpec.png");
 
 	TerrainTextures textures =
 	{
-		TextureCache::GetTexture("gfx/grass.png"),
-		TextureCache::GetTexture("gfx/mud.png"),
-		TextureCache::GetTexture("gfx/path.png"),
-		TextureCache::GetTexture("gfx/pinkFlowers.png"),
-		TextureCache::GetTexture("gfx/blendMap.png")
+		Resources::GetTexture("gfx/grass.png"),
+		Resources::GetTexture("gfx/mud.png"),
+		Resources::GetTexture("gfx/path.png"),
+		Resources::GetTexture("gfx/pinkFlowers.png"),
+		Resources::GetTexture("gfx/blendMap.png")
 	};
 
-	auto treeModel = std::make_shared<Model>("gfx/tree.obj", MeshTextures(treeTexture, defSpecular));
-	auto playerModel = std::make_shared<Model>("gfx/Link/Link.obj", MeshTextures(defDiffuse, defSpecular));
-	auto grassModel = std::make_shared<Model>("gfx/grassModel.obj", MeshTextures(grassTexture, defSpecular), Material(true, true));
-	auto fernModel = std::make_shared<Model>("gfx/fern.obj", MeshTextures(fernTexture, defSpecular), Material(true, true));
+	auto treeModel = Resources::GetModel("gfx/tree.obj", MeshTextures(treeTexture, defSpecular));
+	auto playerModel = Resources::GetModel("gfx/Link/Link.obj", MeshTextures(defDiffuse, defSpecular));
+	auto grassModel = Resources::GetModel("gfx/grassModel.obj", MeshTextures(grassTexture, defSpecular), Material(true, true));
+	auto fernModel = Resources::GetModel("gfx/fern.obj", MeshTextures(fernTexture, defSpecular), Material(true, true));
 
 	// All objects go here
 	std::vector<Terrain> terrains;
