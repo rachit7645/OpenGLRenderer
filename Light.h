@@ -22,11 +22,11 @@ namespace Entities
 		);
 
 		// Light data (must match struct in shaders)
-		glm::vec4 position;
-		glm::vec4 ambient;
-		glm::vec4 diffuse;
-		glm::vec4 specular;
-		glm::vec4 attenuation;
+		alignas(16) glm::vec4 position;
+		alignas(16) glm::vec4 ambient;
+		alignas(16) glm::vec4 diffuse;
+		alignas(16) glm::vec4 specular;
+		alignas(16) glm::vec4 attenuation;
 	};
 }
 

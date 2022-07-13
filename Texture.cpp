@@ -22,7 +22,15 @@ Texture::Texture(const std::string& path, PathType pathType)
 		newPath = path;
 	}
 
-	u8* data = stbi_load(newPath.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+	u8* data = stbi_load
+	(
+		newPath.c_str(),
+		&width,
+		&height,
+		&channels,
+		STBI_rgb_alpha
+	);
+
 	if (data == nullptr)
 	{
 		LOG_ERROR("Unable to load texture: ", path);
@@ -33,12 +41,24 @@ Texture::Texture(const std::string& path, PathType pathType)
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, TEXTURE_LOD_BIAS);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, 	  GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, 	  GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS,   TEXTURE_LOD_BIAS);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glTexImage2D
+	(
+		GL_TEXTURE_2D,
+		0,
+		GL_RGBA,
+		width,
+		height,
+		0,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		data
+	);
+	
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 

@@ -5,7 +5,7 @@ using namespace Shader;
 ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath)
 {
 	programID = glCreateProgram();
-	u32 vertexShaderID = LoadShader(GL_VERTEX_SHADER, vertexPath);
+	u32 vertexShaderID   = LoadShader(GL_VERTEX_SHADER,   vertexPath);
 	u32 fragmentShaderID = LoadShader(GL_FRAGMENT_SHADER, fragmentPath);
 
 	glAttachShader(programID, vertexShaderID);
@@ -16,51 +16,6 @@ ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& f
 	glDeleteShader(fragmentShaderID);
 	glValidateProgram(programID);
 	CheckProgram("Shader validation failed for: " + vertexPath + ", " + fragmentPath, programID, GL_VALIDATE_STATUS);
-}
-
-void ShaderProgram::BindAttribute(u32 attribute, const char* name)
-{
-	glBindAttribLocation(programID, attribute, name);
-}
-
-u32 ShaderProgram::GetUniformLocation(const char* name)
-{
-	return glGetUniformLocation(programID, name);
-}
-
-void ShaderProgram::LoadUniform(u32 location, GLint value)
-{
-	glUniform1i(location, value);
-}
-
-void ShaderProgram::LoadUniform(u32 location, GLuint value)
-{
-	glUniform1ui(location, value);
-}
-
-void ShaderProgram::LoadUniform(u32 location, GLfloat value)
-{
-	glUniform1f(location, value);
-}
-
-void ShaderProgram::LoadUniform(u32 location, bool value)
-{
-	glUniform1i(location, value ? 1 : 0);
-}
-
-void ShaderProgram::LoadUniform(u32 location, const glm::vec3& vector)
-{
-	glUniform3fv(location, 1, &vector[0]);
-}
-
-void ShaderProgram::LoadUniform(u32 location, const glm::vec4& vector)
-{
-	glUniform4fv(location, 1, &vector[0]);
-}
-
-void ShaderProgram::LoadUniform(u32 location, const glm::mat4& matrix)
-{
-	glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
 }
 
 void ShaderProgram::DumpToFile(const std::string& path)
@@ -81,8 +36,7 @@ void ShaderProgram::DumpToFile(const std::string& path)
 u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
 {
 	LOG_INFO("Loading shader: ", path, "\n");
-	std::string newPath = Files::GetResourceDirectory() + path;
-	std::ifstream fileStream(newPath, std::ios::in);
+	std::ifstream fileStream(Files::GetResourceDirectory() + path, std::ios::in);
 
 	if (!fileStream.is_open())
 	{
@@ -131,6 +85,51 @@ void ShaderProgram::Start()
 void ShaderProgram::Stop()
 {
 	glUseProgram(0);
+}
+
+void ShaderProgram::BindAttribute(u32 attribute, const char* name)
+{
+	glBindAttribLocation(programID, attribute, name);
+}
+
+u32 ShaderProgram::GetUniformLocation(const char* name)
+{
+	return glGetUniformLocation(programID, name);
+}
+
+void ShaderProgram::LoadUniform(u32 location, GLint value)
+{
+	glUniform1i(location, value);
+}
+
+void ShaderProgram::LoadUniform(u32 location, GLuint value)
+{
+	glUniform1ui(location, value);
+}
+
+void ShaderProgram::LoadUniform(u32 location, GLfloat value)
+{
+	glUniform1f(location, value);
+}
+
+void ShaderProgram::LoadUniform(u32 location, bool value)
+{
+	glUniform1i(location, value ? 1 : 0);
+}
+
+void ShaderProgram::LoadUniform(u32 location, const glm::vec3& vector)
+{
+	glUniform3fv(location, 1, &vector[0]);
+}
+
+void ShaderProgram::LoadUniform(u32 location, const glm::vec4& vector)
+{
+	glUniform4fv(location, 1, &vector[0]);
+}
+
+void ShaderProgram::LoadUniform(u32 location, const glm::mat4& matrix)
+{
+	glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
 }
 
 // Memory management

@@ -17,12 +17,9 @@
 
 namespace Terrains
 {
-	constexpr auto TERRAIN_SIZE = 500.0f;
-	constexpr auto TERRAIN_MAX_HEIGHT = 30.0f;
+	constexpr auto TERRAIN_SIZE 		 = 500.0f;
+	constexpr auto TERRAIN_MAX_HEIGHT 	 = 30.0f;
 	constexpr auto IMAGE_MAX_PIXEL_COLOR = std::numeric_limits<u8>::max();
-
-	template<typename T>
-	using Array2D = std::vector<std::vector<T>>;
 
 	class Terrain
 	{
@@ -32,7 +29,7 @@ namespace Terrains
 
 		glm::vec2 position;
 		glm::vec2 gridPosition;
-		Array2D<f32> heights;
+		Util::Array2D<f32> heights;
 
 		TerrainTextures textures;
 		Renderer::Material material;
@@ -41,8 +38,8 @@ namespace Terrains
 		f32 GetHeight(const glm::vec2& worldPos) const;
 		f32 GetHeight(const Entities::Entity& entity) const;
 	private:
-		f32 CalculateHeight(int x, int z, Util::Image2D& hMap);
-		glm::vec3 CalculateNormal(int x, int z, Util::Image2D& hMap);
+		f32 CalculateHeight(int x, int z, const Util::Image2D& hMap);
+		glm::vec3 CalculateNormal(int x, int z, const Util::Image2D& hMap);
 	};
 
 	const Terrain* GetCurrent(const std::vector<Terrain>& terrains, const glm::vec2& position);

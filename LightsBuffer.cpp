@@ -8,7 +8,7 @@ using Entities::Light;
 
 const Light emptyLight;
 
-LightsBuffer::LightsBuffer() : UniformBuffer(1, sizeof(Light)* SHADER_MAX_LIGHTS) {}
+LightsBuffer::LightsBuffer() : UniformBuffer(1, sizeof(Light) * SHADER_MAX_LIGHTS) {}
 
 void LightsBuffer::LoadLight(const std::vector<Light>& lights)
 {

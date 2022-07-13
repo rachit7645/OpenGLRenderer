@@ -11,10 +11,10 @@ Player::Player(std::shared_ptr<Model>& model, const glm::vec3& position, const g
 void Player::Move(const Terrain* terrain)
 {
 	CheckInputs();
-	rotation.y += turnSpeed * g_Delta;
-	f32 distance = runSpeed * g_Delta;
-	position.x += distance * std::sin(glm::radians(rotation.y));
-	position.z += distance * std::cos(glm::radians(rotation.y));
+	rotation.y  += turnSpeed * g_Delta;
+	f32 distance = runSpeed  * g_Delta;
+	position.x  += distance  * std::sin(glm::radians(rotation.y));
+	position.z  += distance  * std::cos(glm::radians(rotation.y));
 	Gravity(terrain);
 	ImGuiDisplay();
 }

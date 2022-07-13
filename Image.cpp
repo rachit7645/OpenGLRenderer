@@ -6,55 +6,74 @@ using namespace Util;
 Image2D::Image2D(const std::string& path)
 {
 	LOG_INFO("Loading image: ", path, "\n");
-
-	std::string newPath = Files::GetResourceDirectory() + path;
-	data = stbi_load(newPath.c_str(), &width, &height, &channels, STBI_rgb);
+	data = stbi_load
+	(
+		(Files::GetResourceDirectory() + path).c_str(),
+		&width,
+		&height,
+		&channels,
+		STBI_rgb
+	);
 
 	if (data == nullptr)
 	{
-		LOG_ERROR("Failed to load image: ", newPath);
+		LOG_ERROR("Failed to load image: ", path);
 	}
 }
 
-u8 Image2D::GetRed(int x, int y)
+u8 Image2D::GetRed(int x, int y) const
 {
-	if (x < 0 || x >= width || y < 0 || y >= height)
+	if (DimensionCheck(x, y))
+	{
 		return 0;
+	}
 
-	ssize_t position = (y * width + x) * STBI_rgb;
+	ssize_t position = (y * width + x) * channels;
 	return data[position];
 }
 
-u8 Image2D::GetGreen(int x, int y)
+u8 Image2D::GetGreen(int x, int y) const
 {
-	if (x < 0 || x >= width || y < 0 || y >= height)
+	if (DimensionCheck(x, y))
+	{
 		return 0;
+	}
 
-	ssize_t position = (y * width + x) * STBI_rgb;
+	ssize_t position = (y * width + x) * channels;
 	return data[position + 1];
 }
 
-u8 Image2D::GetBlue(int x, int y)
+u8 Image2D::GetBlue(int x, int y) const
 {
-	if (x < 0 || x >= width || y < 0 || y >= height)
+	if (DimensionCheck(x, y))
+	{
 		return 0;
+	}
 
-	ssize_t position = (y * width + x) * STBI_rgb;
+	ssize_t position = (y * width + x) * channels;
 	return data[position + 2];
 }
 
-u32 Image2D::GetARGB(int x, int y)
+u32 Image2D::GetARGB(int x, int y) const
 {
-	if (x < 0 || x >= width || y < 0 || y >= height)
+	if (DimensionCheck(x, y))
+	{
 		return 0;
+	}
 
-	ssize_t position = (y * width + x) * STBI_rgb;
-	u8 red = data[position];
+	ssize_t position = (y * width + x) * channels;
+	
+	u8 red   = data[position];
 	u8 green = data[position + 1];
-	u8 blue = data[position + 2];
+	u8 blue  = data[position + 2];
 	u8 alpha = 0;
 
 	return alpha << 24 | red << 16 | green << 8 | blue;
+}
+
+bool Image2D::DimensionCheck(int x, int y) const
+{
+	return x < 0 || x >= width || y < 0 || y >= height;
 }
 
 Image2D::~Image2D()

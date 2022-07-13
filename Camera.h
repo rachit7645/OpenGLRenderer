@@ -15,7 +15,7 @@ inline bool g_ToZoomCamera = true;
 
 namespace Entities
 {
-	constexpr auto CAMERA_SPEED = 45.0f;
+	constexpr auto CAMERA_SPEED 	 = 45.0f;
 	constexpr auto CAMERA_ZOOM_SPEED = 1.0f;
 
 	class Camera
@@ -23,7 +23,7 @@ namespace Entities
 	public:
 		Camera(Player* player);
 
-		Player* player;
+		Player*   player;
 		glm::vec3 position = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 rotation = { 5.0f, 0.0f, 0.0f };
 
@@ -32,10 +32,10 @@ namespace Entities
 		glm::ivec2* mousePos;
 		glm::ivec2* mouseScroll;
 
-		bool capPitch = true;
-
 		f32 distanceFromPlayer = 35.0f;
-		f32 angleAroundPlayer = 0.0f;
+		f32 angleAroundPlayer  = 0.0f;
+
+		bool capPitch = true;
 
 		void ImGuiDisplay();
 		void CheckInputs();

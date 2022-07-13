@@ -25,11 +25,11 @@ using Terrains::TerrainTextures;
 void SDLWindow::MainLoop()
 {
 	// Put Models and Textures here 
-	auto treeTexture = Resources::GetTexture("gfx/tree.png");
+	auto treeTexture  = Resources::GetTexture("gfx/tree.png");
 	auto grassTexture = Resources::GetTexture("gfx/grassTexture.png");
-	auto fernTexture = Resources::GetTexture("gfx/fern.png");
-	auto defDiffuse = Resources::GetTexture("gfx/dragon.png");
-	auto defSpecular = Resources::GetTexture("gfx/dSpec.png");
+	auto fernTexture  = Resources::GetTexture("gfx/fern.png");
+	auto defDiffuse   = Resources::GetTexture("gfx/dragon.png");
+	auto defSpecular  = Resources::GetTexture("gfx/dSpec.png");
 
 	TerrainTextures textures =
 	{
@@ -40,10 +40,10 @@ void SDLWindow::MainLoop()
 		Resources::GetTexture("gfx/blendMap.png")
 	};
 
-	auto treeModel = Resources::GetModel("gfx/tree.obj", MeshTextures(treeTexture, defSpecular));
-	auto playerModel = Resources::GetModel("gfx/Link/Link.obj", MeshTextures(defDiffuse, defSpecular));
-	auto grassModel = Resources::GetModel("gfx/grassModel.obj", MeshTextures(grassTexture, defSpecular), Material(true, true));
-	auto fernModel = Resources::GetModel("gfx/fern.obj", MeshTextures(fernTexture, defSpecular), Material(true, true));
+	auto treeModel   = Resources::GetModel("gfx/tree.obj", 		 MeshTextures(treeTexture, defSpecular));
+	auto playerModel = Resources::GetModel("gfx/Link/Link.obj",  MeshTextures(defDiffuse, defSpecular));
+	auto grassModel  = Resources::GetModel("gfx/grassModel.obj", MeshTextures(grassTexture, defSpecular), Material(true, true));
+	auto fernModel   = Resources::GetModel("gfx/fern.obj", 		 MeshTextures(fernTexture, defSpecular),  Material(true, true));
 
 	// All objects go here
 	std::vector<Terrain> terrains;
@@ -61,35 +61,35 @@ void SDLWindow::MainLoop()
 			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
 			current = Terrains::GetCurrent(terrains, glm::vec2(entityX, entityZ));
 			entityY = current != nullptr ? current->GetHeight(glm::vec2(entityX, entityZ)) : 0.0f;
-			entities.push_back(Entity(treeModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f, 0.0f, 0.0f), 3.0f));
+			entities.emplace_back(treeModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f, 0.0f, 0.0f), 3.0f);
 
 			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
 			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
 			current = Terrains::GetCurrent(terrains, glm::vec2(entityX, entityZ));
 			entityY = current != nullptr ? current->GetHeight(glm::vec2(entityX, entityZ)) : 0.0f;
-			entities.push_back(Entity(fernModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f, 0.0f, 0.0f), 0.6f));
+			entities.emplace_back(fernModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f, 0.0f, 0.0f), 0.6f);
 		}
 	}
 	Player player(playerModel, glm::vec3(250.0f, 0.0f, 235.0f), glm::vec3(0.0f, 180.0f, 0.0f), 1.0f);
 
 	std::vector<Light> lights;
 	{
-		lights.push_back(Light
+		lights.emplace_back
 		(
 			glm::vec3(20000.0f, 20000.0f, 2000.0f),
 			glm::vec3(0.2f, 0.2f, 0.2f),
 			glm::vec3(0.3f, 0.3f, 0.3f),
 			glm::vec3(1.0f, 1.0f, 1.0f),
 			glm::vec3(1.0f, 0.0f, 0.0f)
-		));
-		lights.push_back(Light
+		);
+		lights.emplace_back
 		(
 			glm::vec3(250.0f, 5.0f, 235.0f),
 			glm::vec3(0.2f, 0.2f, 0.2f),
 			glm::vec3(0.0f, 2.0f, 2.0f),
 			glm::vec3(1.0f, 1.0f, 1.0f),
 			glm::vec3(1.0f, 0.01f, 0.002f)
-		));
+		);
 	};
 
 	Entities::Skybox skybox;
@@ -135,9 +135,9 @@ void SDLWindow::CalculateFPS()
 	if (endTime - startTime >= seconds(1))
 	{
 		startTime = endTime;
-		finalFPS = FPS;
+		finalFPS  = FPS;
 		frameTime = 1000.0f / FPS;
-		FPS = 0.0f;
+		FPS 	  = 0.0f;
 	}
 	FPS++;
 }

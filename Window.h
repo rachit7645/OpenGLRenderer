@@ -45,16 +45,16 @@ namespace Window
 		// FPS Counting Variables
 		std::chrono::time_point<std::chrono::steady_clock> startTime, frameStartTime, endTime;
 		f32 frameTime = 0.0f;
-		f32 FPS = 0.0f;
-		f32 finalFPS = 0.0f;
+		f32 FPS 	  = 0.0f;
+		f32 finalFPS  = 0.0f;
 
 		// Debug variables
-		bool wireframe = false;
-		bool vsync = true;
+		bool wireframe 		 = false;
+		bool vsync 			 = true;
 		bool isInputCaptured = true;
 
 		// SDL Resources
-		SDL_Window* window = nullptr;
+		SDL_Window* window 		= nullptr;
 		SDL_GLContext glContext = nullptr;
 		SDL_Event event;
 	};

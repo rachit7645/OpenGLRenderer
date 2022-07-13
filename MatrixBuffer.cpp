@@ -10,7 +10,7 @@ void MatrixBuffer::LoadView(const Camera& camera)
 	glBindBuffer(GL_UNIFORM_BUFFER, id);
 	glm::mat4 view = Maths::CreateViewMatrix(camera);
 	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), reinterpret_cast<const void*>(&view[0][0]));
-	glm::vec4 cameraPos(camera.position, 1.0f);
+	glm::vec4 cameraPos = glm::vec4(camera.position, 1.0f);
 	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, sizeof(glm::vec4), reinterpret_cast<const void*>(&cameraPos));
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
