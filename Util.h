@@ -5,6 +5,7 @@
 // Contains utility macros and defines
 
 #include <random>
+#include <vector>
 
 #include <cstdint>
 #include <cstddef>
@@ -12,12 +13,12 @@
 
 #define UNUSED __attribute__((unused))
 
-using s8 = std::int8_t;
+using s8  = std::int8_t;
 using s16 = std::int16_t;
 using s32 = std::int32_t;
 using s64 = std::int64_t;
 
-using u8 = std::uint8_t;
+using u8  = std::uint8_t;
 using u16 = std::uint16_t;
 using u32 = std::uint32_t;
 using u64 = std::uint64_t;
@@ -53,10 +54,23 @@ namespace Util
 
 	// Clamp a number between two other numbers
 	template<typename T>
-	void Clamp(T& value, T min, T max)
+	constexpr void Clamp(T& value, T min, T max)
 	{
 		if (value < min) value = min;
 		if (value > max) value = max;
+	}
+
+	template<typename T>
+	using Array2D = std::vector<std::vector<T>>;
+
+	template<typename T>
+	constexpr void InitArray2D(Array2D<T>& array, size_t size)
+	{
+		array = Array2D<T>(size);
+		for (auto& row : array)
+		{
+			row = std::vector<T>(size);
+		}
 	}
 }
 

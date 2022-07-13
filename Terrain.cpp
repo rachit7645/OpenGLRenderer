@@ -9,8 +9,17 @@ using Renderer::Material;
 using Util::Image2D;
 using Entities::Entity;
 
-Terrain::Terrain(const std::string& hMapPath, const glm::vec2& position, const TerrainTextures& textures, const Material& material)
-	: position(position.x* TERRAIN_SIZE, position.y* TERRAIN_SIZE), gridPosition(position), textures(textures), material(material)
+Terrain::Terrain
+(
+	const std::string& hMapPath,
+	const glm::vec2& position,
+	const TerrainTextures& textures, 
+	const Material& material
+)
+	: position(position.x * TERRAIN_SIZE, position.y * TERRAIN_SIZE),
+	  gridPosition(position),
+	  textures(textures),
+	  material(material)
 {
 	Image2D hMap(hMapPath);
 
@@ -21,29 +30,26 @@ Terrain::Terrain(const std::string& hMapPath, const glm::vec2& position, const T
 	std::vector<f32> normals(COUNT * 3);
 	std::vector<f32> txCoords(COUNT * 2);
 	std::vector<u32> indices(6 * (VERTEX_COUNT - 1) * (VERTEX_COUNT - 1));
-	heights = Array2D<f32>(VERTEX_COUNT);
-	for (auto& row : heights)
-	{
-		row = std::vector<f32>(VERTEX_COUNT);
-	}
+	Util::InitArray2D<f32>(heights, VERTEX_COUNT);
 
 	size_t vertexPointer = 0;
 	for (ssize_t i = 0; i < VERTEX_COUNT; ++i)
 	{
 		for (ssize_t j = 0; j < VERTEX_COUNT; ++j)
 		{
-			vertices[vertexPointer * 3] = static_cast<f32>(j) / static_cast<f32>(VERTEX_COUNT - 1) * TERRAIN_SIZE;
 			f32 height = CalculateHeight(static_cast<int>(j), static_cast<int>(i), hMap);
 			heights[j][i] = height;
+
+			vertices[vertexPointer * 3] 	= static_cast<f32>(j) / static_cast<f32>(VERTEX_COUNT - 1) * TERRAIN_SIZE;
 			vertices[vertexPointer * 3 + 1] = height;
 			vertices[vertexPointer * 3 + 2] = static_cast<f32>(i) / static_cast<f32>(VERTEX_COUNT - 1) * TERRAIN_SIZE;
 
 			glm::vec3 normal = CalculateNormal(j, i, hMap);
-			normals[vertexPointer * 3] = normal.x;
+			normals[vertexPointer * 3]     = normal.x;
 			normals[vertexPointer * 3 + 1] = normal.y;
 			normals[vertexPointer * 3 + 2] = normal.z;
 
-			txCoords[vertexPointer * 2] = static_cast<f32>(j) / static_cast<f32>(VERTEX_COUNT - 1);
+			txCoords[vertexPointer * 2] 	= static_cast<f32>(j) / static_cast<f32>(VERTEX_COUNT - 1);
 			txCoords[vertexPointer * 2 + 1] = static_cast<f32>(i) / static_cast<f32>(VERTEX_COUNT - 1);
 
 			vertexPointer++;
@@ -55,9 +61,9 @@ Terrain::Terrain(const std::string& hMapPath, const glm::vec2& position, const T
 	{
 		for (ssize_t j = 0; j < VERTEX_COUNT - 1; ++j)
 		{
-			auto topLeft = (i * VERTEX_COUNT) + j;
-			auto topRight = topLeft + 1;
-			auto bottomLeft = ((i + 1) * VERTEX_COUNT) + j;
+			auto topLeft	 = (i * VERTEX_COUNT) + j;
+			auto topRight	 = topLeft + 1;
+			auto bottomLeft  = ((i + 1) * VERTEX_COUNT) + j;
 			auto bottomRight = bottomLeft + 1;
 
 			indices[vertexPointer++] = topLeft;
@@ -72,7 +78,7 @@ Terrain::Terrain(const std::string& hMapPath, const glm::vec2& position, const T
 	vao = std::make_shared<VertexArray>(vertices, indices, txCoords, normals);
 }
 
-f32 Terrain::CalculateHeight(int x, int z, Image2D& hMap)
+f32 Terrain::CalculateHeight(int x, int z, const Image2D& hMap)
 {
 	f32 height = hMap.GetRed(x, z);
 	height -= IMAGE_MAX_PIXEL_COLOR / 2.0f;
@@ -81,9 +87,9 @@ f32 Terrain::CalculateHeight(int x, int z, Image2D& hMap)
 	return height;
 }
 
-glm::vec3 Terrain::CalculateNormal(int x, int z, Image2D& hMap)
+glm::vec3 Terrain::CalculateNormal(int x, int z, const Image2D& hMap)
 {
-	auto size = hMap.height;
+	auto size 	= hMap.height;
 	f32 heightL = CalculateHeight((x - 1 + size) % size, z, hMap);
 	f32 heightR = CalculateHeight((x + 1 + size) % size, z, hMap);
 	f32 heightD = CalculateHeight(x, (z - 1 + size) % size, hMap);
@@ -92,6 +98,7 @@ glm::vec3 Terrain::CalculateNormal(int x, int z, Image2D& hMap)
 	return glm::normalize(glm::vec3(heightL - heightR, 2.0f, heightD - heightU));
 }
 
+// TODO: Make this function prettier to look at
 f32 Terrain::GetHeight(const glm::vec2& worldPos) const
 {
 	glm::vec2 terrainPos = worldPos - position;

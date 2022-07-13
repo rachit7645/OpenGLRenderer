@@ -6,10 +6,8 @@ using namespace Renderer;
 
 Model::Model(const std::string& path, const MeshTextures& textures, const Material& material) : material(material)
 {
-	std::string newPath = Files::GetResourceDirectory() + path;
-
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(newPath.c_str(), ASSIMP_FLAGS);
+	const aiScene* scene = importer.ReadFile((Files::GetResourceDirectory() + path).c_str(), ASSIMP_FLAGS);
 
 	LOG_INFO("Loading model: ", path, "\n");
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)

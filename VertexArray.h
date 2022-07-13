@@ -14,8 +14,13 @@ namespace Renderer
 	{
 	public:
 		// Init default VAO
-		VertexArray(const std::vector<f32>& vertices, const std::vector<u32>& indices,
-			const std::vector<f32>& txCoords, const std::vector<f32>& normals);
+		VertexArray
+		(
+			const std::vector<f32>& vertices,
+			const std::vector<u32>& indices,
+			const std::vector<f32>& txCoords,
+			const std::vector<f32>& normals
+		);
 		// Init VAO for glDrawArrays
 		VertexArray(GLuint coordSize, const std::vector<f32>& vertices);
 		// Default constructor

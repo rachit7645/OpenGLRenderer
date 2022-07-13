@@ -19,8 +19,8 @@ SDLWindow::SDLWindow()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
 	// RGBA8888 + Depth24 Framebuffer
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE,   8);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,  8);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -32,13 +32,19 @@ SDLWindow::SDLWindow()
 	LOG_INFO("Creating a window\n");
 	window = SDL_CreateWindow
 	(
-		"Rachit's Engine", SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED, DIMENSIONS.x, DIMENSIONS.y, SDL_WINDOW_FLAGS
+		"Rachit's Engine",
+		SDL_WINDOWPOS_UNDEFINED,
+		SDL_WINDOWPOS_UNDEFINED,
+		DIMENSIONS.x,
+		DIMENSIONS.y,
+		SDL_WINDOW_FLAGS
 	);
+
 	if (window == nullptr)
 	{
 		LOG_ERROR("SDL_CreateWindow Failed\n", SDL_GetError(), "\n");
 	}
+	
 	// For sanity, raise window
 	SDL_RaiseWindow(window);
 	SDL_ShowCursor(SDL_FALSE);

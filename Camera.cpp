@@ -48,13 +48,13 @@ void Camera::ImGuiDisplay()
 
 void Camera::CalculatePosition(f32 hDistance, f32 vDistance)
 {
-	f32 theta = player->rotation.y + angleAroundPlayer;
+	f32 theta   = player->rotation.y + angleAroundPlayer;
 	f32 offsetX = hDistance * std::sin(glm::radians(theta));
 	f32 offsetZ = hDistance * std::cos(glm::radians(theta));
-	position.x = player->position.x - offsetX;
-	position.z = player->position.z - offsetZ;
-	position.y = player->position.y + vDistance;
-	rotation.y = 180.0f - (player->rotation.y + angleAroundPlayer);
+	position.x  = player->position.x - offsetX;
+	position.z  = player->position.z - offsetZ;
+	position.y  = player->position.y + vDistance;
+	rotation.y  = 180.0f - (player->rotation.y + angleAroundPlayer);
 }
 
 void Camera::CalculateZoom()

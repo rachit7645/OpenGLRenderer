@@ -25,5 +25,9 @@ VertexBuffer::VertexBuffer()
 
 VertexBuffer::~VertexBuffer()
 {
-	glDeleteBuffers(1, &id);
+	// ID must not be zero
+	if (id)
+	{
+		glDeleteBuffers(1, &id);
+	}
 }

@@ -11,7 +11,7 @@ SkyboxShader::SkyboxShader() : ShaderProgram(SKYBOX_VERTEX_SHADER_PATH, SKYBOX_F
 void SkyboxShader::GetUniformLocations()
 {
 	uniforms["modelMatrix"] = GetUniformLocation("modelMatrix");
-	uniforms["fogColor"] = GetUniformLocation("fogColor");
+	uniforms["fogColor"] 	= GetUniformLocation("fogColor");
 }
 
 void SkyboxShader::LoadModelMatrix(const glm::mat4& matrix)
