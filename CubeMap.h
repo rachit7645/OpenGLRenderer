@@ -5,11 +5,6 @@
 #include <vector>
 #include <GL/glew.h>
 
-#include "Files.h"
-#include "Util.h"
-#include "Log.h"
-#include "Texture.h"
-
 namespace Renderer
 {
 	class CubeMap

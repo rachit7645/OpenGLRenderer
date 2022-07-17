@@ -1,6 +1,7 @@
 #include "Entity.h"
 
 using namespace Entities;
+
 using Renderer::Model;
 
 Entity::Entity

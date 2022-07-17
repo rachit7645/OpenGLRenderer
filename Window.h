@@ -2,18 +2,10 @@
 #define SDL_WINDOW_H
 
 #include <chrono>
-
 #include <SDL2/SDL.h>
-#include <GL/glew.h>
 
-#include "Imgui.h"
 #include "GLM.h"
-#include "Log.h"
 #include "Util.h"
-#include "Camera.h"
-#include "Files.h"
-#include "Inputs.h"
-#include "Resources.h"
 
 namespace Window
 {

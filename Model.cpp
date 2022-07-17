@@ -1,6 +1,8 @@
 #include "Model.h"
-// Can't put this in a header due to recursive includes
+
 #include "Resources.h"
+#include "Log.h"
+#include "Files.h"
 
 using namespace Renderer;
 

@@ -1,6 +1,12 @@
 #include "MatrixBuffer.h"
 
+#include <GL/glew.h>
+
+#include "Maths.h"
+#include "Util.h"
+
 using namespace Renderer;
+
 using Entities::Camera;
 
 MatrixBuffer::MatrixBuffer() : UniformBuffer(0, sizeof(glm::mat4) * 2 + sizeof(glm::vec4)) {}

@@ -1,7 +1,6 @@
 #ifndef SKYBOX_H
 #define SKYBOX_H
 
-#include <vector>
 #include <memory>
 
 #include "VertexArray.h"

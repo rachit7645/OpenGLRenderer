@@ -1,5 +1,7 @@
 #include "UniformBuffer.h"
 
+#include "Util.h"
+
 using namespace Renderer;
 
 UniformBuffer::UniformBuffer(GLuint slot, GLsizeiptr size) : size(size)

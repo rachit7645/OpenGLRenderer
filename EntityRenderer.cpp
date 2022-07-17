@@ -1,6 +1,13 @@
 #include "EntityRenderer.h"
 
+#include <GL/glew.h>
+
+#include "GLM.h"
+#include "Util.h"
+#include "Maths.h"
+
 using namespace Renderer;
+
 using Entities::Entity;
 using Shader::StaticShader;
 

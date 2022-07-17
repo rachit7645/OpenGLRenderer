@@ -1,5 +1,9 @@
 #include "Files.h"
 
+#include <filesystem>
+
+#include "Util.h"
+
 std::string resDir = "";
 
 void Files::SetResourceDirectory(const std::string& relPath)

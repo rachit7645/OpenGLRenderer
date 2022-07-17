@@ -2,7 +2,6 @@
 #define LIGHT_H
 
 #include "GLM.h"
-#include "Util.h"
 
 namespace Entities
 {

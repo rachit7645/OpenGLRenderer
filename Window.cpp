@@ -1,5 +1,14 @@
 #include "Window.h"
 
+#include <GL/glew.h>
+
+#include "Imgui.h"
+#include "Log.h"
+#include "Camera.h"
+#include "Files.h"
+#include "Inputs.h"
+#include "Resources.h"
+
 using namespace Window;
 
 SDLWindow::SDLWindow()

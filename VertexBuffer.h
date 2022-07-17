@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <GL/glew.h>
+
 #include "Util.h"
 
 namespace Renderer

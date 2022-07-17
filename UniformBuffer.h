@@ -2,7 +2,6 @@
 #define UNIFORM_BUFFER_H
 
 #include <GL/glew.h>
-#include "Util.h"
 
 namespace Renderer
 {

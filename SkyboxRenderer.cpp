@@ -1,5 +1,11 @@
 #include "SkyboxRenderer.h"
 
+#include <string>
+#include <GL/glew.h>
+
+#include "GLM.h"
+#include "Maths.h"
+
 using namespace Renderer;
 
 using Shader::SkyboxShader;

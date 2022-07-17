@@ -1,10 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <SDL2/SDL.h>
-
 #include "GLM.h"
-#include "Imgui.h"
 #include "Entity.h"
 #include "Util.h"
 #include "Model.h"
@@ -19,7 +16,14 @@ namespace Entities
 	class Player : public Entity
 	{
 	public:
-		Player(std::shared_ptr<Renderer::Model>& model, const glm::vec3& position, const glm::vec3& rotation, f32 scale);
+		Player
+		(
+			std::shared_ptr<Renderer::Model>& model,
+			const glm::vec3& position,
+			const glm::vec3& rotation,
+			f32 scale
+		);
+
 		void Move(const Terrains::Terrain* terrain);
 	private:
 		f32 runSpeed 	  = 0.0f;

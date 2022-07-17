@@ -2,8 +2,6 @@
 
 using namespace Shader;
 
-using Entities::Light;
-using Entities::Camera;
 using Renderer::Material;
 
 StaticShader::StaticShader() : ShaderProgram(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH)

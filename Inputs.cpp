@@ -1,5 +1,7 @@
 #include "Inputs.h"
 
+#include "Util.h"
+
 glm::ivec2 mousePos;
 glm::ivec2 mouseScroll;
 

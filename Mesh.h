@@ -4,8 +4,6 @@
 #include <vector>
 #include <memory>
 
-#include "Util.h"
-#include "Texture.h"
 #include "VertexArray.h"
 #include "MeshTextures.h"
 

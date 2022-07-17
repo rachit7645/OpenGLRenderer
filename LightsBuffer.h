@@ -1,10 +1,8 @@
 #ifndef LIGHTS_BUFFER_H
 #define LIGHTS_BUFFER_H
 
-#include <GL/glew.h>
+#include <vector>
 
-#include "Util.h"
-#include "GLM.h"
 #include "UniformBuffer.h"
 #include "Light.h"
 
@@ -16,6 +14,7 @@ namespace Renderer
 	{
 	public:
 		LightsBuffer();
+		
 		void LoadLight(const std::vector<Entities::Light>& lights);
 	};
 }

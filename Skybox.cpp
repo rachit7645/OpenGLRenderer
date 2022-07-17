@@ -1,5 +1,7 @@
 #include "Skybox.h"
 
+#include <vector>
+
 using namespace Entities;
 
 using Renderer::VertexArray;
@@ -56,4 +58,7 @@ const std::vector<f32> SKYBOX_VERTICES =
 	SKYBOX_SIZE, -SKYBOX_SIZE, SKYBOX_SIZE
 };
 
-Skybox::Skybox() : vao(std::make_shared<VertexArray>(3, SKYBOX_VERTICES)), cubeMap(std::make_shared<CubeMap>(SKYBOX_TEXTURE_FILES)) {}
+Skybox::Skybox() 
+	: vao(std::make_shared<VertexArray>(3, SKYBOX_VERTICES)),
+	  cubeMap(std::make_shared<CubeMap>(SKYBOX_TEXTURE_FILES))
+{}

@@ -1,17 +1,10 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include <string>
-#include <vector>
 #include <GL/glew.h>
 
 #include "GLM.h"
-#include "Util.h"
-#include "Log.h"
-#include "Files.h"
 
 namespace Shader
 {
@@ -24,30 +17,30 @@ namespace Shader
 		ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath);
 		~ShaderProgram();
 
-		u32 programID;
+		GLuint programID;
 
 		void Start();
 		void Stop();
 
-		void BindAttribute(u32 attribute, const char* name);
-		u32 GetUniformLocation(const char* name);
+		void BindAttribute(GLuint attribute, const char* name);
+		GLuint GetUniformLocation(const char* name);
 		void DumpToFile(const std::string& path);
 
 		// Uniform loading functions 
-		void LoadUniform(u32 location, GLint value);
-		void LoadUniform(u32 location, GLuint value);
-		void LoadUniform(u32 location, GLfloat value);
-		void LoadUniform(u32 location, bool value);
-		void LoadUniform(u32 location, const glm::vec3& vector);
-		void LoadUniform(u32 location, const glm::vec4& vector);
-		void LoadUniform(u32 location, const glm::mat4& matrix);
+		void LoadUniform(GLuint location, GLint value);
+		void LoadUniform(GLuint location, GLuint value);
+		void LoadUniform(GLuint location, GLfloat value);
+		void LoadUniform(GLuint location, bool value);
+		void LoadUniform(GLuint location, const glm::vec3& vector);
+		void LoadUniform(GLuint location, const glm::vec4& vector);
+		void LoadUniform(GLuint location, const glm::mat4& matrix);
 
 		virtual void GetUniformLocations() = 0;
 	private:
 		// Function to load shaders from file
-		u32  LoadShader(GLenum type, const std::string& path);
-		void CheckShader(const std::string& message, u32 shaderID, GLenum type);
-		void CheckProgram(const std::string& message, u32 programID, GLenum type);
+		GLuint  LoadShader(GLenum type, const std::string& path);
+		void CheckShader(const std::string& message, GLuint shaderID, GLenum type);
+		void CheckProgram(const std::string& message, GLuint programID, GLenum type);
 	};
 }
 

@@ -1,5 +1,22 @@
 #include "Window.h"
-#include "MainLoop.h"
+
+#include <memory>
+#include <vector>
+
+#include "EntityRenderer.h"
+#include "StaticShader.h"
+#include "Model.h"
+#include "Entity.h"
+#include "Camera.h"
+#include "Light.h"
+#include "MasterRenderer.h"
+#include "Terrain.h"
+#include "Material.h"
+#include "Player.h"
+#include "Files.h"
+#include "MeshTextures.h"
+#include "Resources.h"
+#include "Imgui.h"
 
 using namespace Window;
 

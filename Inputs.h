@@ -2,7 +2,6 @@
 #define INPUTS_H
 
 #include "GLM.h"
-#include "Util.h"
 
 // TODO: Add keyboard input to inputs namespace
 namespace Inputs

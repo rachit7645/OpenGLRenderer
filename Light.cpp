@@ -1,5 +1,7 @@
 #include "Light.h"
 
+#include "Util.h"
+
 using namespace Entities;
 
 Light::Light()

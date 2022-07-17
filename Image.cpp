@@ -1,5 +1,9 @@
 #include "Image.h"
+
 #include "stb/stb_image.h"
+
+#include "Files.h"
+#include "Log.h"
 
 using namespace Util;
 

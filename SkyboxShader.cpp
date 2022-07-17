@@ -1,7 +1,6 @@
 #include "SkyboxShader.h"
 
 using namespace Shader;
-using Entities::Camera;
 
 SkyboxShader::SkyboxShader() : ShaderProgram(SKYBOX_VERTEX_SHADER_PATH, SKYBOX_FRAGMENT_SHADER_PATH)
 {

@@ -1,14 +1,10 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
-#include <unordered_map>
 #include <memory>
 #include <string>
 
 #include "Texture.h"
-#include "Util.h"
-#include "Log.h"
-#include "Files.h"
 #include "Model.h"
 #include "Material.h"
 
@@ -25,8 +21,8 @@ namespace Resources
 		const std::string& path,
 		const Renderer::MeshTextures& textures,
 		const Renderer::Material& material = Renderer::Material()
-	)
-	;
+	);
+
 	void Delete();
 }
 

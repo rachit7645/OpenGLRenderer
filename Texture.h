@@ -4,10 +4,6 @@
 #include <string>
 #include <GL/glew.h>
 
-#include "Util.h"
-#include "Log.h"
-#include "Files.h"
-
 namespace Renderer
 {
 	constexpr auto TEXTURE_LOD_BIAS = -0.5f;
@@ -24,7 +20,8 @@ namespace Renderer
 	{
 	public:
 		// Loads a texture into memory, then an OpenGL object
-		Texture(const std::string& path, PathType pathType =  PathType::RELATIVE);
+		Texture(const std::string& path, PathType pathType = PathType::RELATIVE);
+		// Destructor 
 		~Texture();
 
 		GLuint id;

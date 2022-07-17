@@ -1,13 +1,9 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <SDL2/SDL.h>
-
 #include "GLM.h"
-#include "Imgui.h"
 #include "Util.h"
 #include "Player.h"
-#include "Inputs.h"
 
 // HACK: Global Flags
 inline bool g_ToMoveCamera = true;

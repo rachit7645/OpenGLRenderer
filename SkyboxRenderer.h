@@ -1,10 +1,6 @@
 #ifndef SKYBOX_RENDERER_H
 #define SKYBOX_RENDERER_H
 
-#include <string>
-#include <GL/glew.h>
-
-#include "GLM.h"
 #include "Util.h"
 #include "SkyboxShader.h"
 #include "Skybox.h"

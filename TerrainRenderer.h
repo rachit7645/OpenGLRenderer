@@ -2,10 +2,7 @@
 #define TERRAIN_RENDERER_H
 
 #include <vector>
-#include <gl/glew.h>
 
-#include "GLM.h"
-#include "Util.h"
 #include "Terrain.h"
 #include "TerrainShader.h"
 

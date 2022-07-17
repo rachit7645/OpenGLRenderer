@@ -2,7 +2,6 @@
 #define MODEL_H
 
 #include <vector>
-#include <memory>
 #include <string>
 
 #include <assimp/Importer.hpp>
@@ -10,10 +9,8 @@
 #include <assimp/postprocess.h>
 
 #include "Material.h"
-#include "Log.h"
 #include "Util.h"
 #include "Mesh.h"
-#include "Files.h"
 #include "MeshTextures.h"
 
 namespace Renderer

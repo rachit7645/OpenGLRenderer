@@ -5,11 +5,7 @@
 
 #include "GLM.h"
 #include "Shader.h"
-#include "Camera.h"
-#include "Maths.h"
-#include "Light.h"
 #include "Material.h"
-#include "Terrain.h"
 
 namespace Shader
 {

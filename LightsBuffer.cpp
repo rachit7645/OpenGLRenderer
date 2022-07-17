@@ -1,5 +1,9 @@
 #include "LightsBuffer.h"
 
+#include <GL/glew.h>
+
+#include "Util.h"
+
 using namespace Renderer;
 
 using Entities::Light;

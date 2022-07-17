@@ -1,5 +1,14 @@
 #include "Shader.h"
 
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+
+#include "Util.h"
+#include "Log.h"
+#include "Files.h"
+
 using namespace Shader;
 
 ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath)

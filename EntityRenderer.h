@@ -2,12 +2,9 @@
 #define ENTITY_RENDERER_H
 
 #include <unordered_map>
+#include <vector>
 #include <memory>
-#include <GL/glew.h>
 
-#include "GLM.h"
-#include "Util.h"
-#include "Maths.h"
 #include "Entity.h"
 #include "StaticShader.h"
 

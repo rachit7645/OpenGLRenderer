@@ -3,6 +3,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
+#include "Log.h"
+#include "Files.h"
+#include "Util.h"
+
 using namespace Renderer;
 
 // TODO: Please fix this path hell

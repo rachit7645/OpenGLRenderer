@@ -1,10 +1,8 @@
 #ifndef TERRAIN_H
 #define TERRAIN_H
 
-#include <memory>
 #include <vector>
 #include <string>
-#include <algorithm>
 #include <limits>
 
 #include "GLM.h"

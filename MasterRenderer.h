@@ -7,7 +7,6 @@
 #include <GL/glew.h>
 
 #include "EntityRenderer.h"
-#include "Texture.h"
 #include "Util.h"
 #include "Entity.h"
 #include "StaticShader.h"

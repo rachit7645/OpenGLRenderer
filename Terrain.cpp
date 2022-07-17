@@ -1,4 +1,8 @@
 #include "Terrain.h"
+
+#include <memory>
+#include <algorithm>
+
 #include "Maths.h"
 
 using namespace Terrains;

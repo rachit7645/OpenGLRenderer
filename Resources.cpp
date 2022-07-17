@@ -1,5 +1,11 @@
 #include "Resources.h"
 
+#include <unordered_map>
+
+#include "Util.h"
+#include "Log.h"
+#include "Files.h"
+
 using Renderer::Texture;
 using Renderer::PathType;
 using Renderer::Model;

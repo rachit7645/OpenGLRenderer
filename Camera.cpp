@@ -1,5 +1,8 @@
 #include "Camera.h"
 
+#include "Imgui.h"
+#include "Inputs.h"
+
 using namespace Entities;
 
 Camera::Camera(Player* player) : player(player), mousePos(&Inputs::GetMousePos()), mouseScroll(&Inputs::GetMouseScroll()) {}

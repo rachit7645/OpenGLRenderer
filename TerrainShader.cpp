@@ -2,10 +2,6 @@
 
 using namespace Shader;
 
-using Entities::Light;
-using Entities::Camera;
-using Terrains::Terrain;
-
 TerrainShader::TerrainShader() : ShaderProgram(TERRAIN_VERTEX_SHADER_PATH, TERRAIN_FRAGMENT_SHADER_PATH)
 {
 	GetUniformLocations();
