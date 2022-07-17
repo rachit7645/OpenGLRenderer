@@ -15,13 +15,11 @@ void Camera::Move()
 	if (g_ToMoveCamera)
 	{
 		CalculatePitch();
-		CalculateAngleAroundPlayer();
+		CalculateAAP();
 		g_ToMoveCamera = false;
 	}
 
-	f32 hDistance = distanceFromPlayer * std::cos(glm::radians(rotation.x));
-	f32 vDistance = distanceFromPlayer * std::sin(glm::radians(rotation.x));
-	CalculatePosition(hDistance, vDistance);
+	CalculatePosition();
 	ImGuiDisplay();
 }
 
@@ -46,15 +44,19 @@ void Camera::ImGuiDisplay()
 	}
 }
 
-void Camera::CalculatePosition(f32 hDistance, f32 vDistance)
+void Camera::CalculatePosition()
 {
-	f32 theta   = player->rotation.y + angleAroundPlayer;
-	f32 offsetX = hDistance * std::sin(glm::radians(theta));
-	f32 offsetZ = hDistance * std::cos(glm::radians(theta));
-	position.x  = player->position.x - offsetX;
-	position.z  = player->position.z - offsetZ;
-	position.y  = player->position.y + vDistance;
-	rotation.y  = 180.0f - (player->rotation.y + angleAroundPlayer);
+	f32 hDistance = distanceFromPlayer * std::cos(glm::radians(rotation.x));
+	f32 vDistance = distanceFromPlayer * std::sin(glm::radians(rotation.x));
+
+	f32 theta     = player->rotation.y + angleAroundPlayer;
+	f32 offsetX   = hDistance * std::sin(glm::radians(theta));
+	f32 offsetZ   = hDistance * std::cos(glm::radians(theta));
+
+	position.x    = player->position.x - offsetX;
+	position.z    = player->position.z - offsetZ;
+	position.y    = player->position.y + vDistance;
+	rotation.y    = 180.0f - (player->rotation.y + angleAroundPlayer);
 }
 
 void Camera::CalculateZoom()
@@ -82,11 +84,6 @@ void Camera::CalculateZoom()
 
 void Camera::CalculatePitch()
 {
-	// Pitch clamp values, edit as you like :)
-	// Or disable it in the camera options
-	constexpr auto CAMERA_PITCH_MIN = 0.0f;
-	constexpr auto CAMERA_PITCH_MAX = 90.0f;
-
 	rotation.x -= mousePos->y * 0.1f;
 	if (capPitch)
 	{
@@ -94,7 +91,7 @@ void Camera::CalculatePitch()
 	}
 }
 
-void Camera::CalculateAngleAroundPlayer()
+void Camera::CalculateAAP()
 {
 	angleAroundPlayer -= mousePos->x * 0.3f;
 }

@@ -22,7 +22,7 @@ namespace Entities
 		std::shared_ptr<Renderer::Model> model;
 		glm::vec3 position;
 		glm::vec3 rotation;
-		f32 	  scale;
+		f32       scale;
 	};
 }
 

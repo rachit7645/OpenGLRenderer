@@ -17,6 +17,8 @@ namespace Entities
 {
 	constexpr auto CAMERA_SPEED 	 = 45.0f;
 	constexpr auto CAMERA_ZOOM_SPEED = 1.0f;
+	constexpr auto CAMERA_PITCH_MIN  = 0.0f;
+	constexpr auto CAMERA_PITCH_MAX  = 90.0f;
 
 	class Camera
 	{
@@ -27,6 +29,7 @@ namespace Entities
 		glm::vec3 position = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 rotation = { 5.0f, 0.0f, 0.0f };
 
+		// Camera update function
 		void Move();
 	private:
 		glm::ivec2* mousePos;
@@ -37,12 +40,16 @@ namespace Entities
 
 		bool capPitch = true;
 
+		// Display ImGui widgets
 		void ImGuiDisplay();
-		void CheckInputs();
+		// Calculates zoom aka distance from player
 		void CalculateZoom();
+		// Calculates pitch (rotation.x)
 		void CalculatePitch();
-		void CalculateAngleAroundPlayer();
-		void CalculatePosition(f32 hDistance, f32 vDistance);
+		// Calculates angle around player
+		void CalculateAAP();
+		// Calculates position, and rotation 
+		void CalculatePosition();
 	};
 }
 

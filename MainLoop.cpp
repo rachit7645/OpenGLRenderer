@@ -21,6 +21,7 @@ using Terrains::TerrainTextures;
 
 // TODO: Move MainLoop to separate class, move data to said class
 // TODO: Live editing of entities, terrains, lights, etc. with ImGui
+// TODO: Change refactor formatting to spaces (Commit: Major Refactors 13/7/2022)
 
 void SDLWindow::MainLoop()
 {
@@ -40,15 +41,15 @@ void SDLWindow::MainLoop()
 		Resources::GetTexture("gfx/blendMap.png")
 	};
 
-	auto treeModel   = Resources::GetModel("gfx/tree.obj", 		 MeshTextures(treeTexture, defSpecular));
-	auto playerModel = Resources::GetModel("gfx/Link/Link.obj",  MeshTextures(defDiffuse, defSpecular));
-	auto grassModel  = Resources::GetModel("gfx/grassModel.obj", MeshTextures(grassTexture, defSpecular), Material(true, true));
-	auto fernModel   = Resources::GetModel("gfx/fern.obj", 		 MeshTextures(fernTexture, defSpecular),  Material(true, true));
+	auto treeModel   = Resources::GetModel("gfx/tree.obj",       MeshTextures(treeTexture,  defSpecular));
+	auto playerModel = Resources::GetModel("gfx/Link/Link.obj",  MeshTextures(defDiffuse,   defSpecular));
+	auto grassModel  = Resources::GetModel("gfx/grassModel.obj", MeshTextures(grassTexture, defSpecular),  Material(true, true));
+	auto fernModel   = Resources::GetModel("gfx/fern.obj",       MeshTextures(fernTexture,  defSpecular),  Material(true, true));
 
 	// All objects go here
 	std::vector<Terrain> terrains;
 	{
-		terrains.push_back(Terrain("gfx/heightMap.png", glm::vec2(0.0f, 0.0f), textures));
+		terrains.emplace_back("gfx/heightMap.png", glm::vec2(0.0f, 0.0f), textures);
 	}
 
 	std::vector<Entity> entities;

@@ -22,7 +22,7 @@ namespace Shader
 		TerrainShader();
 
 		// Matrix loading functions
-		void LoadTransformationMatrix(const glm::mat4& matrix);
+		void LoadModelMatrix(const glm::mat4& matrix);
 
 		// Material and object loading functions
 		void LoadMaterials(const Renderer::Material& material);

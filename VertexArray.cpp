@@ -20,7 +20,11 @@ VertexArray::VertexArray
 	glBindVertexArray(0);
 }
 
-VertexArray::VertexArray(GLuint coordSize, const std::vector<f32>& vertices)
+VertexArray::VertexArray
+(
+	GLuint coordSize,
+	const std::vector<f32>& vertices
+)
 	: vertexCount(static_cast<GLsizei>(vertices.size() / coordSize))
 {
 	glGenVertexArrays(1, &id);
@@ -29,10 +33,7 @@ VertexArray::VertexArray(GLuint coordSize, const std::vector<f32>& vertices)
 	glBindVertexArray(0);
 }
 
-VertexArray::VertexArray()
-{
-	id = 0;
-}
+VertexArray::VertexArray() : id(0) {}
 
 VertexArray::~VertexArray()
 {

@@ -61,7 +61,7 @@ CubeMap::CubeMap(const std::vector<std::string>& files)
 		
 		stbi_image_free(data);
 	}
-
+	
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 

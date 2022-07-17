@@ -17,21 +17,26 @@
 
 namespace Terrains
 {
-	constexpr auto TERRAIN_SIZE 		 = 500.0f;
-	constexpr auto TERRAIN_MAX_HEIGHT 	 = 30.0f;
+	constexpr auto TERRAIN_SIZE          = 500.0f;
+	constexpr auto TERRAIN_MAX_HEIGHT    = 30.0f;
 	constexpr auto IMAGE_MAX_PIXEL_COLOR = std::numeric_limits<u8>::max();
 
 	class Terrain
 	{
 	public:
-		Terrain(const std::string& hMapPath, const glm::vec2& position, const TerrainTextures& textures,
-			const Renderer::Material& material = Renderer::Material());
+		Terrain
+		(
+			const std::string& hMapPath,
+			const glm::vec2& position,
+			const TerrainTextures& textures,
+			const Renderer::Material& material = Renderer::Material()
+		);
 
 		glm::vec2 position;
 		glm::vec2 gridPosition;
 		Util::Array2D<f32> heights;
 
-		TerrainTextures textures;
+		TerrainTextures    textures;
 		Renderer::Material material;
 		std::shared_ptr<Renderer::VertexArray> vao;
 

@@ -18,7 +18,7 @@ void SkyboxRenderer::PrepareSkybox(const Entities::Skybox& skybox)
 void SkyboxRenderer::LoadModelMatrix()
 {
 	rotation += SKYBOX_ROTATION_SPEED * g_Delta;
-	glm::mat4 trans = Maths::CreateTransformationMatrix(glm::vec3(0.0f, rotation, 0.0f));
+	glm::mat4 trans = Maths::CreateModelMatrix(glm::vec3(0.0f, rotation, 0.0f));
 	shader.LoadModelMatrix(trans);
 }
 

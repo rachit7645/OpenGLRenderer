@@ -25,7 +25,7 @@ void TerrainShader::GetUniformLocations()
 	uniforms["blendMap"]          = GetUniformLocation("blendMap");
 }
 
-void TerrainShader::LoadTransformationMatrix(const glm::mat4& matrix)
+void TerrainShader::LoadModelMatrix(const glm::mat4& matrix)
 {
 	LoadUniform(uniforms["modelMatrix"], matrix);
 }

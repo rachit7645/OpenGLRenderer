@@ -12,8 +12,20 @@ namespace Terrains
 	{
 	public:
 		using TxPtr = std::shared_ptr<Renderer::Texture>;
-		TerrainTextures(TxPtr background, TxPtr rTexture, TxPtr gTexture, TxPtr bTexture, TxPtr blendMap)
-			: background(background), rTexture(rTexture), gTexture(gTexture), bTexture(bTexture), blendMap(blendMap) {}
+		TerrainTextures
+		(
+			TxPtr background,
+			TxPtr rTexture,
+			TxPtr gTexture,
+			TxPtr bTexture,
+			TxPtr blendMap
+		)
+			: background(background),
+			  rTexture(rTexture), 
+			  gTexture(gTexture), 
+			  bTexture(bTexture), 
+			  blendMap(blendMap) 
+		{}
 
 		TxPtr background;
 		TxPtr rTexture;

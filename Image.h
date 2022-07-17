@@ -31,6 +31,7 @@ namespace Util
 		u8* data;
 
 		bool DimensionCheck(int x, int y) const;
+		ssize_t GetPosition(int x, int y) const;
 	};
 }
 

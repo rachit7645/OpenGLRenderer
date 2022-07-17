@@ -11,7 +11,13 @@ UniformBuffer::UniformBuffer(GLuint slot, GLsizeiptr size) : size(size)
 	glBindBufferBase(GL_UNIFORM_BUFFER, slot, id);
 }
 
+UniformBuffer::UniformBuffer() : id(0), size(0) {}
+
 UniformBuffer::~UniformBuffer()
 {
-	glDeleteBuffers(1, &id);
+	// ID must not be zero
+	if (id)
+	{
+		glDeleteBuffers(1, &id);
+	}
 }

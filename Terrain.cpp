@@ -24,7 +24,7 @@ Terrain::Terrain
 	Image2D hMap(hMapPath);
 
 	auto VERTEX_COUNT = hMap.height;
-	auto COUNT = VERTEX_COUNT * VERTEX_COUNT;
+	auto COUNT        = VERTEX_COUNT * VERTEX_COUNT;
 
 	std::vector<f32> vertices(COUNT * 3);
 	std::vector<f32> normals(COUNT * 3);

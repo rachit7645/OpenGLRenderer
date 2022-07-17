@@ -18,10 +18,7 @@ VertexBuffer::VertexBuffer(const std::vector<u32>& data)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(GLuint), data.data(), GL_STATIC_DRAW);
 }
 
-VertexBuffer::VertexBuffer()
-{
-	id = 0;
-}
+VertexBuffer::VertexBuffer() : id(0) {}
 
 VertexBuffer::~VertexBuffer()
 {

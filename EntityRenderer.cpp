@@ -22,7 +22,13 @@ void EntityRenderer::Render(const std::unordered_map<std::shared_ptr<Model>, std
 			for (const auto& entity : batch)
 			{
 				PrepareInstance(entity);
-				glDrawElements(GL_TRIANGLES, mesh.vao->vertexCount, GL_UNSIGNED_INT, static_cast<const void*>(0));
+				glDrawElements
+				(
+					GL_TRIANGLES,
+					mesh.vao->vertexCount,
+					GL_UNSIGNED_INT,
+					static_cast<const void*>(0)
+				);
 			}
 			UnbindMesh();
 		}
@@ -57,8 +63,8 @@ void EntityRenderer::BindTextures(const Mesh& mesh)
 
 void EntityRenderer::PrepareInstance(const Entity& entity)
 {
-	glm::mat4 transformation = Maths::CreateTransformationMatrix(entity.position, entity.rotation, entity.scale);
-	shader.LoadTransformationMatrix(transformation);
+	glm::mat4 matrix = Maths::CreateModelMatrix(entity.position, entity.rotation, entity.scale);
+	shader.LoadModelMatrix(matrix);
 }
 
 void EntityRenderer::UnbindMesh()

@@ -23,7 +23,7 @@ void StaticShader::GetUniformLocations()
 	uniforms["specularTexture"] = GetUniformLocation("specularTexture");
 }
 
-void StaticShader::LoadTransformationMatrix(const glm::mat4& matrix)
+void StaticShader::LoadModelMatrix(const glm::mat4& matrix)
 {
 	LoadUniform(uniforms["modelMatrix"], matrix);
 }
