@@ -22,13 +22,7 @@ void EntityRenderer::Render(const std::unordered_map<std::shared_ptr<Model>, std
 			for (const auto& entity : batch)
 			{
 				PrepareInstance(entity);
-				glDrawElements
-				(
-					GL_TRIANGLES,
-					mesh.vao->vertexCount,
-					GL_UNSIGNED_INT,
-					static_cast<const void*>(0)
-				);
+				glDrawElements(GL_TRIANGLES, mesh.vao->vertexCount, GL_UNSIGNED_INT, static_cast<const void*>(0));
 			}
 			UnbindMesh();
 		}
@@ -46,9 +40,6 @@ void EntityRenderer::PrepareModel(const std::shared_ptr<Model>& model)
 void EntityRenderer::PrepareMesh(const Mesh& mesh)
 {
 	glBindVertexArray(mesh.vao->id);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
 	BindTextures(mesh);
 }
 
@@ -69,9 +60,6 @@ void EntityRenderer::PrepareInstance(const Entity& entity)
 
 void EntityRenderer::UnbindMesh()
 {
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-	glDisableVertexAttribArray(2);
 	glBindVertexArray(0);
 }
 

@@ -13,10 +13,16 @@ VertexArray::VertexArray
 {
 	glGenVertexArrays(1, &id);
 	glBindVertexArray(id);
-	buffers["vertices"] 	 = std::make_shared<VertexBuffer>(0, 3, vertices);
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
+	buffers["vertices"]      = std::make_shared<VertexBuffer>(0, 3, vertices);
 	buffers["textureCoords"] = std::make_shared<VertexBuffer>(1, 2, txCoords);
-	buffers["normals"]		 = std::make_shared<VertexBuffer>(2, 3, normals);
-	buffers["indices"]		 = std::make_shared<VertexBuffer>(indices);
+	buffers["normals"]       = std::make_shared<VertexBuffer>(2, 3, normals);
+	buffers["indices"]       = std::make_shared<VertexBuffer>(indices);
+
 	glBindVertexArray(0);
 }
 
@@ -29,6 +35,7 @@ VertexArray::VertexArray
 {
 	glGenVertexArrays(1, &id);
 	glBindVertexArray(id);
+	glEnableVertexAttribArray(0);
 	buffers["vertices"] = std::make_shared<VertexBuffer>(0, coordSize, vertices);
 	glBindVertexArray(0);
 }

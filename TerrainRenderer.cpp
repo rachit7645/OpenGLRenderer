@@ -27,9 +27,6 @@ void TerrainRenderer::Render(const std::vector<Terrain>& terrains)
 void TerrainRenderer::PrepareTerrain(const Terrain& terrain)
 {
 	glBindVertexArray(terrain.vao->id);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
 	BindTextures(terrain);
 	shader.LoadMaterials(terrain.material);
 }
@@ -62,8 +59,5 @@ void TerrainRenderer::LoadModelMatrix(const Terrain& terrain)
 
 void TerrainRenderer::UnbindTerrain()
 {
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-	glDisableVertexAttribArray(2);
 	glBindVertexArray(0);
 }
