@@ -40,7 +40,9 @@ VertexArray::VertexArray
 	glBindVertexArray(0);
 }
 
-VertexArray::VertexArray() : id(0) {}
+VertexArray::VertexArray() : id(0)
+{
+}
 
 VertexArray::~VertexArray()
 {

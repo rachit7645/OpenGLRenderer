@@ -7,28 +7,41 @@
 
 namespace Util
 {
+	// TODO: Make this copyable
 	class Image2D
 	{
 	public:
+		// Constructor
 		Image2D(const std::string& path);
+		// Destructor
 		~Image2D();
+
+		// Copy constructor
+		Image2D(const Image2D&) = delete;
+		// Move constructor
+		Image2D(Image2D&&) = default;
+
+		// Copy assignment
+		Image2D& operator=(const Image2D&) = delete;
+		// Move assignment
+		Image2D& operator=(Image2D&&) = default;
 
 		int width;
 		int height;
 		int channels;
 
-		// Returns the red component at position (y * width + x) * STBI_rgb
+		// Returns the red component at position GetPosition(x, y)
 		u8 GetRed(int x, int y) const;
-		// Returns the green component at position ((y * width + x) * STBI_rgb) + 1
+		// Returns the green component at GetPosition(x, y) + 1
 		u8 GetGreen(int x, int y) const;
-		// Returns the blue component at position ((y * width + x) * STBI_rgb) + 2
+		// Returns the blue component at GetPosition(x, y) + 2
 		u8 GetBlue(int x, int y) const;
 		// Returns ARGB value with alpha = 0
 		u32 GetARGB(int x, int y) const;
 	private:
-		u8* data;
+		u8* m_data;
 
-		bool DimensionCheck(int x, int y) const;
+		// Returns position = (y * width + x) * channels
 		ssize_t GetPosition(int x, int y) const;
 	};
 }
