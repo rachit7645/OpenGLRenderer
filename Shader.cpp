@@ -45,13 +45,13 @@ void ShaderProgram::DumpToFile(const std::string& path)
 u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
 {
 	LOG_INFO("Loading shader: ", path, "\n");
-	std::ifstream fileStream(Files::GetResourceDirectory() + path, std::ios::in);
+	std::ifstream fs(Files::GetResourceDirectory() + path, std::ios::in);
 
-	if (!fileStream.is_open())
+	if (!fs.is_open())
 	{
 		LOG_ERROR("Unable to open shader: ", path);
 	}
-	std::string content = std::string(std::istreambuf_iterator<char>(fileStream), std::istreambuf_iterator<char>());
+	std::string content = std::string(std::istreambuf_iterator<char>(fs), std::istreambuf_iterator<char>());
 
 	u32 shaderID = glCreateShader(type);
 	const GLchar* cstr = content.c_str();

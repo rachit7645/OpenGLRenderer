@@ -8,12 +8,12 @@ using Entities::Camera;
 using Entities::Skybox;
 using Terrains::Terrain;
 
-MasterRenderer::MasterRenderer() :
-	renderer(shader),
-	terrainRenderer(terrainShader),
-	skyboxRenderer(skyboxShader),
-	m_matrices(std::make_shared<MatrixBuffer>()),
-	m_lights(std::make_shared<LightsBuffer>())
+MasterRenderer::MasterRenderer() 
+	: renderer(shader),
+	  terrainRenderer(terrainShader),
+	  skyboxRenderer(skyboxShader),
+	  m_matrices(std::make_shared<MatrixBuffer>()),
+	  m_lights(std::make_shared<LightsBuffer>())
 {
 	m_matrices->LoadProjection(glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
 }

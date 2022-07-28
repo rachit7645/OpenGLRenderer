@@ -11,7 +11,7 @@ namespace Entities
 {
 	constexpr auto PLAYER_RUN_SPEED  = 45.0f;
 	constexpr auto PLAYER_TURN_SPEED = 160.0f;
-	constexpr auto PLAYER_GRAVITY 	 = -20.0f;
+	constexpr auto PLAYER_GRAVITY    = -20.0f;
 
 	class Player : public Entity
 	{
@@ -26,8 +26,8 @@ namespace Entities
 
 		void Move(const Terrains::Terrain* terrain);
 	private:
-		f32 runSpeed 	  = 0.0f;
-		f32 turnSpeed 	  = 0.0f;
+		f32 runSpeed      = 0.0f;
+		f32 turnSpeed     = 0.0f;
 		f32 terrainHeight = 0.0f;
 
 		void CheckInputs();

@@ -10,8 +10,7 @@
 
 namespace Resources
 {
-	std::shared_ptr<Renderer::Texture>
-	GetTexture(const std::string& path);
+	std::shared_ptr<Renderer::Texture> GetTexture(const std::string& path);
 
 	std::shared_ptr<Renderer::Model> GetModel
 	(

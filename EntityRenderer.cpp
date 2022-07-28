@@ -41,7 +41,9 @@ void EntityRenderer::PrepareModel(const std::shared_ptr<Model>& model)
 {
 	shader.LoadMaterials(model->material);
 	if (model->material.isTransparent)
+	{
 		DisableCulling();
+	}
 }
 
 void EntityRenderer::PrepareMesh(const Mesh& mesh)

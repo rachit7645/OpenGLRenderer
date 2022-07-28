@@ -17,7 +17,8 @@ Player::Player
 	f32 scale
 )
 	: Entity(model, position, rotation, scale) 
-{}
+{
+}
 
 void Player::Move(const Terrain* terrain)
 {
@@ -56,6 +57,7 @@ void Player::Gravity(const Terrain* terrain)
 	if (position.y < terrainHeight) position.y = terrainHeight;
 }
 
+// FIXME: Prettify this one
 void Player::CheckInputs()
 {
 	if (g_Keys[SDL_SCANCODE_W])

@@ -38,7 +38,7 @@ namespace Shader
 		virtual void GetUniformLocations() = 0;
 	private:
 		// Function to load shaders from file
-		GLuint  LoadShader(GLenum type, const std::string& path);
+		GLuint LoadShader(GLenum type, const std::string& path);
 		void CheckShader(const std::string& message, GLuint shaderID, GLenum type);
 		void CheckProgram(const std::string& message, GLuint programID, GLenum type);
 	};

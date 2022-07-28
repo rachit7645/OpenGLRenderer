@@ -25,7 +25,8 @@ namespace Terrains
 			  gTexture(gTexture), 
 			  bTexture(bTexture), 
 			  blendMap(blendMap) 
-		{}
+		{
+		}
 
 		TxPtr background;
 		TxPtr rTexture;

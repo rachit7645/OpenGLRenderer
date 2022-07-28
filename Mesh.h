@@ -9,6 +9,7 @@
 
 namespace Renderer
 {
+	// TODO: Add materials from assimp
 	class Mesh
 	{
 	public:
