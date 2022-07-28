@@ -154,8 +154,8 @@ void SDLWindow::CalculateFPS()
 	{
 		startTime = endTime;
 		finalFPS  = FPS;
-		frameTime = 1000.0f / FPS;
-		FPS 	  = 0.0f;
+		frameTime = 1000.0 / FPS;
+		FPS       = 0.0f;
 	}
 	FPS++;
 }

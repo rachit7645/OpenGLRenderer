@@ -14,6 +14,7 @@ out vec3 txCoords;
 
 void main()
 {
+	// HACK: Editing view matrix in the shader
 	mat4 editedView = viewMatrix;
 	// Disable translation
 	editedView[3][0] = 0.0f;
@@ -23,5 +24,5 @@ void main()
 	// This makes it so that during perspective division z / w = w / w = 1.0f
 	// This means that the driver will (hopefully) use early depth test
 	gl_Position = (projectionMatrix * editedView * modelMatrix * vec4(position, 1.0f)).xyww;
-	txCoords = position;
+	txCoords    = position;
 }

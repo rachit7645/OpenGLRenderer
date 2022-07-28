@@ -13,7 +13,7 @@ out vec4 outColor;
 void main()
 {
 	vec4 finalColor = texture(cubeMap, txCoords);
-	float factor = (txCoords.y - LOWER_LIMIT) / (UPPER_LIMIT - LOWER_LIMIT);
-	factor = clamp(factor, 0.0f, 1.0f);
-	outColor = mix(vec4(fogColor, 1.0f), finalColor, factor);
+	float factor    = (txCoords.y - LOWER_LIMIT) / (UPPER_LIMIT - LOWER_LIMIT);
+	factor          = clamp(factor, 0.0f, 1.0f);
+	outColor        = mix(vec4(fogColor, 1.0f), finalColor, factor);
 }

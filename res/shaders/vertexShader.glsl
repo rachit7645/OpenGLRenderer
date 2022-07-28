@@ -29,28 +29,28 @@ layout(std140, binding = 1) uniform Lights
 	uniform Light lights[MAX_LIGHTS];
 };
 
-uniform int  useFakeLighting;
 uniform mat4 modelMatrix;
+uniform int  useFakeLighting;
 
-out float visibility;
-out vec2  txCoords;
-out vec3  unitNormal;
-out vec3  unitCameraVector;
 out vec4  worldPosition;
 out vec3  unitLightVector[MAX_LIGHTS];
+out vec3  unitCameraVector;
+out vec3  unitNormal;
+out vec2  txCoords;
+out float visibility;
 
 void CalculateLighting();
-void CalculateVisibility(vec4 positionRelativeToCamera);
+void CalculateVisibility(vec4 posRelToCam);
 
 void main()
 {
-	worldPosition = modelMatrix * vec4(position, 1.0f);
-	vec4 positionRelativeToCamera = viewMatrix * worldPosition;
-	gl_Position = projectionMatrix * positionRelativeToCamera;
-	txCoords = textureCoords;
+	worldPosition    = modelMatrix      * vec4(position, 1.0f);
+	vec4 posRelToCam = viewMatrix       * worldPosition;
+	gl_Position      = projectionMatrix * posRelToCam;
+	txCoords         = textureCoords;
 
 	CalculateLighting();
-	CalculateVisibility(positionRelativeToCamera);
+	CalculateVisibility(posRelToCam);
 }
 
 void CalculateLighting()
@@ -58,8 +58,8 @@ void CalculateLighting()
 	// Remove one if statement with the mix function
 	// (which hopefully is a single instruction or similar on the GPU)
 	vec3 actualNormal = mix(normal, vec3(0.0f, 1.0f, 0.0f), useFakeLighting);
-	unitNormal = normalize((modelMatrix * vec4(actualNormal, 0.0f)).xyz);
-	unitCameraVector = normalize(cameraPos.xyz - worldPosition.xyz);
+	unitNormal        = normalize((modelMatrix * vec4(actualNormal, 0.0f)).xyz);
+	unitCameraVector  = normalize(cameraPos.xyz - worldPosition.xyz);
 
 	for (int i = 0; i < MAX_LIGHTS; ++i)
 	{
@@ -67,9 +67,9 @@ void CalculateLighting()
 	}
 }
 
-void CalculateVisibility(vec4 positionRelativeToCamera)
+void CalculateVisibility(vec4 posRelToCam)
 {
-	float distance = length(positionRelativeToCamera.xyz);
-	visibility = exp(-pow((distance * FOG_DENSITY), FOG_GRADIENT));
-	visibility = clamp(visibility, 0.0f, 1.0f);
+	float distance = length(posRelToCam.xyz);
+	visibility     = exp(-pow((distance * FOG_DENSITY), FOG_GRADIENT));
+	visibility     = clamp(visibility, 0.0f, 1.0f);
 }
