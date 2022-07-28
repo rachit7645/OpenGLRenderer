@@ -82,14 +82,14 @@ MeshTextures Model::ProcessMaterial(aiMesh* mesh, const aiScene* scene, const Me
 	mat->GetTexture(aiTextureType_DIFFUSE, 0, &path);
 	if (path.length > 0)
 	{
-		textures.diffuse = Resources::GetTexture(path.C_Str(), PathType::ABSOLUTE);
+		textures.diffuse = Resources::GetTexture(path.C_Str());
 	}
 
 	path.Clear();
 	mat->GetTexture(aiTextureType_SPECULAR, 0, &path);
 	if (path.length > 0)
 	{
-		textures.specular = Resources::GetTexture(path.C_Str(), PathType::ABSOLUTE);
+		textures.specular = Resources::GetTexture(path.C_Str());
 	}
 
 	return textures;

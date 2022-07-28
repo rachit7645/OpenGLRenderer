@@ -10,5 +10,5 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd D:\\Rachit_Pendrive\\Programming\\C++\\SDL2Engine\\res\\gfx\\test\\diff.png
-map_Ks D:\\Rachit_Pendrive\\Programming\\C++\\SDL2Engine\\res\\gfx\\test\\spec.png
+map_Kd gfx\\test\\diff.png
+map_Ks gfx\\test\\spec.png

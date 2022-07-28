@@ -9,26 +9,12 @@
 
 using namespace Renderer;
 
-// TODO: Please fix this path hell
-
-Texture::Texture(const std::string& path, PathType pathType)
+Texture::Texture(const std::string& path)
 {
-	std::string newPath;
-
-	if (pathType == RELATIVE)
-	{
-		LOG_INFO("Loading texture: ", path, "\n");
-		newPath = Files::GetResourceDirectory() + path;
-	}
-	else if (pathType == ABSOLUTE)
-	{
-		LOG_INFO("Loading texture: ", Files::GetRelative(path), "\n");
-		newPath = path;
-	}
-
+	LOG_INFO("Loading texture: ", path, "\n");
 	u8* data = stbi_load
 	(
-		newPath.c_str(),
+		(Files::GetResourceDirectory() + path).c_str(),
 		&width,
 		&height,
 		&channels,
@@ -45,8 +31,8 @@ Texture::Texture(const std::string& path, PathType pathType)
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, 	  GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, 	  GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,     GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,     GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS,   TEXTURE_LOD_BIAS);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
