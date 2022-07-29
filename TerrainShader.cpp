@@ -13,7 +13,6 @@ void TerrainShader::GetUniformLocations()
 	uniforms["shineDamper"]       = GetUniformLocation("shineDamper");
 	uniforms["reflectivity"]      = GetUniformLocation("reflectivity");
 	uniforms["skyColour"]         = GetUniformLocation("skyColour");
-
 	uniforms["backgroundTexture"] = GetUniformLocation("backgroundTexture");
 	uniforms["rTexture"]          = GetUniformLocation("rTexture");
 	uniforms["gTexture"]          = GetUniformLocation("gTexture");

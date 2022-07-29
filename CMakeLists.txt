@@ -57,6 +57,7 @@ add_executable(engine
 	Light.cpp
 	Resources.cpp
 	Time.cpp
+	GL.cpp
 )
 
 target_include_directories(engine PUBLIC libs/)

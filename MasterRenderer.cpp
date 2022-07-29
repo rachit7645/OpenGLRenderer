@@ -103,8 +103,3 @@ void MasterRenderer::ProcessTerrains(const std::vector<Terrain>& terrains)
 {
 	m_terrains = terrains;
 }
-
-void MasterRenderer::ProcessSkybox(const Skybox& skybox)
-{
-	m_skybox = skybox;
-}

@@ -8,12 +8,13 @@
 #include "Files.h"
 #include "Inputs.h"
 #include "Resources.h"
+#include "GL.h"
 
 using namespace Window;
 
 SDLWindow::SDLWindow()
 {
-	LOG_INFO("Initializing SDL2:\n");
+	LOG_INFO("Initializing SDL2\n");
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
 		LOG_ERROR("SDL_Init Failed\n", SDL_GetError(), "\n");
@@ -38,7 +39,6 @@ SDLWindow::SDLWindow()
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-	LOG_INFO("Creating a window\n");
 	window = SDL_CreateWindow
 	(
 		"Rachit's Engine",
@@ -53,6 +53,7 @@ SDLWindow::SDLWindow()
 	{
 		LOG_ERROR("SDL_CreateWindow Failed\n", SDL_GetError(), "\n");
 	}
+	LOG_INFO("Created SDL_Window with address: ", window, "\n");
 	
 	// For sanity, raise window
 	SDL_RaiseWindow(window);
@@ -67,10 +68,12 @@ SDLWindow::SDLWindow()
 	{
 		LOG_ERROR("SDL_GL_CreateContext Failed\n", SDL_GetError(), "\n");
 	}
+
 	if (SDL_GL_MakeCurrent(window, glContext) != 0)
 	{
 		LOG_ERROR("SDL_GL_MakeCurrent Failed\n", SDL_GetError(), "\n");
 	}
+	LOG_INFO("Created SDL_GLContext with address: ", glContext, "\n");
 
 	// Initialize the REAL OpenGL context
 	// Due to a bug in glew, set it to experimental mode
@@ -80,6 +83,24 @@ SDLWindow::SDLWindow()
 		LOG_ERROR("glewInit Failed\n");
 	}
 
+	LOG_DEBUG("GL_MAX_FRAMEBUFFER_HEIGHT: "     , GL::GetIntegerv(GL_MAX_FRAMEBUFFER_HEIGHT),      "\n");
+	LOG_DEBUG("GL_MAX_FRAMEBUFFER_WIDTH: "      , GL::GetIntegerv(GL_MAX_FRAMEBUFFER_WIDTH),       "\n");
+	LOG_DEBUG("GL_MAX_FRAMEBUFFER_SAMPLES: "    , GL::GetIntegerv(GL_MAX_FRAMEBUFFER_SAMPLES),     "\n");
+	LOG_DEBUG("GL_MAX_TEXTURE_SIZE: "           , GL::GetIntegerv(GL_MAX_TEXTURE_SIZE),            "\n");
+	LOG_DEBUG("GL_MAX_TEXTURE_BUFFER_SIZE: "    , GL::GetIntegerv(GL_MAX_TEXTURE_BUFFER_SIZE),     "\n");
+	LOG_DEBUG("GL_MAX_3D_TEXTURE_SIZE: "        , GL::GetIntegerv(GL_MAX_3D_TEXTURE_SIZE),         "\n");
+	LOG_DEBUG("GL_MAX_CUBE_MAP_TEXTURE_SIZE: "  , GL::GetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE),   "\n");
+	LOG_DEBUG("GL_MAX_TEXTURE_LOD_BIAS: "       , GL::GetIntegerv(GL_MAX_TEXTURE_LOD_BIAS),        "\n");
+	LOG_DEBUG("GL_MAX_TEXTURE_MAX_ANISOTROPY: " , GL::GetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY),  "\n");
+	LOG_DEBUG("GL_MAX_SAMPLES: "                , GL::GetIntegerv(GL_MAX_SAMPLES),                 "\n");
+	LOG_DEBUG("GL_MAX_UNIFORM_BLOCK_SIZE: "     , GL::GetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE),      "\n");
+	LOG_DEBUG("GL_MAX_UNIFORM_BUFFER_BINDINGS: ", GL::GetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS), "\n");
+	LOG_DEBUG("GL_MAX_UNIFORM_LOCATIONS: "      , GL::GetIntegerv(GL_MAX_UNIFORM_LOCATIONS),       "\n");
+	LOG_DEBUG("GL_MAX_VERTEX_UNIFORM_BLOCKS: "  , GL::GetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS),   "\n");
+	LOG_DEBUG("GL_MAX_FRAGMENT_UNIFORM_BLOCKS: ", GL::GetIntegerv(GL_MAX_FRAGMENT_UNIFORM_BLOCKS), "\n");
+	LOG_DEBUG("GL_MAX_VERTEX_ATTRIBS: "         , GL::GetIntegerv(GL_MAX_VERTEX_ATTRIBS),          "\n");
+
+	LOG_INFO("Initializing Dear ImGui version: ", ImGui::GetVersion(), "\n");
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	UNUSED ImGuiIO& io = ImGui::GetIO();

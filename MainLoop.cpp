@@ -40,6 +40,8 @@ using Terrains::TerrainTextures;
 // TODO: Live editing of entities, terrains, lights, etc. with ImGui
 // TODO: Change refactor formatting to spaces (Commit: Major Refactors 13/7/2022)
 
+constexpr auto MAX_ENTITIES = 100;
+
 void SDLWindow::MainLoop()
 {
 	// Put Models and Textures here 
@@ -73,7 +75,7 @@ void SDLWindow::MainLoop()
 	{
 		const Terrain* current = nullptr;
 		f32 entityX, entityY, entityZ;
-		for (size_t i = 0; i < 100; ++i)
+		for (size_t i = 0; i < MAX_ENTITIES; ++i)
 		{
 			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
 			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
@@ -110,12 +112,8 @@ void SDLWindow::MainLoop()
 		);
 	};
 
-	Entities::Skybox skybox;
 	Entities::Camera camera(&player);
-
 	Renderer::MasterRenderer renderer;
-	// The skybox doesn't really change, so it is loaded once in the start
-	renderer.ProcessSkybox(skybox);
 
 	startTime = frameStartTime = steady_clock::now();
 
@@ -157,7 +155,7 @@ void SDLWindow::CalculateFPS()
 		frameTime = 1000.0 / FPS;
 		FPS       = 0.0f;
 	}
-	FPS++;
+	++FPS;
 }
 
 void SDLWindow::ImGuiDisplay()

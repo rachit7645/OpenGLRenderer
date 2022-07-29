@@ -54,8 +54,6 @@ namespace Renderer
 		void ProcessTerrain(const Terrains::Terrain& terrain);
 		// Process a vector of terrains
 		void ProcessTerrains(const std::vector<Terrains::Terrain>& terrains);
-		// Process skybox into a class member
-		void ProcessSkybox(const Entities::Skybox& skybox);
 	private:
 		// Prepare framebuffer for render
 		void Prepare();
