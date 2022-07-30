@@ -61,4 +61,5 @@ const std::vector<f32> SKYBOX_VERTICES =
 Skybox::Skybox() 
 	: vao(std::make_shared<VertexArray>(3, SKYBOX_VERTICES)),
 	  cubeMap(std::make_shared<CubeMap>(SKYBOX_TEXTURE_FILES))
-{}
+{
+}

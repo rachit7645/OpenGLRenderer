@@ -11,16 +11,16 @@ namespace Renderer
 	class VertexBuffer
 	{
 	public:
-		// Standard vbo
-		VertexBuffer(GLuint slot, GLuint coordSize, const std::vector<f32>& data);
-		// Element buffer object
-		VertexBuffer(const std::vector<u32>& data);
 		// Default constructor
-		VertexBuffer();
+		VertexBuffer() = default;
+		// Standard vbo
+		VertexBuffer(GLuint slot, GLint coordSize, const std::vector<f32>& data);
+		// Element buffer object
+		explicit VertexBuffer(const std::vector<u32>& data);
 		// Destructor
 		~VertexBuffer();
 
-		GLuint id;
+		GLuint id = 0;
 	};
 }
 

@@ -9,7 +9,7 @@ namespace Entities
 	{
 	public:
 		// Default constructor
-		Light();
+		Light() = default;
 		// Main constructor
 		Light
 		(
@@ -21,11 +21,11 @@ namespace Entities
 		);
 
 		// Light data (must match struct in shaders)
-		alignas(16) glm::vec4 position;
-		alignas(16) glm::vec4 ambient;
-		alignas(16) glm::vec4 diffuse;
-		alignas(16) glm::vec4 specular;
-		alignas(16) glm::vec4 attenuation;
+		alignas(16) glm::vec4 position    = {0.0f, 0.0f, 0.0f, 1.0f};
+		alignas(16) glm::vec4 ambient     = {0.0f, 0.0f, 0.0f, 1.0f};
+		alignas(16) glm::vec4 diffuse     = {0.0f, 0.0f, 0.0f, 1.0f};
+		alignas(16) glm::vec4 specular    = {0.0f, 0.0f, 0.0f, 1.0f};
+		alignas(16) glm::vec4 attenuation = {1.0f, 0.0f, 0.0f, 1.0f};
 	};
 }
 

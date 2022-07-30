@@ -66,7 +66,7 @@ namespace Renderer
 		// Render the skybox
 		void RenderSkybox();
 
-		// The entitiy map
+		// The entity map
 		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>> m_entities;
 		// The terrain vector
 		std::vector<Terrains::Terrain> m_terrains;

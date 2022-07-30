@@ -10,15 +10,23 @@
 
 namespace Resources
 {
-	std::shared_ptr<Renderer::Texture> GetTexture(const std::string& path);
+	using TxPtr = std::shared_ptr<Renderer::Texture>;
+	using MdPtr = std::shared_ptr<Renderer::Model>;
 
-	std::shared_ptr<Renderer::Model> GetModel
+	// If the same texture exists, it returns it (fast)
+	// Otherwise it generates it (slow)
+	TxPtr GetTexture(const std::string& path);
+
+	// If the same model exists, it returns it (fast)
+	// Otherwise it generates it (slow)
+	MdPtr GetModel
 	(
 		const std::string& path,
 		const Renderer::MeshTextures& textures,
 		const Renderer::Material& material = Renderer::Material()
 	);
 
+	// Clears the cache
 	void Delete();
 }
 

@@ -1,6 +1,5 @@
 #include "SkyboxRenderer.h"
 
-#include <string>
 #include <GL/glew.h>
 
 #include "GLM.h"

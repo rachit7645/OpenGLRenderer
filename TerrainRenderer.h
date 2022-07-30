@@ -11,7 +11,7 @@ namespace Renderer
 	class TerrainRenderer
 	{
 	public:
-		TerrainRenderer(Shader::TerrainShader& shaderRef);
+		explicit TerrainRenderer(Shader::TerrainShader& shaderRef);
 		Shader::TerrainShader& shader;
 
 		void Render(const std::vector<Terrains::Terrain>& terrains);

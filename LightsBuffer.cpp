@@ -10,22 +10,36 @@ using Entities::Light;
 
 // HACK: GLSL's alignment is fucking weird, so upload vec4's
 
-const Light emptyLight;
-
-LightsBuffer::LightsBuffer() : UniformBuffer(1, sizeof(Light) * SHADER_MAX_LIGHTS) {}
+LightsBuffer::LightsBuffer() : UniformBuffer(1, sizeof(Light) * SHADER_MAX_LIGHTS)
+{
+}
 
 void LightsBuffer::LoadLight(const std::vector<Light>& lights)
 {
+	static const Light emptyLight;
+
 	glBindBuffer(GL_UNIFORM_BUFFER, id);
 	for (size_t i = 0; i < SHADER_MAX_LIGHTS; ++i)
 	{
 		if (i < lights.size())
 		{
-			glBufferSubData(GL_UNIFORM_BUFFER, sizeof(Light) * i, sizeof(Light), reinterpret_cast<const void*>(&lights[i]));
+			glBufferSubData
+			(
+				GL_UNIFORM_BUFFER,
+				static_cast<GLintptr>(sizeof(Light) * i),
+				static_cast<GLsizeiptr>(sizeof(Light)),
+				reinterpret_cast<const void*>(&lights[i])
+			);
 		}
 		else
 		{
-			glBufferSubData(GL_UNIFORM_BUFFER, sizeof(Light) * i, sizeof(Light), reinterpret_cast<const void*>(&emptyLight));
+			glBufferSubData
+			(
+				GL_UNIFORM_BUFFER,
+				static_cast<GLintptr>(sizeof(Light) * i),
+				static_cast<GLsizeiptr>(sizeof(Light)),
+				reinterpret_cast<const void*>(&lights[i])
+			);
 		}
 	}
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);

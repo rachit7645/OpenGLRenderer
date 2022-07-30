@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <vector>
 
 #include "Util.h"
@@ -20,21 +19,28 @@ ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& f
 	glAttachShader(programID, vertexShaderID);
 	glAttachShader(programID, fragmentShaderID);
 	glLinkProgram(programID);
-	CheckProgram("Shader link failed for: " + vertexPath + ", " + fragmentPath, programID, GL_LINK_STATUS);
+	CheckProgram("Shader link failed for: " + vertexPath + ", " + fragmentPath, GL_LINK_STATUS);
 	glDeleteShader(vertexShaderID);
 	glDeleteShader(fragmentShaderID);
 	glValidateProgram(programID);
-	CheckProgram("Shader validation failed for: " + vertexPath + ", " + fragmentPath, programID, GL_VALIDATE_STATUS);
+	CheckProgram("Shader validation failed for: " + vertexPath + ", " + fragmentPath, GL_VALIDATE_STATUS);
 }
 
-void ShaderProgram::DumpToFile(const std::string& path)
+void ShaderProgram::DumpToFile(const std::string& path) const
 {
 	GLint length;
 	glGetProgramiv(programID, GL_PROGRAM_BINARY_LENGTH, &length);
 
 	GLenum format;
 	std::vector<char> binary(length);
-	glGetProgramBinary(programID, binary.size(), &length, &format, reinterpret_cast<void*>(binary.data()));
+	glGetProgramBinary
+	(
+		programID,
+		static_cast<GLsizei>(binary.size()),
+		&length,
+		&format,
+		reinterpret_cast<void*>(binary.data())
+	);
 
 	std::ofstream file(path);
 	file.write(binary.data(), length);
@@ -62,7 +68,7 @@ u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
 	return shaderID;
 }
 
-void ShaderProgram::CheckShader(const std::string& message, u32 shaderID, GLenum type)
+void ShaderProgram::CheckShader(const std::string& message, u32 shaderID, GLenum type) const
 {
 	GLint status;
 	glGetShaderiv(shaderID, type, &status);
@@ -74,7 +80,7 @@ void ShaderProgram::CheckShader(const std::string& message, u32 shaderID, GLenum
 	}
 }
 
-void ShaderProgram::CheckProgram(const std::string& message, u32 programID, GLenum type)
+void ShaderProgram::CheckProgram(const std::string& message, GLenum type) const
 {
 	GLint status;
 	glGetProgramiv(programID, type, &status);
@@ -86,57 +92,52 @@ void ShaderProgram::CheckProgram(const std::string& message, u32 programID, GLen
 	}
 }
 
-void ShaderProgram::Start()
+void ShaderProgram::Start() const
 {
 	glUseProgram(programID);
 }
 
-void ShaderProgram::Stop()
+void ShaderProgram::Stop() const
 {
 	glUseProgram(0);
 }
 
-void ShaderProgram::BindAttribute(u32 attribute, const char* name)
-{
-	glBindAttribLocation(programID, attribute, name);
-}
-
-u32 ShaderProgram::GetUniformLocation(const char* name)
+GLint ShaderProgram::GetUniformLocation(const char* name) const
 {
 	return glGetUniformLocation(programID, name);
 }
 
-void ShaderProgram::LoadUniform(u32 location, GLint value)
+void ShaderProgram::LoadUniform(GLint location, GLint value) const
 {
 	glUniform1i(location, value);
 }
 
-void ShaderProgram::LoadUniform(u32 location, GLuint value)
+void ShaderProgram::LoadUniform(GLint location, GLuint value) const
 {
 	glUniform1ui(location, value);
 }
 
-void ShaderProgram::LoadUniform(u32 location, GLfloat value)
+void ShaderProgram::LoadUniform(GLint location, GLfloat value) const
 {
 	glUniform1f(location, value);
 }
 
-void ShaderProgram::LoadUniform(u32 location, bool value)
+void ShaderProgram::LoadUniform(GLint location, bool value) const
 {
 	glUniform1i(location, value ? 1 : 0);
 }
 
-void ShaderProgram::LoadUniform(u32 location, const glm::vec3& vector)
+void ShaderProgram::LoadUniform(GLint location, const glm::vec3& vector) const
 {
 	glUniform3fv(location, 1, &vector[0]);
 }
 
-void ShaderProgram::LoadUniform(u32 location, const glm::vec4& vector)
+void ShaderProgram::LoadUniform(GLint location, const glm::vec4& vector) const
 {
 	glUniform4fv(location, 1, &vector[0]);
 }
 
-void ShaderProgram::LoadUniform(u32 location, const glm::mat4& matrix)
+void ShaderProgram::LoadUniform(GLint location, const glm::mat4& matrix) const
 {
 	glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
 }

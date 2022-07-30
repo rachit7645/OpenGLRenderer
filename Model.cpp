@@ -25,7 +25,7 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene, const MeshTextures& 
 	// Iterate over all the node's meshes
 	for (u32 i = 0; i < node->mNumMeshes; i++)
 	{
-		meshes.push_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], scene, textures));
+		meshes.emplace_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], scene, textures));
 	}
 
 	// Iterate over all the child meshes

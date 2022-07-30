@@ -10,10 +10,14 @@ namespace Renderer
 	class CubeMap
 	{
 	public:
+        // Default constructor
+        CubeMap() = default;
+        // TODO: Use std::array of std::string_view instead
 		CubeMap(const std::vector<std::string>& files);
+        // Destructor
 		~CubeMap();
 
-		GLuint id;
+		GLuint id = 0;
 	};
 }
 

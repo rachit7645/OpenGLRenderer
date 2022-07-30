@@ -11,7 +11,6 @@ inline bool g_ToZoomCamera = true;
 
 namespace Entities
 {
-	constexpr auto CAMERA_SPEED      = 45.0f;
 	constexpr auto CAMERA_ZOOM_SPEED = 1.0f;
 	constexpr auto CAMERA_PITCH_MIN  = 0.0f;
 	constexpr auto CAMERA_PITCH_MAX  = 90.0f;
@@ -19,7 +18,7 @@ namespace Entities
 	class Camera
 	{
 	public:
-		Camera(Player* player);
+		explicit Camera(Player* player);
 
 		Player*   player;
 		glm::vec3 position = { 0.0f, 0.0f, 0.0f };

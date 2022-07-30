@@ -2,7 +2,6 @@
 
 #include <unordered_map>
 
-#include "Util.h"
 #include "Log.h"
 #include "Files.h"
 
@@ -11,8 +10,7 @@ using Renderer::Model;
 using Renderer::MeshTextures;
 using Renderer::Material;
 
-using TxPtr = std::shared_ptr<Texture>;
-using MdPtr = std::shared_ptr<Model>;
+using namespace Resources;
 
 // Note: This implementation is not the fastest, but it works very well
 
@@ -37,8 +35,6 @@ TxPtr Resources::GetTexture(const std::string& path)
 	{
 		return m_textures[path] = std::make_shared<Texture>(path);
 	}
-	// Hello cosmic ray
-	return nullptr;
 }
 
 MdPtr Resources::GetModel(const std::string& path, const MeshTextures& textures, const Material& material)
@@ -53,8 +49,6 @@ MdPtr Resources::GetModel(const std::string& path, const MeshTextures& textures,
 	{
 		return m_models[path] = std::make_shared<Model>(path, textures, material);
 	}
-	// Hello cosmic ray (again)
-	return nullptr;
 }
 
 void Resources::Delete()

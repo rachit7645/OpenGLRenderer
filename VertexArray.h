@@ -13,6 +13,8 @@ namespace Renderer
 	class VertexArray
 	{
 	public:
+		// Default constructor
+		VertexArray() = default;
 		// Init default VAO
 		VertexArray
 		(
@@ -23,13 +25,12 @@ namespace Renderer
 		);
 		// Init VAO for glDrawArrays
 		VertexArray(GLuint coordSize, const std::vector<f32>& vertices);
-		// Default constructor
-		VertexArray();
 		// Destructor
 		~VertexArray();
 
-		GLuint id;
-		GLsizei vertexCount;
+		GLuint  id          = 0;
+		GLsizei vertexCount = 0;
+
 		std::unordered_map<const char*, std::shared_ptr<VertexBuffer>> buffers;
 	};
 }

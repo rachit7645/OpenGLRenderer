@@ -48,7 +48,7 @@ Terrain::Terrain
 			vertices[vertexPointer * 3 + 1] = height;
 			vertices[vertexPointer * 3 + 2] = static_cast<f32>(i) / static_cast<f32>(VERTEX_COUNT - 1) * TERRAIN_SIZE;
 
-			glm::vec3 normal = CalculateNormal(j, i, hMap);
+			glm::vec3 normal = CalculateNormal(static_cast<int>(j), static_cast<int>(i), hMap);
 			normals[vertexPointer * 3]     = normal.x;
 			normals[vertexPointer * 3 + 1] = normal.y;
 			normals[vertexPointer * 3 + 2] = normal.z;

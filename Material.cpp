@@ -13,7 +13,8 @@ Material::Material
 	  reflectivity(reflectivity),
 	  isTransparent(isTransparent), 
 	  useFakeLighting(useFakeLighting) 
-{}
+{
+}
 
 Material::Material
 (
@@ -22,4 +23,5 @@ Material::Material
 ) 
 	: isTransparent(isTransparent),
 	  useFakeLighting(useFakeLighting)
-{}
+{
+}

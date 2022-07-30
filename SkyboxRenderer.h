@@ -12,7 +12,7 @@ namespace Renderer
 	class SkyboxRenderer
 	{
 	public:
-		SkyboxRenderer(Shader::SkyboxShader& shaderRef);
+		explicit SkyboxRenderer(Shader::SkyboxShader& shaderRef);
 		Shader::SkyboxShader& shader;
 
 		void Render(const Entities::Skybox& skybox);

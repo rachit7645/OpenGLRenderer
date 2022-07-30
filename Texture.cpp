@@ -57,5 +57,9 @@ Texture::Texture(const std::string& path)
 
 Texture::~Texture()
 {
-	glDeleteTextures(1, &id);
+	// ID must not be zero
+	if (id)
+	{
+		glDeleteTextures(1, &id);
+	}
 }

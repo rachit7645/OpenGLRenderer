@@ -62,7 +62,7 @@ SDLWindow::SDLWindow()
 	g_Keys = SDL_GetKeyboardState(nullptr);
 
 	// Basically useless GLContext
-	// You don't get more than GL 1.1 for compatibilty reasons (Windows YOU SUCK)
+	// You don't get more than GL 1.1 for compatibility reasons (Windows YOU SUCK)
 	glContext = SDL_GL_CreateContext(window);
 	if (glContext == nullptr)
 	{

@@ -27,7 +27,7 @@ namespace Shader
 
 		void GetUniformLocations() override;
 	private:
-		std::unordered_map<const char*, u32> uniforms;
+		std::unordered_map<const char*, GLint> uniforms;
 	};
 }
 

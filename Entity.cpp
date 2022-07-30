@@ -6,7 +6,7 @@ using Renderer::Model;
 
 Entity::Entity
 (
-	std::shared_ptr<Model>& sharedModel,
+	MdPtr& sharedModel,
 	const glm::vec3& position,
 	const glm::vec3& rotation,
 	f32 scale
@@ -15,4 +15,5 @@ Entity::Entity
 	  position(position),
 	  rotation(rotation),
 	  scale(scale) 
-{}
+{
+}

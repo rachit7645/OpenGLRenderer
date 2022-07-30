@@ -18,7 +18,7 @@ namespace Entities
 	public:
 		Player
 		(
-			std::shared_ptr<Renderer::Model>& model,
+			MdPtr& model,
 			const glm::vec3& position,
 			const glm::vec3& rotation,
 			f32 scale

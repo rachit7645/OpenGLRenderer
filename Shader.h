@@ -13,34 +13,33 @@ namespace Shader
 	class ShaderProgram
 	{
 	public:
-		// Creates a vertex and fragment shader and links em' into a program
+		// Creates a vertex and fragment shader and links em\' into a program
 		ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath);
 		~ShaderProgram();
 
 		GLuint programID;
 
-		void Start();
-		void Stop();
+		void Start() const;
+		void Stop()  const;
 
-		void BindAttribute(GLuint attribute, const char* name);
-		GLuint GetUniformLocation(const char* name);
-		void DumpToFile(const std::string& path);
+		GLint GetUniformLocation(const char* name) const;
+		void  DumpToFile(const std::string& path)  const;
 
 		// Uniform loading functions 
-		void LoadUniform(GLuint location, GLint value);
-		void LoadUniform(GLuint location, GLuint value);
-		void LoadUniform(GLuint location, GLfloat value);
-		void LoadUniform(GLuint location, bool value);
-		void LoadUniform(GLuint location, const glm::vec3& vector);
-		void LoadUniform(GLuint location, const glm::vec4& vector);
-		void LoadUniform(GLuint location, const glm::mat4& matrix);
+		void LoadUniform(GLint location, GLint value)             const;
+		void LoadUniform(GLint location, GLuint value)            const;
+		void LoadUniform(GLint location, GLfloat value)           const;
+		void LoadUniform(GLint location, bool value)              const;
+		void LoadUniform(GLint location, const glm::vec3& vector) const;
+		void LoadUniform(GLint location, const glm::vec4& vector) const;
+		void LoadUniform(GLint location, const glm::mat4& matrix) const;
 
 		virtual void GetUniformLocations() = 0;
 	private:
 		// Function to load shaders from file
 		GLuint LoadShader(GLenum type, const std::string& path);
-		void CheckShader(const std::string& message, GLuint shaderID, GLenum type);
-		void CheckProgram(const std::string& message, GLuint programID, GLenum type);
+		void   CheckProgram(const std::string& message, GLenum type)                 const;
+		void   CheckShader(const std::string& message, GLuint shaderID, GLenum type) const;
 	};
 }
 

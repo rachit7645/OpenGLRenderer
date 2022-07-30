@@ -12,14 +12,15 @@ namespace Renderer
 	{
 	public:
 		// Loads a texture into memory, then an OpenGL object
-		Texture(const std::string& path);
+		explicit Texture(const std::string& path);
 		// Destructor 
 		~Texture();
 
-		GLuint id;
-		int width;
-		int height;
-		int channels;
+		GLuint id = 0;
+
+		int width    = 0;
+		int height   = 0;
+		int channels = 0;
 	};
 }
 #endif // TEXTURE_H

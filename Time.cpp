@@ -20,7 +20,7 @@ std::string Util::GetTime()
 	auto timer  = system_clock::to_time_t(now);
 	std::tm* bt = std::localtime(&timer);
 
-	// Format HH:MM:SS with strftime
+	// Format HH:MM:SS with strftime()
 	char buffer[TIME_BUFFER_LENGTH];
 	std::strftime(buffer, TIME_BUFFER_SIZE, "[%H:%M:%S]", bt);
 	return buffer;

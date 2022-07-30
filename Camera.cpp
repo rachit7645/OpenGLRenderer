@@ -5,7 +5,12 @@
 
 using namespace Entities;
 
-Camera::Camera(Player* player) : player(player), mousePos(&Inputs::GetMousePos()), mouseScroll(&Inputs::GetMouseScroll()) {}
+Camera::Camera(Player* player)
+    : player(player),
+      mousePos(&Inputs::GetMousePos()),
+      mouseScroll(&Inputs::GetMouseScroll())
+{
+}
 
 void Camera::Move()
 {
@@ -87,7 +92,7 @@ void Camera::CalculateZoom()
 
 void Camera::CalculatePitch()
 {
-	rotation.x -= mousePos->y * 0.1f;
+	rotation.x -= static_cast<f32>(mousePos->y * 0.1);
 	if (capPitch)
 	{
 		Util::Clamp<f32>(rotation.x, CAMERA_PITCH_MIN, CAMERA_PITCH_MAX);
@@ -96,5 +101,5 @@ void Camera::CalculatePitch()
 
 void Camera::CalculateAAP()
 {
-	angleAroundPlayer -= mousePos->x * 0.3f;
+	angleAroundPlayer -= static_cast<f32>(mousePos->x * 0.3);
 }

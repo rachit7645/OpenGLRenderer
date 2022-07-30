@@ -13,6 +13,7 @@ namespace Renderer
 	class Mesh
 	{
 	public:
+		using VAO = std::shared_ptr<VertexArray>;
 		Mesh
 		(
 			const std::vector<f32>& vertices,
@@ -22,7 +23,7 @@ namespace Renderer
 			const MeshTextures& textures
 		);
 
-		std::shared_ptr<VertexArray> vao;
+		VAO          vao;
 		MeshTextures textures;
 	};
 }

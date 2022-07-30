@@ -41,7 +41,7 @@ namespace Util
 		return distributer(generator);
 	}
 
-	// Truely random number between a range
+	// Truly random number between a range
 	template<typename T>
 	T True_Rand_Range(T min, T max)
 	{

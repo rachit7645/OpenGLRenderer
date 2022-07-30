@@ -20,11 +20,11 @@ namespace Terrains
 			TxPtr bTexture,
 			TxPtr blendMap
 		)
-			: background(background),
-			  rTexture(rTexture), 
-			  gTexture(gTexture), 
-			  bTexture(bTexture), 
-			  blendMap(blendMap) 
+			: background(std::move(background)),
+			  rTexture(std::move(rTexture)),
+			  gTexture(std::move(gTexture)),
+			  bTexture(std::move(bTexture)),
+			  blendMap(std::move(blendMap))
 		{
 		}
 

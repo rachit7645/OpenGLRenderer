@@ -12,7 +12,7 @@ namespace Util
 	{
 	public:
 		// Constructor
-		Image2D(const std::string& path);
+		explicit Image2D(const std::string& path);
 		// Destructor
 		~Image2D();
 
@@ -26,18 +26,18 @@ namespace Util
 		// Move assignment
 		Image2D& operator=(Image2D&&) = default;
 
-		int width;
-		int height;
-		int channels;
+		int width    = 0;
+		int height   = 0;
+		int channels = 0;
 
 		// Returns the red component at position GetPosition(x, y)
 		u8 GetRed(int x, int y) const;
 		// Returns the green component at GetPosition(x, y) + 1
-		u8 GetGreen(int x, int y) const;
+		[[maybe_unused]] u8 GetGreen(int x, int y) const;
 		// Returns the blue component at GetPosition(x, y) + 2
-		u8 GetBlue(int x, int y) const;
+		[[maybe_unused]] u8 GetBlue(int x, int y) const;
 		// Returns ARGB value with alpha = 0
-		u32 GetARGB(int x, int y) const;
+		[[maybe_unused]] u32 GetARGB(int x, int y) const;
 	private:
 		u8* m_data;
 

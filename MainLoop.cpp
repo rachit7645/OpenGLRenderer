@@ -1,10 +1,7 @@
 #include "Window.h"
 
-#include <memory>
 #include <vector>
 
-#include "EntityRenderer.h"
-#include "StaticShader.h"
 #include "Model.h"
 #include "Entity.h"
 #include "Camera.h"
@@ -13,7 +10,6 @@
 #include "Terrain.h"
 #include "Material.h"
 #include "Player.h"
-#include "Files.h"
 #include "MeshTextures.h"
 #include "Resources.h"
 #include "Imgui.h"
@@ -73,7 +69,7 @@ void SDLWindow::MainLoop()
 
 	std::vector<Entity> entities;
 	{
-		const Terrain* current = nullptr;
+		const Terrain* current;
 		f32 entityX, entityY, entityZ;
 		for (size_t i = 0; i < MAX_ENTITIES; ++i)
 		{
@@ -81,13 +77,13 @@ void SDLWindow::MainLoop()
 			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
 			current = Terrains::GetCurrent(terrains, glm::vec2(entityX, entityZ));
 			entityY = current != nullptr ? current->GetHeight(glm::vec2(entityX, entityZ)) : 0.0f;
-			entities.emplace_back(treeModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f, 0.0f, 0.0f), 3.0f);
+			entities.emplace_back(treeModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f), 3.0f);
 
 			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
 			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
 			current = Terrains::GetCurrent(terrains, glm::vec2(entityX, entityZ));
 			entityY = current != nullptr ? current->GetHeight(glm::vec2(entityX, entityZ)) : 0.0f;
-			entities.emplace_back(fernModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f, 0.0f, 0.0f), 0.6f);
+			entities.emplace_back(fernModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f), 0.6f);
 		}
 	}
 	Player player(playerModel, glm::vec3(250.0f, 0.0f, 235.0f), glm::vec3(0.0f, 180.0f, 0.0f), 1.0f);
@@ -110,7 +106,7 @@ void SDLWindow::MainLoop()
 			glm::vec3(1.0f, 1.0f, 1.0f),
 			glm::vec3(1.0f, 0.01f, 0.002f)
 		);
-	};
+	}
 
 	Entities::Camera camera(&player);
 	Renderer::MasterRenderer renderer;
@@ -144,15 +140,16 @@ void SDLWindow::MainLoop()
 
 void SDLWindow::CalculateFPS()
 {
-	endTime = steady_clock::now();
-	g_Delta = duration_cast<milliseconds>(endTime - frameStartTime).count() / 1000.0;
-	frameStartTime = endTime;
+	endTime       = steady_clock::now();
+	auto duration = duration_cast<milliseconds>(endTime - frameStartTime);
+	g_Delta       = static_cast<f32>(duration.count() / 1000.0);
 
+	frameStartTime = endTime;
 	if (endTime - startTime >= seconds(1))
 	{
 		startTime = endTime;
 		finalFPS  = FPS;
-		frameTime = 1000.0 / FPS;
+		frameTime = static_cast<f32>(1000.0 / FPS);
 		FPS       = 0.0f;
 	}
 	++FPS;
@@ -175,7 +172,7 @@ void SDLWindow::ImGuiDisplay()
 	ImGuiUpdate();
 }
 
-void SDLWindow::ImGuiUpdate()
+void SDLWindow::ImGuiUpdate() const
 {
 	if (wireframe)
 	{

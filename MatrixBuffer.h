@@ -15,6 +15,16 @@ namespace Renderer
 		void LoadView(const Entities::Camera& camera);
 		void LoadProjection(const glm::mat4& projection);
 	};
+
+	namespace Detail
+	{
+		struct MatrixBufferGLSL
+		{
+			glm::mat4 projectionMatrix;
+			glm::mat4 viewMatrix;
+			glm::vec4 cameraPos;
+		};
+	}
 }
 
 #endif

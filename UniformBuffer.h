@@ -8,15 +8,15 @@ namespace Renderer
 	class UniformBuffer
 	{
 	public:
+		// Default constructor
+		UniformBuffer() = default;
 		// Main constructor
 		UniformBuffer(GLuint slot, GLsizeiptr size);
-		// Default constructor
-		UniformBuffer();
 		// Destructor
 		~UniformBuffer();
 
-		GLuint id;
-		GLsizeiptr size;
+		GLuint     id   = 0;
+		GLsizeiptr size = 0;
 	};
 }
 

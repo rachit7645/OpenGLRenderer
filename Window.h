@@ -27,12 +27,12 @@ namespace Window
 		// Display ImGui Widgets
 		void ImGuiDisplay();
 		// Update options menu
-		void ImGuiUpdate();
+		void ImGuiUpdate() const;
 		// Function to process SDL Events
 		bool PollEvents();
-		// Calculates the FPS and the the frame delta
+		// Calculates the FPS and the frame delta
 		void CalculateFPS();
-		// Set OpengGL stuff 
+		// Set OpenGL stuff
 		void InitGL();
 
 		// FPS Counting Variables
@@ -47,11 +47,11 @@ namespace Window
 		bool isInputCaptured = true;
 
 		// SDL Resources
-		SDL_Window* window      = nullptr;
-		SDL_GLContext glContext = nullptr;
-		SDL_Event event;
+		SDL_Window*   window     = nullptr;
+		SDL_GLContext glContext  = nullptr;
+		SDL_Event     event      = {};
 	};
 
 }
 
-#endif // WINDOW_H
+#endif

@@ -16,7 +16,6 @@ void StaticShader::GetUniformLocations()
 	uniforms["reflectivity"]    = GetUniformLocation("reflectivity");
 	uniforms["useFakeLighting"] = GetUniformLocation("useFakeLighting");
 	uniforms["skyColour"]       = GetUniformLocation("skyColour");
-
 	uniforms["diffuseTexture"]  = GetUniformLocation("diffuseTexture");
 	uniforms["specularTexture"] = GetUniformLocation("specularTexture");
 }

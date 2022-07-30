@@ -22,6 +22,7 @@ namespace Terrains
 	class Terrain
 	{
 	public:
+		using VAO = std::shared_ptr<Renderer::VertexArray>;
 		Terrain
 		(
 			const std::string& hMapPath,
@@ -32,16 +33,17 @@ namespace Terrains
 
 		glm::vec2 position;
 		glm::vec2 gridPosition;
-		Util::Array2D<f32> heights;
 
 		TerrainTextures    textures;
 		Renderer::Material material;
-		std::shared_ptr<Renderer::VertexArray> vao;
+		VAO                vao;
 
-		f32 GetHeight(const glm::vec2& worldPos) const;
+		Util::Array2D<f32> heights;
+
+		f32 GetHeight(const glm::vec2& worldPos)      const;
 		f32 GetHeight(const Entities::Entity& entity) const;
 	private:
-		f32 CalculateHeight(int x, int z, const Util::Image2D& hMap);
+		f32       CalculateHeight(int x, int z, const Util::Image2D& hMap);
 		glm::vec3 CalculateNormal(int x, int z, const Util::Image2D& hMap);
 	};
 

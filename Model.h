@@ -23,7 +23,7 @@ namespace Renderer
 		Model(const std::string& path, const MeshTextures& textures, const Material& material = Material());
 
 		std::vector<Mesh> meshes;
-		Material material;
+		Material          material;
 	private:
 		void ProcessNode(aiNode* node, const aiScene* scene, const MeshTextures& textures);
 		Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene, const MeshTextures& textures);

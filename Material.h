@@ -9,7 +9,7 @@ namespace Renderer
 	class Material
 	{
 	public:
-		Material
+		explicit Material
 		(
 			f32 shineDamper = 1.0f,
 			f32 reflectivity = 0.0f,
@@ -23,7 +23,7 @@ namespace Renderer
 			bool useFakeLighting
 		);
 
-		f32 shineDamper  = 1.0f;					// Shine Dampner
+		f32 shineDamper  = 1.0f;					// Shine Damper
 		f32 reflectivity = 0.0f;					// Reflectivity
 
 		bool isTransparent   = false;				// Is Transparent or not

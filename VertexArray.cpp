@@ -40,10 +40,6 @@ VertexArray::VertexArray
 	glBindVertexArray(0);
 }
 
-VertexArray::VertexArray() : id(0)
-{
-}
-
 VertexArray::~VertexArray()
 {
 	// ID must not be zero

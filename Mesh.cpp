@@ -10,4 +10,6 @@ Mesh::Mesh
 	const std::vector<f32>& normals,
 	const MeshTextures& textures
 )
-	: vao(std::make_shared<VertexArray>(vertices, indices, txCoords, normals)), textures(textures) {}
+	: vao(std::make_shared<VertexArray>(vertices, indices, txCoords, normals)), textures(textures)
+{
+}
