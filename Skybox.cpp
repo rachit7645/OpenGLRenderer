@@ -1,13 +1,14 @@
 #include "Skybox.h"
 
 #include <vector>
+#include <array>
 
 using namespace Entities;
 
 using Renderer::VertexArray;
 using Renderer::CubeMap;
 
-const std::vector<std::string> SKYBOX_TEXTURE_FILES =
+constexpr std::array<const char*, 6> SKYBOX_TEXTURE_FILES =
 {
 	"gfx/right.png", "gfx/left.png", "gfx/top.png",
 	"gfx/bottom.png", "gfx/back.png", "gfx/front.png"

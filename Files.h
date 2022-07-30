@@ -2,15 +2,15 @@
 #define FILES_H
 
 #include <string>
+#include <string_view>
 
 namespace Files
 {
-	void SetResourceDirectory(const std::string& relPath);
+	void SetResourceDirectory(const std::string_view relPath);
 	const std::string& GetResourceDirectory();
 
-	// TODO: Maybe use string_view here, for performance?
-	std::string GetName(const std::string& path);
-	std::string GetRelative(const std::string& path);
+	std::string GetName(const std::string_view path);
+	std::string GetRelative(const std::string_view path);
 }
 
 #endif

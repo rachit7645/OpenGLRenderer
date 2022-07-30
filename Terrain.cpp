@@ -102,36 +102,46 @@ glm::vec3 Terrain::CalculateNormal(int x, int z, const Image2D& hMap)
 	return glm::normalize(glm::vec3(heightL - heightR, 2.0f, heightD - heightU));
 }
 
-// TODO: Make this function prettier to look at
 f32 Terrain::GetHeight(const glm::vec2& worldPos) const
 {
-	glm::vec2 terrainPos = worldPos - position;
-	f32 gridSize = TERRAIN_SIZE / static_cast<f32>(heights.size() - 1);
-	glm::vec2 gridPos = glm::floor(terrainPos / gridSize);
+	f32 terrainX = worldPos.x - position.x;
+	f32 terrainZ = worldPos.y - position.y;
 
-	if (gridPos.x >= heights.size() - 1 || gridPos.y >= heights.size() - 1 || gridPos.x < 0 || gridPos.y < 0)
+	f32 gridSize  = TERRAIN_SIZE / static_cast<f32>(heights.size() - 1);
+	ssize_t gridX = std::floor(terrainX / gridSize);
+	ssize_t gridZ = std::floor(terrainZ / gridSize);
+
+	if
+	(
+		gridX >= static_cast<ssize_t>(heights.size() - 1) ||
+		gridZ >= static_cast<ssize_t>(heights.size() - 1) ||
+		gridX < 0 ||
+		gridZ < 0
+	)
 	{
 		return 0.0f;
 	}
-	glm::vec2 coords(std::fmod(terrainPos.x, gridSize) / gridSize, std::fmod(terrainPos.y, gridSize) / gridSize);
+
+	f32 xCoord = std::fmod(terrainX, gridSize) / gridSize;
+	f32 zCoord = std::fmod(terrainZ, gridSize) / gridSize;
 
 	f32 height;
-	if (coords.x <= (1 - coords.y))
+	if (xCoord <= (1 - zCoord))
 	{
 		height = Maths::BarryCentric(
-			glm::vec3(0, heights[gridPos.x][gridPos.y], 0),
-			glm::vec3(1, heights[gridPos.x + 1][gridPos.y], 0),
-			glm::vec3(0, heights[gridPos.x][gridPos.y + 1], 1),
-			coords
+			glm::vec3(0, heights[gridX][gridZ], 0),
+			glm::vec3(1, heights[gridX + 1][gridZ], 0),
+			glm::vec3(0, heights[gridX][gridZ + 1], 1),
+			glm::vec2(xCoord, zCoord)
 		);
 	}
 	else
 	{
 		height = Maths::BarryCentric(
-			glm::vec3(1, heights[gridPos.x + 1][gridPos.y], 0),
-			glm::vec3(1, heights[gridPos.x + 1][gridPos.y + 1], 1),
-			glm::vec3(0, heights[gridPos.x][gridPos.y + 1], 1),
-			coords
+			glm::vec3(1, heights[gridX + 1][gridZ], 0),
+			glm::vec3(1, heights[gridX + 1][gridZ + 1], 1),
+			glm::vec3(0, heights[gridX][gridZ + 1], 1),
+			glm::vec2(xCoord, zCoord)
 		);
 	}
 

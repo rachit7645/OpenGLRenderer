@@ -38,7 +38,7 @@ void LightsBuffer::LoadLight(const std::vector<Light>& lights)
 				GL_UNIFORM_BUFFER,
 				static_cast<GLintptr>(sizeof(Light) * i),
 				static_cast<GLsizeiptr>(sizeof(Light)),
-				reinterpret_cast<const void*>(&lights[i])
+				reinterpret_cast<const void*>(&emptyLight)
 			);
 		}
 	}

@@ -60,6 +60,9 @@ namespace Util
 		if (value > max) value = max;
 	}
 
+	// TODO: Write a custom 2D array wrapper
+	// std::vector<std::vector<T>> is not contiguous in layout
+	// This breaks havoc with the cpu cache
 	template<typename T>
 	using Array2D = std::vector<std::vector<T>>;
 

@@ -1,8 +1,7 @@
 #ifndef CUBE_MAP_H
 #define CUBE_MAP_H
 
-#include <string>
-#include <vector>
+#include <array>
 #include <GL/glew.h>
 
 namespace Renderer
@@ -12,8 +11,8 @@ namespace Renderer
 	public:
         // Default constructor
         CubeMap() = default;
-        // TODO: Use std::array of std::string_view instead
-		CubeMap(const std::vector<std::string>& files);
+		// Generate Cubemap texture
+		explicit CubeMap(const std::array<const char*, 6>& files);
         // Destructor
 		~CubeMap();
 

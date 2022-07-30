@@ -142,7 +142,7 @@ void SDLWindow::CalculateFPS()
 {
 	endTime       = steady_clock::now();
 	auto duration = duration_cast<milliseconds>(endTime - frameStartTime);
-	g_Delta       = static_cast<f32>(duration.count() / 1000.0);
+	g_Delta       = static_cast<f32>(static_cast<f64>(duration.count()) / 1000.0);
 
 	frameStartTime = endTime;
 	if (endTime - startTime >= seconds(1))

@@ -1,6 +1,7 @@
 #include "CubeMap.h"
-
 #include "stb/stb_image.h"
+
+#include <string>
 
 #include "Files.h"
 #include "Util.h"
@@ -9,14 +10,8 @@
 
 using namespace Renderer;
 
-CubeMap::CubeMap(const std::vector<std::string>& files)
+CubeMap::CubeMap(const std::array<const char*, 6>& files)
 {
-	// Sanity check
-	if (files.size() != 6)
-	{
-		LOG_ERROR("files.size() not equal to 6\n");
-	}
-
 	// Temporary variables
 	u8* data;
 	int width;
@@ -35,7 +30,7 @@ CubeMap::CubeMap(const std::vector<std::string>& files)
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R,     GL_CLAMP_TO_EDGE);
 	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_LOD_BIAS,   TEXTURE_LOD_BIAS);
 
-	for (size_t i = 0; i < files.size(); i++)
+	for (size_t i = 0; i < files.size(); ++i)
 	{
 		path = Files::GetResourceDirectory() + files[i];
 		data = stbi_load
