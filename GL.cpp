@@ -19,35 +19,35 @@ void GL::CheckErrors
 	static const std::unordered_map<GLenum, const char*>
 	GL_ERROR_SOURCES =
 	{
-		{GL_DEBUG_SOURCE_API,            "[GL_DEBUG_SOURCE_API]"            },
-		{GL_DEBUG_SOURCE_WINDOW_SYSTEM,  "[GL_DEBUG_SOURCE_WINDOW_SYSTEM]"  },
-		{GL_DEBUG_SOURCE_SHADER_COMPILER,"[GL_DEBUG_SOURCE_SHADER_COMPILER]"},
-		{GL_DEBUG_SOURCE_THIRD_PARTY,    "[GL_DEBUG_SOURCE_THIRD_PARTY]"    },
-		{GL_DEBUG_SOURCE_APPLICATION,    "[GL_DEBUG_SOURCE_APPLICATION]"    },
-		{GL_DEBUG_SOURCE_OTHER,          "[GL_DEBUG_SOURCE_OTHER]"          }
+		{GL_DEBUG_SOURCE_API,            "[SOURCE_API]"     },
+		{GL_DEBUG_SOURCE_WINDOW_SYSTEM,  "[WINDOW_SYSTEM]"  },
+		{GL_DEBUG_SOURCE_SHADER_COMPILER,"[SHADER_COMPILER]"},
+		{GL_DEBUG_SOURCE_THIRD_PARTY,    "[THIRD_PARTY]"    },
+		{GL_DEBUG_SOURCE_APPLICATION,    "[APPLICATION]"    },
+		{GL_DEBUG_SOURCE_OTHER,          "[OTHER]"          }
 	};
 
 	static const std::unordered_map<GLenum, const char*>
 	GL_ERROR_TYPES =
 	{
-		{GL_DEBUG_TYPE_ERROR,               "[GL_DEBUG_TYPE_ERROR]"              },
-		{GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR, "[GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR]"},
-		{GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR,  "[GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR]" },
-		{GL_DEBUG_TYPE_PORTABILITY,         "[GL_DEBUG_TYPE_PORTABILITY]"        },
-		{GL_DEBUG_TYPE_PERFORMANCE,         "[GL_DEBUG_TYPE_PERFORMANCE]"        },
-		{GL_DEBUG_TYPE_MARKER,              "[GL_DEBUG_TYPE_MARKER]"             },
-		{GL_DEBUG_TYPE_PUSH_GROUP,          "[GL_DEBUG_TYPE_PUSH_GROUP]"         },
-		{GL_DEBUG_TYPE_POP_GROUP,           "[GL_DEBUG_TYPE_POP_GROUP]"          },
-		{GL_DEBUG_TYPE_OTHER,               "[GL_DEBUG_TYPE_OTHER]"              }
+		{GL_DEBUG_TYPE_ERROR,               "[ERROR]"              },
+		{GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR, "[DEPRECATED_BEHAVIOR]"},
+		{GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR,  "[UNDEFINED_BEHAVIOR]" },
+		{GL_DEBUG_TYPE_PORTABILITY,         "[PORTABILITY]"        },
+		{GL_DEBUG_TYPE_PERFORMANCE,         "[PERFORMANCE]"        },
+		{GL_DEBUG_TYPE_MARKER,              "[MARKER]"             },
+		{GL_DEBUG_TYPE_PUSH_GROUP,          "[PUSH_GROUP]"         },
+		{GL_DEBUG_TYPE_POP_GROUP,           "[POP_GROUP]"          },
+		{GL_DEBUG_TYPE_OTHER,               "[OTHER]"              }
 	};
 
 	static const std::unordered_map<GLenum, const char*>
 	GL_ERROR_SEVERITY =
 	{
-		{GL_DEBUG_SEVERITY_HIGH,         "[GL_DEBUG_SEVERITY_HIGH]"        },
-		{GL_DEBUG_SEVERITY_MEDIUM,       "[GL_DEBUG_SEVERITY_MEDIUM]"      },
-		{GL_DEBUG_SEVERITY_LOW,          "[GL_DEBUG_SEVERITY_LOW]"         },
-		{GL_DEBUG_SEVERITY_NOTIFICATION, "[GL_DEBUG_SEVERITY_NOTIFICATION]"}
+		{GL_DEBUG_SEVERITY_HIGH,         "[SEVERITY_HIGH]"        },
+		{GL_DEBUG_SEVERITY_MEDIUM,       "[SEVERITY_MEDIUM]"      },
+		{GL_DEBUG_SEVERITY_LOW,          "[SEVERITY_LOW]"         },
+		{GL_DEBUG_SEVERITY_NOTIFICATION, "[SEVERITY_NOTIFICATION]"}
 	};
 
 	auto sourceStr   = GL_ERROR_SOURCES.find(source)->second;
@@ -83,6 +83,7 @@ void GL::Init(const glm::ivec2& dimensions)
 	glCullFace(GL_BACK);
 	// Enable Debug Output
 	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(GL::CheckErrors, nullptr);
 	// Disable selected messages
 	glDebugMessageControl
