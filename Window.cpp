@@ -1,5 +1,6 @@
 #include "Window.h"
 
+#include <sstream>
 #include <GL/glew.h>
 
 #include "Imgui.h"
@@ -14,7 +15,19 @@ using namespace Window;
 
 SDLWindow::SDLWindow()
 {
-	LOG_INFO("Initializing SDL2\n");
+	// Get SDL version
+	SDL_version version;
+	SDL_GetVersion(&version);
+	// Put it in a string stream
+	std::stringstream versionSS;
+	// Major
+	versionSS << static_cast<size_t>(version.major) << ".";
+	// Minor
+	versionSS << static_cast<size_t>(version.minor) << ".";
+	// Patch
+	versionSS << static_cast<size_t>(version.patch);
+
+	LOG_INFO("Initializing SDL2 version: ", versionSS.str(), "\n");
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
 		LOG_ERROR("SDL_Init Failed\n", SDL_GetError(), "\n");
@@ -76,6 +89,7 @@ SDLWindow::SDLWindow()
 	LOG_INFO("Created SDL_GLContext with address: ", &glContext, "\n");
 
 	// Initialize the REAL OpenGL context
+	LOG_INFO("Initializing GLEW version: ", glewGetString(GLEW_VERSION), "\n");
 	// Due to a bug in glew, set it to experimental mode
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
