@@ -20,8 +20,7 @@ namespace Shader
 		// Matrix loading functions
 		void LoadModelMatrix(const glm::mat4& matrix);
 
-		// Material and object loading functions
-		void LoadMaterials(const Renderer::Material& material);
+		// Object loading functions
 		void LoadSkyColour(const glm::vec4& skyColour);
 		void ConnectTextureUnits();
 

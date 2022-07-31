@@ -1,7 +1,6 @@
 #version 430 core
 
 const float AMBIENT_STRENGTH = 0.2f;
-const float MIN_SPECULAR     = 0.0f;
 const float TEXTURE_TILING   = 40.0f;
 const int   MAX_LIGHTS       = 4; 
 
@@ -21,7 +20,6 @@ layout(std140, binding = 1) uniform Lights
 
 in vec4  worldPosition;
 in vec3  unitNormal;
-in vec3  unitCameraVector;
 in vec3  unitLightVector[MAX_LIGHTS];
 in vec2  txCoords;
 in float visibility;
@@ -32,16 +30,13 @@ uniform sampler2D bTexture;
 uniform sampler2D gTexture;
 uniform sampler2D blendMap;
 
-uniform vec4  skyColour;
-uniform float shineDamper;
-uniform float reflectivity;
+uniform vec4 skyColour;
 
 out vec4 outColor;
 
 float CalculateAttFactor(int index);
 vec4  CalculateAmbient(int index);
 vec4  CalculateDiffuse(int index);
-vec4  CalculateSpecular(int index);
 vec4  CalculateTextureColor();
 
 void main()
@@ -50,18 +45,16 @@ void main()
 
 	vec4 totalAmbient  = vec4(0.0f);
 	vec4 totalDiffuse  = vec4(0.0f);
-	vec4 totalSpecular = vec4(0.0f);
 
 	for (int i = 0; i < MAX_LIGHTS; ++i)
 	{
 		float attFactor = CalculateAttFactor(i);
-		totalAmbient  += CalculateAmbient(i)  * textureColor * attFactor;
-		totalDiffuse  += CalculateDiffuse(i)  * textureColor * attFactor;
-		totalSpecular += CalculateSpecular(i) * attFactor;
+		totalAmbient += CalculateAmbient(i) * textureColor * attFactor;
+		totalDiffuse += CalculateDiffuse(i) * textureColor * attFactor;
 	}
 
 	// Add all lighting
-	outColor = totalDiffuse + totalSpecular + totalAmbient;
+	outColor = totalDiffuse + totalAmbient;
 	// Mix with fog colour
 	outColor = mix(skyColour, outColor, visibility);
 }
@@ -86,24 +79,14 @@ vec4 CalculateDiffuse(int index)
 	return vec4(brightness * lights[index].diffuse.rgb, 1.0f);
 }
 
-vec4 CalculateSpecular(int index)
-{
-	vec3 lightDirection  = -unitLightVector[index];
-	vec3 refLightDir     = reflect(lightDirection, unitNormal);
-	float specularFactor = dot(refLightDir, unitCameraVector);
-	specularFactor       = max(specularFactor, MIN_SPECULAR);
-	float dampedFactor   = pow(specularFactor, shineDamper);
-	return vec4(dampedFactor * reflectivity * lights[index].specular.rgb, 1.0f);
-}
-
 vec4 CalculateTextureColor()
 {
-	vec4  blendMapColor  = texture(blendMap, txCoords);
-    float backTxAmount   = 1.0f - (blendMapColor.r + blendMapColor.g + blendMapColor.b);
-    vec2  tiledCoords    = txCoords * TEXTURE_TILING;
-    vec4  bgTextureColor = texture(backgroundTexture, tiledCoords) * backTxAmount;
-    vec4  rTextureColor  = texture(rTexture, tiledCoords) * blendMapColor.r;
-    vec4  gTextureColor  = texture(gTexture, tiledCoords) * blendMapColor.g;
-    vec4  bTextureColor  = texture(bTexture, tiledCoords) * blendMapColor.b;
+	vec4  blendMapColor   = texture(blendMap, txCoords);
+    float backTxAmount    = 1.0f - (blendMapColor.r + blendMapColor.g + blendMapColor.b);
+    vec2  tiledCoords     = txCoords * TEXTURE_TILING;
+    vec4  bgTextureColor  = texture(backgroundTexture, tiledCoords) * backTxAmount;
+    vec4  rTextureColor   = texture(rTexture, tiledCoords) * blendMapColor.r;
+    vec4  gTextureColor   = texture(gTexture, tiledCoords) * blendMapColor.g;
+    vec4  bTextureColor   = texture(bTexture, tiledCoords) * blendMapColor.b;
 	return bgTextureColor + rTextureColor + gTextureColor + bTextureColor;
 }

@@ -36,6 +36,8 @@ uniform float reflectivity;
 
 out vec4 outColor;
 
+vec4 WhenNotEqual(vec4 x, vec4 y);
+
 float CalculateAttFactor(int index);
 vec4  CalculateAmbient(int index);
 vec4  CalculateDiffuse(int index);
@@ -59,8 +61,10 @@ void main()
 	{
 		float attFactor = CalculateAttFactor(i);
 		totalAmbient  += CalculateAmbient(i)  * diffuseColor  * attFactor;
-		totalDiffuse  += CalculateDiffuse(i)  * diffuseColor  * attFactor;
-		totalSpecular += CalculateSpecular(i) * specularColor * attFactor;
+		vec4 curDiff  = CalculateDiffuse(i)   * diffuseColor  * attFactor;
+		totalDiffuse  += curDiff;
+		vec4 curSpec  = CalculateSpecular(i) * specularColor * attFactor;
+		totalSpecular += curSpec * WhenNotEqual(curDiff, vec4(0.0));
 	}
 
 	// Add all lighting
@@ -91,10 +95,20 @@ vec4 CalculateDiffuse(int index)
 
 vec4 CalculateSpecular(int index)
 {
-	vec3 lightDirection  = -unitLightVector[index];
-	vec3 refLightDir     = reflect(lightDirection, unitNormal);
-	float specularFactor = dot(refLightDir, unitCameraVector);
-	specularFactor       = max(specularFactor, 0.0f);
+	vec3 lightDirection  = unitLightVector[index];
+	vec3 halfwayDir      = normalize(lightDirection + unitCameraVector);
+	float specularFactor = dot(unitNormal, unitCameraVector);
+	specularFactor       = max(specularFactor, MIN_SPECULAR);
 	float dampedFactor   = pow(specularFactor, shineDamper);
 	return vec4(dampedFactor * reflectivity * lights[index].specular.rgb, 1.0f);
+}
+
+// Branchless implementation of
+// if (x != y)
+//	 return 1;
+// else
+// 	 return 0;
+vec4 WhenNotEqual(vec4 x, vec4 y)
+{
+	return abs(sign(x - y));
 }

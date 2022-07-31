@@ -27,16 +27,14 @@ namespace Terrains
 		(
 			const std::string& hMapPath,
 			const glm::vec2& position,
-			const TerrainTextures& textures,
-			const Renderer::Material& material = Renderer::Material()
+			const TerrainTextures& textures
 		);
 
 		glm::vec2 position;
 		glm::vec2 gridPosition;
 
-		TerrainTextures    textures;
-		Renderer::Material material;
-		VAO                vao;
+		TerrainTextures textures;
+		VAO             vao;
 
 		Util::Array2D<f32> heights;
 

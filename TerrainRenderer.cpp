@@ -12,7 +12,8 @@ using Shader::TerrainShader;
 using Terrains::TerrainTextures;
 using Terrains::Terrain;
 
-TerrainRenderer::TerrainRenderer(TerrainShader& shaderRef) : shader{ shaderRef }
+TerrainRenderer::TerrainRenderer(TerrainShader& shaderRef)
+	: shader(shaderRef)
 {
 	shader.Start();
 	shader.ConnectTextureUnits();
@@ -40,7 +41,6 @@ void TerrainRenderer::PrepareTerrain(const Terrain& terrain)
 {
 	glBindVertexArray(terrain.vao->id);
 	BindTextures(terrain);
-	shader.LoadMaterials(terrain.material);
 }
 
 void TerrainRenderer::BindTextures(const Terrain& terrain)

@@ -86,7 +86,13 @@ void SDLWindow::MainLoop()
 			entities.emplace_back(fernModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f), 0.6f);
 		}
 	}
-	Player player(playerModel, glm::vec3(250.0f, 0.0f, 235.0f), glm::vec3(0.0f, 180.0f, 0.0f), 1.0f);
+	Player player
+	(
+		playerModel,
+		glm::vec3(250.0f, 0.0f, 235.0f),
+		glm::vec3(0.0f, 180.0f, 0.0f),
+		1.0f
+	);
 
 	std::vector<Light> lights;
 	{

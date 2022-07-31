@@ -17,13 +17,11 @@ Terrain::Terrain
 (
 	const std::string& hMapPath,
 	const glm::vec2& position,
-	const TerrainTextures& textures, 
-	const Material& material
+	const TerrainTextures& textures
 )
 	: position(position.x * TERRAIN_SIZE, position.y * TERRAIN_SIZE),
 	  gridPosition(position),
-	  textures(textures),
-	  material(material)
+	  textures(textures)
 {
 	Image2D hMap(hMapPath);
 

@@ -33,7 +33,6 @@ uniform mat4 modelMatrix;
 
 out vec4  worldPosition;
 out vec3  unitLightVector[MAX_LIGHTS];
-out vec3  unitCameraVector;
 out vec3  unitNormal;
 out vec2  txCoords;
 out float visibility;
@@ -54,9 +53,7 @@ void main()
 
 void CalculateLighting()
 {
-	unitNormal       = normalize((modelMatrix * vec4(normal, 0.0f)).xyz);
-	unitCameraVector = normalize(cameraPos.xyz - worldPosition.xyz);
-
+	unitNormal = normalize((modelMatrix * vec4(normal, 0.0f)).xyz);
 	for (int i = 0; i < MAX_LIGHTS; ++i)
 	{
 		unitLightVector[i] = normalize(lights[i].position.xyz - worldPosition.xyz);

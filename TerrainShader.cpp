@@ -10,8 +10,6 @@ TerrainShader::TerrainShader() : ShaderProgram(TERRAIN_VERTEX_SHADER_PATH, TERRA
 void TerrainShader::GetUniformLocations()
 {
 	uniforms["modelMatrix"]       = GetUniformLocation("modelMatrix");
-	uniforms["shineDamper"]       = GetUniformLocation("shineDamper");
-	uniforms["reflectivity"]      = GetUniformLocation("reflectivity");
 	uniforms["skyColour"]         = GetUniformLocation("skyColour");
 	uniforms["backgroundTexture"] = GetUniformLocation("backgroundTexture");
 	uniforms["rTexture"]          = GetUniformLocation("rTexture");
@@ -23,12 +21,6 @@ void TerrainShader::GetUniformLocations()
 void TerrainShader::LoadModelMatrix(const glm::mat4& matrix)
 {
 	LoadUniform(uniforms["modelMatrix"], matrix);
-}
-
-void TerrainShader::LoadMaterials(const Renderer::Material& material)
-{
-	LoadUniform(uniforms["shineDamper"],  material.shineDamper);
-	LoadUniform(uniforms["reflectivity"], material.reflectivity);
 }
 
 void TerrainShader::LoadSkyColour(const glm::vec4& skyColour)
