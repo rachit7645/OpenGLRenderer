@@ -82,23 +82,7 @@ SDLWindow::SDLWindow()
 	{
 		LOG_ERROR("glewInit Failed\n");
 	}
-
-	LOG_DEBUG("GL_MAX_FRAMEBUFFER_HEIGHT: "     , GL::GetIntegerv(GL_MAX_FRAMEBUFFER_HEIGHT),      "\n");
-	LOG_DEBUG("GL_MAX_FRAMEBUFFER_WIDTH: "      , GL::GetIntegerv(GL_MAX_FRAMEBUFFER_WIDTH),       "\n");
-	LOG_DEBUG("GL_MAX_FRAMEBUFFER_SAMPLES: "    , GL::GetIntegerv(GL_MAX_FRAMEBUFFER_SAMPLES),     "\n");
-	LOG_DEBUG("GL_MAX_TEXTURE_SIZE: "           , GL::GetIntegerv(GL_MAX_TEXTURE_SIZE),            "\n");
-	LOG_DEBUG("GL_MAX_TEXTURE_BUFFER_SIZE: "    , GL::GetIntegerv(GL_MAX_TEXTURE_BUFFER_SIZE),     "\n");
-	LOG_DEBUG("GL_MAX_3D_TEXTURE_SIZE: "        , GL::GetIntegerv(GL_MAX_3D_TEXTURE_SIZE),         "\n");
-	LOG_DEBUG("GL_MAX_CUBE_MAP_TEXTURE_SIZE: "  , GL::GetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE),   "\n");
-	LOG_DEBUG("GL_MAX_TEXTURE_LOD_BIAS: "       , GL::GetIntegerv(GL_MAX_TEXTURE_LOD_BIAS),        "\n");
-	LOG_DEBUG("GL_MAX_TEXTURE_MAX_ANISOTROPY: " , GL::GetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY),  "\n");
-	LOG_DEBUG("GL_MAX_SAMPLES: "                , GL::GetIntegerv(GL_MAX_SAMPLES),                 "\n");
-	LOG_DEBUG("GL_MAX_UNIFORM_BLOCK_SIZE: "     , GL::GetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE),      "\n");
-	LOG_DEBUG("GL_MAX_UNIFORM_BUFFER_BINDINGS: ", GL::GetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS), "\n");
-	LOG_DEBUG("GL_MAX_UNIFORM_LOCATIONS: "      , GL::GetIntegerv(GL_MAX_UNIFORM_LOCATIONS),       "\n");
-	LOG_DEBUG("GL_MAX_VERTEX_UNIFORM_BLOCKS: "  , GL::GetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS),   "\n");
-	LOG_DEBUG("GL_MAX_FRAGMENT_UNIFORM_BLOCKS: ", GL::GetIntegerv(GL_MAX_FRAGMENT_UNIFORM_BLOCKS), "\n");
-	LOG_DEBUG("GL_MAX_VERTEX_ATTRIBS: "         , GL::GetIntegerv(GL_MAX_VERTEX_ATTRIBS),          "\n");
+	GL::DebugLog();
 
 	LOG_INFO("Initializing Dear ImGui version: ", ImGui::GetVersion(), "\n");
 	IMGUI_CHECKVERSION();
@@ -158,17 +142,38 @@ bool SDLWindow::PollEvents()
 			break;
 		}
 	}
-
 	return false;
 }
 
 void SDLWindow::InitGL()
 {
+	// Check extensions
+	if (!glewGetExtension("GL_KHR_debug"))
+	{
+		LOG_ERROR("Extension GL_KHR_debug is not supported by the GPU.\n");
+	}
+	// Setup viewport
 	glViewport(0, 0, DIMENSIONS.x, DIMENSIONS.y);
+	// Enable MSAA
 	glEnable(GL_MULTISAMPLE);
+	// Enable Depth test
 	glEnable(GL_DEPTH_TEST);
+	// Enable back-face culling
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+	// Enable Debug Output
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(GL::CheckErrors, nullptr);
+	// Disable selected messages
+	glDebugMessageControl
+	(
+		GL_DONT_CARE,                   // source
+		GL_DONT_CARE,                   // type
+		GL_DEBUG_SEVERITY_NOTIFICATION, // severity
+		0,                              // count
+		nullptr,                        // ids
+		GL_FALSE                        // enabled
+	);
 }
 
 SDLWindow::~SDLWindow()

@@ -22,6 +22,6 @@ std::string Util::GetTime()
 
 	// Format HH:MM:SS with strftime()
 	char buffer[TIME_BUFFER_LENGTH];
-	std::strftime(buffer, TIME_BUFFER_SIZE, "[%H:%M:%S]", bt);
+	std::strftime(buffer, TIME_BUFFER_SIZE, "%H:%M:%S", bt);
 	return buffer;
 }

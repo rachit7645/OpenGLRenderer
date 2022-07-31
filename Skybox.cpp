@@ -10,8 +10,12 @@ using Renderer::CubeMap;
 
 constexpr std::array<const char*, 6> SKYBOX_TEXTURE_FILES =
 {
-	"gfx/right.png", "gfx/left.png", "gfx/top.png",
-	"gfx/bottom.png", "gfx/back.png", "gfx/front.png"
+	"gfx/right.png",
+	"gfx/left.png",
+	"gfx/top.png",
+	"gfx/bottom.png",
+	"gfx/back.png",
+	"gfx/front.png"
 };
 
 const std::vector<f32> SKYBOX_VERTICES =

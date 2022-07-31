@@ -11,7 +11,11 @@
 #include <cstddef>
 #include <cassert>
 
+#ifdef __CLION_IDE__
+#define UNUSED [[maybe_unused]]
+#else
 #define UNUSED __attribute__((unused))
+#endif
 
 using s8  = std::int8_t;
 using s16 = std::int16_t;
