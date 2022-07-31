@@ -6,7 +6,13 @@
 
 using namespace Renderer;
 
-Model::Model(const std::string& path, const MeshTextures& textures, const Material& material) : material(material)
+Model::Model
+(
+	const std::string& path,
+	const MeshTextures& textures,
+	const Material& material
+)
+	: material(material)
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile((Files::GetResourceDirectory() + path).c_str(), ASSIMP_FLAGS);
@@ -20,7 +26,12 @@ Model::Model(const std::string& path, const MeshTextures& textures, const Materi
 	ProcessNode(scene->mRootNode, scene, textures);
 }
 
-void Model::ProcessNode(aiNode* node, const aiScene* scene, const MeshTextures& textures)
+void Model::ProcessNode
+(
+	aiNode* node,
+	const aiScene* scene,
+	const MeshTextures& textures
+)
 {
 	// Iterate over all the node's meshes
 	for (u32 i = 0; i < node->mNumMeshes; i++)
@@ -35,7 +46,12 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene, const MeshTextures& 
 	}
 }
 
-Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene, const MeshTextures& textures)
+Mesh Model::ProcessMesh
+(
+	aiMesh* mesh,
+	const aiScene* scene,
+	const MeshTextures& textures
+)
 {
 	std::vector<f32> vertices;
 	std::vector<u32> indices;
@@ -73,7 +89,12 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene, const MeshTextures& 
 	return Mesh(vertices, indices, txCoords, normals, ProcessMaterial(mesh, scene, textures));
 }
 
-MeshTextures Model::ProcessMaterial(aiMesh* mesh, const aiScene* scene, const MeshTextures& pTextures)
+MeshTextures Model::ProcessMaterial
+(
+	aiMesh* mesh,
+	const aiScene* scene,
+	const MeshTextures& pTextures
+)
 {
 	aiString path;
 	MeshTextures textures = pTextures;

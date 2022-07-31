@@ -24,8 +24,8 @@ SDLWindow::SDLWindow()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	// OpenGL Version 3.3 Core
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	// OpenGL Version 4.3 Core
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
 	// RGBA8888 + Depth24 Framebuffer
@@ -73,7 +73,7 @@ SDLWindow::SDLWindow()
 	{
 		LOG_ERROR("SDL_GL_MakeCurrent Failed\n", SDL_GetError(), "\n");
 	}
-	LOG_INFO("Created SDL_GLContext with address: ", glContext, "\n");
+	LOG_INFO("Created SDL_GLContext with address: ", &glContext, "\n");
 
 	// Initialize the REAL OpenGL context
 	// Due to a bug in glew, set it to experimental mode
@@ -82,7 +82,7 @@ SDLWindow::SDLWindow()
 	{
 		LOG_ERROR("glewInit Failed\n");
 	}
-	GL::DebugLog();
+	GL::LogDebugInfo();
 
 	LOG_INFO("Initializing Dear ImGui version: ", ImGui::GetVersion(), "\n");
 	IMGUI_CHECKVERSION();
@@ -91,10 +91,10 @@ SDLWindow::SDLWindow()
 	ImGui::StyleColorsDark();
 
 	ImGui_ImplSDL2_InitForOpenGL(window, glContext);
-	ImGui_ImplOpenGL3_Init("#version 330 core");
+	ImGui_ImplOpenGL3_Init("#version 430 core");
 
 	Files::SetResourceDirectory("../res/");
-	InitGL();
+	GL::Init(DIMENSIONS);
 }
 
 bool SDLWindow::PollEvents()
@@ -143,37 +143,6 @@ bool SDLWindow::PollEvents()
 		}
 	}
 	return false;
-}
-
-void SDLWindow::InitGL()
-{
-	// Check extensions
-	if (!glewGetExtension("GL_KHR_debug"))
-	{
-		LOG_ERROR("Extension GL_KHR_debug is not supported by the GPU.\n");
-	}
-	// Setup viewport
-	glViewport(0, 0, DIMENSIONS.x, DIMENSIONS.y);
-	// Enable MSAA
-	glEnable(GL_MULTISAMPLE);
-	// Enable Depth test
-	glEnable(GL_DEPTH_TEST);
-	// Enable back-face culling
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	// Enable Debug Output
-	glEnable(GL_DEBUG_OUTPUT);
-	glDebugMessageCallback(GL::CheckErrors, nullptr);
-	// Disable selected messages
-	glDebugMessageControl
-	(
-		GL_DONT_CARE,                   // source
-		GL_DONT_CARE,                   // type
-		GL_DEBUG_SEVERITY_NOTIFICATION, // severity
-		0,                              // count
-		nullptr,                        // ids
-		GL_FALSE                        // enabled
-	);
 }
 
 SDLWindow::~SDLWindow()

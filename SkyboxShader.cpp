@@ -2,7 +2,8 @@
 
 using namespace Shader;
 
-SkyboxShader::SkyboxShader() : ShaderProgram(SKYBOX_VERTEX_SHADER_PATH, SKYBOX_FRAGMENT_SHADER_PATH)
+SkyboxShader::SkyboxShader()
+	: ShaderProgram(SKYBOX_VERTEX_SHADER_PATH, SKYBOX_FRAGMENT_SHADER_PATH)
 {
 	GetUniformLocations();
 }

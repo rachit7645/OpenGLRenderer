@@ -1,12 +1,12 @@
-#version 420 core
+#version 430 core
 
 layout (location = 0) in vec3 position;
 
 layout(std140, binding = 0) uniform Matrices
 {
-	uniform mat4 projectionMatrix;
-	uniform mat4 viewMatrix;
-	uniform vec4 cameraPos;	
+	mat4 projectionMatrix;
+	mat4 viewMatrix;
+	vec4 cameraPos;
 };
 uniform mat4 modelMatrix;
 

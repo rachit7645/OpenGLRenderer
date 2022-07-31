@@ -60,13 +60,11 @@ void TerrainRenderer::BindTextures(const Terrain& terrain)
 
 void TerrainRenderer::LoadModelMatrix(const Terrain& terrain)
 {
-	glm::mat4 transformation = Maths::CreateModelMatrix
+	glm::mat4 matrix = Maths::CreateModelMatrixT
 	(
-		glm::vec3(terrain.position.x, 0.0f, terrain.position.y),
-		glm::vec3(0.0f, 0.0f, 0.0f),
-		1.0f
+		glm::vec3(terrain.position.x, 0.0f, terrain.position.y)
 	);
-	shader.LoadModelMatrix(transformation);
+	shader.LoadModelMatrix(matrix);
 }
 
 void TerrainRenderer::UnbindTerrain()

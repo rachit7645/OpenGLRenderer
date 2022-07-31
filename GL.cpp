@@ -3,6 +3,7 @@
 #include <unordered_map>
 
 #include "Log.h"
+#include "Util.h"
 
 void GL::CheckErrors
 (
@@ -63,12 +64,44 @@ GLint GL::GetIntegerv(GLenum param)
 	return value;
 }
 
-void GL::DebugLog()
+void GL::Init(const glm::ivec2& dimensions)
 {
-	LOG_DEBUG("GL_VENDOR: "                     , glGetString(GL_VENDOR),                           "\n");
-	LOG_DEBUG("GL_RENDERER: "                   , glGetString(GL_RENDERER),                         "\n");
-	LOG_DEBUG("GL_VERSION: "                    , glGetString(GL_VERSION),                          "\n");
-	LOG_DEBUG("GL_SHADING_LANGUAGE_VERSION: "   , glGetString(GL_SHADING_LANGUAGE_VERSION),         "\n");
+	// Setup viewport
+	glViewport
+	(
+		0,
+		0,
+		dimensions.x,
+		dimensions.y
+	);
+	// Enable MSAA
+	glEnable(GL_MULTISAMPLE);
+	// Enable Depth test
+	glEnable(GL_DEPTH_TEST);
+	// Enable back-face culling
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	// Enable Debug Output
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(GL::CheckErrors, nullptr);
+	// Disable selected messages
+	glDebugMessageControl
+	(
+		GL_DONT_CARE,                   // source
+		GL_DONT_CARE,                   // type
+		GL_DEBUG_SEVERITY_NOTIFICATION, // severity
+		0,                              // count
+		nullptr,                        // ids
+		GL_FALSE                        // enabled
+	);
+}
+
+void GL::LogDebugInfo()
+{
+	LOG_DEBUG("GL_VENDOR: "                     , glGetString(GL_VENDOR),                          "\n");
+	LOG_DEBUG("GL_RENDERER: "                   , glGetString(GL_RENDERER),                        "\n");
+	LOG_DEBUG("GL_VERSION: "                    , glGetString(GL_VERSION),                         "\n");
+	LOG_DEBUG("GL_SHADING_LANGUAGE_VERSION: "   , glGetString(GL_SHADING_LANGUAGE_VERSION),        "\n");
 	LOG_DEBUG("GL_MAX_FRAMEBUFFER_HEIGHT: "     , GL::GetIntegerv(GL_MAX_FRAMEBUFFER_HEIGHT),      "\n");
 	LOG_DEBUG("GL_MAX_FRAMEBUFFER_HEIGHT: "     , GL::GetIntegerv(GL_MAX_FRAMEBUFFER_HEIGHT),      "\n");
 	LOG_DEBUG("GL_MAX_FRAMEBUFFER_WIDTH: "      , GL::GetIntegerv(GL_MAX_FRAMEBUFFER_WIDTH),       "\n");

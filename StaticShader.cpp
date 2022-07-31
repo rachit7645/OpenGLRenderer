@@ -4,7 +4,8 @@ using namespace Shader;
 
 using Renderer::Material;
 
-StaticShader::StaticShader() : ShaderProgram(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH)
+StaticShader::StaticShader()
+	: ShaderProgram(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH)
 {
 	GetUniformLocations();
 }

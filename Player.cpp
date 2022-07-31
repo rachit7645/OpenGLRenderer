@@ -11,7 +11,7 @@ using Terrains::Terrain;
 
 Player::Player
 (
-	MdPtr& model,
+	MdPtr model,
 	const glm::vec3& position,
 	const glm::vec3& rotation,
 	f32 scale

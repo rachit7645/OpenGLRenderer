@@ -32,8 +32,6 @@ namespace Window
 		bool PollEvents();
 		// Calculates the FPS and the frame delta
 		void CalculateFPS();
-		// Set OpenGL stuff
-		void InitGL();
 
 		// FPS Counting Variables
 		std::chrono::time_point<std::chrono::steady_clock> startTime, frameStartTime, endTime;

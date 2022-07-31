@@ -17,7 +17,16 @@ glm::mat4 Maths::CreateModelMatrix(const glm::vec3& translation, const glm::vec3
 	return matrix;
 }
 
-glm::mat4 Maths::CreateModelMatrix(const glm::vec3& rotation)
+glm::mat4 Maths::CreateModelMatrixT(const glm::vec3& translation)
+{
+	// 1. Create an identity matrix
+	glm::mat4 matrix(1.0f);
+	// 2. Translate it by translation vector
+	matrix = glm::translate(matrix, translation);
+	return matrix;
+}
+
+glm::mat4 Maths::CreateModelMatrixR(const glm::vec3& rotation)
 {
 	// 1. Create an identity matrix
 	glm::mat4 matrix(1.0f);
@@ -45,7 +54,13 @@ glm::mat4 Maths::CreateViewMatrix(const Camera& camera)
 
 // No idea how this works
 // But it does work
-f32 Maths::BarryCentric(const glm::vec3& vec1, const glm::vec3& vec2, const glm::vec3& vec3, const glm::vec2& position)
+f32 Maths::BarryCentric
+(
+	const glm::vec3& vec1,
+	const glm::vec3& vec2,
+	const glm::vec3& vec3,
+	const glm::vec2& position
+)
 {
 	f32 det = (vec2.z - vec3.z) * (vec1.x - vec3.x) + (vec3.x - vec2.x) * (vec1.z - vec3.z);
 	f32 l1 = ((vec2.z - vec3.z) * (position.x - vec3.x) + (vec3.x - vec2.x) * (position.y - vec3.z)) / det;

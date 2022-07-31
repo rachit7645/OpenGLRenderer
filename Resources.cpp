@@ -37,7 +37,12 @@ TxPtr Resources::GetTexture(const std::string& path)
 	}
 }
 
-MdPtr Resources::GetModel(const std::string& path, const MeshTextures& textures, const Material& material)
+MdPtr Resources::GetModel
+(
+	const std::string& path,
+	const MeshTextures& textures,
+	const Material& material
+)
 {
 	auto result = m_models.find(path);
 	if (result != m_models.end())

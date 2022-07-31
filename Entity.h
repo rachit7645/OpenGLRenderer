@@ -14,7 +14,7 @@ namespace Entities
         using MdPtr = std::shared_ptr<Renderer::Model>;
 		Entity
         (
-			MdPtr& sharedModel,
+			MdPtr sharedModel,
 			const glm::vec3& position,
 			const glm::vec3& rotation,
 			f32 scale

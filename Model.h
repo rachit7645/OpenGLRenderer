@@ -20,14 +20,36 @@ namespace Renderer
 	class Model
 	{
 	public:
-		Model(const std::string& path, const MeshTextures& textures, const Material& material = Material());
+		Model
+		(
+			const std::string& path,
+			const MeshTextures& textures,
+			const Material& material = Material()
+		);
 
 		std::vector<Mesh> meshes;
 		Material          material;
 	private:
-		void ProcessNode(aiNode* node, const aiScene* scene, const MeshTextures& textures);
-		Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene, const MeshTextures& textures);
-		MeshTextures ProcessMaterial(aiMesh* mesh, const aiScene* scene, const MeshTextures& pTextures);
+		void ProcessNode
+		(
+			aiNode* node,
+			const aiScene* scene,
+			const MeshTextures& textures
+		);
+
+		Mesh ProcessMesh
+		(
+			aiMesh* mesh,
+			const aiScene* scene,
+			const MeshTextures& textures
+		);
+
+		MeshTextures ProcessMaterial
+		(
+			aiMesh* mesh,
+			const aiScene* scene,
+			const MeshTextures& pTextures
+		);
 	};
 }
 

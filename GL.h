@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 
-#include "Util.h"
+#include "GLM.h"
 
 // Quick wrappers around OpenGL calls
 namespace GL
@@ -22,8 +22,10 @@ namespace GL
 		const void* userParam
 	);
 
+	// Initialize OpenGL info
+	void Init(const glm::ivec2& dimensions);
 	// Log debug information
-	void DebugLog();
+	void LogDebugInfo();
 }
 
 #endif

@@ -17,7 +17,6 @@ CubeMap::CubeMap(const std::array<const char*, 6>& files)
 	int width;
 	int height;
 	int channels;
-	std::string path;
 
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, id);
@@ -32,10 +31,9 @@ CubeMap::CubeMap(const std::array<const char*, 6>& files)
 
 	for (size_t i = 0; i < files.size(); ++i)
 	{
-		path = Files::GetResourceDirectory() + files[i];
 		data = stbi_load
 		(
-			path.c_str(),
+			(Files::GetResourceDirectory() + files[i]).c_str(),
 			&width,
 			&height,
 			&channels,
@@ -44,7 +42,7 @@ CubeMap::CubeMap(const std::array<const char*, 6>& files)
 
 		if (data == nullptr)
 		{
-			LOG_ERROR("Unable to open file: ", path);
+			LOG_ERROR("Unable to open file: ", files[i]);
 		}
 
 		glTexImage2D

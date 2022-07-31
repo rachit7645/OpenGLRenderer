@@ -1,4 +1,4 @@
-#version 420 core
+#version 430 core
 
 const float AMBIENT_STRENGTH = 0.2f;
 const float MIN_SPECULAR     = 0.0f;

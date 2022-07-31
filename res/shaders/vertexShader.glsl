@@ -1,4 +1,4 @@
-#version 420 core
+#version 430 core
 
 const float FOG_DENSITY  = 0.0035f;
 const float FOG_GRADIENT = 1.5f;
@@ -19,14 +19,14 @@ layout(location = 2) in vec3 normal;
 
 layout(std140, binding = 0) uniform Matrices
 {
-	uniform mat4 projectionMatrix;
-	uniform mat4 viewMatrix;
-	uniform vec4 cameraPos;
+	mat4 projectionMatrix;
+	mat4 viewMatrix;
+	vec4 cameraPos;
 };
 
 layout(std140, binding = 1) uniform Lights
 {
-	uniform Light lights[MAX_LIGHTS];
+	Light lights[MAX_LIGHTS];
 };
 
 uniform mat4 modelMatrix;

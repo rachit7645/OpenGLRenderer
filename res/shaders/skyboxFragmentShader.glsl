@@ -1,4 +1,4 @@
-#version 330 core
+#version 430 core
 
 const float LOWER_LIMIT = 0.0f;
 const float UPPER_LIMIT = 25.0f;
