@@ -16,7 +16,7 @@ using namespace Window;
 SDLWindow::SDLWindow()
 {
 	// Get SDL version
-	SDL_version version;
+	SDL_version version = {};
 	SDL_GetVersion(&version);
 	// Put it in a string stream
 	std::stringstream versionSS;

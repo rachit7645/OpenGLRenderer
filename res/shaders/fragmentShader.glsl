@@ -59,11 +59,17 @@ void main()
 
 	for (int i = 0; i < MAX_LIGHTS; ++i)
 	{
+		// Compute att factor
 		float attFactor = CalculateAttFactor(i);
-		totalAmbient  += CalculateAmbient(i)  * diffuseColor  * attFactor;
-		vec4 curDiff  = CalculateDiffuse(i)   * diffuseColor  * attFactor;
-		totalDiffuse  += curDiff;
-		vec4 curSpec  = CalculateSpecular(i) * specularColor * attFactor;
+		// Compute ambient
+		totalAmbient += CalculateAmbient(i) * diffuseColor * attFactor;
+		// Compute diffuse and store it for later
+		vec4 curDiff = CalculateDiffuse(i) * diffuseColor * attFactor;
+		// Add curDiff to total
+		totalDiffuse += curDiff;
+		// Calculate curSpec
+		vec4 curSpec = CalculateSpecular(i) * specularColor * attFactor;
+		// Add it if diffuse != 0.0f
 		totalSpecular += curSpec * WhenNotEqual(curDiff, vec4(0.0));
 	}
 
@@ -97,7 +103,7 @@ vec4 CalculateSpecular(int index)
 {
 	vec3 lightDirection  = unitLightVector[index];
 	vec3 halfwayDir      = normalize(lightDirection + unitCameraVector);
-	float specularFactor = dot(unitNormal, unitCameraVector);
+	float specularFactor = dot(halfwayDir, unitNormal);
 	specularFactor       = max(specularFactor, MIN_SPECULAR);
 	float dampedFactor   = pow(specularFactor, shineDamper);
 	return vec4(dampedFactor * reflectivity * lights[index].specular.rgb, 1.0f);
