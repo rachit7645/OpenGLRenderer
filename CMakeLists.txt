@@ -62,4 +62,4 @@ add_executable(engine
 )
 
 target_include_directories(engine PUBLIC libs/)
-target_link_libraries(engine OpenGL::GL GLEW::GLEW SDL2::SDL2 glm assimp imgui)
+target_link_libraries(engine OpenGL::GL GLEW::GLEW SDL2::SDL2 assimp imgui)
