@@ -59,6 +59,7 @@ add_executable(engine
 	Resources.cpp
 	Time.cpp
 	GL.cpp
+	FrameBuffer.cpp
 )
 
 target_include_directories(engine PUBLIC libs/)
