@@ -1,6 +1,6 @@
 #include "TerrainRenderer.h"
 
-#include <gl/glew.h>
+#include <GL/glew.h>
 
 #include "GLM.h"
 #include "Util.h"
