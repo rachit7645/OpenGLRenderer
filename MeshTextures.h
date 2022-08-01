@@ -12,6 +12,10 @@ namespace Renderer
 	{
 	public:
 		using TxPtr = std::shared_ptr<Texture>;
+
+		// Default Constructor
+		MeshTextures() = default;
+		// Main Constructor
 		MeshTextures(TxPtr diffuse, TxPtr specular)
 			: diffuse(std::move(diffuse)),
 			  specular(std::move(specular))
