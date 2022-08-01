@@ -16,6 +16,12 @@ void GL::CheckErrors
 	UNUSED const void* userParam
 )
 {
+	// Disable certain messages
+	if (id == 131185)
+	{
+		return;
+	}
+
 	static const std::unordered_map<GLenum, const char*>
 	GL_ERROR_SOURCES =
 	{
@@ -85,16 +91,6 @@ void GL::Init(const glm::ivec2& dimensions)
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(GL::CheckErrors, nullptr);
-	// Disable selected messages
-	glDebugMessageControl
-	(
-		GL_DONT_CARE,                   // source
-		GL_DONT_CARE,                   // type
-		GL_DEBUG_SEVERITY_NOTIFICATION, // severity
-		0,                              // count
-		nullptr,                        // ids
-		GL_FALSE                        // enabled
-	);
 }
 
 void GL::LogDebugInfo()
