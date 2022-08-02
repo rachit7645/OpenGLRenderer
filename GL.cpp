@@ -9,7 +9,7 @@ void GL::CheckErrors
 (
 	GLenum source,
 	GLenum type,
-	UNUSED GLuint id,
+	GLuint id,
 	GLenum severity,
 	UNUSED GLsizei length,
 	const GLchar* message,

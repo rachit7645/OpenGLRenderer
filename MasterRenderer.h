@@ -18,6 +18,9 @@
 #include "SkyboxShader.h"
 #include "MatrixBuffer.h"
 #include "LightsBuffer.h"
+#include "GUIRenderer.h"
+#include "GUIShader.h"
+#include "GUI.h"
 
 namespace Renderer
 {
@@ -44,6 +47,9 @@ namespace Renderer
 		Shader::SkyboxShader     skyboxShader;
 		Renderer::SkyboxRenderer skyboxRenderer;
 
+		Shader::GUIShader     guiShader;
+		Renderer::GUIRenderer guiRenderer;
+
 		// Main render function
 		void Render(const std::vector<Entities::Light>& lights, const Entities::Camera& camera);
 		// Process entities into the entity map
@@ -54,6 +60,8 @@ namespace Renderer
 		void ProcessTerrain(const Terrains::Terrain& terrain);
 		// Process a vector of terrains
 		void ProcessTerrains(const std::vector<Terrains::Terrain>& terrains);
+		// Process a vector of GUIs
+		void ProcessGUIs(const std::vector<Renderer::GUI>& guis);
 	private:
 		// Prepare framebuffer for render
 		void Prepare();
@@ -65,11 +73,15 @@ namespace Renderer
 		void RenderTerrains();
 		// Render the skybox
 		void RenderSkybox();
+		// Render the guis
+		void RenderGUIs();
 
 		// The entity map
 		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>> m_entities;
 		// The terrain vector
 		std::vector<Terrains::Terrain> m_terrains;
+		// The GUI vector
+		std::vector<Renderer::GUI> m_guis;
 		// The Skybox
 		Entities::Skybox m_skybox;
 		// Matrix Uniform Buffer

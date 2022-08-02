@@ -2,7 +2,12 @@
 
 using Entities::Camera;
 
-glm::mat4 Maths::CreateModelMatrix(const glm::vec3& translation, const glm::vec3& rotation, f32 scale)
+glm::mat4 Maths::CreateModelMatrix
+(
+	const glm::vec3& translation,
+	const glm::vec3& rotation,
+	f32 scale
+)
 {
 	// 1. Create an identity matrix
 	glm::mat4 matrix(1.0f);
@@ -34,6 +39,18 @@ glm::mat4 Maths::CreateModelMatrixR(const glm::vec3& rotation)
 	matrix = glm::rotate(matrix, glm::radians(rotation.x), glm::vec3(1, 0, 0));
 	matrix = glm::rotate(matrix, glm::radians(rotation.y), glm::vec3(0, 1, 0));
 	matrix = glm::rotate(matrix, glm::radians(rotation.z), glm::vec3(0, 0, 1));
+	// Return
+	return matrix;
+}
+
+glm::mat4 Maths::CreateModelMatrix2D(const glm::vec2& translation, const glm::vec2& scale)
+{
+	// 1. Create an identity matrix
+	glm::mat4 matrix(1.0f);
+	// 2. Translate it by translation vector
+	matrix = glm::translate(matrix, glm::vec3(translation, 0.0f));
+	// 4. Scale the matrix
+	matrix = glm::scale(matrix, glm::vec3(scale, 0.0f));
 	// Return
 	return matrix;
 }

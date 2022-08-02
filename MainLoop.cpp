@@ -13,6 +13,7 @@
 #include "MeshTextures.h"
 #include "Resources.h"
 #include "Imgui.h"
+#include "GUI.h"
 
 using namespace Window;
 
@@ -25,6 +26,7 @@ using Renderer::Texture;
 using Renderer::Model;
 using Renderer::Material;
 using Renderer::MeshTextures;
+using Renderer::GUI;
 using Entities::Entity;
 using Entities::Player;
 using Entities::Skybox;
@@ -34,7 +36,6 @@ using Terrains::TerrainTextures;
 
 // TODO: Move MainLoop to separate class, move data to said class
 // TODO: Live editing of entities, terrains, lights, etc. with ImGui
-// TODO: Change refactor formatting to spaces (Commit: Major Refactors 13/7/2022)
 
 constexpr auto MAX_ENTITIES = 100;
 
@@ -114,6 +115,10 @@ void SDLWindow::MainLoop()
 		);
 	}
 
+	std::vector<GUI> guis;
+	{
+	}
+
 	Entities::Camera camera(&player);
 	Renderer::MasterRenderer renderer;
 
@@ -131,6 +136,7 @@ void SDLWindow::MainLoop()
 
 		renderer.ProcessEntities(entities);
 		renderer.ProcessTerrains(terrains);
+		renderer.ProcessGUIs(guis);
 		renderer.ProcessEntity(player);
 
 		renderer.Render(lights, camera);
