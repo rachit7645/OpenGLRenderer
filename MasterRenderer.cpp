@@ -12,6 +12,7 @@ MasterRenderer::MasterRenderer()
 	: renderer(shader),
 	  terrainRenderer(terrainShader),
 	  skyboxRenderer(skyboxShader),
+	  guiRenderer(guiShader),
 	  m_matrices(std::make_shared<MatrixBuffer>()),
 	  m_lights(std::make_shared<LightsBuffer>())
 {
@@ -38,6 +39,7 @@ void MasterRenderer::Render(const std::vector<Light>& lights, const Camera& came
 	RenderEntities();
 	RenderTerrains();
 	RenderSkybox();
+	RenderGUIs();
 
 	m_entities.clear();
 	m_terrains.clear();
@@ -73,6 +75,20 @@ void MasterRenderer::RenderSkybox()
 	glDepthFunc(GL_LESS);
 }
 
+void MasterRenderer::RenderGUIs()
+{
+	// Enable blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// Disable depth test
+	glDisable(GL_DEPTH_TEST);
+	guiShader.Start();
+	guiRenderer.Render(m_guis);
+	guiShader.Stop();
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+}
+
 void MasterRenderer::ProcessEntity(const Entities::Entity& entity)
 {
 	auto iter = m_entities.find(entity.model);
@@ -102,4 +118,9 @@ void MasterRenderer::ProcessTerrain(const Terrain& terrain)
 void MasterRenderer::ProcessTerrains(const std::vector<Terrain>& terrains)
 {
 	m_terrains = terrains;
+}
+
+void MasterRenderer::ProcessGUIs(const std::vector<Renderer::GUI>& guis)
+{
+	m_guis = guis;
 }

@@ -13,6 +13,8 @@ namespace Maths
 	glm::mat4 CreateModelMatrixT(const glm::vec3& translation);
 	// Create model matrix with only rotation
 	glm::mat4 CreateModelMatrixR(const glm::vec3& rotation);
+	// Create 2D model matrix
+	glm::mat4 CreateModelMatrix2D(const glm::vec2& translation, const glm::vec2& scale);
 	// Create view matrix from camera
 	glm::mat4 CreateViewMatrix(const Entities::Camera& camera);
 	// BarryCentric equation

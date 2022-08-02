@@ -60,6 +60,9 @@ add_executable(engine
 	Time.cpp
 	GL.cpp
 	FrameBuffer.cpp
+	GUI.cpp
+	GUIShader.cpp
+	GUIRenderer.cpp
 )
 
 target_include_directories(engine PUBLIC libs/)
