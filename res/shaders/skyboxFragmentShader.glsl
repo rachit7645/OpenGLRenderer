@@ -6,7 +6,7 @@ const float UPPER_LIMIT = 25.0f;
 in vec3 txCoords;
 
 uniform samplerCube cubeMap;
-uniform vec3 fogColor;
+uniform vec3        fogColor;
 
 out vec4 outColor;
 

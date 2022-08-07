@@ -13,10 +13,15 @@ namespace Entities
 	class Skybox
 	{
 	public:
+		// Usings
+		using VAO        = std::shared_ptr<Renderer::VertexArray>;
+		using CubeMapPtr = std::shared_ptr<Renderer::CubeMap>;
+		// Main constructor
 		Skybox();
 
-		std::shared_ptr<Renderer::VertexArray> vao;
-		std::shared_ptr<Renderer::CubeMap> cubeMap;
+		// Data
+		VAO        vao;
+		CubeMapPtr cubeMap;
 	};
 }
 

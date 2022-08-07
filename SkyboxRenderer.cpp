@@ -15,6 +15,14 @@ SkyboxRenderer::SkyboxRenderer(SkyboxShader& shaderRef)
 {
 }
 
+void SkyboxRenderer::Render(const Skybox& skybox)
+{
+	PrepareSkybox(skybox);
+	LoadModelMatrix();
+	glDrawArrays(GL_TRIANGLES, 0, skybox.vao->vertexCount);
+	UnbindSkybox();
+}
+
 void SkyboxRenderer::PrepareSkybox(const Entities::Skybox& skybox)
 {
 	glBindVertexArray(skybox.vao->id);
@@ -30,14 +38,6 @@ void SkyboxRenderer::LoadModelMatrix()
 		glm::vec3(0.0f, rotation, 0.0f)
 	);
 	shader.LoadModelMatrix(matrix);
-}
-
-void SkyboxRenderer::Render(const Skybox& skybox)
-{
-	PrepareSkybox(skybox);
-	LoadModelMatrix();
-	glDrawArrays(GL_TRIANGLES, 0, skybox.vao->vertexCount);
-	UnbindSkybox();
 }
 
 void SkyboxRenderer::UnbindSkybox()

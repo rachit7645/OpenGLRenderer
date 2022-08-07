@@ -11,7 +11,8 @@ using namespace Renderer;
 using Entities::Entity;
 using Shader::StaticShader;
 
-EntityRenderer::EntityRenderer(StaticShader& shaderRef) : shader(shaderRef)
+EntityRenderer::EntityRenderer(StaticShader& shaderRef)
+	: shader(shaderRef)
 {
 	shader.Start();
 	shader.ConnectTextureUnits();

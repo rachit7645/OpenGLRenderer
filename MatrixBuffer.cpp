@@ -9,7 +9,8 @@ using namespace Renderer;
 using Detail::MatrixBufferGLSL;
 using Entities::Camera;
 
-MatrixBuffer::MatrixBuffer() : UniformBuffer(0, sizeof(MatrixBufferGLSL))
+MatrixBuffer::MatrixBuffer()
+	: UniformBuffer(0, sizeof(MatrixBufferGLSL))
 {
 }
 

@@ -24,7 +24,7 @@ in vec3  unitLightVector[MAX_LIGHTS];
 in vec2  txCoords;
 in float visibility;
 
-uniform sampler2D backgroundTexture;
+uniform sampler2D bgTexture;
 uniform sampler2D rTexture;
 uniform sampler2D bTexture;
 uniform sampler2D gTexture;
@@ -84,9 +84,9 @@ vec4 CalculateTextureColor()
 	vec4  blendMapColor   = texture(blendMap, txCoords);
     float backTxAmount    = 1.0f - (blendMapColor.r + blendMapColor.g + blendMapColor.b);
     vec2  tiledCoords     = txCoords * TEXTURE_TILING;
-    vec4  bgTextureColor  = texture(backgroundTexture, tiledCoords) * backTxAmount;
-    vec4  rTextureColor   = texture(rTexture, tiledCoords) * blendMapColor.r;
-    vec4  gTextureColor   = texture(gTexture, tiledCoords) * blendMapColor.g;
-    vec4  bTextureColor   = texture(bTexture, tiledCoords) * blendMapColor.b;
+    vec4  bgTextureColor  = texture(bgTexture, tiledCoords) * backTxAmount;
+    vec4  rTextureColor   = texture(rTexture, tiledCoords)  * blendMapColor.r;
+    vec4  gTextureColor   = texture(gTexture, tiledCoords)  * blendMapColor.g;
+    vec4  bTextureColor   = texture(bTexture, tiledCoords)  * blendMapColor.b;
 	return bgTextureColor + rTextureColor + gTextureColor + bTextureColor;
 }
