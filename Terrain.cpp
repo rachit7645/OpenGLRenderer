@@ -23,9 +23,9 @@ Terrain::Terrain
 	  gridPosition(position),
 	  textures(textures)
 {
-	Image2D hMap(hMapPath);
+	auto hMap = std::make_shared<Image2D>(hMapPath);
 
-	auto VERTEX_COUNT = hMap.height;
+	auto VERTEX_COUNT = hMap->height;
 	auto COUNT        = VERTEX_COUNT * VERTEX_COUNT;
 
 	std::vector<f32> vertices(COUNT * 3);
@@ -80,18 +80,18 @@ Terrain::Terrain
 	vao = std::make_shared<VertexArray>(vertices, indices, txCoords, normals);
 }
 
-f32 Terrain::CalculateHeight(int x, int z, const Image2D& hMap)
+f32 Terrain::CalculateHeight(int x, int z, const ImgPtr& hMap)
 {
-	f32 height = hMap.GetRed(x, z);
+	f32 height = hMap->GetRed(x, z);
 	height -= IMAGE_MAX_PIXEL_COLOR / 2.0f;
 	height /= IMAGE_MAX_PIXEL_COLOR / 2.0f;
 	height *= TERRAIN_MAX_HEIGHT;
 	return height;
 }
 
-glm::vec3 Terrain::CalculateNormal(int x, int z, const Image2D& hMap)
+glm::vec3 Terrain::CalculateNormal(int x, int z, const ImgPtr& hMap)
 {
-	auto size 	= hMap.height;
+	auto size   = hMap->height;
 	f32 heightL = CalculateHeight((x - 1 + size) % size, z, hMap);
 	f32 heightR = CalculateHeight((x + 1 + size) % size, z, hMap);
 	f32 heightD = CalculateHeight(x, (z - 1 + size) % size, hMap);

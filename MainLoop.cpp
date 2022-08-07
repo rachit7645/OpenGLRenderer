@@ -14,6 +14,7 @@
 #include "Resources.h"
 #include "Imgui.h"
 #include "GUI.h"
+#include "WaterTile.h"
 
 using namespace Window;
 
@@ -33,6 +34,7 @@ using Entities::Skybox;
 using Entities::Light;
 using Terrains::Terrain;
 using Terrains::TerrainTextures;
+using Waters::WaterTile;
 
 // TODO: Move MainLoop to separate class, move data to said class
 // TODO: Live editing of entities, terrains, lights, etc. with ImGui
@@ -119,6 +121,11 @@ void SDLWindow::MainLoop()
 	{
 	}
 
+	std::vector<WaterTile> waters;
+	{
+		waters.emplace_back(glm::vec3(185.0f, 3.2f, 240.0f));
+	}
+
 	Entities::Camera camera(&player);
 	Renderer::MasterRenderer renderer;
 
@@ -134,12 +141,8 @@ void SDLWindow::MainLoop()
 		player.Move(Terrains::GetCurrent(terrains, player));
 		camera.Move();
 
-		renderer.ProcessEntities(entities);
-		renderer.ProcessTerrains(terrains);
-		renderer.ProcessGUIs(guis);
-		renderer.ProcessEntity(player);
-
-		renderer.Render(lights, camera);
+		renderer.RenderScene(entities, terrains, lights, camera, player);
+		renderer.RenderWaters(waters);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

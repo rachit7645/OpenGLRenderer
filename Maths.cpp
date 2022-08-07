@@ -43,6 +43,17 @@ glm::mat4 Maths::CreateModelMatrixR(const glm::vec3& rotation)
 	return matrix;
 }
 
+glm::mat4 Maths::CreateModelMatrixTS(const glm::vec3& translation, f32 scale)
+{
+	// 1. Create an identity matrix
+	glm::mat4 matrix(1.0f);
+	// 2. Translate it by translation vector
+	matrix = glm::translate(matrix, translation);
+	// 4. Scale the matrix
+	matrix = glm::scale(matrix, glm::vec3(scale));
+	return matrix;
+}
+
 glm::mat4 Maths::CreateModelMatrix2D(const glm::vec2& translation, const glm::vec2& scale)
 {
 	// 1. Create an identity matrix

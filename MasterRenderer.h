@@ -21,6 +21,10 @@
 #include "GUIRenderer.h"
 #include "GUIShader.h"
 #include "GUI.h"
+#include "WaterShader.h"
+#include "WaterRenderer.h"
+#include "WaterTile.h"
+#include "Player.h"
 
 namespace Renderer
 {
@@ -50,8 +54,22 @@ namespace Renderer
 		Shader::GUIShader     guiShader;
 		Renderer::GUIRenderer guiRenderer;
 
+		Shader::WaterShader     waterShader;
+		Renderer::WaterRenderer waterRenderer;
+
+		// Render Scene
+		void RenderScene
+		(
+			const std::vector<Entities::Entity>& entities,
+			const std::vector<Terrains::Terrain>& terrains,
+			const std::vector<Entities::Light>& lights,
+			const Entities::Camera& camera,
+			const Entities::Player& player
+		);
 		// Main render function
 		void Render(const std::vector<Entities::Light>& lights, const Entities::Camera& camera);
+		// Render the water
+		void RenderWaters(const std::vector<Waters::WaterTile>& waters);
 		// Process entities into the entity map
 		void ProcessEntity(const Entities::Entity& entity);
 		// Process a vector of entities

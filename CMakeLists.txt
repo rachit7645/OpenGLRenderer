@@ -64,6 +64,8 @@ add_executable(engine
 	GUIShader.cpp
 	GUIRenderer.cpp
 	RenderBuffer.cpp
+	WaterShader.cpp
+	WaterRenderer.cpp
 )
 
 target_include_directories(engine PUBLIC libs/)

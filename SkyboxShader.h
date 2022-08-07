@@ -5,7 +5,6 @@
 
 #include "GLM.h"
 #include "Shader.h"
-#include "Util.h"
 
 namespace Shader
 {

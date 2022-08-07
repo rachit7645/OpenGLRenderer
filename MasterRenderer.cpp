@@ -6,17 +6,36 @@ using Entities::Entity;
 using Entities::Light;
 using Entities::Camera;
 using Entities::Skybox;
+using Entities::Player;
 using Terrains::Terrain;
+using Waters::WaterTile;
 
 MasterRenderer::MasterRenderer() 
 	: renderer(shader),
 	  terrainRenderer(terrainShader),
 	  skyboxRenderer(skyboxShader),
 	  guiRenderer(guiShader),
+	  waterRenderer(waterShader),
 	  m_matrices(std::make_shared<MatrixBuffer>()),
 	  m_lights(std::make_shared<LightsBuffer>())
 {
 	m_matrices->LoadProjection(glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
+}
+
+void MasterRenderer::RenderScene
+(
+	const std::vector<Entity>& entities,
+	const std::vector<Terrain>& terrains,
+	const std::vector<Light>& lights,
+	const Camera& camera,
+	const Player& player
+)
+{
+	ProcessEntities(entities);
+	ProcessTerrains(terrains);
+	ProcessEntity(player);
+
+	Render(lights, camera);
 }
 
 void MasterRenderer::Prepare()
@@ -39,11 +58,9 @@ void MasterRenderer::Render(const std::vector<Light>& lights, const Camera& came
 	RenderEntities();
 	RenderTerrains();
 	RenderSkybox();
-	RenderGUIs();
 
 	m_entities.clear();
 	m_terrains.clear();
-	m_guis.clear();
 }
 
 void MasterRenderer::RenderEntities()
@@ -90,6 +107,13 @@ void MasterRenderer::RenderGUIs()
 	glDisable(GL_BLEND);
 }
 
+void MasterRenderer::RenderWaters(const std::vector<WaterTile>& waters)
+{
+	waterShader.Start();
+	waterRenderer.Render(waters);
+	waterShader.Stop();
+}
+
 void MasterRenderer::ProcessEntity(const Entities::Entity& entity)
 {
 	auto iter = m_entities.find(entity.model);
@@ -121,7 +145,7 @@ void MasterRenderer::ProcessTerrains(const std::vector<Terrain>& terrains)
 	m_terrains = terrains;
 }
 
-void MasterRenderer::ProcessGUIs(const std::vector<Renderer::GUI>& guis)
+void MasterRenderer::ProcessGUIs(const std::vector<GUI>& guis)
 {
 	m_guis = guis;
 }

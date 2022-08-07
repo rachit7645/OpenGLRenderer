@@ -1,5 +1,5 @@
-#ifndef RENDERBUFFER_H
-#define RENDERBUFFER_H
+#ifndef RENDER_BUFFER_H
+#define RENDER_BUFFER_H
 
 #include <GL/glew.h>
 
