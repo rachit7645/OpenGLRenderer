@@ -7,27 +7,11 @@ using namespace Renderer;
 FrameBuffer::FrameBuffer(GLsizei width, GLsizei height)
 {
 	// Generate Framebuffer
-	glGenFramebuffers(1, &frameBufferID);
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
+	glGenFramebuffers(1, &id);
+	glBindFramebuffer(GL_FRAMEBUFFER, id);
 
 	// Generate Texture
-	glGenTextures(1, &textureID);
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D
-	(
-		GL_TEXTURE_2D,
-		0,
-		GL_RGBA,
-		width,
-		height,
-		0,
-		GL_RGBA,
-		GL_UNSIGNED_BYTE,
-		nullptr
-	);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	texture = std::make_shared<Texture>(width, height);
 
 	// Attach texture
 	glFramebufferTexture2D
@@ -35,40 +19,40 @@ FrameBuffer::FrameBuffer(GLsizei width, GLsizei height)
 		GL_FRAMEBUFFER,
 		GL_COLOR_ATTACHMENT0,
 		GL_TEXTURE_2D,
-		textureID,
+		texture->id,
 		0
 	);
 
 	// Generate renderbuffer
-	glGenRenderbuffers(1, &renderBufferID);
-	glBindRenderbuffer(GL_RENDERBUFFER, renderBufferID);
-	glRenderbufferStorage
-	(
-		GL_RENDERBUFFER,
-		GL_DEPTH24_STENCIL8,
-		width,
-		height
-	);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	renderBuffer = std::make_shared<RenderBuffer>(width, height);
 
+	// Attach renderbuffer
 	glFramebufferRenderbuffer
 	(
 		GL_FRAMEBUFFER,
 		GL_DEPTH_STENCIL_ATTACHMENT,
 		GL_RENDERBUFFER,
-		renderBufferID
+		renderBuffer->id
 	);
 
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		LOG_ERROR("Framebuffer [id=", frameBufferID,"] is incomplete!");
+		LOG_ERROR("Framebuffer [ID=", id, "] is incomplete!");
 	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void FrameBuffer::Bind() const
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, id);
+}
+
+void FrameBuffer::Unbind() const
+{
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 FrameBuffer::~FrameBuffer()
 {
-	glDeleteTextures(1, &textureID);
-	glDeleteRenderbuffers(1, &renderBufferID);
-	glDeleteFramebuffers(1, &frameBufferID);
+	glDeleteFramebuffers(1, &id);
 }

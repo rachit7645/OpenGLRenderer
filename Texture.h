@@ -13,6 +13,8 @@ namespace Renderer
 	public:
 		// Loads a texture into memory, then an OpenGL object
 		explicit Texture(const std::string& path);
+		// Empty texture
+		Texture(GLsizei width, GLsizei height);
 		// Destructor 
 		~Texture();
 

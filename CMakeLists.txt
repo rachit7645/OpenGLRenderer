@@ -63,6 +63,7 @@ add_executable(engine
 	GUI.cpp
 	GUIShader.cpp
 	GUIRenderer.cpp
+	RenderBuffer.cpp
 )
 
 target_include_directories(engine PUBLIC libs/)

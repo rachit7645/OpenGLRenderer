@@ -43,6 +43,7 @@ void MasterRenderer::Render(const std::vector<Light>& lights, const Camera& came
 
 	m_entities.clear();
 	m_terrains.clear();
+	m_guis.clear();
 }
 
 void MasterRenderer::RenderEntities()
