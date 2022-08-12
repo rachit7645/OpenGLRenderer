@@ -31,10 +31,12 @@ void MasterRenderer::RenderScene
 	const Player& player
 )
 {
+	// Process stuff
 	ProcessEntities(entities);
 	ProcessTerrains(terrains);
 	ProcessEntity(player);
 
+	// Render
 	Render(lights, camera);
 }
 

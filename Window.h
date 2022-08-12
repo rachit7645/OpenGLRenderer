@@ -11,7 +11,7 @@
 namespace Window
 {
 	// Choosing a 16:9 Resolution
-	constexpr glm::ivec2 DIMENSIONS = { 1024, 576 };
+	constexpr glm::ivec2 DIMENSIONS = {1024, 576};
 	constexpr u32 SDL_WINDOW_FLAGS  = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
 	class SDLWindow

@@ -15,6 +15,7 @@ namespace Renderer
 		// Destructor
 		~UniformBuffer();
 
+		GLuint     slot = 0;
 		GLuint     id   = 0;
 		GLsizeiptr size = 0;
 	};

@@ -56,14 +56,6 @@ namespace Util
 		return distributer(generator);
 	}
 
-	// Clamp a number between two other numbers
-	template<typename T>
-	constexpr void Clamp(T& value, T min, T max)
-	{
-		if (value < min) value = min;
-		if (value > max) value = max;
-	}
-
 	// TODO: Write a custom 2D array wrapper
 	// std::vector<std::vector<T>> is not contiguous in layout
 	// This wrecks havoc with the cpu cache

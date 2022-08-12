@@ -5,29 +5,29 @@
 
 namespace Renderer
 {
-	// FIXME: This class is a mess
 	class Material
 	{
 	public:
-		explicit Material
+		// Default constructor
+		Material() = default;
+		// Specular constructor
+		Material
 		(
-			f32 shineDamper = 1.0f,
-			f32 reflectivity = 0.0f,
-			bool isTransparent = false,
-			bool useFakeLighting = false
+			f32 shineDamper,
+			f32 reflectivity
 		);
-
+		// Transparency constructor
 		Material
 		(
 			bool isTransparent,
 			bool useFakeLighting
 		);
 
-		f32 shineDamper  = 1.0f;					// Shine Damper
-		f32 reflectivity = 0.0f;					// Reflectivity
+		f32 shineDamper  = 1.0f; // Shine Damper
+		f32 reflectivity = 0.0f; // Reflectivity
 
-		bool isTransparent   = false;				// Is Transparent or not
-		bool useFakeLighting = false;				// Use fake lighting or not
+		bool isTransparent   = false; // Is Transparent or not
+		bool useFakeLighting = false; // Use fake lighting or not
 	};
 }
 

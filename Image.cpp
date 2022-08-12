@@ -27,28 +27,40 @@ Image2D::Image2D(const std::string& path)
 
 u8 Image2D::GetRed(int x, int y) const
 {
-	assert(x >= 0 || x < width || y >= 0 || y < height);
+	if(!CheckBounds(x, y))
+	{
+		return 0;
+	}
 
 	return m_data[GetPosition(x, y)];
 }
 
 u8 Image2D::GetGreen(int x, int y) const
 {
-	assert(x >= 0 || x < width || y >= 0 || y < height);
+	if(!CheckBounds(x, y))
+	{
+		return 0;
+	}
 
 	return m_data[GetPosition(x, y) + 1];
 }
 
 u8 Image2D::GetBlue(int x, int y) const
 {
-	assert(x >= 0 || x < width || y >= 0 || y < height);
+	if(!CheckBounds(x, y))
+	{
+		return 0;
+	}
 
 	return m_data[GetPosition(x, y) + 2];
 }
 
 u32 Image2D::GetARGB(int x, int y) const
 {
-	assert(x >= 0 || x < width || y >= 0 || y < height);
+	if(!CheckBounds(x, y))
+	{
+		return 0;
+	}
 
 	ssize_t position = GetPosition(x, y);
 	
@@ -63,6 +75,11 @@ u32 Image2D::GetARGB(int x, int y) const
 ssize_t Image2D::GetPosition(int x, int y) const
 {
 	return (y * width + x) * channels;
+}
+
+bool Image2D::CheckBounds(int x, int y) const
+{
+	return x >= 0 || x < width || y >= 0 || y < height;
 }
 
 Image2D::~Image2D()

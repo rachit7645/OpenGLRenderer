@@ -14,4 +14,6 @@ Light::Light
 	  ambient(ambient, 1.0f),
 	  diffuse(diffuse, 1.0f),
 	  specular(specular, 1.0f),
-	  attenuation(attenuation, 1.0f) {}
+	  attenuation(attenuation, 1.0f)
+{
+}

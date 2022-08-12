@@ -33,16 +33,18 @@ namespace Util
 		// Returns the red component at position GetPosition(x, y)
 		u8 GetRed(int x, int y) const;
 		// Returns the green component at GetPosition(x, y) + 1
-		[[maybe_unused]] u8 GetGreen(int x, int y) const;
+		u8 GetGreen(int x, int y) const;
 		// Returns the blue component at GetPosition(x, y) + 2
-		[[maybe_unused]] u8 GetBlue(int x, int y) const;
+		u8 GetBlue(int x, int y) const;
 		// Returns ARGB value with alpha = 0
-		[[maybe_unused]] u32 GetARGB(int x, int y) const;
+		u32 GetARGB(int x, int y) const;
 	private:
 		u8* m_data;
 
 		// Returns position = (y * width + x) * channels
 		ssize_t GetPosition(int x, int y) const;
+		// Bounds Check
+		bool CheckBounds(int x, int y) const;
 	};
 }
 
