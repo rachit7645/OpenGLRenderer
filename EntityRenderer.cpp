@@ -19,7 +19,7 @@ EntityRenderer::EntityRenderer(StaticShader& shaderRef)
 	shader.Stop();
 }
 
-void EntityRenderer::Render(const std::unordered_map<std::shared_ptr<Model>, std::vector<Entity>>& entities)
+void EntityRenderer::Render(const std::unordered_map<std::shared_ptr<Model>, std::vector<Entity*>>& entities)
 {
 	for (const auto& [model, batch] : entities)
 	{
@@ -68,9 +68,9 @@ void EntityRenderer::BindTextures(const Mesh& mesh)
 	glBindTexture(GL_TEXTURE_2D, textures.specular->id);
 }
 
-void EntityRenderer::PrepareInstance(const Entity& entity)
+void EntityRenderer::PrepareInstance(const Entity* entity)
 {
-	glm::mat4 matrix = Maths::CreateModelMatrix(entity.position, entity.rotation, entity.scale);
+	glm::mat4 matrix = Maths::CreateModelMatrix(entity->position, entity->rotation, entity->scale);
 	shader.LoadModelMatrix(matrix);
 }
 
@@ -82,7 +82,9 @@ void EntityRenderer::UnbindMesh()
 void EntityRenderer::UnbindModel(const std::shared_ptr<Model>& model)
 {
 	if (model->material.isTransparent)
+	{
 		EnableCulling();
+	}
 }
 
 void EntityRenderer::EnableCulling()

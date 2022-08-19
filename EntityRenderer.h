@@ -17,7 +17,7 @@ namespace Renderer
 		Shader::StaticShader& shader;
 
 		// Render THE MAP
-		void Render(const std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>>& entities);
+		void Render(const std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity*>>& entities);
 	private:
 		// Prepare each model for render
 		void PrepareModel(const std::shared_ptr<Model>& model);
@@ -26,7 +26,7 @@ namespace Renderer
 		// Bind Textures
 		void BindTextures(const Mesh& mesh);
 		// Prepare each instance
-		void PrepareInstance(const Entities::Entity& entity);
+		void PrepareInstance(const Entities::Entity* entity);
 		// Unbind the model
 		void UnbindModel(const std::shared_ptr<Model>& model);
 		// Unbind the mesh

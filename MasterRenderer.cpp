@@ -24,11 +24,11 @@ MasterRenderer::MasterRenderer()
 
 void MasterRenderer::RenderScene
 (
-	const std::vector<Entity>& entities,
-	const std::vector<Terrain>& terrains,
+	std::vector<Entity>& entities,
+	std::vector<Terrain>& terrains,
 	const std::vector<Light>& lights,
 	const Camera& camera,
-	const Player& player
+	Player& player
 )
 {
 	// Process stuff
@@ -116,38 +116,44 @@ void MasterRenderer::RenderWaters(const std::vector<WaterTile>& waters)
 	waterShader.Stop();
 }
 
-void MasterRenderer::ProcessEntity(const Entities::Entity& entity)
+void MasterRenderer::ProcessEntity(Entities::Entity& entity)
 {
 	auto iter = m_entities.find(entity.model);
 	if (iter != m_entities.end())
 	{
-		iter->second.push_back(entity);
+		iter->second.push_back(&entity);
 	}
 	else
 	{
-		m_entities[entity.model] = { entity };
+		m_entities[entity.model] = { &entity };
 	}
 }
 
-void MasterRenderer::ProcessEntities(const std::vector<Entity>& entities)
+void MasterRenderer::ProcessEntities(std::vector<Entity>& entities)
 {
-	for (const auto& entity : entities)
+	for (auto& entity : entities)
 	{
 		ProcessEntity(entity);
 	}
 }
 
-void MasterRenderer::ProcessTerrain(const Terrain& terrain)
+void MasterRenderer::ProcessTerrain(Terrain& terrain)
 {
-	m_terrains.push_back(terrain);
+	m_terrains.push_back(&terrain);
 }
 
-void MasterRenderer::ProcessTerrains(const std::vector<Terrain>& terrains)
+void MasterRenderer::ProcessTerrains(std::vector<Terrain>& terrains)
 {
-	m_terrains = terrains;
+	for (auto& terrain : terrains)
+	{
+		m_terrains.push_back(&terrain);
+	}
 }
 
-void MasterRenderer::ProcessGUIs(const std::vector<GUI>& guis)
+void MasterRenderer::ProcessGUIs(std::vector<GUI>& guis)
 {
-	m_guis = guis;
+	for (auto& gui : guis)
+	{
+		m_guis.push_back(&gui);
+	}
 }

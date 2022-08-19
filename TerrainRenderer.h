@@ -14,11 +14,11 @@ namespace Renderer
 		explicit TerrainRenderer(Shader::TerrainShader& shaderRef);
 		Shader::TerrainShader& shader;
 
-		void Render(const std::vector<Terrains::Terrain>& terrains);
+		void Render(const std::vector<Terrains::Terrain*>& terrains);
 	private:
-		void PrepareTerrain(const Terrains::Terrain& terrain);
-		void BindTextures(const Terrains::Terrain& terrain);
-		void LoadModelMatrix(const Terrains::Terrain& terrain);
+		void PrepareTerrain(const Terrains::Terrain* terrain);
+		void BindTextures(const Terrains::Terrain* terrain);
+		void LoadModelMatrix(const Terrains::Terrain* terrain);
 		void UnbindTerrain();
 	};
 }

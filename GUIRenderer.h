@@ -19,7 +19,7 @@ namespace Renderer
 		Shader::GUIShader& shader;
 
 		// Render GUIs
-		void Render(const std::vector<GUI>& guis);
+		void Render(const std::vector<GUI*>& guis);
 	private:
 		VAO vao;
 	};

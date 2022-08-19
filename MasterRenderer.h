@@ -60,26 +60,26 @@ namespace Renderer
 		// Render Scene
 		void RenderScene
 		(
-			const std::vector<Entities::Entity>& entities,
-			const std::vector<Terrains::Terrain>& terrains,
+			std::vector<Entities::Entity>& entities,
+			std::vector<Terrains::Terrain>& terrains,
 			const std::vector<Entities::Light>& lights,
 			const Entities::Camera& camera,
-			const Entities::Player& player
+			Entities::Player& player
 		);
 		// Main render function
 		void Render(const std::vector<Entities::Light>& lights, const Entities::Camera& camera);
 		// Render the water
 		void RenderWaters(const std::vector<Waters::WaterTile>& waters);
 		// Process entities into the entity map
-		void ProcessEntity(const Entities::Entity& entity);
+		void ProcessEntity(Entities::Entity& entity);
 		// Process a vector of entities
-		void ProcessEntities(const std::vector<Entities::Entity>& entities);
+		void ProcessEntities(std::vector<Entities::Entity>& entities);
 		// Process terrains into a vector
-		void ProcessTerrain(const Terrains::Terrain& terrain);
+		void ProcessTerrain(Terrains::Terrain& terrain);
 		// Process a vector of terrains
-		void ProcessTerrains(const std::vector<Terrains::Terrain>& terrains);
+		void ProcessTerrains(std::vector<Terrains::Terrain>& terrains);
 		// Process a vector of GUIs
-		void ProcessGUIs(const std::vector<Renderer::GUI>& guis);
+		void ProcessGUIs(std::vector<Renderer::GUI>& guis);
 	private:
 		// Prepare framebuffer for render
 		void Prepare();
@@ -95,11 +95,11 @@ namespace Renderer
 		void RenderGUIs();
 
 		// The entity map
-		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>> m_entities;
+		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity*>> m_entities;
 		// The terrain vector
-		std::vector<Terrains::Terrain> m_terrains;
+		std::vector<Terrains::Terrain*> m_terrains;
 		// The GUI vector
-		std::vector<Renderer::GUI> m_guis;
+		std::vector<Renderer::GUI*> m_guis;
 		// The Skybox
 		Entities::Skybox m_skybox;
 		// Matrix Uniform Buffer
