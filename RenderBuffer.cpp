@@ -9,7 +9,7 @@ RenderBuffer::RenderBuffer(GLsizei width, GLsizei height)
 	glRenderbufferStorage
 	(
 		GL_RENDERBUFFER,
-		GL_DEPTH24_STENCIL8,
+		GL_DEPTH_COMPONENT24,
 		width,
 		height
 	);

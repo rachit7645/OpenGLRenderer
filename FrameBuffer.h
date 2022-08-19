@@ -2,6 +2,7 @@
 #define FRAMEBUFFER_H
 
 #include <memory>
+#include <optional>
 #include <GL/glew.h>
 
 #include "Texture.h"
@@ -9,6 +10,13 @@
 
 namespace Renderer
 {
+	enum FBType : size_t
+	{
+		Color         = 0,
+		Depth         = 1,
+		ColorAndDepth = 2
+	};
+
 	class FrameBuffer
 	{
 	public:
@@ -18,7 +26,7 @@ namespace Renderer
 		// Default constructor
 		FrameBuffer() = default;
 		// Main constructor
-		FrameBuffer(GLsizei width, GLsizei height);
+		FrameBuffer(GLsizei width, GLsizei height, FBType type);
 		// Destructor
 		~FrameBuffer();
 
@@ -27,10 +35,15 @@ namespace Renderer
 
 		// Framebuffer ID
 		GLuint id = 0;
-		// Texture
-		TxPtr texture;
+		// Textures
+		std::optional<TxPtr> colorTexture;
+		std::optional<TxPtr> depthTexture;
 		// RenderBuffer
-		RdBufPtr renderBuffer;
+		std::optional<RdBufPtr> renderBuffer;
+	private:
+		void CreateColorTexture(GLsizei width, GLsizei height);
+		void CreateDepthTexture(GLsizei width, GLsizei height);
+		void CreateDepthBuffer(GLsizei width, GLsizei height);
 	};
 }
 

@@ -15,6 +15,7 @@
 #include "Imgui.h"
 #include "GUI.h"
 #include "WaterTile.h"
+#include "FrameBuffer.h"
 
 using namespace Window;
 
@@ -28,6 +29,8 @@ using Renderer::Model;
 using Renderer::Material;
 using Renderer::MeshTextures;
 using Renderer::GUI;
+using Renderer::FrameBuffer;
+using Renderer::FBType;
 using Entities::Entity;
 using Entities::Player;
 using Entities::Skybox;
@@ -128,6 +131,9 @@ void SDLWindow::MainLoop()
 
 	Entities::Camera camera(&player);
 	Renderer::MasterRenderer renderer;
+
+	// Check FrameBuffers
+	// auto fb = std::make_shared<FrameBuffer>(1024, 576, FBType::ColorAndDepth);
 
 	startTime = frameStartTime = steady_clock::now();
 

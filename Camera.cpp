@@ -95,7 +95,7 @@ void Camera::CalculatePitch()
 	rotation.x -= static_cast<f32>(mousePos->y * 0.1);
 	if (capPitch)
 	{
-		glm::clamp<f32>(rotation.x, CAMERA_PITCH_MIN, CAMERA_PITCH_MAX);
+		rotation.x = glm::clamp<f32>(rotation.x, CAMERA_PITCH_MIN, CAMERA_PITCH_MAX);
 	}
 }
 
