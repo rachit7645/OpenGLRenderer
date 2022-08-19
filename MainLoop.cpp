@@ -120,8 +120,17 @@ void SDLWindow::MainLoop()
 		);
 	}
 
+	// Check FrameBuffers
+	auto waterFBOs = Waters::WaterFrameBuffers();
+
 	std::vector<GUI> guis;
 	{
+		guis.emplace_back
+		(
+			waterFBOs.reflectionFBO->colorTexture,
+			glm::vec2(-0.5f, 0.5f),
+			glm::vec2(0.5f, 0.5f)
+		);
 	}
 
 	std::vector<WaterTile> waters;
@@ -131,9 +140,6 @@ void SDLWindow::MainLoop()
 
 	Entities::Camera camera(&player);
 	Renderer::MasterRenderer renderer;
-
-	// Check FrameBuffers
-	// auto waterFB = Waters::WaterFrameBuffers();
 
 	startTime = frameStartTime = steady_clock::now();
 
@@ -147,8 +153,13 @@ void SDLWindow::MainLoop()
 		player.Move(Terrains::GetCurrent(terrains, player));
 		camera.Move();
 
+		waterFBOs.BindReflection();
+		renderer.RenderScene(entities, terrains, lights, camera, player);
+
+		waterFBOs.BindDefaultFBO();
 		renderer.RenderScene(entities, terrains, lights, camera, player);
 		renderer.RenderWaters(waters);
+		renderer.RenderGUIs(guis);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

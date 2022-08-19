@@ -28,7 +28,8 @@
 
 namespace Renderer
 {
-	constexpr glm::vec4  GL_CLEAR_COLOR = { 0.53f, 0.81f, 0.92f, 1.0f };
+	constexpr glm::vec4  GL_CLEAR_COLOR = {0.0f, 0.0f, 0.0f, 1.0f};
+	constexpr glm::vec4  GL_SKY_COLOR   = {0.53f, 0.81f, 0.92f, 1.0f};
 	constexpr GLbitfield GL_CLEAR_FLAGS = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
 
 	constexpr f32 FOV           = 70.0f;
@@ -70,6 +71,8 @@ namespace Renderer
 		void Render(const std::vector<Entities::Light>& lights, const Entities::Camera& camera);
 		// Render the water
 		void RenderWaters(const std::vector<Waters::WaterTile>& waters);
+		// Render the guis
+		void RenderGUIs(const std::vector<GUI>& guis);
 		// Process entities into the entity map
 		void ProcessEntity(Entities::Entity& entity);
 		// Process a vector of entities
@@ -78,8 +81,6 @@ namespace Renderer
 		void ProcessTerrain(Terrains::Terrain& terrain);
 		// Process a vector of terrains
 		void ProcessTerrains(std::vector<Terrains::Terrain>& terrains);
-		// Process a vector of GUIs
-		void ProcessGUIs(std::vector<Renderer::GUI>& guis);
 	private:
 		// Prepare framebuffer for render
 		void Prepare();
@@ -91,15 +92,11 @@ namespace Renderer
 		void RenderTerrains();
 		// Render the skybox
 		void RenderSkybox();
-		// Render the guis
-		void RenderGUIs();
 
 		// The entity map
 		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity*>> m_entities;
 		// The terrain vector
 		std::vector<Terrains::Terrain*> m_terrains;
-		// The GUI vector
-		std::vector<Renderer::GUI*> m_guis;
 		// The Skybox
 		Entities::Skybox m_skybox;
 		// Matrix Uniform Buffer

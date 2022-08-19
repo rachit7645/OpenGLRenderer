@@ -68,7 +68,7 @@ void MasterRenderer::Render(const std::vector<Light>& lights, const Camera& came
 void MasterRenderer::RenderEntities()
 {
 	shader.Start();
-	shader.LoadSkyColour(GL_CLEAR_COLOR);
+	shader.LoadSkyColour(GL_SKY_COLOR);
 	renderer.Render(m_entities);
 	shader.Stop();
 }
@@ -76,7 +76,7 @@ void MasterRenderer::RenderEntities()
 void MasterRenderer::RenderTerrains()
 {
 	terrainShader.Start();
-	terrainShader.LoadSkyColour(GL_CLEAR_COLOR);
+	terrainShader.LoadSkyColour(GL_SKY_COLOR);
 	terrainRenderer.Render(m_terrains);
 	terrainShader.Stop();
 }
@@ -88,14 +88,14 @@ void MasterRenderer::RenderSkybox()
 	// Disable depth writing for performance
 	glDepthMask(GL_FALSE);
 	skyboxShader.Start();
-	skyboxShader.LoadFogColor(GL_CLEAR_COLOR);
+	skyboxShader.LoadFogColor(GL_SKY_COLOR);
 	skyboxRenderer.Render(m_skybox);
 	skyboxShader.Stop();
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);
 }
 
-void MasterRenderer::RenderGUIs()
+void MasterRenderer::RenderGUIs(const std::vector<GUI>& guis)
 {
 	// Enable blending
 	glEnable(GL_BLEND);
@@ -103,7 +103,7 @@ void MasterRenderer::RenderGUIs()
 	// Disable depth test
 	glDisable(GL_DEPTH_TEST);
 	guiShader.Start();
-	guiRenderer.Render(m_guis);
+	guiRenderer.Render(guis);
 	guiShader.Stop();
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
@@ -147,13 +147,5 @@ void MasterRenderer::ProcessTerrains(std::vector<Terrain>& terrains)
 	for (auto& terrain : terrains)
 	{
 		m_terrains.push_back(&terrain);
-	}
-}
-
-void MasterRenderer::ProcessGUIs(std::vector<GUI>& guis)
-{
-	for (auto& gui : guis)
-	{
-		m_guis.push_back(&gui);
 	}
 }
