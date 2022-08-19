@@ -66,6 +66,7 @@ add_executable(engine
 	RenderBuffer.cpp
 	WaterShader.cpp
 	WaterRenderer.cpp
+	WaterFrameBuffers.cpp
 )
 
 target_include_directories(engine PUBLIC libs/)

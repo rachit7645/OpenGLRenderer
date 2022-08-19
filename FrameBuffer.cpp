@@ -1,10 +1,16 @@
 #include "FrameBuffer.h"
 
 #include "Log.h"
+#include "Window.h"
 
 using namespace Renderer;
 
+using Window::DIMENSIONS;
+
 FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type)
+	: width(width),
+	  height(height),
+	  type(type)
 {
 	// Generate Framebuffer
 	glGenFramebuffers(1, &id);
@@ -13,19 +19,22 @@ FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type)
 	switch (type)
 	{
 	case FBType::Color:
-		CreateColorTexture(width, height);
-		CreateDepthBuffer(width, height);
+		CreateColorTexture();
+		CreateDepthBuffer();
 		break;
 
 	case FBType::Depth:
-		CreateDepthTexture(width, height);
+		CreateDepthTexture();
 		// FIXME: RenderBuffer not supported for color attachments
 		break;
 
 	case FBType::ColorAndDepth:
-		CreateColorTexture(width, height);
-		CreateDepthTexture(width, height);
+		CreateColorTexture();
+		CreateDepthTexture();
 		break;
+
+	case FBType::None:
+		LOG_ERROR("FBType is equal to \"None\"");
 	}
 
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -35,7 +44,7 @@ FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void FrameBuffer::CreateColorTexture(GLsizei width, GLsizei height)
+void FrameBuffer::CreateColorTexture()
 {
 	colorTexture = std::make_shared<Texture>
 	(
@@ -51,12 +60,12 @@ void FrameBuffer::CreateColorTexture(GLsizei width, GLsizei height)
 		GL_FRAMEBUFFER,
 		GL_COLOR_ATTACHMENT0,
 		GL_TEXTURE_2D,
-		colorTexture->get()->id,
+		colorTexture->id,
 		0
 	);
 }
 
-void FrameBuffer::CreateDepthTexture(GLsizei width, GLsizei height)
+void FrameBuffer::CreateDepthTexture()
 {
 	depthTexture = std::make_shared<Texture>
 	(
@@ -72,31 +81,34 @@ void FrameBuffer::CreateDepthTexture(GLsizei width, GLsizei height)
 		GL_FRAMEBUFFER,
 		GL_DEPTH_ATTACHMENT,
 		GL_TEXTURE_2D,
-		depthTexture->get()->id,
+		depthTexture->id,
 		0
 	);
 }
 
-void FrameBuffer::CreateDepthBuffer(GLsizei width, GLsizei height)
+void FrameBuffer::CreateDepthBuffer()
 {
 	renderBuffer = std::make_shared<RenderBuffer>(width, height);
 	glFramebufferRenderbuffer
 	(
 		GL_FRAMEBUFFER,
-		GL_DEPTH_STENCIL_ATTACHMENT,
+		GL_DEPTH_ATTACHMENT,
 		GL_RENDERBUFFER,
-		renderBuffer->get()->id
+		renderBuffer->id
 	);
 }
 
 void FrameBuffer::Bind() const
 {
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, id);
+	glViewport(0, 0, width, height);
 }
 
 void FrameBuffer::Unbind() const
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, DIMENSIONS.x, DIMENSIONS.y);
 }
 
 FrameBuffer::~FrameBuffer()

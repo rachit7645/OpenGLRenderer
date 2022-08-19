@@ -15,7 +15,7 @@
 #include "Imgui.h"
 #include "GUI.h"
 #include "WaterTile.h"
-#include "FrameBuffer.h"
+#include "WaterFrameBuffers.h"
 
 using namespace Window;
 
@@ -133,7 +133,7 @@ void SDLWindow::MainLoop()
 	Renderer::MasterRenderer renderer;
 
 	// Check FrameBuffers
-	// auto fb = std::make_shared<FrameBuffer>(1024, 576, FBType::ColorAndDepth);
+	// auto waterFB = Waters::WaterFrameBuffers();
 
 	startTime = frameStartTime = steady_clock::now();
 
