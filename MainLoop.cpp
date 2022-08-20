@@ -163,22 +163,32 @@ void SDLWindow::MainLoop()
 		camera.Move();
 
 		// Begin render
-		renderer.BeginFrame(entities, terrains, lights, camera, player);
+		renderer.BeginFrame(entities, terrains, lights, player);
 
 		// Enable clip plane 0
 		glEnable(GL_CLIP_DISTANCE0);
+
 		// Reflection pass
 		waterFBOs.BindReflection();
-		renderer.RenderScene(glm::vec4(0, 1, 0, -waters[0].position.y));
+		// Move the camera
+		f32 distance = 2.0f * (camera.position.y - waters[0].position.y);
+		camera.position.y -= distance;
+		camera.InvertPitch();
+		renderer.RenderScene(camera, glm::vec4(0, 1, 0, -waters[0].position.y));
+		// Move it back to its original position
+		camera.position.y += distance;
+		camera.InvertPitch();
+
 		// Refraction pass
 		waterFBOs.BindRefraction();
-		renderer.RenderScene(glm::vec4(0, -1, 0, waters[0].position.y));
+		renderer.RenderScene(camera, glm::vec4(0, -1, 0, waters[0].position.y));
 
 		// Disable clip plane 0
 		glDisable(GL_CLIP_DISTANCE0);
+
 		// Main render pass
 		waterFBOs.BindDefaultFBO();
-		renderer.RenderScene();
+		renderer.RenderScene(camera);
 		renderer.RenderWaters(waters);
 		renderer.RenderGUIs(guis);
 

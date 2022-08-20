@@ -65,11 +65,10 @@ namespace Renderer
 			std::vector<Entities::Entity>& entities,
 			std::vector<Terrains::Terrain>& terrains,
 			const std::vector<Entities::Light>& lights,
-			const Entities::Camera& camera,
 			Entities::Player& player
 		);
 		// Render Scene
-		void RenderScene(const glm::vec4& clipPlane = glm::vec4(0.0f));
+		void RenderScene(const Entities::Camera& camera, const glm::vec4& clipPlane = glm::vec4(0.0f));
 		// Render the water
 		void RenderWaters(const std::vector<Waters::WaterTile>& waters);
 		// Render the guis
@@ -86,7 +85,7 @@ namespace Renderer
 		void ProcessTerrains(std::vector<Terrains::Terrain>& terrains);
 	private:
 		// Prepare render
-		void Prepare(const glm::vec4& clipPlane);
+		void Prepare(const Entities::Camera& camera, const glm::vec4& clipPlane);
 		// Render entities
 		void RenderEntities();
 		// Render Terrains

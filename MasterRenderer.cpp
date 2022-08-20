@@ -29,7 +29,6 @@ void MasterRenderer::BeginFrame
 	std::vector<Entity>& entities,
 	std::vector<Terrain>& terrains,
 	const std::vector<Light>& lights,
-	const Camera& camera,
 	Player& player
 )
 {
@@ -37,13 +36,12 @@ void MasterRenderer::BeginFrame
 	ProcessTerrains(terrains);
 	ProcessEntity(player);
 
-	m_matrices->LoadView(camera);
 	m_lights->LoadLights(lights);
 }
 
-void MasterRenderer::RenderScene(const glm::vec4& clipPlane)
+void MasterRenderer::RenderScene(const Camera& camera, const glm::vec4& clipPlane)
 {
-	Prepare(clipPlane);
+	Prepare(camera, clipPlane);
 
 	RenderEntities();
 	RenderTerrains();
@@ -57,11 +55,12 @@ void MasterRenderer::EndFrame()
 	m_terrains.clear();
 }
 
-void MasterRenderer::Prepare(const glm::vec4& clipPlane)
+void MasterRenderer::Prepare(const Camera& camera, const glm::vec4& clipPlane)
 {
 	glClearColor(GL_CLEAR_COLOR.r, GL_CLEAR_COLOR.g, GL_CLEAR_COLOR.b, GL_CLEAR_COLOR.a);
 	glClear(GL_CLEAR_FLAGS);
 
+	m_matrices->LoadView(camera);
 	m_shared->LoadClipPlane(clipPlane);
 }
 

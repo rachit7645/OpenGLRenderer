@@ -103,3 +103,8 @@ void Camera::CalculateAAP()
 {
 	angleAroundPlayer -= static_cast<f32>(mousePos->x * 0.3);
 }
+
+void Camera::InvertPitch()
+{
+	rotation.x = -rotation.x;
+}

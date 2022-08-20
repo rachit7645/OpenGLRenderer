@@ -26,6 +26,8 @@ namespace Entities
 
 		// Camera update function
 		void Move();
+		// Invert pitch
+		void InvertPitch();
 	private:
 		glm::ivec2* mousePos;
 		glm::ivec2* mouseScroll;
