@@ -42,7 +42,7 @@ using Waters::WaterTile;
 // TODO: Move MainLoop to separate class, move data to said class
 // TODO: Live editing of entities, terrains, lights, etc. with ImGui
 
-constexpr auto MAX_ENTITIES = 100;
+constexpr auto MAX_ENTITIES = 75;
 
 void SDLWindow::MainLoop()
 {
@@ -145,26 +145,37 @@ void SDLWindow::MainLoop()
 
 	while (true)
 	{
+		// Prepare ImGUI
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(window);
 		ImGui::NewFrame();
 
+		// Update
 		ImGuiDisplay();
 		player.Move(Terrains::GetCurrent(terrains, player));
 		camera.Move();
 
-		waterFBOs.BindReflection();
-		renderer.RenderScene(entities, terrains, lights, camera, player);
+		// Begin render
+		renderer.BeginFrame(entities, terrains, lights, camera, player);
 
+		// Water reflection pass
+		waterFBOs.BindReflection();
+		renderer.RenderScene();
+
+		// Main render pass
 		waterFBOs.BindDefaultFBO();
-		renderer.RenderScene(entities, terrains, lights, camera, player);
+		renderer.RenderScene();
 		renderer.RenderWaters(waters);
 		renderer.RenderGUIs(guis);
 
+		// End render
+		renderer.EndFrame();
+
+		// ImGUI render pass
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-		SDL_GL_SwapWindow(window);
 
+		SDL_GL_SwapWindow(window);
 		CalculateFPS();
 		if (PollEvents()) break;
 	}

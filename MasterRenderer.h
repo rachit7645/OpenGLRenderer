@@ -28,7 +28,7 @@
 
 namespace Renderer
 {
-	constexpr glm::vec4  GL_CLEAR_COLOR = {0.0f, 0.0f, 0.0f, 1.0f};
+	constexpr glm::vec4  GL_CLEAR_COLOR = {0.0f,  0.0f,  0.0f,  1.0f};
 	constexpr glm::vec4  GL_SKY_COLOR   = {0.53f, 0.81f, 0.92f, 1.0f};
 	constexpr GLbitfield GL_CLEAR_FLAGS = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
 
@@ -58,8 +58,8 @@ namespace Renderer
 		Shader::WaterShader     waterShader;
 		Renderer::WaterRenderer waterRenderer;
 
-		// Render Scene
-		void RenderScene
+		// Prepare frame
+		void BeginFrame
 		(
 			std::vector<Entities::Entity>& entities,
 			std::vector<Terrains::Terrain>& terrains,
@@ -67,12 +67,14 @@ namespace Renderer
 			const Entities::Camera& camera,
 			Entities::Player& player
 		);
-		// Main render function
-		void Render(const std::vector<Entities::Light>& lights, const Entities::Camera& camera);
+		// Render Scene
+		void RenderScene();
 		// Render the water
 		void RenderWaters(const std::vector<Waters::WaterTile>& waters);
 		// Render the guis
 		void RenderGUIs(const std::vector<GUI>& guis);
+		// Finish frame
+		void EndFrame();
 		// Process entities into the entity map
 		void ProcessEntity(Entities::Entity& entity);
 		// Process a vector of entities
@@ -84,8 +86,6 @@ namespace Renderer
 	private:
 		// Prepare framebuffer for render
 		void Prepare();
-		// Update buffers, etc.
-		void Update(const std::vector<Entities::Light>& lights, const Entities::Camera& camera);
 		// Render entities
 		void RenderEntities();
 		// Render Terrains

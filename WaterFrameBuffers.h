@@ -9,7 +9,7 @@
 namespace Waters
 {
 	constexpr glm::ivec2 WATER_REFLECTION_SIZE = {320, 180};
-	constexpr glm::ivec2 WATER_REFRACTION_SIZE = {1280, 720};
+	constexpr glm::ivec2 WATER_REFRACTION_SIZE = {640, 360};
 
 	class WaterFrameBuffers
 	{

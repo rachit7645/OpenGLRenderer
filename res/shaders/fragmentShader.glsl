@@ -53,7 +53,7 @@ void main()
 	}
 	vec4 specularColor = texture(specularTexture, txCoords);
 
-	vec4 totalAmbient  = vec4(0.0f);	
+	vec4 totalAmbient  = vec4(0.0f);
 	vec4 totalDiffuse  = vec4(0.0f);
 	vec4 totalSpecular = vec4(0.0f);
 
@@ -70,7 +70,7 @@ void main()
 		// Calculate curSpec
 		vec4 curSpec = CalculateSpecular(i) * specularColor * attFactor;
 		// Add it if diffuse != 0.0f
-		totalSpecular += curSpec * WhenNotEqual(curDiff, vec4(0.0));
+		totalSpecular += curSpec * WhenNotEqual(curDiff, vec4(0.0f));
 	}
 
 	// Add all lighting

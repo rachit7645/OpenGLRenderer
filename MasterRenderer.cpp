@@ -22,7 +22,7 @@ MasterRenderer::MasterRenderer()
 	m_matrices->LoadProjection(glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
 }
 
-void MasterRenderer::RenderScene
+void MasterRenderer::BeginFrame
 (
 	std::vector<Entity>& entities,
 	std::vector<Terrain>& terrains,
@@ -31,38 +31,34 @@ void MasterRenderer::RenderScene
 	Player& player
 )
 {
-	// Process stuff
 	ProcessEntities(entities);
 	ProcessTerrains(terrains);
 	ProcessEntity(player);
 
-	// Render
-	Render(lights, camera);
+	m_matrices->LoadView(camera);
+	m_lights->LoadLight(lights);
+}
+
+void MasterRenderer::RenderScene()
+{
+	Prepare();
+
+	RenderEntities();
+	RenderTerrains();
+	RenderSkybox();
+}
+
+void MasterRenderer::EndFrame()
+{
+	// Clear internal render data
+	m_entities.clear();
+	m_terrains.clear();
 }
 
 void MasterRenderer::Prepare()
 {
 	glClearColor(GL_CLEAR_COLOR.r, GL_CLEAR_COLOR.g, GL_CLEAR_COLOR.b, GL_CLEAR_COLOR.a);
 	glClear(GL_CLEAR_FLAGS);
-}
-
-void MasterRenderer::Update(const std::vector<Light>& lights, const Camera& camera)
-{
-	m_matrices->LoadView(camera);
-	m_lights->LoadLight(lights);
-}
-
-void MasterRenderer::Render(const std::vector<Light>& lights, const Camera& camera)
-{
-	Prepare();
-	Update(lights, camera);
-
-	RenderEntities();
-	RenderTerrains();
-	RenderSkybox();
-
-	m_entities.clear();
-	m_terrains.clear();
 }
 
 void MasterRenderer::RenderEntities()
@@ -116,7 +112,7 @@ void MasterRenderer::RenderWaters(const std::vector<WaterTile>& waters)
 	waterShader.Stop();
 }
 
-void MasterRenderer::ProcessEntity(Entities::Entity& entity)
+void MasterRenderer::ProcessEntity(Entity& entity)
 {
 	auto iter = m_entities.find(entity.model);
 	if (iter != m_entities.end())
