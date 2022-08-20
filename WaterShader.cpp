@@ -10,10 +10,19 @@ WaterShader::WaterShader()
 
 void WaterShader::GetUniformLocations()
 {
-	uniforms["modelMatrix"] = GetUniformLocation("modelMatrix");
+	uniforms["modelMatrix"]  = GetUniformLocation("modelMatrix");
+	uniforms["reflectionTx"] = GetUniformLocation("reflectionTx");
+	uniforms["refractionTx"] = GetUniformLocation("refractionTx");
+
 }
 
 void WaterShader::LoadModelMatrix(const glm::mat4& matrix)
 {
 	LoadUniform(uniforms["modelMatrix"], matrix);
+}
+
+void WaterShader::ConnectTextureUnits()
+{
+	LoadUniform(uniforms["reflectionTx"], 0);
+	LoadUniform(uniforms["refractionTx"], 1);
 }

@@ -40,7 +40,7 @@ namespace Util
 	template<typename T>
 	T Rand_Range(T min, T max)
 	{
-		static thread_local std::mt19937_64 generator(777);
+		static thread_local std::mt19937_64 generator(69420);
 		std::uniform_real_distribution<T> distributer(min, max);
 		return distributer(generator);
 	}

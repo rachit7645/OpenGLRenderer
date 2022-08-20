@@ -26,6 +26,7 @@
 #include "WaterTile.h"
 #include "Player.h"
 #include "SharedBuffer.h"
+#include "WaterFrameBuffers.h"
 
 namespace Renderer
 {
@@ -70,7 +71,7 @@ namespace Renderer
 		// Render Scene
 		void RenderScene(const Entities::Camera& camera, const glm::vec4& clipPlane = glm::vec4(0.0f));
 		// Render the water
-		void RenderWaters(const std::vector<Waters::WaterTile>& waters);
+		void RenderWaters(const std::vector<Waters::WaterTile>& waters, const Waters::WaterFrameBuffers& waterFBOs);
 		// Render the guis
 		void RenderGUIs(const std::vector<GUI>& guis);
 		// Finish frame

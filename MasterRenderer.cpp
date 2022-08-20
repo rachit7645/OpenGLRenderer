@@ -105,10 +105,10 @@ void MasterRenderer::RenderGUIs(const std::vector<GUI>& guis)
 	glDisable(GL_BLEND);
 }
 
-void MasterRenderer::RenderWaters(const std::vector<WaterTile>& waters)
+void MasterRenderer::RenderWaters(const std::vector<WaterTile>& waters, const Waters::WaterFrameBuffers& waterFBOs)
 {
 	waterShader.Start();
-	waterRenderer.Render(waters);
+	waterRenderer.Render(waters, waterFBOs);
 	waterShader.Stop();
 }
 

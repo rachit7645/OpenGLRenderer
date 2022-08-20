@@ -7,6 +7,7 @@
 #include "WaterShader.h"
 #include "VertexArray.h"
 #include "WaterTile.h"
+#include "WaterFrameBuffers.h"
 
 namespace Renderer
 {
@@ -18,8 +19,12 @@ namespace Renderer
 		explicit WaterRenderer(Shader::WaterShader& shader);
 		Shader::WaterShader& shader;
 
-		void Render(const std::vector<Waters::WaterTile>& waters);
+		void Render(const std::vector<Waters::WaterTile>& waters, const Waters::WaterFrameBuffers& waterFBOs);
 	private:
+		void Prepare(const Waters::WaterFrameBuffers& waterFBOs);
+		void PrepareWater(const Waters::WaterTile& water);
+		void Unbind();
+
 		VAO vao;
 	};
 }

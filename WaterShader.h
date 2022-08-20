@@ -17,6 +17,7 @@ namespace Shader
 		WaterShader();
 
 		void LoadModelMatrix(const glm::mat4& matrix);
+		void ConnectTextureUnits();
 
 		void GetUniformLocations() override;
 	private:

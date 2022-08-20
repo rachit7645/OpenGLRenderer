@@ -42,7 +42,7 @@ using Waters::WaterTile;
 // TODO: Move MainLoop to separate class, move data to said class
 // TODO: Live editing of entities, terrains, lights, etc. with ImGui
 
-constexpr auto MAX_ENTITIES = 75;
+constexpr auto MAX_ENTITIES = 50;
 
 void SDLWindow::MainLoop()
 {
@@ -70,7 +70,7 @@ void SDLWindow::MainLoop()
 	// All objects go here
 	std::vector<Terrain> terrains;
 	{
-		terrains.emplace_back("gfx/heightMap.png", glm::vec2(0.0f, 0.0f), textures);
+		terrains.emplace_back("gfx/hMapWtr.bmp", glm::vec2(0.0f, 0.0f), textures);
 	}
 
 	std::vector<Entity> entities;
@@ -95,7 +95,7 @@ void SDLWindow::MainLoop()
 	Player player
 	(
 		playerModel,
-		glm::vec3(250.0f, 0.0f, 235.0f),
+		glm::vec3(67.0f, 0.0f, 73.0f),
 		glm::vec3(0.0f, 180.0f, 0.0f),
 		1.0f
 	);
@@ -125,6 +125,7 @@ void SDLWindow::MainLoop()
 
 	std::vector<GUI> guis;
 	{
+		/* Use for debugging
 		guis.emplace_back
 		(
 			waterFBOs.reflectionFBO->colorTexture,
@@ -137,12 +138,12 @@ void SDLWindow::MainLoop()
 			waterFBOs.refractionFBO->colorTexture,
 			glm::vec2(-0.5f, -0.5f),
 			glm::vec2(0.5f, 0.5f)
-		);
+		); */
 	}
 
 	std::vector<WaterTile> waters;
 	{
-		waters.emplace_back(glm::vec3(185.0f, 3.2f, 240.0f));
+		waters.emplace_back(glm::vec3(67.0f, 6.0f, 73.0f));
 	}
 
 	Entities::Camera camera(&player);
@@ -174,14 +175,14 @@ void SDLWindow::MainLoop()
 		f32 distance = 2.0f * (camera.position.y - waters[0].position.y);
 		camera.position.y -= distance;
 		camera.InvertPitch();
-		renderer.RenderScene(camera, glm::vec4(0, 1, 0, -waters[0].position.y));
+		renderer.RenderScene(camera, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].position.y));
 		// Move it back to its original position
 		camera.position.y += distance;
 		camera.InvertPitch();
 
 		// Refraction pass
 		waterFBOs.BindRefraction();
-		renderer.RenderScene(camera, glm::vec4(0, -1, 0, waters[0].position.y));
+		renderer.RenderScene(camera, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].position.y));
 
 		// Disable clip plane 0
 		glDisable(GL_CLIP_DISTANCE0);
@@ -189,7 +190,7 @@ void SDLWindow::MainLoop()
 		// Main render pass
 		waterFBOs.BindDefaultFBO();
 		renderer.RenderScene(camera);
-		renderer.RenderWaters(waters);
+		renderer.RenderWaters(waters, waterFBOs);
 		renderer.RenderGUIs(guis);
 
 		// End render
