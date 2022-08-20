@@ -21,7 +21,6 @@ namespace Shader
 		void LoadModelMatrix(const glm::mat4& matrix);
 
 		// Object loading functions
-		void LoadSkyColour(const glm::vec4& skyColour);
 		void ConnectTextureUnits();
 
 		void GetUniformLocations() override;

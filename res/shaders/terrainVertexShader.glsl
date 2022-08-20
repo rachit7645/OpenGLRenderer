@@ -29,6 +29,12 @@ layout(std140, binding = 1) uniform Lights
 	Light lights[MAX_LIGHTS];
 };
 
+layout(std140, binding = 2) uniform Shared
+{
+	vec4 clipPlane;
+	vec4 skyColor;
+};
+
 uniform mat4 modelMatrix;
 
 out vec4  worldPosition;
@@ -42,10 +48,11 @@ void CalculateVisibility(vec4 posRelToCam);
 
 void main() 
 {
-	worldPosition    = modelMatrix      * vec4(position, 1.0f);
-	vec4 posRelToCam = viewMatrix       * worldPosition;
-	gl_Position      = projectionMatrix * posRelToCam;
-	txCoords         = textureCoords;
+	worldPosition      = modelMatrix      * vec4(position, 1.0f);
+	vec4 posRelToCam   = viewMatrix       * worldPosition;
+	gl_Position        = projectionMatrix * posRelToCam;
+	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
+	txCoords           = textureCoords;
 	
 	CalculateLighting();
 	CalculateVisibility(posRelToCam);

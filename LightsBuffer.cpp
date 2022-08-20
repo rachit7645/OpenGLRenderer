@@ -15,7 +15,7 @@ LightsBuffer::LightsBuffer()
 {
 }
 
-void LightsBuffer::LoadLight(const std::vector<Light>& lights)
+void LightsBuffer::LoadLights(const std::vector<Light>& lights)
 {
 	static const Light emptyLight;
 

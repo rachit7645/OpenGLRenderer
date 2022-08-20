@@ -8,6 +8,7 @@ layout(std140, binding = 0) uniform Matrices
 	mat4 viewMatrix;
 	vec4 cameraPos;
 };
+
 uniform mat4 modelMatrix;
 
 out vec3 txCoords;

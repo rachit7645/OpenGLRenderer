@@ -25,6 +25,7 @@
 #include "WaterRenderer.h"
 #include "WaterTile.h"
 #include "Player.h"
+#include "SharedBuffer.h"
 
 namespace Renderer
 {
@@ -68,7 +69,7 @@ namespace Renderer
 			Entities::Player& player
 		);
 		// Render Scene
-		void RenderScene();
+		void RenderScene(const glm::vec4& clipPlane = glm::vec4(0.0f));
 		// Render the water
 		void RenderWaters(const std::vector<Waters::WaterTile>& waters);
 		// Render the guis
@@ -84,8 +85,8 @@ namespace Renderer
 		// Process a vector of terrains
 		void ProcessTerrains(std::vector<Terrains::Terrain>& terrains);
 	private:
-		// Prepare framebuffer for render
-		void Prepare();
+		// Prepare render
+		void Prepare(const glm::vec4& clipPlane);
 		// Render entities
 		void RenderEntities();
 		// Render Terrains
@@ -101,8 +102,10 @@ namespace Renderer
 		Entities::Skybox m_skybox;
 		// Matrix Uniform Buffer
 		std::shared_ptr<MatrixBuffer> m_matrices;
-		// Lights uniform Buffer
+		// Lights Uniform Buffer
 		std::shared_ptr<LightsBuffer> m_lights;
+		// Shared Uniform Buffer
+		std::shared_ptr<SharedBuffer> m_shared;
 	};
 }
 

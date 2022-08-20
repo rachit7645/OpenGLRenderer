@@ -131,6 +131,13 @@ void SDLWindow::MainLoop()
 			glm::vec2(-0.5f, 0.5f),
 			glm::vec2(0.5f, 0.5f)
 		);
+
+		guis.emplace_back
+		(
+			waterFBOs.refractionFBO->colorTexture,
+			glm::vec2(-0.5f, -0.5f),
+			glm::vec2(0.5f, 0.5f)
+		);
 	}
 
 	std::vector<WaterTile> waters;
@@ -158,10 +165,17 @@ void SDLWindow::MainLoop()
 		// Begin render
 		renderer.BeginFrame(entities, terrains, lights, camera, player);
 
-		// Water reflection pass
+		// Enable clip plane 0
+		glEnable(GL_CLIP_DISTANCE0);
+		// Reflection pass
 		waterFBOs.BindReflection();
-		renderer.RenderScene();
+		renderer.RenderScene(glm::vec4(0, 1, 0, -waters[0].position.y));
+		// Refraction pass
+		waterFBOs.BindRefraction();
+		renderer.RenderScene(glm::vec4(0, -1, 0, waters[0].position.y));
 
+		// Disable clip plane 0
+		glDisable(GL_CLIP_DISTANCE0);
 		// Main render pass
 		waterFBOs.BindDefaultFBO();
 		renderer.RenderScene();

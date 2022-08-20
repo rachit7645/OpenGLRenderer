@@ -17,9 +17,11 @@ MasterRenderer::MasterRenderer()
 	  guiRenderer(guiShader),
 	  waterRenderer(waterShader),
 	  m_matrices(std::make_shared<MatrixBuffer>()),
-	  m_lights(std::make_shared<LightsBuffer>())
+	  m_lights(std::make_shared<LightsBuffer>()),
+	  m_shared(std::make_shared<SharedBuffer>())
 {
 	m_matrices->LoadProjection(glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
+	m_shared->LoadSkyColor(GL_SKY_COLOR);
 }
 
 void MasterRenderer::BeginFrame
@@ -36,12 +38,12 @@ void MasterRenderer::BeginFrame
 	ProcessEntity(player);
 
 	m_matrices->LoadView(camera);
-	m_lights->LoadLight(lights);
+	m_lights->LoadLights(lights);
 }
 
-void MasterRenderer::RenderScene()
+void MasterRenderer::RenderScene(const glm::vec4& clipPlane)
 {
-	Prepare();
+	Prepare(clipPlane);
 
 	RenderEntities();
 	RenderTerrains();
@@ -55,16 +57,17 @@ void MasterRenderer::EndFrame()
 	m_terrains.clear();
 }
 
-void MasterRenderer::Prepare()
+void MasterRenderer::Prepare(const glm::vec4& clipPlane)
 {
 	glClearColor(GL_CLEAR_COLOR.r, GL_CLEAR_COLOR.g, GL_CLEAR_COLOR.b, GL_CLEAR_COLOR.a);
 	glClear(GL_CLEAR_FLAGS);
+
+	m_shared->LoadClipPlane(clipPlane);
 }
 
 void MasterRenderer::RenderEntities()
 {
 	shader.Start();
-	shader.LoadSkyColour(GL_SKY_COLOR);
 	renderer.Render(m_entities);
 	shader.Stop();
 }
@@ -72,7 +75,6 @@ void MasterRenderer::RenderEntities()
 void MasterRenderer::RenderTerrains()
 {
 	terrainShader.Start();
-	terrainShader.LoadSkyColour(GL_SKY_COLOR);
 	terrainRenderer.Render(m_terrains);
 	terrainShader.Stop();
 }
@@ -84,7 +86,6 @@ void MasterRenderer::RenderSkybox()
 	// Disable depth writing for performance
 	glDepthMask(GL_FALSE);
 	skyboxShader.Start();
-	skyboxShader.LoadFogColor(GL_SKY_COLOR);
 	skyboxRenderer.Render(m_skybox);
 	skyboxShader.Stop();
 	glDepthMask(GL_TRUE);
