@@ -4,7 +4,6 @@
 #include <memory>
 
 #include "Texture.h"
-#include "Util.h" 
 
 namespace Renderer
 {
@@ -16,11 +15,7 @@ namespace Renderer
 		// Default Constructor
 		MeshTextures() = default;
 		// Main Constructor
-		MeshTextures(TxPtr diffuse, TxPtr specular)
-			: diffuse(std::move(diffuse)),
-			  specular(std::move(specular))
-		{
-		}
+		MeshTextures(TxPtr diffuse, TxPtr specular);
 
 		TxPtr diffuse;
 		TxPtr specular;

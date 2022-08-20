@@ -3,7 +3,6 @@
 
 #include <memory>
 
-#include "Util.h"
 #include "Texture.h"
 
 namespace Terrains
@@ -12,6 +11,9 @@ namespace Terrains
 	{
 	public:
 		using TxPtr = std::shared_ptr<Renderer::Texture>;
+		// Default constructor
+		TerrainTextures() = default;
+		// Main constructor
 		TerrainTextures
 		(
 			TxPtr background,
@@ -19,14 +21,7 @@ namespace Terrains
 			TxPtr gTexture,
 			TxPtr bTexture,
 			TxPtr blendMap
-		)
-			: background(std::move(background)),
-			  rTexture(std::move(rTexture)),
-			  gTexture(std::move(gTexture)),
-			  bTexture(std::move(bTexture)),
-			  blendMap(std::move(blendMap))
-		{
-		}
+		);
 
 		TxPtr background;
 		TxPtr rTexture;

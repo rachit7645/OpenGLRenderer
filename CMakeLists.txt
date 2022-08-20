@@ -68,6 +68,9 @@ add_executable(engine
 	WaterRenderer.cpp
 	WaterFrameBuffers.cpp
 	SharedBuffer.cpp
+	MeshTextures.cpp
+	TerrainTextures.cpp
+	WaterTile.cpp
 )
 
 target_include_directories(engine PUBLIC libs/)

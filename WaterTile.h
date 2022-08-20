@@ -13,10 +13,7 @@ namespace Waters
 		// Default constructor
 		WaterTile() = default;
 		// Main constructor
-		WaterTile(const glm::vec3& position)
-			: position(position)
-		{
-		}
+		explicit WaterTile(const glm::vec3& position);
 
 		// X: X Pos
 		// Y: Height
