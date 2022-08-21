@@ -14,7 +14,8 @@ namespace Renderer
 		None          = 0,
 		Color         = 1,
 		Depth         = 2,
-		ColorAndDepth = 3
+		ColorAndDepth = 3,
+		Empty         = 4
 	};
 
 	class FrameBuffer
@@ -43,11 +44,13 @@ namespace Renderer
 		// Textures
 		TxPtr colorTexture;
 		TxPtr depthTexture;
-		// RenderBuffer
-		RdBufPtr renderBuffer;
+		// RenderBuffers
+		RdBufPtr colorRenderBuffer;
+		RdBufPtr depthRenderBuffer;
 	private:
 		void CreateColorTexture();
 		void CreateDepthTexture();
+		void CreateColorBuffer();
 		void CreateDepthBuffer();
 	};
 }

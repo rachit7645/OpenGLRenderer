@@ -2,14 +2,14 @@
 
 using namespace Renderer;
 
-RenderBuffer::RenderBuffer(GLsizei width, GLsizei height)
+RenderBuffer::RenderBuffer(GLsizei width, GLsizei height, GLenum internalformat)
 {
 	glGenRenderbuffers(1, &id);
 	glBindRenderbuffer(GL_RENDERBUFFER, id);
 	glRenderbufferStorage
 	(
 		GL_RENDERBUFFER,
-		GL_DEPTH_COMPONENT24,
+		internalformat,
 		width,
 		height
 	);

@@ -24,13 +24,18 @@ FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type)
 		break;
 
 	case FBType::Depth:
+		CreateColorBuffer();
 		CreateDepthTexture();
-		// FIXME: RenderBuffer not supported for color attachments
 		break;
 
 	case FBType::ColorAndDepth:
 		CreateColorTexture();
 		CreateDepthTexture();
+		break;
+
+	case Empty:
+		CreateColorBuffer();
+		CreateDepthBuffer();
 		break;
 
 	case FBType::None:
@@ -86,15 +91,39 @@ void FrameBuffer::CreateDepthTexture()
 	);
 }
 
+void FrameBuffer::CreateColorBuffer()
+{
+	colorRenderBuffer = std::make_shared<RenderBuffer>
+	(
+		width,
+		height,
+		GL_RGBA
+	);
+
+	glFramebufferRenderbuffer
+	(
+		GL_FRAMEBUFFER,
+		GL_COLOR_ATTACHMENT0,
+		GL_RENDERBUFFER,
+		colorRenderBuffer->id
+	);
+}
+
 void FrameBuffer::CreateDepthBuffer()
 {
-	renderBuffer = std::make_shared<RenderBuffer>(width, height);
+	depthRenderBuffer = std::make_shared<RenderBuffer>
+	(
+		width,
+		height,
+		GL_DEPTH_COMPONENT24
+	);
+
 	glFramebufferRenderbuffer
 	(
 		GL_FRAMEBUFFER,
 		GL_DEPTH_ATTACHMENT,
 		GL_RENDERBUFFER,
-		renderBuffer->id
+		depthRenderBuffer->id
 	);
 }
 

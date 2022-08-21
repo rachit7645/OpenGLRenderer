@@ -11,11 +11,11 @@ namespace Renderer
 		// Default constructor
 		RenderBuffer() = default;
 		// Main constructor
-		RenderBuffer(GLsizei width, GLsizei height);
+		RenderBuffer(GLsizei width, GLsizei height, GLenum internalformat);
 		// Destructor
 		~RenderBuffer();
 
-		GLuint id;
+		GLuint id = 0;
 	};
 }
 
