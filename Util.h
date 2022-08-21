@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <cstddef>
 #include <cassert>
+#include <cmath>
 
 #ifdef __CLION_IDE__
 #define UNUSED [[maybe_unused]]

@@ -5,6 +5,7 @@
 
 #include "Shader.h"
 #include "GLM.h"
+#include "Util.h"
 
 namespace Shader
 {
@@ -17,6 +18,7 @@ namespace Shader
 		WaterShader();
 
 		void LoadModelMatrix(const glm::mat4& matrix);
+		void LoadMoveFactor(f32 moveFactor);
 		void ConnectTextureUnits();
 
 		void GetUniformLocations() override;

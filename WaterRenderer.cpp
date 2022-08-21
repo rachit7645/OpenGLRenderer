@@ -2,6 +2,7 @@
 
 #include "GLM.h"
 #include "Maths.h"
+#include "Util.h"
 
 using namespace Renderer;
 
@@ -20,7 +21,8 @@ const std::vector<f32> TILE_VERTICES =
 
 WaterRenderer::WaterRenderer(Shader::WaterShader& shader)
 	: shader(shader),
-	  vao(std::make_shared<VertexArray>(2, TILE_VERTICES))
+	  vao(std::make_shared<VertexArray>(2, TILE_VERTICES)),
+	  dudvMap(std::make_shared<Texture>(WATER_DUDV_MAP_PATH))
 {
 	shader.Start();
 	shader.ConnectTextureUnits();
@@ -45,6 +47,11 @@ void WaterRenderer::Prepare(const WaterFrameBuffers& waterFBOs)
 	glBindTexture(GL_TEXTURE_2D, waterFBOs.reflectionFBO->colorTexture->id);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, waterFBOs.refractionFBO->colorTexture->id);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, dudvMap->id);
+	moveFactor += WATER_WAVE_SPEED * g_Delta;
+	moveFactor = std::fmod(moveFactor, 1.0f);
+	shader.LoadMoveFactor(moveFactor);
 }
 
 void WaterRenderer::PrepareWater(const WaterTile& water)
