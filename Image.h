@@ -7,7 +7,6 @@
 
 namespace Util
 {
-	// TODO: Make this copyable
 	class Image2D
 	{
 	public:

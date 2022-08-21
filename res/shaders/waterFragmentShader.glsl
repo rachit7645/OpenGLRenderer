@@ -30,8 +30,8 @@ void main()
 	vec2 totalDistortion = distortion1 + distortion2;
 
 	reflectTxCoords   += totalDistortion;
-	reflectTxCoords.x = clamp(reflectTxCoords.x, 0.001, 0.999);
-	reflectTxCoords.y = clamp(reflectTxCoords.y, -0.999, -0.001);
+	reflectTxCoords.x = clamp(reflectTxCoords.x, 0.001f, 0.999f);
+	reflectTxCoords.y = clamp(reflectTxCoords.y, -0.999f, -0.001f);
 
 	refractTxCoords   += totalDistortion;
 	refractTxCoords   = clamp(refractTxCoords, 0.001f, 0.999f);

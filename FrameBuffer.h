@@ -37,13 +37,16 @@ namespace Renderer
 		// Framebuffer dimensions
 		GLsizei width  = 0;
 		GLsizei height = 0;
+
 		// Framebuffer type
 		FBType type = FBType::None;
 		// Framebuffer ID
 		GLuint id = 0;
+
 		// Textures
 		TxPtr colorTexture;
 		TxPtr depthTexture;
+
 		// RenderBuffers
 		RdBufPtr colorRenderBuffer;
 		RdBufPtr depthRenderBuffer;
