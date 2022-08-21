@@ -62,6 +62,7 @@ void MasterRenderer::Prepare(const Camera& camera, const glm::vec4& clipPlane)
 
 	m_matrices->LoadView(camera);
 	m_shared->LoadClipPlane(clipPlane);
+	m_shared->LoadCameraPos(camera);
 }
 
 void MasterRenderer::RenderEntities()

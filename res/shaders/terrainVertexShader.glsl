@@ -21,7 +21,6 @@ layout(std140, binding = 0) uniform Matrices
 {
 	mat4 projectionMatrix;
 	mat4 viewMatrix;
-	vec4 cameraPos;
 };
 
 layout(std140, binding = 1) uniform Lights
@@ -33,6 +32,7 @@ layout(std140, binding = 2) uniform Shared
 {
 	vec4 clipPlane;
 	vec4 skyColor;
+	vec4 cameraPos;
 };
 
 uniform mat4 modelMatrix;

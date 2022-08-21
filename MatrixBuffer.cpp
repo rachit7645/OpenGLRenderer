@@ -27,15 +27,6 @@ void MatrixBuffer::LoadView(const Camera& camera)
 		reinterpret_cast<const void*>(&view[0][0])
 	);
 
-	glm::vec4 cameraPos = glm::vec4(camera.position, 1.0f);
-	glBufferSubData
-	(
-		GL_UNIFORM_BUFFER,
-		static_cast<GLint>(offsetof(MatrixBufferGLSL, cameraPos)),
-		static_cast<GLsizeiptr>(sizeof(glm::vec4)),
-		reinterpret_cast<const void*>(&cameraPos)
-	);
-
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 

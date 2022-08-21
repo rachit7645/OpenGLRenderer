@@ -3,6 +3,7 @@
 
 #include "GLM.h"
 #include "UniformBuffer.h"
+#include "Camera.h"
 
 namespace Renderer
 {
@@ -13,6 +14,7 @@ namespace Renderer
 
 		void LoadClipPlane(const glm::vec4& clipPlane);
 		void LoadSkyColor(const glm::vec4& skyColor);
+		void LoadCameraPos(const Entities::Camera& camera);
 	};
 
 	namespace Detail
@@ -21,6 +23,7 @@ namespace Renderer
 		{
 			glm::vec4 clipPlane;
 			glm::vec4 skyColor;
+			glm::vec4 cameraPos;
 		};
 	}
 }
