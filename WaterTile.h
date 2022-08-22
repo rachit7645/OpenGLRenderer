@@ -1,7 +1,10 @@
 #ifndef WATER_TILE_H
 #define WATER_TILE_H
 
+#include <memory>
+
 #include "GLM.h"
+#include "Texture.h"
 
 namespace Waters
 {
@@ -10,14 +13,16 @@ namespace Waters
 	class WaterTile
 	{
 	public:
+		using TxPtr = std::shared_ptr<Renderer::Texture>;
 		// Default constructor
 		WaterTile() = default;
 		// Main constructor
-		explicit WaterTile(const glm::vec3& position);
+		WaterTile(TxPtr dudvMap, TxPtr normalMap, const glm::vec3& position);
 
-		// X: X Pos
+		// Maps
+		TxPtr dudvMap;
+		TxPtr normalMap;
 		// Y: Height
-		// Z: Z Pos
 		glm::vec3 position;
 	};
 }

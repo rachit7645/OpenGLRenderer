@@ -14,6 +14,7 @@ void WaterShader::GetUniformLocations()
 	uniforms["reflectionTx"] = GetUniformLocation("reflectionTx");
 	uniforms["refractionTx"] = GetUniformLocation("refractionTx");
 	uniforms["moveFactor"]   = GetUniformLocation("moveFactor");
+	uniforms["normalMap"]    = GetUniformLocation("normalMap");
 }
 
 void WaterShader::LoadModelMatrix(const glm::mat4& matrix)
@@ -31,4 +32,5 @@ void WaterShader::ConnectTextureUnits()
 	LoadUniform(uniforms["reflectionTx"], 0);
 	LoadUniform(uniforms["refractionTx"], 1);
 	LoadUniform(uniforms["dudvMap"],      2);
+	LoadUniform(uniforms["normalMap"],    3);
 }

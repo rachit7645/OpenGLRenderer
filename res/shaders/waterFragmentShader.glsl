@@ -1,15 +1,35 @@
 #version 430 core
 
-const float WAVE_STRENGTH    = 0.02f;
-const float REFLECT_STRENGTH = 0.7f;
+const float WAVE_STRENGTH    = 0.04f;
+const float REFLECT_AMOUNT   = 0.7f;
+const float SHINE_DAMPER     = 20.0f;
+const float REFLECTIVITY     = 0.5f;
+const float MIN_SPECULAR     = 0.0f;
+const int   MAX_LIGHTS       = 4;
 
-in vec2 txCoords;
-in vec3 toCameraVector;
+struct Light
+{
+	vec4 position;
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular;
+	vec4 attenuation;
+};
+
+layout(std140, binding = 1) uniform Lights
+{
+	Light lights[MAX_LIGHTS];
+};
+
 in vec4 clipSpace;
+in vec3 unitCameraVector;
+in vec3 unitLightVector;
+in vec2 txCoords;
 
 uniform sampler2D reflectionTx;
 uniform sampler2D refractionTx;
 uniform sampler2D dudvMap;
+uniform sampler2D normalMap;
 
 uniform float moveFactor;
 
@@ -21,15 +41,10 @@ void main()
 	vec2 reflectTxCoords = vec2(NDC.x, -NDC.y);
 	vec2 refractTxCoords = vec2(NDC.x, NDC.y);
 
-	vec2 distortion1 = texture(dudvMap, vec2(txCoords.x + moveFactor, txCoords.y)).rg;
-	distortion1      = distortion1 * 2.0f - 1.0f;
-	distortion1      = distortion1 * WAVE_STRENGTH;
-
-	vec2 distortion2 = texture(dudvMap, vec2(-txCoords.x + moveFactor, txCoords.y + moveFactor)).rg;
-	distortion2      = distortion2 * 2.0f - 1.0f;
-	distortion2      = distortion2 * WAVE_STRENGTH;
-
-	vec2 totalDistortion = distortion1 + distortion2;
+	vec2 distortedCoords = texture(dudvMap, vec2(txCoords.x + moveFactor, txCoords.y)).rg * 0.1f;
+	distortedCoords      = txCoords + vec2(distortedCoords.x, distortedCoords.y + moveFactor);
+	vec2 totalDistortion = texture(dudvMap, distortedCoords).rg * 2.0f - 1.0f;
+	totalDistortion      = totalDistortion * WAVE_STRENGTH;
 
 	reflectTxCoords   += totalDistortion;
 	reflectTxCoords.x = clamp(reflectTxCoords.x, 0.001f, 0.999f);
@@ -41,9 +56,25 @@ void main()
 	vec4 reflectColor = texture(reflectionTx, reflectTxCoords);
 	vec4 refractColor = texture(refractionTx, refractTxCoords);
 
-	float refractFactor = dot(toCameraVector, vec3(0.0f, 1.0f, 0.0f));
-	refractFactor       = pow(refractFactor, REFLECT_STRENGTH);
+	float refractFactor = dot(unitCameraVector, vec3(0.0f, 1.0f, 0.0f));
+	refractFactor       = pow(refractFactor, REFLECT_AMOUNT);
+
+	vec4 normalColor = texture(normalMap, distortedCoords);
+	vec3 unitNormal  = normalize(vec3
+	(
+		normalColor.r * 2.0f - 1.0f,
+		normalColor.b,
+		normalColor.g * 2.0f - 1.0f
+	));
+
+	vec3 lightDirection  = unitLightVector;
+	vec3 halfwayDir      = normalize(lightDirection + unitCameraVector);
+	float specularFactor = dot(halfwayDir, unitNormal);
+	specularFactor       = max(specularFactor, MIN_SPECULAR);
+	float dampedFactor   = pow(specularFactor, SHINE_DAMPER);
+	vec3 specular        = dampedFactor * REFLECTIVITY * lights[0].specular.rgb;
 
 	outColor = mix(reflectColor, refractColor, refractFactor);
 	outColor = mix(outColor, vec4(0.0f, 0.3f, 0.5f, 1.0f), 0.2f);
+	outColor = outColor + vec4(specular, 1.0f);
 }

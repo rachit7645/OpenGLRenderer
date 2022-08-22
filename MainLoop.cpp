@@ -143,7 +143,12 @@ void SDLWindow::MainLoop()
 
 	std::vector<WaterTile> waters;
 	{
-		waters.emplace_back(glm::vec3(67.0f, 3.7f, 73.0f));
+		waters.emplace_back
+		(
+			Resources::GetTexture("gfx/waterDUDV.png"),
+			Resources::GetTexture("gfx/normal.png"),
+			glm::vec3(67.0f, 3.7f, 73.0f)
+		);
 	}
 
 	Entities::Camera camera(&player);
