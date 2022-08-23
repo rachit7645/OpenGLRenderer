@@ -1,7 +1,5 @@
 #version 430 core
 
-// TODO: Gamma Correction?
-
 const float AMBIENT_STRENGTH = 0.2f;
 const float MIN_SPECULAR     = 0.0f;
 const int   MAX_LIGHTS       = 4; 
