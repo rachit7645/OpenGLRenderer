@@ -1,5 +1,8 @@
 #version 430 core
 
+#define NEAR_PLANE frustum.x
+#define FAR_PLANE  frustum.y
+
 const float WAVE_STRENGTH         = 0.04f;
 const float REFLECT_AMOUNT        = 0.7f;
 const float SHINE_DAMPER          = 20.0f;
@@ -10,9 +13,6 @@ const float DISTORT_BLEND_FACTOR  = 2.5f;
 const float SPECULAR_BLEND_FACTOR = 1.4f;
 const float NORMAL_FACTOR_Y       = 3.0f;
 const int   MAX_LIGHTS            = 4;
-// FIXME: Load as uniforms
-const float NEAR_PLANE       = 0.1f;
-const float FAR_PLANE        = 1000.0f;
 
 struct Light
 {
@@ -26,6 +26,14 @@ struct Light
 layout(std140, binding = 1) uniform Lights
 {
 	Light lights[MAX_LIGHTS];
+};
+
+layout(std140, binding = 2) uniform Shared
+{
+	vec4 clipPlane;
+	vec4 skyColor;
+	vec4 cameraPos;
+	vec2 frustum;
 };
 
 in vec4 clipSpace;

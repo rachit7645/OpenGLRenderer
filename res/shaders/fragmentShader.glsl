@@ -25,6 +25,7 @@ layout(std140, binding = 2) uniform Shared
 	vec4 clipPlane;
 	vec4 skyColor;
 	vec4 cameraPos;
+	vec2 frustum;
 };
 
 in vec4  worldPosition;

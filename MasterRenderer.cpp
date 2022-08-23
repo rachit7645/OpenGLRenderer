@@ -22,6 +22,7 @@ MasterRenderer::MasterRenderer()
 {
 	m_matrices->LoadProjection(glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
 	m_shared->LoadSkyColor(GL_SKY_COLOR);
+	m_shared->LoadFrustum(glm::vec2(NEAR_PLANE, FAR_PLANE));
 }
 
 void MasterRenderer::BeginFrame

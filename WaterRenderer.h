@@ -12,13 +12,13 @@
 
 namespace Renderer
 {
-	constexpr auto WATER_WAVE_SPEED = 0.03f;
+	constexpr auto WATER_WAVE_SPEED = 0.05f;
 
 	class WaterRenderer
 	{
 	public:
 		// Usings
-		using VAO   = std::shared_ptr<VertexArray>;
+		using VAO = std::shared_ptr<VertexArray>;
 		// Main constructor
 		explicit WaterRenderer(Shader::WaterShader& shader);
 		Shader::WaterShader& shader;

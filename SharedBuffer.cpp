@@ -51,3 +51,16 @@ void SharedBuffer::LoadCameraPos(const Camera& camera)
 	);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
+
+void SharedBuffer::LoadFrustum(const glm::vec2& frustum)
+{
+	glBindBuffer(GL_UNIFORM_BUFFER, id);
+	glBufferSubData
+	(
+		GL_UNIFORM_BUFFER,
+		static_cast<GLint>(offsetof(SharedBufferGLSL, frustum)),
+		static_cast<GLsizeiptr>(sizeof(glm::vec2)),
+		reinterpret_cast<const void*>(&frustum[0])
+	);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}

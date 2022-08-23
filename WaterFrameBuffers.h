@@ -9,9 +9,9 @@
 
 namespace Waters
 {
-	// Render at 0.5x the resolution
-	constexpr glm::ivec2 WATER_REFLECTION_SIZE = {Window::DIMENSIONS / 2};
-	constexpr glm::ivec2 WATER_REFRACTION_SIZE = {Window::DIMENSIONS / 2};
+	// Render at 1/3 the resolution
+	constexpr glm::ivec2 WATER_REFLECTION_SIZE = {Window::DIMENSIONS / 3};
+	constexpr glm::ivec2 WATER_REFRACTION_SIZE = {Window::DIMENSIONS / 3};
 
 	class WaterFrameBuffers
 	{
