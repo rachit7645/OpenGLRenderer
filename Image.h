@@ -1,7 +1,7 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#include <string>
+#include <string_view>
 
 #include "Util.h"
 
@@ -11,7 +11,7 @@ namespace Util
 	{
 	public:
 		// Constructor
-		explicit Image2D(const std::string& path);
+		explicit Image2D(const std::string_view path);
 		// Destructor
 		~Image2D();
 

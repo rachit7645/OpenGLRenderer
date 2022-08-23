@@ -2,6 +2,7 @@
 #define STATIC_SHADER_H
 
 #include <unordered_map>
+#include <GL/glew.h>
 
 #include "GLM.h"
 #include "Shader.h"

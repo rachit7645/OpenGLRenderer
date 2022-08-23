@@ -6,11 +6,8 @@
 // TODO: Add keyboard input to inputs namespace
 namespace Inputs
 {
-	void SetMousePos(const glm::ivec2& position);
-	glm::ivec2& GetMousePos();
-
-	void SetMouseScroll(const glm::ivec2& scroll);
-	glm::ivec2& GetMouseScroll();
+	glm::ivec2& MousePos();
+	glm::ivec2& MouseScroll();
 }
 
 #endif

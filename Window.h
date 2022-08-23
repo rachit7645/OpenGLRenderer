@@ -6,7 +6,6 @@
 
 #include "GLM.h"
 #include "Util.h"
-#include "Light.h"
 
 namespace Window
 {

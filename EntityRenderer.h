@@ -13,7 +13,7 @@ namespace Renderer
 	class EntityRenderer
 	{
 	public:
-		EntityRenderer(Shader::StaticShader& shaderRef);
+		explicit EntityRenderer(Shader::StaticShader& shaderRef);
 		Shader::StaticShader& shader;
 
 		// Render THE MAP

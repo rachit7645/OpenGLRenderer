@@ -2,6 +2,7 @@
 #define GUI_SHADER_H
 
 #include <unordered_map>
+#include <GL/glew.h>
 
 #include "Shader.h"
 

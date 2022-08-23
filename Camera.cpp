@@ -6,9 +6,7 @@
 using namespace Entities;
 
 Camera::Camera(Player* player)
-    : player(player),
-      mousePos(&Inputs::GetMousePos()),
-      mouseScroll(&Inputs::GetMouseScroll())
+    : player(player)
 {
 }
 
@@ -69,13 +67,15 @@ void Camera::CalculatePosition()
 
 void Camera::CalculateZoom()
 {
+	auto& mouseScroll = Inputs::MouseScroll();
+
 	// If there is no scrolling input, return
-	if (mouseScroll->y == 0) return;
+	if (mouseScroll.y == 0) return;
 
 	// If scroll direction is positive, reduce distance from player
-	if (mouseScroll->y > 0)
+	if (mouseScroll.y > 0)
 	{
-		for (ssize_t i = 0; i < mouseScroll->y; ++i)
+		for (ssize_t i = 0; i < mouseScroll.y; ++i)
 		{
 			distanceFromPlayer -= CAMERA_ZOOM_SPEED;
 		}
@@ -83,7 +83,7 @@ void Camera::CalculateZoom()
 	// If scroll direction is negative, increase distance from player
 	else
 	{
-		for (ssize_t i = 0; i < -mouseScroll->y; ++i)
+		for (ssize_t i = 0; i < -mouseScroll.y; ++i)
 		{
 			distanceFromPlayer += CAMERA_ZOOM_SPEED;
 		}
@@ -92,7 +92,9 @@ void Camera::CalculateZoom()
 
 void Camera::CalculatePitch()
 {
-	rotation.x -= static_cast<f32>(mousePos->y * 0.1);
+	auto& mousePos = Inputs::MousePos();
+	rotation.x    -= static_cast<f32>(mousePos.y * 0.1);
+
 	if (capPitch)
 	{
 		rotation.x = glm::clamp<f32>(rotation.x, CAMERA_PITCH_MIN, CAMERA_PITCH_MAX);
@@ -101,7 +103,8 @@ void Camera::CalculatePitch()
 
 void Camera::CalculateAAP()
 {
-	angleAroundPlayer -= static_cast<f32>(mousePos->x * 0.3);
+	auto& mousePos     = Inputs::MousePos();
+	angleAroundPlayer -= static_cast<f32>(mousePos.x * 0.3);
 }
 
 void Camera::InvertPitch()

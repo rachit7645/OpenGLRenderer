@@ -13,10 +13,6 @@ struct Light
 	vec4 attenuation;
 };
 
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec2 textureCoords;
-layout(location = 2) in vec3 normal;
-
 layout(std140, binding = 0) uniform Matrices
 {
 	mat4 projectionMatrix;
@@ -34,6 +30,10 @@ layout(std140, binding = 2) uniform Shared
 	vec4 skyColor;
 	vec4 cameraPos;
 };
+
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec2 textureCoords;
+layout(location = 2) in vec3 normal;
 
 uniform mat4 modelMatrix;
 

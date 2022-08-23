@@ -7,12 +7,12 @@
 
 using namespace Util;
 
-Image2D::Image2D(const std::string& path)
+Image2D::Image2D(const std::string_view path)
 {
 	LOG_INFO("Loading image: ", path, "\n");
 	m_data = stbi_load
 	(
-		(Files::GetResourceDirectory() + path).c_str(),
+		(Files::GetResourceDirectory() + path.data()).c_str(),
 		&width,
 		&height,
 		&channels,

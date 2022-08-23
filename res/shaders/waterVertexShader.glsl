@@ -12,8 +12,6 @@ struct Light
 	vec4 attenuation;
 };
 
-layout(location = 0) in vec2 position;
-
 layout(std140, binding = 0) uniform Matrices
 {
 	mat4 projectionMatrix;
@@ -31,6 +29,8 @@ layout(std140, binding = 2) uniform Shared
 	vec4 skyColor;
 	vec4 cameraPos;
 };
+
+layout(location = 0) in vec2 position;
 
 uniform mat4 modelMatrix;
 
