@@ -1,5 +1,8 @@
 #version 430 core
 
+// FIXME: Ugly jagged edges
+// Try making framebuffers MSAA
+
 #define NEAR_PLANE frustum.x
 #define FAR_PLANE  frustum.y
 
@@ -51,30 +54,23 @@ uniform float moveFactor;
 
 out vec4 outColor;
 
+float LogNToLinear(float x, float min, float max);
+float CalculateWaterDepth(vec2 refractTxCoords);
+vec2  CalculateDistortedCoords();
+vec2  CalculateTotalDistortion(vec2 distortedCoords, float waterDepth);
+vec3  CalculateNormal(vec2 distortedCoords);
+float CalculateRefractiveFactor(vec3 unitNormal);
+vec3  CalculateSpecular(vec3 unitNormal, float waterDepth);
+
 void main()
 {
 	vec2 NDC             = (clipSpace.xy / clipSpace.w) / 2.0f + 0.5f;
 	vec2 reflectTxCoords = vec2(NDC.x, -NDC.y);
 	vec2 refractTxCoords = vec2(NDC.x, NDC.y);
 
-	float depth         = texture(refractDepth, refractTxCoords).r;
-	float floorDistance = (2.0f * NEAR_PLANE * FAR_PLANE)
-	                      / (FAR_PLANE + NEAR_PLANE
-						  - (2.0f * depth - 1.0f)
-						  * (FAR_PLANE - NEAR_PLANE));
-
-	depth               = gl_FragCoord.z;
-	float waterDistance = (2.0f * NEAR_PLANE * FAR_PLANE)
-	                      / (FAR_PLANE + NEAR_PLANE
-	                      - (2.0f * depth - 1.0f)
-	                      * (FAR_PLANE - NEAR_PLANE));
-
-	float waterDepth = floorDistance - waterDistance;
-
-	vec2 distortedCoords = texture(dudvMap, vec2(txCoords.x + moveFactor, txCoords.y)).rg * 0.1f;
-	distortedCoords      = txCoords + vec2(distortedCoords.x, distortedCoords.y + moveFactor);
-	vec2 totalDistortion = texture(dudvMap, distortedCoords).rg * 2.0f - 1.0f;
-	totalDistortion      = totalDistortion * WAVE_STRENGTH * clamp(depth / DISTORT_BLEND_FACTOR, 0.0f, 1.0f);
+	float waterDepth     = CalculateWaterDepth(refractTxCoords);
+	vec2 distortedCoords = CalculateDistortedCoords();
+	vec2 totalDistortion = CalculateTotalDistortion(distortedCoords, waterDepth);
 
 	reflectTxCoords   += totalDistortion;
 	reflectTxCoords.x = clamp(reflectTxCoords.x, 0.001f, 0.999f);
@@ -86,28 +82,66 @@ void main()
 	vec4 reflectColor = texture(reflectionTx, reflectTxCoords);
 	vec4 refractColor = texture(refractionTx, refractTxCoords);
 
+	vec3  unitNormal    = CalculateNormal(distortedCoords);
+	float refractFactor = CalculateRefractiveFactor(unitNormal);
+	vec3  specular      = CalculateSpecular(unitNormal, waterDepth);
+
+	outColor   = mix(reflectColor, refractColor, refractFactor);
+	outColor   = mix(outColor, vec4(0.0f, 0.3f, 0.5f, 0.0f), 0.2f);
+	outColor   = outColor + vec4(specular, 0.0f);
+	outColor.a = clamp(waterDepth / EDGE_BLEND_FACTOR, 0.0f, 1.0f);
+}
+
+float LogNToLinear(float x, float min, float max)
+{
+	return (2.0f * min * max) / (min + max - (2.0f * x - 1.0f) * (max - min));
+}
+
+vec2 CalculateTotalDistortion(vec2 distortedCoords, float waterDepth)
+{
+	vec2 totalDistortion = texture(dudvMap, distortedCoords).rg * 2.0f - 1.0f;
+	return totalDistortion * WAVE_STRENGTH * clamp(waterDepth / DISTORT_BLEND_FACTOR, 0.0f, 1.0f);
+}
+
+vec2 CalculateDistortedCoords()
+{
+	vec2 distortedCoords = texture(dudvMap, vec2(txCoords.x + moveFactor, txCoords.y)).rg * 0.1f;
+	return txCoords + vec2(distortedCoords.x, distortedCoords.y + moveFactor);
+}
+
+vec3 CalculateNormal(vec2 distortedCoords)
+{
 	vec4 normalColor = texture(normalMap, distortedCoords);
-	vec3 unitNormal  = normalize(vec3
+	return normalize(vec3
 	(
 		normalColor.r * 2.0f - 1.0f,
 		normalColor.b * NORMAL_FACTOR_Y,
 		normalColor.g * 2.0f - 1.0f
 	));
+}
 
+float CalculateWaterDepth(vec2 refractTxCoords)
+{
+	float depth         = texture(refractDepth, refractTxCoords).r;
+	float floorDistance = LogNToLinear(depth,          NEAR_PLANE, FAR_PLANE);
+	float waterDistance = LogNToLinear(gl_FragCoord.z, NEAR_PLANE, FAR_PLANE);
+	return floorDistance - waterDistance;
+}
+
+float CalculateRefractiveFactor(vec3 unitNormal)
+{
 	float refractFactor = dot(unitCameraVector, unitNormal);
 	refractFactor       = pow(refractFactor, REFLECT_AMOUNT);
-	refractFactor       = clamp(refractFactor, 0.0f, 1.0f);
+	return clamp(refractFactor, 0.0f, 1.0f);
+}
 
+vec3 CalculateSpecular(vec3 unitNormal, float waterDepth)
+{
 	vec3 lightDirection  = unitLightVector;
 	vec3 halfwayDir      = normalize(lightDirection + unitCameraVector);
 	float specularFactor = dot(halfwayDir, unitNormal);
 	specularFactor       = max(specularFactor, MIN_SPECULAR);
 	float dampedFactor   = pow(specularFactor, SHINE_DAMPER);
 	vec3 specular        = dampedFactor * REFLECTIVITY * lights[0].specular.rgb;
-	specular             = specular * clamp(depth / SPECULAR_BLEND_FACTOR, 0.0f, 1.0f);
-
-	outColor   = mix(reflectColor, refractColor, refractFactor);
-	outColor   = mix(outColor, vec4(0.0f, 0.3f, 0.5f, 0.0f), 0.2f);
-	outColor   = outColor + vec4(specular, 0.0f);
-	outColor.a = clamp(depth / EDGE_BLEND_FACTOR, 0.0f, 1.0f);
+	return specular * clamp(waterDepth / SPECULAR_BLEND_FACTOR, 0.0f, 1.0f);
 }

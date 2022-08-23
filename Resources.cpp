@@ -14,12 +14,6 @@ using namespace Resources;
 
 // Note: This implementation is not the fastest, but it works very well
 
-// FIXME: Remove std::string from resource maps in this file
-// Reasons:
-// 1. Unnecessary allocations
-// 2. Copying strings
-// 3. Construction/Destruction
-
 std::unordered_map<std::string, TxPtr> m_textures;
 std::unordered_map<std::string, MdPtr> m_models;
 

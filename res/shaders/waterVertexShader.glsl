@@ -40,13 +40,27 @@ out vec3 unitCameraVector;
 out vec3 unitLightVector;
 out vec2 txCoords;
 
+void CalculateTxCoords();
+void CalculateLighting(vec4 worldPos);
+
 void main()
 {
-	vec4 worldPosition = modelMatrix * vec4(position.x, 0.0f, position.y, 1.0f);
-	clipSpace          = projectionMatrix * viewMatrix * worldPosition;
-	gl_Position        = clipSpace;
-	txCoords           = vec2(position.x / 2.0f + 0.5f, position.y / 2.0f + 0.5f);
-	txCoords           = txCoords * TEXTURE_TILING;
-	unitCameraVector   = normalize(cameraPos.xyz - worldPosition.xyz);
-	unitLightVector    = normalize(lights[0].position.xyz - worldPosition.xyz);
+	vec4 worldPos = modelMatrix * vec4(position.x, 0.0f, position.y, 1.0f);
+	clipSpace     = projectionMatrix * viewMatrix * worldPos;
+	gl_Position   = clipSpace;
+
+	CalculateTxCoords();
+	CalculateLighting(worldPos);
+}
+
+void CalculateTxCoords()
+{
+	txCoords = vec2(position.x / 2.0f + 0.5f, position.y / 2.0f + 0.5f);
+	txCoords = txCoords * TEXTURE_TILING;
+}
+
+void CalculateLighting(vec4 worldPos)
+{
+	unitCameraVector = normalize(cameraPos.xyz - worldPos.xyz);
+	unitLightVector  = normalize(lights[0].position.xyz - worldPos.xyz);
 }
