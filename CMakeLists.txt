@@ -77,8 +77,9 @@ add_executable(engine
 	WaterTile.cpp
 )
 
-# Precompiled headers
+# Precompiled Headers
 target_precompile_headers(engine PRIVATE
+	# Project Headers
 	Camera.h
 	CubeMap.h
 	Entity.h
@@ -122,6 +123,39 @@ target_precompile_headers(engine PRIVATE
 	VertexBuffer.h
 	WaterShader.h
 	WaterTile.h
+	# ImGui Headers
+	libs/imgui/imgui.h
+	libs/imgui/backends/imgui_impl_sdl.h
+	libs/imgui/backends/imgui_impl_opengl3.h
+	libs/imgui/misc/imgui_stdlib.h
+	# STB Headers
+	libs/stb/stb_image.h
+	# GLEW Headers
+	<GL/glew.h>
+	# Assimp Headers
+	<assimp/Importer.hpp>
+	<assimp/scene.h>
+	<assimp/postprocess.h>
+	# STL Headers
+	<unordered_map>
+	<vector>
+	<random>
+	<filesystem>
+	<cstdint>
+	<cstddef>
+	<cassert>
+	<cmath>
+	<array>
+	<memory>
+	<string_view>
+	<string>
+	<iostream>
+	<fstream>
+	<algorithm>
+	<limits>
+	<chrono>
+	<ctime>
+	<sstream>
 )
 
 # Library includes
