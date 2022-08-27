@@ -3,7 +3,7 @@
 const float WAVE_STRENGTH   = 0.04f;
 const float REFRACT_AMOUNT  = 0.7f;
 const float SHINE_DAMPER    = 20.0f;
-const float REFLECTIVITY    = 0.5f;
+const float REFLECTIVITY    = 0.2f;
 const float MIN_SPECULAR    = 0.0f;
 const float NORMAL_FACTOR_Y = 0.5f;
 const int   MAX_LIGHTS      = 4;
@@ -27,7 +27,6 @@ layout(std140, binding = 2) uniform Shared
 	vec4 clipPlane;
 	vec4 skyColor;
 	vec4 cameraPos;
-	vec2 frustum;
 };
 
 in vec4 clipSpace;
