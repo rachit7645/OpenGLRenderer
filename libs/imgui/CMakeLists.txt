@@ -28,6 +28,17 @@ add_library(imgui SHARED
 	misc/imgui_stdlib.cpp
 )
 
+target_precompile_headers(imgui PRIVATE
+	imconfig.h
+	imgui.h
+	imstb_rectpack.h
+	imstb_truetype.h
+	backends/imgui_impl_sdl.h
+	backends/imgui_impl_opengl3_loader.h
+	backends/imgui_impl_opengl3.h
+	misc/imgui_stdlib.h
+)
+
 # SDL2 Includes
 target_include_directories(imgui PRIVATE ${SDL2_INCLUDE_DIRS})
 # ImGUI Includes

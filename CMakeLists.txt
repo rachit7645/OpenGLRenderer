@@ -77,6 +77,53 @@ add_executable(engine
 	WaterTile.cpp
 )
 
+# Precompiled headers
+target_precompile_headers(engine PRIVATE
+	Camera.h
+	CubeMap.h
+	Entity.h
+	EntityRenderer.h
+	Files.h
+	FrameBuffer.h
+	GL.h
+	GLM.h
+	GUI.h
+	GUIRenderer.h
+	GUIShader.h
+	Image.h
+	Imgui.h
+	Light.h
+	LightsBuffer.h
+	Log.h
+	Material.h
+	Maths.h
+	MatrixBuffer.h
+	Mesh.h
+	MeshTextures.h
+	Model.h
+	Player.h
+	RenderBuffer.h
+	Resources.h
+	Shader.h
+	SharedBuffer.h
+	Skybox.h
+	SkyboxRenderer.h
+	SkyboxShader.h
+	StaticShader.h
+	Terrain.h
+	TerrainRenderer.h
+	TerrainShader.h
+	TerrainTextures.h
+	Texture.h
+	Time.h
+	UniformBuffer.h
+	Util.h
+	VertexArray.h
+	VertexBuffer.h
+	WaterShader.h
+	WaterTile.h
+)
+
 # Library includes
 target_include_directories(engine PRIVATE libs/)
 # Define _DEBUG in debug mode
