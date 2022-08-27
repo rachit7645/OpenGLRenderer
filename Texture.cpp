@@ -55,7 +55,14 @@ Texture::Texture(const std::string& path)
 	stbi_image_free(data);
 }
 
-Texture::Texture(GLsizei width, GLsizei height)
+Texture::Texture
+(
+	GLsizei width,
+	GLsizei height,
+	GLint internalFormat,
+	GLint format,
+	GLint type
+)
 	: width(width),
 	  height(height),
 	  channels(STBI_rgb_alpha)
@@ -70,12 +77,12 @@ Texture::Texture(GLsizei width, GLsizei height)
 	(
 		GL_TEXTURE_2D,
 		0,
-		GL_RGBA,
+		internalFormat,
 		width,
 		height,
 		0,
-		GL_RGBA,
-		GL_UNSIGNED_BYTE,
+		format,
+		type,
 		nullptr
 	);
 

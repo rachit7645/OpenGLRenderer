@@ -26,10 +26,9 @@ namespace Entities
 
 		// Camera update function
 		void Move();
+		// Invert pitch
+		void InvertPitch();
 	private:
-		glm::ivec2* mousePos;
-		glm::ivec2* mouseScroll;
-
 		f32 distanceFromPlayer = 35.0f;
 		f32 angleAroundPlayer  = 0.0f;
 

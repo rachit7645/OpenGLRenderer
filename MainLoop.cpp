@@ -15,6 +15,7 @@
 #include "Imgui.h"
 #include "GUI.h"
 #include "WaterTile.h"
+#include "WaterFrameBuffers.h"
 
 using namespace Window;
 
@@ -28,6 +29,8 @@ using Renderer::Model;
 using Renderer::Material;
 using Renderer::MeshTextures;
 using Renderer::GUI;
+using Renderer::FrameBuffer;
+using Renderer::FBType;
 using Entities::Entity;
 using Entities::Player;
 using Entities::Skybox;
@@ -39,7 +42,7 @@ using Waters::WaterTile;
 // TODO: Move MainLoop to separate class, move data to said class
 // TODO: Live editing of entities, terrains, lights, etc. with ImGui
 
-constexpr auto MAX_ENTITIES = 100;
+constexpr auto MAX_ENTITIES = 50;
 
 void SDLWindow::MainLoop()
 {
@@ -67,7 +70,7 @@ void SDLWindow::MainLoop()
 	// All objects go here
 	std::vector<Terrain> terrains;
 	{
-		terrains.emplace_back("gfx/heightMap.png", glm::vec2(0.0f, 0.0f), textures);
+		terrains.emplace_back("gfx/hMapWtr.bmp", glm::vec2(0.0f, 0.0f), textures);
 	}
 
 	std::vector<Entity> entities;
@@ -92,7 +95,7 @@ void SDLWindow::MainLoop()
 	Player player
 	(
 		playerModel,
-		glm::vec3(250.0f, 0.0f, 235.0f),
+		glm::vec3(67.0f, 0.0f, 73.0f),
 		glm::vec3(0.0f, 180.0f, 0.0f),
 		1.0f
 	);
@@ -101,7 +104,7 @@ void SDLWindow::MainLoop()
 	{
 		lights.emplace_back
 		(
-			glm::vec3(20000.0f, 20000.0f, 2000.0f),
+			glm::vec3(0.0f, 1000.0f, -7000.0f),
 			glm::vec3(0.2f, 0.2f, 0.2f),
 			glm::vec3(0.3f, 0.3f, 0.3f),
 			glm::vec3(1.0f, 1.0f, 1.0f),
@@ -117,13 +120,35 @@ void SDLWindow::MainLoop()
 		);
 	}
 
+	// Check FrameBuffers
+	auto waterFBOs = Waters::WaterFrameBuffers();
+
 	std::vector<GUI> guis;
 	{
+		/* Use for debugging
+		guis.emplace_back
+		(
+			waterFBOs.reflectionFBO->colorTexture,
+			glm::vec2(-0.5f, 0.5f),
+			glm::vec2(0.5f, 0.5f)
+		);
+
+		guis.emplace_back
+		(
+			waterFBOs.refractionFBO->colorTexture,
+			glm::vec2(-0.5f, -0.5f),
+			glm::vec2(0.5f, 0.5f)
+		); */
 	}
 
 	std::vector<WaterTile> waters;
 	{
-		waters.emplace_back(glm::vec3(185.0f, 3.2f, 240.0f));
+		waters.emplace_back
+		(
+			Resources::GetTexture("gfx/waterDUDV.png"),
+			Resources::GetTexture("gfx/normal.png"),
+			glm::vec3(67.0f, 3.7f, 73.0f)
+		);
 	}
 
 	Entities::Camera camera(&player);
@@ -133,21 +158,54 @@ void SDLWindow::MainLoop()
 
 	while (true)
 	{
+		// Prepare ImGUI
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(window);
 		ImGui::NewFrame();
 
+		// Update
 		ImGuiDisplay();
 		player.Move(Terrains::GetCurrent(terrains, player));
 		camera.Move();
 
-		renderer.RenderScene(entities, terrains, lights, camera, player);
-		renderer.RenderWaters(waters);
+		// Begin render
+		renderer.BeginFrame(entities, terrains, lights, player);
 
+		// Enable clip plane 0
+		glEnable(GL_CLIP_DISTANCE0);
+
+		// Reflection pass
+		waterFBOs.BindReflection();
+		// Move the camera
+		f32 distance = 2.0f * (camera.position.y - waters[0].position.y);
+		camera.position.y -= distance;
+		camera.InvertPitch();
+		renderer.RenderScene(camera, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].position.y));
+		// Move it back to its original position
+		camera.position.y += distance;
+		camera.InvertPitch();
+
+		// Refraction pass
+		waterFBOs.BindRefraction();
+		renderer.RenderScene(camera, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].position.y));
+
+		// Disable clip plane 0
+		glDisable(GL_CLIP_DISTANCE0);
+
+		// Main render pass
+		waterFBOs.BindDefaultFBO();
+		renderer.RenderScene(camera);
+		renderer.RenderWaters(waters, waterFBOs);
+		renderer.RenderGUIs(guis);
+
+		// End render
+		renderer.EndFrame();
+
+		// ImGUI render pass
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-		SDL_GL_SwapWindow(window);
 
+		SDL_GL_SwapWindow(window);
 		CalculateFPS();
 		if (PollEvents()) break;
 	}

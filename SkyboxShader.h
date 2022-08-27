@@ -17,7 +17,6 @@ namespace Shader
 		SkyboxShader();
 
 		void LoadModelMatrix(const glm::mat4& matrix);
-		void LoadFogColor(const glm::vec3& color);
 
 		void GetUniformLocations() override;
 	private:

@@ -20,7 +20,7 @@ TerrainRenderer::TerrainRenderer(TerrainShader& shaderRef)
 	shader.Stop();
 }
 
-void TerrainRenderer::Render(const std::vector<Terrain>& terrains)
+void TerrainRenderer::Render(const std::vector<Terrain*>& terrains)
 {
 	for (const auto& terrain : terrains)
 	{
@@ -29,7 +29,7 @@ void TerrainRenderer::Render(const std::vector<Terrain>& terrains)
 		glDrawElements
 		(
 			GL_TRIANGLES,
-			terrain.vao->vertexCount,
+			terrain->vao->vertexCount,
 			GL_UNSIGNED_INT,
 			nullptr
 		);
@@ -37,15 +37,15 @@ void TerrainRenderer::Render(const std::vector<Terrain>& terrains)
 	}
 }
 
-void TerrainRenderer::PrepareTerrain(const Terrain& terrain)
+void TerrainRenderer::PrepareTerrain(const Terrain* terrain)
 {
-	glBindVertexArray(terrain.vao->id);
+	glBindVertexArray(terrain->vao->id);
 	BindTextures(terrain);
 }
 
-void TerrainRenderer::BindTextures(const Terrain& terrain)
+void TerrainRenderer::BindTextures(const Terrain* terrain)
 {
-	const TerrainTextures& textures = terrain.textures;
+	const TerrainTextures& textures = terrain->textures;
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textures.background->id);
 	glActiveTexture(GL_TEXTURE1);
@@ -58,11 +58,11 @@ void TerrainRenderer::BindTextures(const Terrain& terrain)
 	glBindTexture(GL_TEXTURE_2D, textures.blendMap->id);
 }
 
-void TerrainRenderer::LoadModelMatrix(const Terrain& terrain)
+void TerrainRenderer::LoadModelMatrix(const Terrain* terrain)
 {
 	glm::mat4 matrix = Maths::CreateModelMatrixT
 	(
-		glm::vec3(terrain.position.x, 0.0f, terrain.position.y)
+		glm::vec3(terrain->position.x, 0.0f, terrain->position.y)
 	);
 	shader.LoadModelMatrix(matrix);
 }

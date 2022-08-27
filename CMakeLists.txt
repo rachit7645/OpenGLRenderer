@@ -1,29 +1,33 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(engine VERSION 0.1.0)
 
+# MSVC is not supported
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
+	message(FATAL_ERROR "Only GCC/Clang are supported")
+endif()
+
+# Output executable/libraries to main build directory
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
+# Require C++ 17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# For Linux, prefer modern opengl
 set(OpenGL_GL_PREFERENCE GLVND)
 
+# Required packages
 find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm REQUIRED)
 find_package(assimp REQUIRED)
 
+# Add sub-projects
 add_subdirectory(libs/imgui/)
 
-if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
-	set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -O3")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -D_DEBUG")
-else()
-	message(FATAL_ERROR "Only GCC/Clang are supported")
-endif()
-
+# Source files
 add_executable(engine
 	Main.cpp
 	Window.cpp
@@ -66,7 +70,64 @@ add_executable(engine
 	RenderBuffer.cpp
 	WaterShader.cpp
 	WaterRenderer.cpp
+	WaterFrameBuffers.cpp
+	SharedBuffer.cpp
+	MeshTextures.cpp
+	TerrainTextures.cpp
+	WaterTile.cpp
 )
 
-target_include_directories(engine PUBLIC libs/)
+# Precompiled Headers
+target_precompile_headers(engine PRIVATE
+	# ImGui Headers
+	libs/imgui/imgui.h
+	libs/imgui/backends/imgui_impl_sdl.h
+	libs/imgui/backends/imgui_impl_opengl3.h
+	libs/imgui/misc/imgui_stdlib.h
+	# STB Headers
+	libs/stb/stb_image.h
+	# GLEW Headers
+	<GL/glew.h>
+	# Assimp Headers
+	<assimp/Importer.hpp>
+	<assimp/scene.h>
+	<assimp/postprocess.h>
+	# C++ STL Headers
+	<unordered_map>
+	<vector>
+	<random>
+	<filesystem>
+	<array>
+	<memory>
+	<string_view>
+	<string>
+	<iostream>
+	<fstream>
+	<algorithm>
+	<limits>
+	<chrono>
+	<sstream>
+	# C STL Headers
+	<cstdint>
+	<cstddef>
+	<cassert>
+	<cmath>
+	<ctime>
+)
+
+# Library includes
+target_include_directories(engine PRIVATE libs/)
+# Define _DEBUG in debug mode
+target_compile_definitions(engine PRIVATE _DEBUG)
+# Enable all warnings
+target_compile_options(engine PRIVATE -Wall)
+# Enable extra warnings
+target_compile_options(engine PRIVATE -Wextra)
+# Enable pedantic warnings
+target_compile_options(engine PRIVATE -Wpedantic)
+# -O3 optimisations
+target_compile_options(engine PRIVATE -O3)
+# Enable debug output
+target_compile_options(engine PRIVATE -g)
+# Link libraries
 target_link_libraries(engine OpenGL::GL GLEW::GLEW SDL2::SDL2 assimp imgui)

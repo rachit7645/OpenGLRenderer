@@ -22,9 +22,9 @@ namespace Renderer
 			const glm::vec2& scale
 		);
 
-		TxPtr     texture;
-		glm::vec2 position;
-		glm::vec2 scale;
+		TxPtr     texture  = nullptr;
+		glm::vec2 position = {0.0f, 0.0f};
+		glm::vec2 scale    = {1.0f, 1.0f};
 	};
 }
 

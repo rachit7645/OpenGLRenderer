@@ -18,6 +18,13 @@ layout(std140, binding = 1) uniform Lights
 	Light lights[MAX_LIGHTS];
 };
 
+layout(std140, binding = 2) uniform Shared
+{
+	vec4 clipPlane;
+	vec4 skyColor;
+	vec4 cameraPos;
+};
+
 in vec4  worldPosition;
 in vec3  unitNormal;
 in vec3  unitLightVector[MAX_LIGHTS];
@@ -29,8 +36,6 @@ uniform sampler2D rTexture;
 uniform sampler2D bTexture;
 uniform sampler2D gTexture;
 uniform sampler2D blendMap;
-
-uniform vec4 skyColour;
 
 out vec4 outColor;
 
@@ -56,7 +61,7 @@ void main()
 	// Add all lighting
 	outColor = totalDiffuse + totalAmbient;
 	// Mix with fog colour
-	outColor = mix(skyColour, outColor, visibility);
+	outColor = mix(skyColor, outColor, visibility);
 }
 
 float CalculateAttFactor(int index)

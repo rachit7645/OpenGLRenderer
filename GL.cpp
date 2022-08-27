@@ -1,6 +1,7 @@
 #include "GL.h"
 
 #include <unordered_map>
+#include <array>
 
 #include "Log.h"
 #include "Util.h"
@@ -16,12 +17,6 @@ void GL::CheckErrors
 	UNUSED const void* userParam
 )
 {
-	// Disable certain messages
-	if (id == 131185)
-	{
-		return;
-	}
-
 	static const std::unordered_map<GLenum, const char*>
 	GL_ERROR_SOURCES =
 	{
@@ -73,13 +68,7 @@ GLint GL::GetIntegerv(GLenum param)
 void GL::Init(const glm::ivec2& dimensions)
 {
 	// Setup viewport
-	glViewport
-	(
-		0,
-		0,
-		dimensions.x,
-		dimensions.y
-	);
+	glViewport(0, 0, dimensions.x, dimensions.y);
 	// Enable MSAA
 	glEnable(GL_MULTISAMPLE);
 	// Enable Depth test
@@ -90,7 +79,23 @@ void GL::Init(const glm::ivec2& dimensions)
 	// Enable Debug Output
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	// Set debug message callback
 	glDebugMessageCallback(GL::CheckErrors, nullptr);
+	// Message ids to filter
+	constexpr std::array<GLuint, 1> ids =
+	{
+		131185
+	};
+	// Filter messages
+	glDebugMessageControl
+	(
+		GL_DEBUG_SOURCE_API, // source
+		GL_DEBUG_TYPE_OTHER, // type
+		GL_DONT_CARE,        // severity
+		ids.size(),          // count
+		ids.data(),          // ids
+		GL_FALSE             // enabled
+	);
 }
 
 void GL::LogDebugInfo()

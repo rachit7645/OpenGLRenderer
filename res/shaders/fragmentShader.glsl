@@ -1,7 +1,5 @@
 #version 430 core
 
-// TODO: Gamma Correction?
-
 const float AMBIENT_STRENGTH = 0.2f;
 const float MIN_SPECULAR     = 0.0f;
 const int   MAX_LIGHTS       = 4; 
@@ -20,6 +18,13 @@ layout(std140, binding = 1) uniform Lights
 	Light lights[MAX_LIGHTS];
 };
 
+layout(std140, binding = 2) uniform Shared
+{
+	vec4 clipPlane;
+	vec4 skyColor;
+	vec4 cameraPos;
+};
+
 in vec4  worldPosition;
 in vec3  unitLightVector[MAX_LIGHTS];
 in vec3  unitNormal;
@@ -30,7 +35,6 @@ in float visibility;
 uniform sampler2D diffuseTexture;
 uniform sampler2D specularTexture;
 
-uniform vec4  skyColour;
 uniform float shineDamper;
 uniform float reflectivity;
 
@@ -53,7 +57,7 @@ void main()
 	}
 	vec4 specularColor = texture(specularTexture, txCoords);
 
-	vec4 totalAmbient  = vec4(0.0f);	
+	vec4 totalAmbient  = vec4(0.0f);
 	vec4 totalDiffuse  = vec4(0.0f);
 	vec4 totalSpecular = vec4(0.0f);
 
@@ -70,13 +74,13 @@ void main()
 		// Calculate curSpec
 		vec4 curSpec = CalculateSpecular(i) * specularColor * attFactor;
 		// Add it if diffuse != 0.0f
-		totalSpecular += curSpec * WhenNotEqual(curDiff, vec4(0.0));
+		totalSpecular += curSpec * WhenNotEqual(curDiff, vec4(0.0f));
 	}
 
 	// Add all lighting
 	outColor = totalDiffuse + totalSpecular + totalAmbient;
 	// Mix with fog colour
-	outColor = mix(skyColour, outColor, visibility);
+	outColor = mix(skyColor, outColor, visibility);
 }
 
 float CalculateAttFactor(int index)

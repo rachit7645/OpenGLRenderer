@@ -11,15 +11,9 @@ SkyboxShader::SkyboxShader()
 void SkyboxShader::GetUniformLocations()
 {
 	uniforms["modelMatrix"] = GetUniformLocation("modelMatrix");
-	uniforms["fogColor"]    = GetUniformLocation("fogColor");
 }
 
 void SkyboxShader::LoadModelMatrix(const glm::mat4& matrix)
 {
 	LoadUniform(uniforms["modelMatrix"], matrix);
-}
-
-void SkyboxShader::LoadFogColor(const glm::vec3& color)
-{
-	LoadUniform(uniforms["fogColor"], color);
 }

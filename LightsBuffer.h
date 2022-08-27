@@ -15,7 +15,7 @@ namespace Renderer
 	public:
 		LightsBuffer();
 		
-		void LoadLight(const std::vector<Entities::Light>& lights);
+		void LoadLights(const std::vector<Entities::Light>& lights);
 	};
 }
 

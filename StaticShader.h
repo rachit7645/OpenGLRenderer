@@ -2,6 +2,7 @@
 #define STATIC_SHADER_H
 
 #include <unordered_map>
+#include <GL/glew.h>
 
 #include "GLM.h"
 #include "Shader.h"
@@ -22,7 +23,6 @@ namespace Shader
 
 		// Material and object loading functions
 		void LoadMaterials(const Renderer::Material& material);
-		void LoadSkyColour(const glm::vec4& skyColour);
 		void ConnectTextureUnits();
 
 		void GetUniformLocations() override;

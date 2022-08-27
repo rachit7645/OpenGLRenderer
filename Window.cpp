@@ -72,7 +72,6 @@ SDLWindow::SDLWindow()
 	SDL_RaiseWindow(window);
 	SDL_ShowCursor(SDL_FALSE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
-	g_Keys = SDL_GetKeyboardState(nullptr);
 
 	// Basically useless GLContext
 	// You don't get more than GL 1.1 for compatibility reasons (Windows YOU SUCK)
@@ -108,6 +107,8 @@ SDLWindow::SDLWindow()
 	ImGui_ImplOpenGL3_Init("#version 430 core");
 
 	Files::SetResourceDirectory("../res/");
+
+	Inputs::Init();
 	GL::Init(DIMENSIONS);
 }
 
@@ -143,12 +144,12 @@ bool SDLWindow::PollEvents()
 			break;
 
 		case SDL_MOUSEWHEEL:
-			Inputs::SetMouseScroll(glm::ivec2(event.wheel.x, event.wheel.y));
+			Inputs::MouseScroll() = glm::ivec2(event.wheel.x, event.wheel.y);
 			g_ToZoomCamera = true;
 			break;
 
 		case SDL_MOUSEMOTION:
-			Inputs::SetMousePos(glm::ivec2(event.motion.xrel, event.motion.yrel));
+			Inputs::MousePos() = glm::ivec2(event.motion.xrel, event.motion.yrel);
 			g_ToMoveCamera = true;
 			break;
 

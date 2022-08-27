@@ -9,6 +9,15 @@
 
 namespace Renderer
 {
+	enum FBType : size_t
+	{
+		None          = 0,
+		Color         = 1,
+		Depth         = 2,
+		ColorAndDepth = 3,
+		Empty         = 4
+	};
+
 	class FrameBuffer
 	{
 	public:
@@ -18,19 +27,35 @@ namespace Renderer
 		// Default constructor
 		FrameBuffer() = default;
 		// Main constructor
-		FrameBuffer(GLsizei width, GLsizei height);
+		FrameBuffer(GLsizei width, GLsizei height, FBType type);
 		// Destructor
 		~FrameBuffer();
 
 		void Bind()   const;
 		void Unbind() const;
 
+		// Framebuffer dimensions
+		GLsizei width  = 0;
+		GLsizei height = 0;
+
+		// Framebuffer type
+		FBType type = FBType::None;
 		// Framebuffer ID
 		GLuint id = 0;
-		// Texture
-		TxPtr texture;
-		// RenderBuffer
-		RdBufPtr renderBuffer;
+
+		// Textures
+		TxPtr colorTexture;
+		TxPtr depthTexture;
+
+		// RenderBuffers
+		RdBufPtr colorRenderBuffer;
+		RdBufPtr depthRenderBuffer;
+	private:
+		void CreateColorTexture();
+		void CreateDepthTexture();
+		void CreateColorBuffer();
+		void CreateDepthBuffer();
+		void CheckStatus();
 	};
 }
 

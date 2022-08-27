@@ -1,24 +1,27 @@
 #include "Inputs.h"
 
+#include "Util.h"
+
 glm::ivec2 mousePos;
 glm::ivec2 mouseScroll;
+const u8*  keys;
 
-void Inputs::SetMousePos(const glm::ivec2& position)
+void Inputs::Init()
 {
-	mousePos = position;
+	keys = SDL_GetKeyboardState(nullptr);
 }
 
-glm::ivec2& Inputs::GetMousePos()
+glm::ivec2& Inputs::MousePos()
 {
 	return mousePos;
 }
 
-void Inputs::SetMouseScroll(const glm::ivec2& scroll)
-{
-	mouseScroll = scroll;
-}
-
-glm::ivec2& Inputs::GetMouseScroll()
+glm::ivec2& Inputs::MouseScroll()
 {
 	return mouseScroll;
+}
+
+bool Inputs::IsKeyPressed(SDL_Scancode key)
+{
+	return static_cast<bool>(keys[key]);
 }

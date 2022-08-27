@@ -17,58 +17,57 @@ MasterRenderer::MasterRenderer()
 	  guiRenderer(guiShader),
 	  waterRenderer(waterShader),
 	  m_matrices(std::make_shared<MatrixBuffer>()),
-	  m_lights(std::make_shared<LightsBuffer>())
+	  m_lights(std::make_shared<LightsBuffer>()),
+	  m_shared(std::make_shared<SharedBuffer>())
 {
 	m_matrices->LoadProjection(glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
+	m_shared->LoadSkyColor(GL_SKY_COLOR);
 }
 
-void MasterRenderer::RenderScene
+void MasterRenderer::BeginFrame
 (
-	const std::vector<Entity>& entities,
-	const std::vector<Terrain>& terrains,
+	std::vector<Entity>& entities,
+	std::vector<Terrain>& terrains,
 	const std::vector<Light>& lights,
-	const Camera& camera,
-	const Player& player
+	Player& player
 )
 {
-	// Process stuff
 	ProcessEntities(entities);
 	ProcessTerrains(terrains);
 	ProcessEntity(player);
 
-	// Render
-	Render(lights, camera);
+	m_lights->LoadLights(lights);
 }
 
-void MasterRenderer::Prepare()
+void MasterRenderer::RenderScene(const Camera& camera, const glm::vec4& clipPlane)
 {
-	glClearColor(GL_CLEAR_COLOR.r, GL_CLEAR_COLOR.g, GL_CLEAR_COLOR.b, GL_CLEAR_COLOR.a);
-	glClear(GL_CLEAR_FLAGS);
-}
-
-void MasterRenderer::Update(const std::vector<Light>& lights, const Camera& camera)
-{
-	m_matrices->LoadView(camera);
-	m_lights->LoadLight(lights);
-}
-
-void MasterRenderer::Render(const std::vector<Light>& lights, const Camera& camera)
-{
-	Prepare();
-	Update(lights, camera);
+	Prepare(camera, clipPlane);
 
 	RenderEntities();
 	RenderTerrains();
 	RenderSkybox();
+}
 
+void MasterRenderer::EndFrame()
+{
+	// Clear internal render data
 	m_entities.clear();
 	m_terrains.clear();
+}
+
+void MasterRenderer::Prepare(const Camera& camera, const glm::vec4& clipPlane)
+{
+	glClearColor(GL_CLEAR_COLOR.r, GL_CLEAR_COLOR.g, GL_CLEAR_COLOR.b, GL_CLEAR_COLOR.a);
+	glClear(GL_CLEAR_FLAGS);
+
+	m_matrices->LoadView(camera);
+	m_shared->LoadClipPlane(clipPlane);
+	m_shared->LoadCameraPos(camera);
 }
 
 void MasterRenderer::RenderEntities()
 {
 	shader.Start();
-	shader.LoadSkyColour(GL_CLEAR_COLOR);
 	renderer.Render(m_entities);
 	shader.Stop();
 }
@@ -76,7 +75,6 @@ void MasterRenderer::RenderEntities()
 void MasterRenderer::RenderTerrains()
 {
 	terrainShader.Start();
-	terrainShader.LoadSkyColour(GL_CLEAR_COLOR);
 	terrainRenderer.Render(m_terrains);
 	terrainShader.Stop();
 }
@@ -88,14 +86,13 @@ void MasterRenderer::RenderSkybox()
 	// Disable depth writing for performance
 	glDepthMask(GL_FALSE);
 	skyboxShader.Start();
-	skyboxShader.LoadFogColor(GL_CLEAR_COLOR);
 	skyboxRenderer.Render(m_skybox);
 	skyboxShader.Stop();
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);
 }
 
-void MasterRenderer::RenderGUIs()
+void MasterRenderer::RenderGUIs(const std::vector<GUI>& guis)
 {
 	// Enable blending
 	glEnable(GL_BLEND);
@@ -103,51 +100,49 @@ void MasterRenderer::RenderGUIs()
 	// Disable depth test
 	glDisable(GL_DEPTH_TEST);
 	guiShader.Start();
-	guiRenderer.Render(m_guis);
+	guiRenderer.Render(guis);
 	guiShader.Stop();
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 }
 
-void MasterRenderer::RenderWaters(const std::vector<WaterTile>& waters)
+void MasterRenderer::RenderWaters(const std::vector<WaterTile>& waters, const Waters::WaterFrameBuffers& waterFBOs)
 {
 	waterShader.Start();
-	waterRenderer.Render(waters);
+	waterRenderer.Render(waters, waterFBOs);
 	waterShader.Stop();
 }
 
-void MasterRenderer::ProcessEntity(const Entities::Entity& entity)
+void MasterRenderer::ProcessEntity(Entity& entity)
 {
 	auto iter = m_entities.find(entity.model);
 	if (iter != m_entities.end())
 	{
-		iter->second.push_back(entity);
+		iter->second.push_back(&entity);
 	}
 	else
 	{
-		m_entities[entity.model] = { entity };
+		m_entities[entity.model] = { &entity };
 	}
 }
 
-void MasterRenderer::ProcessEntities(const std::vector<Entity>& entities)
+void MasterRenderer::ProcessEntities(std::vector<Entity>& entities)
 {
-	for (const auto& entity : entities)
+	for (auto& entity : entities)
 	{
 		ProcessEntity(entity);
 	}
 }
 
-void MasterRenderer::ProcessTerrain(const Terrain& terrain)
+void MasterRenderer::ProcessTerrain(Terrain& terrain)
 {
-	m_terrains.push_back(terrain);
+	m_terrains.push_back(&terrain);
 }
 
-void MasterRenderer::ProcessTerrains(const std::vector<Terrain>& terrains)
+void MasterRenderer::ProcessTerrains(std::vector<Terrain>& terrains)
 {
-	m_terrains = terrains;
-}
-
-void MasterRenderer::ProcessGUIs(const std::vector<GUI>& guis)
-{
-	m_guis = guis;
+	for (auto& terrain : terrains)
+	{
+		m_terrains.push_back(&terrain);
+	}
 }

@@ -17,7 +17,7 @@
 namespace Terrains
 {
 	constexpr auto TERRAIN_SIZE          = 500.0f;
-	constexpr auto TERRAIN_MAX_HEIGHT    = 30.0f;
+	constexpr auto TERRAIN_MAX_HEIGHT    = 50.0f;
 	constexpr auto IMAGE_MAX_PIXEL_COLOR = std::numeric_limits<u8>::max();
 
 	class Terrain

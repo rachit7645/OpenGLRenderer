@@ -1,8 +1,6 @@
 #include "CubeMap.h"
 #include "stb/stb_image.h"
 
-#include <string>
-
 #include "Files.h"
 #include "Util.h"
 #include "Log.h"

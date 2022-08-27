@@ -11,7 +11,6 @@ TerrainShader::TerrainShader()
 void TerrainShader::GetUniformLocations()
 {
 	uniforms["modelMatrix"] = GetUniformLocation("modelMatrix");
-	uniforms["skyColour"]   = GetUniformLocation("skyColour");
 	uniforms["bgTexture"]   = GetUniformLocation("bgTexture");
 	uniforms["rTexture"]    = GetUniformLocation("rTexture");
 	uniforms["gTexture"]    = GetUniformLocation("gTexture");
@@ -22,11 +21,6 @@ void TerrainShader::GetUniformLocations()
 void TerrainShader::LoadModelMatrix(const glm::mat4& matrix)
 {
 	LoadUniform(uniforms["modelMatrix"], matrix);
-}
-
-void TerrainShader::LoadSkyColour(const glm::vec4& skyColour)
-{
-	LoadUniform(uniforms["skyColour"], skyColour);
 }
 
 void TerrainShader::ConnectTextureUnits()

@@ -1,13 +1,13 @@
 #version 430 core
 
-layout (location = 0) in vec3 position;
-
 layout(std140, binding = 0) uniform Matrices
 {
 	mat4 projectionMatrix;
 	mat4 viewMatrix;
-	vec4 cameraPos;
 };
+
+layout (location = 0) in vec3 position;
+
 uniform mat4 modelMatrix;
 
 out vec3 txCoords;

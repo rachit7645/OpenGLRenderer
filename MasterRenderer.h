@@ -25,10 +25,13 @@
 #include "WaterRenderer.h"
 #include "WaterTile.h"
 #include "Player.h"
+#include "SharedBuffer.h"
+#include "WaterFrameBuffers.h"
 
 namespace Renderer
 {
-	constexpr glm::vec4  GL_CLEAR_COLOR = { 0.53f, 0.81f, 0.92f, 1.0f };
+	constexpr glm::vec4  GL_CLEAR_COLOR = {0.0f,  0.0f,  0.0f,  1.0f};
+	constexpr glm::vec4  GL_SKY_COLOR   = {0.53f, 0.81f, 0.92f, 1.0f};
 	constexpr GLbitfield GL_CLEAR_FLAGS = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
 
 	constexpr f32 FOV           = 70.0f;
@@ -57,55 +60,52 @@ namespace Renderer
 		Shader::WaterShader     waterShader;
 		Renderer::WaterRenderer waterRenderer;
 
-		// Render Scene
-		void RenderScene
+		// Prepare frame
+		void BeginFrame
 		(
-			const std::vector<Entities::Entity>& entities,
-			const std::vector<Terrains::Terrain>& terrains,
+			std::vector<Entities::Entity>& entities,
+			std::vector<Terrains::Terrain>& terrains,
 			const std::vector<Entities::Light>& lights,
-			const Entities::Camera& camera,
-			const Entities::Player& player
+			Entities::Player& player
 		);
-		// Main render function
-		void Render(const std::vector<Entities::Light>& lights, const Entities::Camera& camera);
+		// Render Scene
+		void RenderScene(const Entities::Camera& camera, const glm::vec4& clipPlane = glm::vec4(0.0f));
 		// Render the water
-		void RenderWaters(const std::vector<Waters::WaterTile>& waters);
+		void RenderWaters(const std::vector<Waters::WaterTile>& waters, const Waters::WaterFrameBuffers& waterFBOs);
+		// Render the guis
+		void RenderGUIs(const std::vector<GUI>& guis);
+		// Finish frame
+		void EndFrame();
 		// Process entities into the entity map
-		void ProcessEntity(const Entities::Entity& entity);
+		void ProcessEntity(Entities::Entity& entity);
 		// Process a vector of entities
-		void ProcessEntities(const std::vector<Entities::Entity>& entities);
+		void ProcessEntities(std::vector<Entities::Entity>& entities);
 		// Process terrains into a vector
-		void ProcessTerrain(const Terrains::Terrain& terrain);
+		void ProcessTerrain(Terrains::Terrain& terrain);
 		// Process a vector of terrains
-		void ProcessTerrains(const std::vector<Terrains::Terrain>& terrains);
-		// Process a vector of GUIs
-		void ProcessGUIs(const std::vector<Renderer::GUI>& guis);
+		void ProcessTerrains(std::vector<Terrains::Terrain>& terrains);
 	private:
-		// Prepare framebuffer for render
-		void Prepare();
-		// Update buffers, etc.
-		void Update(const std::vector<Entities::Light>& lights, const Entities::Camera& camera);
+		// Prepare render
+		void Prepare(const Entities::Camera& camera, const glm::vec4& clipPlane);
 		// Render entities
 		void RenderEntities();
 		// Render Terrains
 		void RenderTerrains();
 		// Render the skybox
 		void RenderSkybox();
-		// Render the guis
-		void RenderGUIs();
 
 		// The entity map
-		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity>> m_entities;
+		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity*>> m_entities;
 		// The terrain vector
-		std::vector<Terrains::Terrain> m_terrains;
-		// The GUI vector
-		std::vector<Renderer::GUI> m_guis;
+		std::vector<Terrains::Terrain*> m_terrains;
 		// The Skybox
 		Entities::Skybox m_skybox;
 		// Matrix Uniform Buffer
 		std::shared_ptr<MatrixBuffer> m_matrices;
-		// Lights uniform Buffer
+		// Lights Uniform Buffer
 		std::shared_ptr<LightsBuffer> m_lights;
+		// Shared Uniform Buffer
+		std::shared_ptr<SharedBuffer> m_shared;
 	};
 }
 

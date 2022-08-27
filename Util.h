@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <cstddef>
 #include <cassert>
+#include <cmath>
 
 #ifdef __CLION_IDE__
 #define UNUSED [[maybe_unused]]
@@ -31,7 +32,6 @@ using f32 = float;
 using f64 = double;
 
 // Handy global variables
-inline const u8* g_Keys;
 inline f32 g_Delta = 1.0f;
 
 namespace Util
@@ -40,7 +40,7 @@ namespace Util
 	template<typename T>
 	T Rand_Range(T min, T max)
 	{
-		static thread_local std::mt19937_64 generator(777);
+		static thread_local std::mt19937_64 generator(69420);
 		std::uniform_real_distribution<T> distributer(min, max);
 		return distributer(generator);
 	}

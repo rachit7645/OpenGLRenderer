@@ -1,13 +1,12 @@
 #include "Player.h"
 
-#include <SDL2/SDL.h>
 #include <string>
 
 #include "Imgui.h"
 #include "MeshTextures.h"
 #include "Model.h"
 #include "Material.h"
-#include "Resources.h"
+#include "Inputs.h"
 
 using namespace Entities;
 
@@ -38,12 +37,6 @@ void Player::Move(const Terrain* terrain)
 	ImGuiDisplay();
 }
 
-// CTM Model Loader variables
-std::string modelPath;
-std::string txDiffPath;
-std::string txSpecPath;
-Material    material;
-
 void Player::ImGuiDisplay()
 {
 	if (ImGui::BeginMainMenuBar())
@@ -57,40 +50,6 @@ void Player::ImGuiDisplay()
 			ImGui::InputFloat3("##rot", &rotation[0], "%.1f");
 			ImGui::EndMenu();
 		}
-
-		if (ImGui::BeginMenu("CTM Models"))
-		{
-			// Custom model loader (experimental)
-			ImGui::Text("Options:");
-			// Model's path
-			ImGui::Text("Model Path:");
-			ImGui::InputText("##path", &modelPath);
-			// Diffuse texture
-			ImGui::Text("Texture Diffuse:");
-			ImGui::InputText("##txdiff", &txDiffPath);
-			// Specular texture
-			ImGui::Text("Texture Specular:");
-			ImGui::InputText("##txspec", &txSpecPath);
-			// Material information
-			ImGui::Checkbox("isTransparent",   &material.isTransparent);
-			ImGui::Checkbox("useFakeLighting", &material.useFakeLighting);
-			ImGui::Text("shineDamper:");
-			ImGui::InputFloat("##sd", &material.shineDamper, 0.0f,0.0f,"%.1f");
-			ImGui::Text("reflectivity:");
-			ImGui::InputFloat("##ref",&material.reflectivity,0.0f,0.0f,"%.1f");
-
-			if (ImGui::Button("Load Model"))
-			{
-				MeshTextures textures =
-				{
-				Resources::GetTexture(txDiffPath),
-				Resources::GetTexture(txSpecPath)
-				};
-				model = Resources::GetModel(modelPath, textures, material);
-			}
-			ImGui::EndMenu();
-		}
-
 		ImGui::EndMainMenuBar();
 	}
 }
@@ -108,11 +67,11 @@ void Player::Gravity(const Terrain* terrain)
 // FIXME: Prettify this one
 void Player::CheckInputs()
 {
-	if (g_Keys[SDL_SCANCODE_W])
+	if (Inputs::IsKeyPressed(SDL_SCANCODE_W))
 	{
 		runSpeed = PLAYER_RUN_SPEED;
 	}
-	else if (g_Keys[SDL_SCANCODE_S])
+	else if (Inputs::IsKeyPressed(SDL_SCANCODE_S))
 	{
 		runSpeed = -PLAYER_RUN_SPEED;
 	}
@@ -121,11 +80,11 @@ void Player::CheckInputs()
 		runSpeed = 0.0f;
 	}
 
-	if (g_Keys[SDL_SCANCODE_A])
+	if (Inputs::IsKeyPressed(SDL_SCANCODE_A))
 	{
 		turnSpeed = PLAYER_TURN_SPEED;
 	}
-	else if (g_Keys[SDL_SCANCODE_D])
+	else if (Inputs::IsKeyPressed(SDL_SCANCODE_D))
 	{
 		turnSpeed = -PLAYER_TURN_SPEED;
 	}

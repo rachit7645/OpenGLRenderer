@@ -2,6 +2,7 @@
 #define TERRAIN_SHADER_H
 
 #include <unordered_map>
+#include <GL/glew.h>
 
 #include "GLM.h"
 #include "Shader.h"
@@ -21,7 +22,6 @@ namespace Shader
 		void LoadModelMatrix(const glm::mat4& matrix);
 
 		// Object loading functions
-		void LoadSkyColour(const glm::vec4& skyColour);
 		void ConnectTextureUnits();
 
 		void GetUniformLocations() override;

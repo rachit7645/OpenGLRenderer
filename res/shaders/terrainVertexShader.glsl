@@ -13,21 +13,27 @@ struct Light
 	vec4 attenuation;
 };
 
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec2 textureCoords;
-layout(location = 2) in vec3 normal;
-
 layout(std140, binding = 0) uniform Matrices
 {
 	mat4 projectionMatrix;
 	mat4 viewMatrix;
-	vec4 cameraPos;
 };
 
 layout(std140, binding = 1) uniform Lights
 {
 	Light lights[MAX_LIGHTS];
 };
+
+layout(std140, binding = 2) uniform Shared
+{
+	vec4 clipPlane;
+	vec4 skyColor;
+	vec4 cameraPos;
+};
+
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec2 textureCoords;
+layout(location = 2) in vec3 normal;
 
 uniform mat4 modelMatrix;
 
@@ -42,10 +48,11 @@ void CalculateVisibility(vec4 posRelToCam);
 
 void main() 
 {
-	worldPosition    = modelMatrix      * vec4(position, 1.0f);
-	vec4 posRelToCam = viewMatrix       * worldPosition;
-	gl_Position      = projectionMatrix * posRelToCam;
-	txCoords         = textureCoords;
+	worldPosition      = modelMatrix      * vec4(position, 1.0f);
+	vec4 posRelToCam   = viewMatrix       * worldPosition;
+	gl_Position        = projectionMatrix * posRelToCam;
+	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
+	txCoords           = textureCoords;
 	
 	CalculateLighting();
 	CalculateVisibility(posRelToCam);

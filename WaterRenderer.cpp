@@ -2,8 +2,12 @@
 
 #include "GLM.h"
 #include "Maths.h"
+#include "Util.h"
 
 using namespace Renderer;
+
+using Waters::WaterTile;
+using Waters::WaterFrameBuffers;
 
 const std::vector<f32> TILE_VERTICES =
 {
@@ -19,20 +23,54 @@ WaterRenderer::WaterRenderer(Shader::WaterShader& shader)
 	: shader(shader),
 	  vao(std::make_shared<VertexArray>(2, TILE_VERTICES))
 {
+	shader.Start();
+	shader.ConnectTextureUnits();
+	shader.Stop();
 }
 
-void WaterRenderer::Render(const std::vector<Waters::WaterTile>& waters)
+void WaterRenderer::Render(const std::vector<WaterTile>& waters, const WaterFrameBuffers& waterFBOs)
 {
-	glBindVertexArray(vao->id);
-	for (const auto& tile : waters)
+	Prepare(waterFBOs);
+	for (const auto& water : waters)
 	{
-		glm::mat4 matrix = Maths::CreateModelMatrixTS
-		(
-			tile.position,
-			Waters::WATER_TILE_SIZE
-		);
-		shader.LoadModelMatrix(matrix);
+		PrepareWater(water);
 		glDrawArrays(GL_TRIANGLES, 0,vao->vertexCount);
 	}
+	Unbind();
+}
+
+void WaterRenderer::Prepare(const WaterFrameBuffers& waterFBOs)
+{
+	// Bind vao
+	glBindVertexArray(vao->id);
+	// Bind framebuffers
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, waterFBOs.reflectionFBO->colorTexture->id);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, waterFBOs.refractionFBO->colorTexture->id);
+	// Load dudv move factor
+	moveFactor += WATER_WAVE_SPEED * g_Delta;
+	moveFactor = std::fmod(moveFactor, 1.0f);
+	shader.LoadMoveFactor(moveFactor);
+}
+
+void WaterRenderer::PrepareWater(const WaterTile& water)
+{
+	// Bind maps
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, water.dudvMap->id);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, water.normalMap->id);
+	// Load model matrix
+	glm::mat4 matrix = Maths::CreateModelMatrixTS
+	(
+		water.position,
+		Waters::WATER_TILE_SIZE
+	);
+	shader.LoadModelMatrix(matrix);
+}
+
+void WaterRenderer::Unbind()
+{
 	glBindVertexArray(0);
 }
