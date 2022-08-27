@@ -79,50 +79,6 @@ add_executable(engine
 
 # Precompiled Headers
 target_precompile_headers(engine PRIVATE
-	# Project Headers
-	Camera.h
-	CubeMap.h
-	Entity.h
-	EntityRenderer.h
-	Files.h
-	FrameBuffer.h
-	GL.h
-	GLM.h
-	GUI.h
-	GUIRenderer.h
-	GUIShader.h
-	Image.h
-	Imgui.h
-	Light.h
-	LightsBuffer.h
-	Log.h
-	Material.h
-	Maths.h
-	MatrixBuffer.h
-	Mesh.h
-	MeshTextures.h
-	Model.h
-	Player.h
-	RenderBuffer.h
-	Resources.h
-	Shader.h
-	SharedBuffer.h
-	Skybox.h
-	SkyboxRenderer.h
-	SkyboxShader.h
-	StaticShader.h
-	Terrain.h
-	TerrainRenderer.h
-	TerrainShader.h
-	TerrainTextures.h
-	Texture.h
-	Time.h
-	UniformBuffer.h
-	Util.h
-	VertexArray.h
-	VertexBuffer.h
-	WaterShader.h
-	WaterTile.h
 	# ImGui Headers
 	libs/imgui/imgui.h
 	libs/imgui/backends/imgui_impl_sdl.h
@@ -136,15 +92,11 @@ target_precompile_headers(engine PRIVATE
 	<assimp/Importer.hpp>
 	<assimp/scene.h>
 	<assimp/postprocess.h>
-	# STL Headers
+	# C++ STL Headers
 	<unordered_map>
 	<vector>
 	<random>
 	<filesystem>
-	<cstdint>
-	<cstddef>
-	<cassert>
-	<cmath>
 	<array>
 	<memory>
 	<string_view>
@@ -154,8 +106,13 @@ target_precompile_headers(engine PRIVATE
 	<algorithm>
 	<limits>
 	<chrono>
-	<ctime>
 	<sstream>
+	# C STL Headers
+	<cstdint>
+	<cstddef>
+	<cassert>
+	<cmath>
+	<ctime>
 )
 
 # Library includes

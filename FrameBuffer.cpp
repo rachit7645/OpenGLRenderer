@@ -42,10 +42,7 @@ FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type)
 		LOG_ERROR("FBType is equal to \"None\"");
 	}
 
-	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	{
-		LOG_ERROR("Framebuffer [ID=", id, "] is incomplete!");
-	}
+	CheckStatus();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -125,6 +122,28 @@ void FrameBuffer::CreateDepthBuffer()
 		GL_RENDERBUFFER,
 		depthRenderBuffer->id
 	);
+}
+
+void FrameBuffer::CheckStatus()
+{
+	static const std::unordered_map<GLenum, const char*> GL_FRAMEBUFFER_ERROR_TYPES
+	{
+		{GL_FRAMEBUFFER_UNDEFINED,                     "[FRAMEBUFFER_UNDEFINED]"                    },
+		{GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT,         "[FRAMEBUFFER_INCOMPLETE_ATTACHMENT]"        },
+		{GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT, "[FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT]"},
+		{GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER,        "[FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER]"       },
+		{GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER,        "[FRAMEBUFFER_INCOMPLETE_READ_BUFFER]"       },
+		{GL_FRAMEBUFFER_UNSUPPORTED,                   "[FRAMEBUFFER_UNSUPPORTED]"                  },
+		{GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE,        "[FRAMEBUFFER_INCOMPLETE_MULTISAMPLE]"       },
+		{GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS,      "[FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS]"     }
+	};
+
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if(status != GL_FRAMEBUFFER_COMPLETE)
+	{
+		auto errorStr = GL_FRAMEBUFFER_ERROR_TYPES.find(status)->second;
+		LOG_ERROR(errorStr, " Framebuffer [ID=", id, "] is incomplete!");
+	}
 }
 
 void FrameBuffer::Bind() const
