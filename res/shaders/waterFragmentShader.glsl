@@ -1,21 +1,12 @@
 #version 430 core
 
-// FIXME: Ugly jagged edges
-// Try making framebuffers MSAA
-
-#define NEAR_PLANE frustum.x
-#define FAR_PLANE  frustum.y
-
-const float WAVE_STRENGTH         = 0.04f;
-const float REFLECT_AMOUNT        = 0.7f;
-const float SHINE_DAMPER          = 20.0f;
-const float REFLECTIVITY          = 0.5f;
-const float MIN_SPECULAR          = 0.0f;
-const float EDGE_BLEND_FACTOR     = 1.2f;
-const float DISTORT_BLEND_FACTOR  = 2.5f;
-const float SPECULAR_BLEND_FACTOR = 1.4f;
-const float NORMAL_FACTOR_Y       = 3.0f;
-const int   MAX_LIGHTS            = 4;
+const float WAVE_STRENGTH   = 0.04f;
+const float REFRACT_AMOUNT  = 0.7f;
+const float SHINE_DAMPER    = 20.0f;
+const float REFLECTIVITY    = 0.5f;
+const float MIN_SPECULAR    = 0.0f;
+const float NORMAL_FACTOR_Y = 0.5f;
+const int   MAX_LIGHTS      = 4;
 
 struct Light
 {
@@ -46,7 +37,6 @@ in vec2 txCoords;
 
 uniform sampler2D reflectionTx;
 uniform sampler2D refractionTx;
-uniform sampler2D refractDepth;
 uniform sampler2D dudvMap;
 uniform sampler2D normalMap;
 
@@ -54,13 +44,11 @@ uniform float moveFactor;
 
 out vec4 outColor;
 
-float LogNToLinear(float x, float min, float max);
-float CalculateWaterDepth(vec2 refractTxCoords);
 vec2  CalculateDistortedCoords();
-vec2  CalculateTotalDistortion(vec2 distortedCoords, float waterDepth);
+vec2  CalculateTotalDistortion(vec2 distortedCoords);
 vec3  CalculateNormal(vec2 distortedCoords);
 float CalculateRefractiveFactor(vec3 unitNormal);
-vec3  CalculateSpecular(vec3 unitNormal, float waterDepth);
+vec3  CalculateSpecular(vec3 unitNormal);
 
 void main()
 {
@@ -68,9 +56,8 @@ void main()
 	vec2 reflectTxCoords = vec2(NDC.x, -NDC.y);
 	vec2 refractTxCoords = vec2(NDC.x, NDC.y);
 
-	float waterDepth     = CalculateWaterDepth(refractTxCoords);
 	vec2 distortedCoords = CalculateDistortedCoords();
-	vec2 totalDistortion = CalculateTotalDistortion(distortedCoords, waterDepth);
+	vec2 totalDistortion = CalculateTotalDistortion(distortedCoords);
 
 	reflectTxCoords   += totalDistortion;
 	reflectTxCoords.x = clamp(reflectTxCoords.x, 0.001f, 0.999f);
@@ -84,23 +71,17 @@ void main()
 
 	vec3  unitNormal    = CalculateNormal(distortedCoords);
 	float refractFactor = CalculateRefractiveFactor(unitNormal);
-	vec3  specular      = CalculateSpecular(unitNormal, waterDepth);
+	vec3  specular      = CalculateSpecular(unitNormal);
 
 	outColor   = mix(reflectColor, refractColor, refractFactor);
 	outColor   = mix(outColor, vec4(0.0f, 0.3f, 0.5f, 0.0f), 0.2f);
 	outColor   = outColor + vec4(specular, 0.0f);
-	outColor.a = clamp(waterDepth / EDGE_BLEND_FACTOR, 0.0f, 1.0f);
 }
 
-float LogNToLinear(float x, float min, float max)
-{
-	return (2.0f * min * max) / (min + max - (2.0f * x - 1.0f) * (max - min));
-}
-
-vec2 CalculateTotalDistortion(vec2 distortedCoords, float waterDepth)
+vec2 CalculateTotalDistortion(vec2 distortedCoords)
 {
 	vec2 totalDistortion = texture(dudvMap, distortedCoords).rg * 2.0f - 1.0f;
-	return totalDistortion * WAVE_STRENGTH * clamp(waterDepth / DISTORT_BLEND_FACTOR, 0.0f, 1.0f);
+	return totalDistortion * WAVE_STRENGTH;
 }
 
 vec2 CalculateDistortedCoords()
@@ -120,28 +101,19 @@ vec3 CalculateNormal(vec2 distortedCoords)
 	));
 }
 
-float CalculateWaterDepth(vec2 refractTxCoords)
-{
-	float depth         = texture(refractDepth, refractTxCoords).r;
-	float floorDistance = LogNToLinear(depth,          NEAR_PLANE, FAR_PLANE);
-	float waterDistance = LogNToLinear(gl_FragCoord.z, NEAR_PLANE, FAR_PLANE);
-	return floorDistance - waterDistance;
-}
-
 float CalculateRefractiveFactor(vec3 unitNormal)
 {
 	float refractFactor = dot(unitCameraVector, unitNormal);
-	refractFactor       = pow(refractFactor, REFLECT_AMOUNT);
+	refractFactor       = pow(refractFactor, REFRACT_AMOUNT);
 	return clamp(refractFactor, 0.0f, 1.0f);
 }
 
-vec3 CalculateSpecular(vec3 unitNormal, float waterDepth)
+vec3 CalculateSpecular(vec3 unitNormal)
 {
 	vec3 lightDirection  = unitLightVector;
 	vec3 halfwayDir      = normalize(lightDirection + unitCameraVector);
 	float specularFactor = dot(halfwayDir, unitNormal);
 	specularFactor       = max(specularFactor, MIN_SPECULAR);
 	float dampedFactor   = pow(specularFactor, SHINE_DAMPER);
-	vec3 specular        = dampedFactor * REFLECTIVITY * lights[0].specular.rgb;
-	return specular * clamp(waterDepth / SPECULAR_BLEND_FACTOR, 0.0f, 1.0f);
+	return dampedFactor * REFLECTIVITY * lights[0].specular.rgb;
 }

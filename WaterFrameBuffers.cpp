@@ -7,7 +7,7 @@ using Renderer::FBType;
 
 WaterFrameBuffers::WaterFrameBuffers()
 	: reflectionFBO(std::make_shared<FrameBuffer>(WATER_REFLECTION_SIZE.x, WATER_REFLECTION_SIZE.y, FBType::Color)),
-	  refractionFBO(std::make_shared<FrameBuffer>(WATER_REFRACTION_SIZE.x, WATER_REFRACTION_SIZE.y, FBType::ColorAndDepth))
+	  refractionFBO(std::make_shared<FrameBuffer>(WATER_REFRACTION_SIZE.x, WATER_REFRACTION_SIZE.y, FBType::Color))
 {
 }
 

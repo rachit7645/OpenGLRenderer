@@ -15,7 +15,6 @@ namespace Renderer
 		void LoadClipPlane(const glm::vec4& clipPlane);
 		void LoadSkyColor(const glm::vec4& skyColor);
 		void LoadCameraPos(const Entities::Camera& camera);
-		void LoadFrustum(const glm::vec2& frustum);
 	};
 
 	namespace Detail
@@ -25,7 +24,6 @@ namespace Renderer
 			glm::vec4 clipPlane;
 			glm::vec4 skyColor;
 			glm::vec4 cameraPos;
-			glm::vec2 frustum;
 		};
 	}
 }

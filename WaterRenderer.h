@@ -12,7 +12,7 @@
 
 namespace Renderer
 {
-	constexpr auto WATER_WAVE_SPEED = 0.05f;
+	constexpr auto WATER_WAVE_SPEED = 0.04f;
 
 	class WaterRenderer
 	{

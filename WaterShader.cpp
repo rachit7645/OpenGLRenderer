@@ -32,7 +32,6 @@ void WaterShader::ConnectTextureUnits()
 {
 	LoadUniform(uniforms["reflectionTx"], 0);
 	LoadUniform(uniforms["refractionTx"], 1);
-	LoadUniform(uniforms["refractDepth"], 2);
-	LoadUniform(uniforms["dudvMap"],      3);
-	LoadUniform(uniforms["normalMap"],    4);
+	LoadUniform(uniforms["dudvMap"],      2);
+	LoadUniform(uniforms["normalMap"],    3);
 }
