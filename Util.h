@@ -31,6 +31,9 @@ using u64 = std::uint64_t;
 using f32 = float;
 using f64 = double;
 
+using ssize = ssize_t;
+using usize = std::size_t;
+
 // Handy global variables
 inline f32 g_Delta = 1.0f;
 
@@ -63,7 +66,7 @@ namespace Util
 	using Array2D = std::vector<std::vector<T>>;
 
 	template<typename T>
-	constexpr void InitArray2D(Array2D<T>& array, size_t size)
+	constexpr void InitArray2D(Array2D<T>& array, usize size)
 	{
 		array = Array2D<T>(size);
 		for (auto& row : array)

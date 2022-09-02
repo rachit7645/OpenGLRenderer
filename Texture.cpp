@@ -11,7 +11,7 @@ using namespace Renderer;
 
 Texture::Texture(const std::string& path)
 {
-	LOG_INFO("Loading texture: ", path, "\n");
+	LOG_INFO("Loading texture: {}\n", path);
 	u8* data = stbi_load
 	(
 		(Files::GetResourceDirectory() + path).c_str(),

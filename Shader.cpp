@@ -50,7 +50,7 @@ void ShaderProgram::DumpToFile(const std::string& path) const
 
 u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
 {
-	LOG_INFO("Loading shader: ", path, "\n");
+	LOG_INFO("Loading shader: {}\n", path);
 	std::ifstream fs(Files::GetResourceDirectory() + path, std::ios::in);
 
 	if (!fs.is_open())

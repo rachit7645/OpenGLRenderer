@@ -22,7 +22,7 @@ TxPtr Resources::GetTexture(const std::string& path)
 	auto result = m_textures.find(path);
 	if (result != m_textures.end())
 	{
-		LOG_INFO("Loading cached texture: ", path, "\n");
+		LOG_INFO("Loading cached texture: {}\n", path);
 		return result->second;
 	}
 	else
@@ -41,7 +41,7 @@ MdPtr Resources::GetModel
 	auto result = m_models.find(path);
 	if (result != m_models.end())
 	{
-		LOG_INFO("Loading cached model: ", path, "\n");
+		LOG_INFO("Loading cached model: {}\n", path);
 		return result->second;
 	}
 	else

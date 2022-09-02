@@ -1,9 +1,9 @@
 #include "Window.h"
 
-#include <sstream>
+#include <string_view>
 #include <GL/glew.h>
 
-#include "Imgui.h"
+#include "imgui.h"
 #include "Log.h"
 #include "Camera.h"
 #include "Files.h"
@@ -18,22 +18,20 @@ SDLWindow::SDLWindow()
 	// Get SDL version
 	SDL_version version = {};
 	SDL_GetVersion(&version);
-	// Put it in a string stream
-	std::stringstream versionSS;
-	// Major
-	versionSS << static_cast<size_t>(version.major) << ".";
-	// Minor
-	versionSS << static_cast<size_t>(version.minor) << ".";
-	// Patch
-	versionSS << static_cast<size_t>(version.patch);
+	LOG_INFO
+	(
+		"Initializing SDL2 version: {}.{}.{}\n",
+		static_cast<usize>(version.major),
+		static_cast<usize>(version.minor),
+		static_cast<usize>(version.patch)
+	);
 
-	LOG_INFO("Initializing SDL2 version: ", versionSS.str(), "\n");
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
 		LOG_ERROR("SDL_Init Failed\n", SDL_GetError(), "\n");
 	}
 
-	LOG_INFO("Setting up OpenGL context\n");
+	LOG_INFO("{}\n", "Setting up OpenGL context");
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
@@ -66,7 +64,7 @@ SDLWindow::SDLWindow()
 	{
 		LOG_ERROR("SDL_CreateWindow Failed\n", SDL_GetError(), "\n");
 	}
-	LOG_INFO("Created SDL_Window with address: ", window, "\n");
+	LOG_INFO("Created SDL_Window with address: {}\n", reinterpret_cast<void*>(window));
 	
 	// For sanity, raise window
 	SDL_RaiseWindow(window);
@@ -85,10 +83,11 @@ SDLWindow::SDLWindow()
 	{
 		LOG_ERROR("SDL_GL_MakeCurrent Failed\n", SDL_GetError(), "\n");
 	}
-	LOG_INFO("Created SDL_GLContext with address: ", &glContext, "\n");
+	LOG_INFO("Created SDL_GLContext with address: {}\n", reinterpret_cast<void*>(&glContext));
 
 	// Initialize the REAL OpenGL context
-	LOG_INFO("Initializing GLEW version: ", glewGetString(GLEW_VERSION), "\n");
+	auto glewVersion = std::string_view(reinterpret_cast<const char*>(glewGetString(GLEW_VERSION)));
+	LOG_INFO("Initializing GLEW version: {}\n", glewVersion);
 	// Due to a bug in glew, set it to experimental mode
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
@@ -97,7 +96,7 @@ SDLWindow::SDLWindow()
 	}
 	GL::LogDebugInfo();
 
-	LOG_INFO("Initializing Dear ImGui version: ", ImGui::GetVersion(), "\n");
+	LOG_INFO("Initializing Dear ImGui version: {}\n", ImGui::GetVersion());
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	UNUSED ImGuiIO& io = ImGui::GetIO();
@@ -162,7 +161,7 @@ bool SDLWindow::PollEvents()
 
 SDLWindow::~SDLWindow()
 {
-	LOG_INFO("Quiting SDL2\n");
+	LOG_INFO("{}\n", "Quiting SDL2");
 
 	Resources::Delete();
 

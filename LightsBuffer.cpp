@@ -20,7 +20,7 @@ void LightsBuffer::LoadLights(const std::vector<Light>& lights)
 	static const Light emptyLight;
 
 	glBindBuffer(GL_UNIFORM_BUFFER, id);
-	for (size_t i = 0; i < SHADER_MAX_LIGHTS; ++i)
+	for (usize i = 0; i < SHADER_MAX_LIGHTS; ++i)
 	{
 		if (i < lights.size())
 		{

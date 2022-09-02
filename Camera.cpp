@@ -75,7 +75,7 @@ void Camera::CalculateZoom()
 	// If scroll direction is positive, reduce distance from player
 	if (mouseScroll.y > 0)
 	{
-		for (ssize_t i = 0; i < mouseScroll.y; ++i)
+		for (ssize i = 0; i < mouseScroll.y; ++i)
 		{
 			distanceFromPlayer -= CAMERA_ZOOM_SPEED;
 		}
@@ -83,7 +83,7 @@ void Camera::CalculateZoom()
 	// If scroll direction is negative, increase distance from player
 	else
 	{
-		for (ssize_t i = 0; i < -mouseScroll.y; ++i)
+		for (ssize i = 0; i < -mouseScroll.y; ++i)
 		{
 			distanceFromPlayer += CAMERA_ZOOM_SPEED;
 		}
