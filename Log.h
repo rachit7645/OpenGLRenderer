@@ -50,13 +50,13 @@ namespace Logger
 	} \
 	while (0)
 
-#define LOG_ERROR(...) /*\
+#define LOG_ERROR(format, ...) \
 	do \
 	{ \
-		Logger::Log("[ERROR] [", Util::GetTime(), "] [", Files::GetName(__FILE__), ":", __LINE__, "] ", __VA_ARGS__); \
-		std::exit(-1); \
+		Logger::Log("ERROR", Util::GetTime(), Files::GetName(__FILE__), __LINE__, FMT_STRING(format), __VA_ARGS__); \
+    	std::exit(-1); \
 	} \
-	while (0)*/
+	while (0)
 
 #define LOG_GL(format, ...) \
 	do \

@@ -39,7 +39,7 @@ FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type)
 		break;
 
 	case FBType::None:
-		LOG_ERROR("FBType is equal to \"None\"");
+		LOG_ERROR("FBType is equal to \"{}\"\n", "None");
 	}
 
 	CheckStatus();
@@ -142,7 +142,7 @@ void FrameBuffer::CheckStatus()
 	if(status != GL_FRAMEBUFFER_COMPLETE)
 	{
 		auto errorStr = GL_FRAMEBUFFER_ERROR_TYPES.find(status)->second;
-		LOG_ERROR(errorStr, " Framebuffer [ID=", id, "] is incomplete!");
+		LOG_ERROR("{} Framebuffer [ID={}] is incomplete!", errorStr, id);
 	}
 }
 

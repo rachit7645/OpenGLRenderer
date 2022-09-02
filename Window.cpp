@@ -28,7 +28,7 @@ SDLWindow::SDLWindow()
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
-		LOG_ERROR("SDL_Init Failed\n", SDL_GetError(), "\n");
+		LOG_ERROR("SDL_Init Failed\n{}\n", SDL_GetError());
 	}
 
 	LOG_INFO("{}\n", "Setting up OpenGL context");
@@ -62,7 +62,7 @@ SDLWindow::SDLWindow()
 
 	if (window == nullptr)
 	{
-		LOG_ERROR("SDL_CreateWindow Failed\n", SDL_GetError(), "\n");
+		LOG_ERROR("SDL_CreateWindow Failed\n{}\n", SDL_GetError());
 	}
 	LOG_INFO("Created SDL_Window with address: {}\n", reinterpret_cast<void*>(window));
 	
@@ -76,12 +76,12 @@ SDLWindow::SDLWindow()
 	glContext = SDL_GL_CreateContext(window);
 	if (glContext == nullptr)
 	{
-		LOG_ERROR("SDL_GL_CreateContext Failed\n", SDL_GetError(), "\n");
+		LOG_ERROR("SDL_GL_CreateContext Failed\n{}\n", SDL_GetError());
 	}
 
 	if (SDL_GL_MakeCurrent(window, glContext) != 0)
 	{
-		LOG_ERROR("SDL_GL_MakeCurrent Failed\n", SDL_GetError(), "\n");
+		LOG_ERROR("SDL_GL_MakeCurrent Failed\n{}\n", SDL_GetError());
 	}
 	LOG_INFO("Created SDL_GLContext with address: {}\n", reinterpret_cast<void*>(&glContext));
 
@@ -92,7 +92,7 @@ SDLWindow::SDLWindow()
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
 	{
-		LOG_ERROR("glewInit Failed\n");
+		LOG_ERROR("{}\n", "glewInit Failed");
 	}
 	GL::LogDebugInfo();
 

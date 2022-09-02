@@ -93,6 +93,9 @@ target_precompile_headers(engine PRIVATE
 	<assimp/Importer.hpp>
 	<assimp/scene.h>
 	<assimp/postprocess.h>
+	# FMT headers
+	<fmt/core.h>
+	<fmt/format.h>
 	# C++ STL Headers
 	<unordered_map>
 	<vector>
@@ -107,7 +110,6 @@ target_precompile_headers(engine PRIVATE
 	<algorithm>
 	<limits>
 	<chrono>
-	<sstream>
 	# C STL Headers
 	<cstdint>
 	<cstddef>
