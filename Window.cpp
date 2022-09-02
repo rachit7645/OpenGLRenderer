@@ -86,8 +86,8 @@ SDLWindow::SDLWindow()
 	LOG_INFO("Created SDL_GLContext with address: {}\n", reinterpret_cast<void*>(&glContext));
 
 	// Initialize the REAL OpenGL context
-	auto glewVersion = std::string_view(reinterpret_cast<const char*>(glewGetString(GLEW_VERSION)));
-	LOG_INFO("Initializing GLEW version: {}\n", glewVersion);
+	auto glewVersion = reinterpret_cast<const char*>(glewGetString(GLEW_VERSION));
+	LOG_INFO("Initializing GLEW version: {}\n", std::string_view(glewVersion));
 	// Due to a bug in glew, set it to experimental mode
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)

@@ -36,19 +36,19 @@ namespace Logger
 	} \
 	while (0)
 
-#define LOG_DEBUG(...) /*\
+#define LOG_DEBUG(format, ...) \
 	do \
 	{ \
-		Logger::Log("[DEBUG] [", Util::GetTime(), "] [", Files::GetName(__FILE__), ":", __LINE__, "] ", __VA_ARGS__); \
+		Logger::Log("DEBUG", Util::GetTime(), Files::GetName(__FILE__), __LINE__, FMT_STRING(format), __VA_ARGS__); \
 	} \
-	while (0)*/
+	while (0)
 
-#define LOG_WARNING(...) /*\
+#define LOG_WARNING(format, ...) \
 	do \
 	{ \
-		 Logger::Log("[WARNING] [", Util::GetTime(), "] [", Files::GetName(__FILE__), ":", __LINE__, "] ", __VA_ARGS__); \
+		Logger::Log("WARNING", Util::GetTime(), Files::GetName(__FILE__), __LINE__, FMT_STRING(format), __VA_ARGS__); \
 	} \
-	while (0)*/
+	while (0)
 
 #define LOG_ERROR(...) /*\
 	do \
@@ -58,11 +58,11 @@ namespace Logger
 	} \
 	while (0)*/
 
-#define LOG_GL(...) /*\
+#define LOG_GL(format, ...) \
 	do \
-    { \
-		Logger::Log("[GL] [", Util::GetTime(), "] ", __VA_ARGS__); \
+	{ \
+		Logger::Log("GL", Util::GetTime(), Files::GetName(__FILE__), __LINE__, FMT_STRING(format), __VA_ARGS__); \
 	} \
-	while(0)*/
+	while (0)
 
 #endif // LOG_H
