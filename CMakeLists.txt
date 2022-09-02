@@ -23,6 +23,7 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm REQUIRED)
 find_package(assimp REQUIRED)
+find_package(fmt REQUIRED)
 
 # Add sub-projects
 add_subdirectory(libs/imgui/)
@@ -92,6 +93,9 @@ target_precompile_headers(engine PRIVATE
 	<assimp/Importer.hpp>
 	<assimp/scene.h>
 	<assimp/postprocess.h>
+	# FMT headers
+	<fmt/core.h>
+	<fmt/format.h>
 	# C++ STL Headers
 	<unordered_map>
 	<vector>
@@ -106,7 +110,6 @@ target_precompile_headers(engine PRIVATE
 	<algorithm>
 	<limits>
 	<chrono>
-	<sstream>
 	# C STL Headers
 	<cstdint>
 	<cstddef>
@@ -130,4 +133,4 @@ target_compile_options(engine PRIVATE -O3)
 # Enable debug output
 target_compile_options(engine PRIVATE -g)
 # Link libraries
-target_link_libraries(engine OpenGL::GL GLEW::GLEW SDL2::SDL2 assimp imgui)
+target_link_libraries(engine OpenGL::GL GLEW::GLEW SDL2::SDL2 fmt::fmt assimp imgui)

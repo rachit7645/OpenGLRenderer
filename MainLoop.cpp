@@ -77,7 +77,7 @@ void SDLWindow::MainLoop()
 	{
 		const Terrain* current;
 		f32 entityX, entityY, entityZ;
-		for (size_t i = 0; i < MAX_ENTITIES; ++i)
+		for (usize i = 0; i < MAX_ENTITIES; ++i)
 		{
 			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
 			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;

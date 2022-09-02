@@ -17,7 +17,7 @@ Model::Model
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile((Files::GetResourceDirectory() + path).c_str(), ASSIMP_FLAGS);
 
-	LOG_INFO("Loading model: ", path, "\n");
+	LOG_INFO("Loading model: {}\n", path);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
 		LOG_ERROR("Model Load Failed: ", importer.GetErrorString());

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <fmt/format.h>
 
 #include "Util.h"
 #include "Log.h"
@@ -19,11 +20,11 @@ ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& f
 	glAttachShader(programID, vertexShaderID);
 	glAttachShader(programID, fragmentShaderID);
 	glLinkProgram(programID);
-	CheckProgram("Shader link failed for: " + vertexPath + ", " + fragmentPath, GL_LINK_STATUS);
+	CheckProgram(fmt::format("Shader link failed for: {}, {}", vertexPath, fragmentPath), GL_LINK_STATUS);
 	glDeleteShader(vertexShaderID);
 	glDeleteShader(fragmentShaderID);
 	glValidateProgram(programID);
-	CheckProgram("Shader validation failed for: " + vertexPath + ", " + fragmentPath, GL_VALIDATE_STATUS);
+	CheckProgram(fmt::format("Shader validation failed for: {}, {}", vertexPath, fragmentPath), GL_VALIDATE_STATUS);
 }
 
 void ShaderProgram::DumpToFile(const std::string& path) const
@@ -50,7 +51,7 @@ void ShaderProgram::DumpToFile(const std::string& path) const
 
 u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
 {
-	LOG_INFO("Loading shader: ", path, "\n");
+	LOG_INFO("Loading shader: {}\n", path);
 	std::ifstream fs(Files::GetResourceDirectory() + path, std::ios::in);
 
 	if (!fs.is_open())
@@ -63,7 +64,7 @@ u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
 	const GLchar* cstr = content.c_str();
 	glShaderSource(shaderID, 1, &cstr, nullptr);
 	glCompileShader(shaderID);
-	CheckShader("Shader Compilation Failed: " + path, shaderID, GL_COMPILE_STATUS);
+	CheckShader(fmt::format("Shader Compilation Failed: {}", path), shaderID, GL_COMPILE_STATUS);
 
 	return shaderID;
 }
@@ -76,7 +77,7 @@ void ShaderProgram::CheckShader(const std::string& message, u32 shaderID, GLenum
 	{
 		std::vector<char> v(SHADER_ERROR_BUFFER_SIZE);
 		glGetShaderInfoLog(shaderID, SHADER_ERROR_BUFFER_SIZE, nullptr, v.data());
-		LOG_ERROR(message, "\n", v.data());
+		LOG_ERROR("{}\n{}", message, v.data());
 	}
 }
 
@@ -88,7 +89,7 @@ void ShaderProgram::CheckProgram(const std::string& message, GLenum type) const
 	{
 		std::vector<char> v(SHADER_ERROR_BUFFER_SIZE);
 		glGetProgramInfoLog(programID, SHADER_ERROR_BUFFER_SIZE, nullptr, v.data());
-		LOG_ERROR(message, "\n", v.data());
+		LOG_ERROR("{}\n{}", message, v.data());
 	}
 }
 

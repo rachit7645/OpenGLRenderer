@@ -27,7 +27,7 @@ CubeMap::CubeMap(const std::array<const char*, 6>& files)
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R,     GL_CLAMP_TO_EDGE);
 	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_LOD_BIAS,   TEXTURE_LOD_BIAS);
 
-	for (size_t i = 0; i < files.size(); ++i)
+	for (usize i = 0; i < files.size(); ++i)
 	{
 		data = stbi_load
 		(

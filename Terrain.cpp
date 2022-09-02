@@ -34,10 +34,10 @@ Terrain::Terrain
 	std::vector<u32> indices(6 * (VERTEX_COUNT - 1) * (VERTEX_COUNT - 1));
 	Util::InitArray2D<f32>(heights, VERTEX_COUNT);
 
-	size_t vertexPointer = 0;
-	for (ssize_t i = 0; i < VERTEX_COUNT; ++i)
+	usize vertexPointer = 0;
+	for (ssize i = 0; i < VERTEX_COUNT; ++i)
 	{
-		for (ssize_t j = 0; j < VERTEX_COUNT; ++j)
+		for (ssize j = 0; j < VERTEX_COUNT; ++j)
 		{
 			f32 height = CalculateHeight(static_cast<int>(j), static_cast<int>(i), hMap);
 			heights[j][i] = height;
@@ -59,9 +59,9 @@ Terrain::Terrain
 	}
 
 	vertexPointer = 0;
-	for (ssize_t i = 0; i < VERTEX_COUNT - 1; ++i)
+	for (ssize i = 0; i < VERTEX_COUNT - 1; ++i)
 	{
-		for (ssize_t j = 0; j < VERTEX_COUNT - 1; ++j)
+		for (ssize j = 0; j < VERTEX_COUNT - 1; ++j)
 		{
 			auto topLeft	 = (i * VERTEX_COUNT) + j;
 			auto topRight	 = topLeft + 1;
@@ -106,13 +106,13 @@ f32 Terrain::GetHeight(const glm::vec2& worldPos) const
 	f32 terrainZ = worldPos.y - position.y;
 
 	f32 gridSize  = TERRAIN_SIZE / static_cast<f32>(heights.size() - 1);
-	ssize_t gridX = std::floor(terrainX / gridSize);
-	ssize_t gridZ = std::floor(terrainZ / gridSize);
+	ssize gridX = std::floor(terrainX / gridSize);
+	ssize gridZ = std::floor(terrainZ / gridSize);
 
 	if
 	(
-		gridX >= static_cast<ssize_t>(heights.size() - 1) ||
-		gridZ >= static_cast<ssize_t>(heights.size() - 1) ||
+		gridX >= static_cast<ssize>(heights.size() - 1) ||
+		gridZ >= static_cast<ssize>(heights.size() - 1) ||
 		gridX < 0 ||
 		gridZ < 0
 	)

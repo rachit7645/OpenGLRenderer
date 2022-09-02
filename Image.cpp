@@ -9,7 +9,7 @@ using namespace Util;
 
 Image2D::Image2D(const std::string_view path)
 {
-	LOG_INFO("Loading image: ", path, "\n");
+	LOG_INFO("Loading image: {}\n", path);
 	m_data = stbi_load
 	(
 		(Files::GetResourceDirectory() + path.data()).c_str(),
@@ -62,7 +62,7 @@ u32 Image2D::GetARGB(int x, int y) const
 		return 0;
 	}
 
-	ssize_t position = GetPosition(x, y);
+	ssize position = GetPosition(x, y);
 	
 	u8 red   = m_data[position];
 	u8 green = m_data[position + 1];
@@ -72,7 +72,7 @@ u32 Image2D::GetARGB(int x, int y) const
 	return alpha << 24 | red << 16 | green << 8 | blue;
 }
 
-ssize_t Image2D::GetPosition(int x, int y) const
+ssize Image2D::GetPosition(int x, int y) const
 {
 	return (y * width + x) * channels;
 }

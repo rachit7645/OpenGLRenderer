@@ -41,7 +41,7 @@ namespace Util
 		u8* m_data;
 
 		// Returns position = (y * width + x) * channels
-		ssize_t GetPosition(int x, int y) const;
+		ssize GetPosition(int x, int y) const;
 		// Bounds Check
 		bool CheckBounds(int x, int y) const;
 	};

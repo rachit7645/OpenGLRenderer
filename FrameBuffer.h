@@ -6,10 +6,11 @@
 
 #include "Texture.h"
 #include "RenderBuffer.h"
+#include "Util.h"
 
 namespace Renderer
 {
-	enum FBType : size_t
+	enum FBType : usize
 	{
 		None          = 0,
 		Color         = 1,

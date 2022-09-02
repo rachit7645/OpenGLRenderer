@@ -55,7 +55,7 @@ void GL::CheckErrors
 	auto typeStr     = GL_ERROR_TYPES.find(type)->second;
 	auto severityStr = GL_ERROR_SEVERITY.find(severity)->second;
 
-	LOG_GL(sourceStr, " ", typeStr, " ", severityStr, " [ID=", id, "]:\n", message, "\n");
+	LOG_GL("{} {} {} [ID={}]:\n{}\n", sourceStr, typeStr, severityStr, id, message);
 }
 
 GLint GL::GetIntegerv(GLenum param)
@@ -63,6 +63,11 @@ GLint GL::GetIntegerv(GLenum param)
 	GLint value;
 	glGetIntegerv(param, &value);
 	return value;
+}
+
+std::string_view GL::GetString(GLenum name)
+{
+	return std::string_view(reinterpret_cast<const char*>(glGetString(name)));
 }
 
 void GL::Init(const glm::ivec2& dimensions)
@@ -100,25 +105,25 @@ void GL::Init(const glm::ivec2& dimensions)
 
 void GL::LogDebugInfo()
 {
-	LOG_DEBUG("GL_VENDOR: "                     , glGetString(GL_VENDOR),                          "\n");
-	LOG_DEBUG("GL_RENDERER: "                   , glGetString(GL_RENDERER),                        "\n");
-	LOG_DEBUG("GL_VERSION: "                    , glGetString(GL_VERSION),                         "\n");
-	LOG_DEBUG("GL_SHADING_LANGUAGE_VERSION: "   , glGetString(GL_SHADING_LANGUAGE_VERSION),        "\n");
-	LOG_DEBUG("GL_MAX_FRAMEBUFFER_HEIGHT: "     , GL::GetIntegerv(GL_MAX_FRAMEBUFFER_HEIGHT),      "\n");
-	LOG_DEBUG("GL_MAX_FRAMEBUFFER_HEIGHT: "     , GL::GetIntegerv(GL_MAX_FRAMEBUFFER_HEIGHT),      "\n");
-	LOG_DEBUG("GL_MAX_FRAMEBUFFER_WIDTH: "      , GL::GetIntegerv(GL_MAX_FRAMEBUFFER_WIDTH),       "\n");
-	LOG_DEBUG("GL_MAX_FRAMEBUFFER_SAMPLES: "    , GL::GetIntegerv(GL_MAX_FRAMEBUFFER_SAMPLES),     "\n");
-	LOG_DEBUG("GL_MAX_TEXTURE_SIZE: "           , GL::GetIntegerv(GL_MAX_TEXTURE_SIZE),            "\n");
-	LOG_DEBUG("GL_MAX_TEXTURE_BUFFER_SIZE: "    , GL::GetIntegerv(GL_MAX_TEXTURE_BUFFER_SIZE),     "\n");
-	LOG_DEBUG("GL_MAX_3D_TEXTURE_SIZE: "        , GL::GetIntegerv(GL_MAX_3D_TEXTURE_SIZE),         "\n");
-	LOG_DEBUG("GL_MAX_CUBE_MAP_TEXTURE_SIZE: "  , GL::GetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE),   "\n");
-	LOG_DEBUG("GL_MAX_TEXTURE_LOD_BIAS: "       , GL::GetIntegerv(GL_MAX_TEXTURE_LOD_BIAS),        "\n");
-	LOG_DEBUG("GL_MAX_TEXTURE_MAX_ANISOTROPY: " , GL::GetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY),  "\n");
-	LOG_DEBUG("GL_MAX_SAMPLES: "                , GL::GetIntegerv(GL_MAX_SAMPLES),                 "\n");
-	LOG_DEBUG("GL_MAX_UNIFORM_BLOCK_SIZE: "     , GL::GetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE),      "\n");
-	LOG_DEBUG("GL_MAX_UNIFORM_BUFFER_BINDINGS: ", GL::GetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS), "\n");
-	LOG_DEBUG("GL_MAX_UNIFORM_LOCATIONS: "      , GL::GetIntegerv(GL_MAX_UNIFORM_LOCATIONS),       "\n");
-	LOG_DEBUG("GL_MAX_VERTEX_UNIFORM_BLOCKS: "  , GL::GetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS),   "\n");
-	LOG_DEBUG("GL_MAX_FRAGMENT_UNIFORM_BLOCKS: ", GL::GetIntegerv(GL_MAX_FRAGMENT_UNIFORM_BLOCKS), "\n");
-	LOG_DEBUG("GL_MAX_VERTEX_ATTRIBS: "         , GL::GetIntegerv(GL_MAX_VERTEX_ATTRIBS),          "\n");
+	LOG_DEBUG("GL_VENDOR: {}\n"                     , GL::GetString(GL_VENDOR));
+	LOG_DEBUG("GL_RENDERER: {}\n"                   , GL::GetString(GL_RENDERER));
+	LOG_DEBUG("GL_VERSION: {}\n"                    , GL::GetString(GL_VERSION));
+	LOG_DEBUG("GL_SHADING_LANGUAGE_VERSION: {}\n"   , GL::GetString(GL_SHADING_LANGUAGE_VERSION));
+	LOG_DEBUG("GL_MAX_FRAMEBUFFER_HEIGHT: {}\n"     , GL::GetIntegerv(GL_MAX_FRAMEBUFFER_HEIGHT));
+	LOG_DEBUG("GL_MAX_FRAMEBUFFER_HEIGHT: {}\n"     , GL::GetIntegerv(GL_MAX_FRAMEBUFFER_HEIGHT));
+	LOG_DEBUG("GL_MAX_FRAMEBUFFER_WIDTH: {}\n"      , GL::GetIntegerv(GL_MAX_FRAMEBUFFER_WIDTH));
+	LOG_DEBUG("GL_MAX_FRAMEBUFFER_SAMPLES: {}\n"    , GL::GetIntegerv(GL_MAX_FRAMEBUFFER_SAMPLES));
+	LOG_DEBUG("GL_MAX_TEXTURE_SIZE: {}\n"           , GL::GetIntegerv(GL_MAX_TEXTURE_SIZE));
+	LOG_DEBUG("GL_MAX_TEXTURE_BUFFER_SIZE: {}\n"    , GL::GetIntegerv(GL_MAX_TEXTURE_BUFFER_SIZE));
+	LOG_DEBUG("GL_MAX_3D_TEXTURE_SIZE: {}\n"        , GL::GetIntegerv(GL_MAX_3D_TEXTURE_SIZE));
+	LOG_DEBUG("GL_MAX_CUBE_MAP_TEXTURE_SIZE: {}\n"  , GL::GetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE));
+	LOG_DEBUG("GL_MAX_TEXTURE_LOD_BIAS: {}\n"       , GL::GetIntegerv(GL_MAX_TEXTURE_LOD_BIAS));
+	LOG_DEBUG("GL_MAX_TEXTURE_MAX_ANISOTROPY: {}\n" , GL::GetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY));
+	LOG_DEBUG("GL_MAX_SAMPLES: {}\n"                , GL::GetIntegerv(GL_MAX_SAMPLES));
+	LOG_DEBUG("GL_MAX_UNIFORM_BLOCK_SIZE: {}\n"     , GL::GetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE));
+	LOG_DEBUG("GL_MAX_UNIFORM_BUFFER_BINDINGS: {}\n", GL::GetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS));
+	LOG_DEBUG("GL_MAX_UNIFORM_LOCATIONS: {}\n"      , GL::GetIntegerv(GL_MAX_UNIFORM_LOCATIONS));
+	LOG_DEBUG("GL_MAX_VERTEX_UNIFORM_BLOCKS: {}\n"  , GL::GetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS));
+	LOG_DEBUG("GL_MAX_FRAGMENT_UNIFORM_BLOCKS: {}\n", GL::GetIntegerv(GL_MAX_FRAGMENT_UNIFORM_BLOCKS));
+	LOG_DEBUG("GL_MAX_VERTEX_ATTRIBS: {}\n"         , GL::GetIntegerv(GL_MAX_VERTEX_ATTRIBS));
 }
