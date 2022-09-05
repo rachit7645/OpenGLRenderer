@@ -7,12 +7,11 @@
 #include "Camera.h"
 #include "Light.h"
 #include "MasterRenderer.h"
-#include "Terrain.h"
 #include "Material.h"
 #include "Player.h"
 #include "MeshTextures.h"
 #include "Resources.h"
-#include "Imgui.h"
+#include "imgui.h"
 #include "GUI.h"
 #include "WaterTile.h"
 #include "WaterFrameBuffers.h"
@@ -35,14 +34,13 @@ using Entities::Entity;
 using Entities::Player;
 using Entities::Skybox;
 using Entities::Light;
-using Terrains::Terrain;
-using Terrains::TerrainTextures;
 using Waters::WaterTile;
 
 // TODO: Move MainLoop to separate class, move data to said class
-// TODO: Live editing of entities, terrains, lights, etc. with ImGui
+// TODO: Live editing of entities, lights, etc. with ImGui
 
-constexpr auto MAX_ENTITIES = 50;
+constexpr usize MAX_ENTITIES    = 25;
+constexpr f32   ENTITY_DISTANCE = 196.0f;
 
 void SDLWindow::MainLoop()
 {
@@ -53,43 +51,24 @@ void SDLWindow::MainLoop()
 	auto defDiffuse   = Resources::GetTexture("gfx/dragon.png");
 	auto defSpecular  = Resources::GetTexture("gfx/dSpec.png");
 
-	TerrainTextures textures =
-	{
-		Resources::GetTexture("gfx/grass.png"),
-		Resources::GetTexture("gfx/mud.png"),
-		Resources::GetTexture("gfx/path.png"),
-		Resources::GetTexture("gfx/pinkFlowers.png"),
-		Resources::GetTexture("gfx/blendMap.png")
-	};
-
 	auto treeModel   = Resources::GetModel("gfx/tree.obj",       MeshTextures(treeTexture,  defSpecular));
 	auto playerModel = Resources::GetModel("gfx/Link/Link.obj",  MeshTextures(defDiffuse,   defSpecular));
 	auto grassModel  = Resources::GetModel("gfx/grassModel.obj", MeshTextures(grassTexture, defSpecular),  Material(true, true));
 	auto fernModel   = Resources::GetModel("gfx/fern.obj",       MeshTextures(fernTexture,  defSpecular),  Material(true, true));
 
 	// All objects go here
-	std::vector<Terrain> terrains;
-	{
-		terrains.emplace_back("gfx/hMapWtr.bmp", glm::vec2(0.0f, 0.0f), textures);
-	}
-
 	std::vector<Entity> entities;
 	{
-		const Terrain* current;
-		f32 entityX, entityY, entityZ;
+		f32 entityX, entityZ;
 		for (usize i = 0; i < MAX_ENTITIES; ++i)
 		{
-			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
-			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
-			current = Terrains::GetCurrent(terrains, glm::vec2(entityX, entityZ));
-			entityY = current != nullptr ? current->GetHeight(glm::vec2(entityX, entityZ)) : 0.0f;
-			entities.emplace_back(treeModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f), 3.0f);
+			entityX = Util::Rand_Range<f32>(-1.0f, 1.0f) * ENTITY_DISTANCE;
+			entityZ = Util::Rand_Range<f32>(-1.0f, 1.0f) * ENTITY_DISTANCE;
+			entities.emplace_back(treeModel, glm::vec3(entityX, 0.0f, entityZ), glm::vec3(0.0f), 3.0f);
 
-			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
-			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * Terrains::TERRAIN_SIZE;
-			current = Terrains::GetCurrent(terrains, glm::vec2(entityX, entityZ));
-			entityY = current != nullptr ? current->GetHeight(glm::vec2(entityX, entityZ)) : 0.0f;
-			entities.emplace_back(fernModel, glm::vec3(entityX, entityY, entityZ), glm::vec3(0.0f), 0.6f);
+			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * ENTITY_DISTANCE;
+			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * ENTITY_DISTANCE;
+			entities.emplace_back(fernModel, glm::vec3(entityX, 0.0f, entityZ), glm::vec3(0.0f), 0.6f);
 		}
 	}
 	Player player
@@ -147,7 +126,7 @@ void SDLWindow::MainLoop()
 		(
 			Resources::GetTexture("gfx/waterDUDV.png"),
 			Resources::GetTexture("gfx/normal.png"),
-			glm::vec3(67.0f, 3.7f, 73.0f)
+			glm::vec3(120.0f, 3.7f, -2.0f)
 		);
 	}
 
@@ -165,11 +144,11 @@ void SDLWindow::MainLoop()
 
 		// Update
 		ImGuiDisplay();
-		player.Move(Terrains::GetCurrent(terrains, player));
+		player.Move();
 		camera.Move();
 
 		// Begin render
-		renderer.BeginFrame(entities, terrains, lights, player);
+		renderer.BeginFrame(entities, lights, player);
 
 		// Enable clip plane 0
 		glEnable(GL_CLIP_DISTANCE0);

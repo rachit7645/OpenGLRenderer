@@ -10,9 +10,6 @@
 #include "Util.h"
 #include "Entity.h"
 #include "StaticShader.h"
-#include "Terrain.h"
-#include "TerrainRenderer.h"
-#include "TerrainShader.h"
 #include "Skybox.h"
 #include "SkyboxRenderer.h"
 #include "SkyboxShader.h"
@@ -48,9 +45,6 @@ namespace Renderer
 		Shader::StaticShader     shader;
 		Renderer::EntityRenderer renderer;
 
-		Shader::TerrainShader     terrainShader;
-		Renderer::TerrainRenderer terrainRenderer;
-
 		Shader::SkyboxShader     skyboxShader;
 		Renderer::SkyboxRenderer skyboxRenderer;
 
@@ -64,7 +58,6 @@ namespace Renderer
 		void BeginFrame
 		(
 			std::vector<Entities::Entity>& entities,
-			std::vector<Terrains::Terrain>& terrains,
 			const std::vector<Entities::Light>& lights,
 			Entities::Player& player
 		);
@@ -80,24 +73,16 @@ namespace Renderer
 		void ProcessEntity(Entities::Entity& entity);
 		// Process a vector of entities
 		void ProcessEntities(std::vector<Entities::Entity>& entities);
-		// Process terrains into a vector
-		void ProcessTerrain(Terrains::Terrain& terrain);
-		// Process a vector of terrains
-		void ProcessTerrains(std::vector<Terrains::Terrain>& terrains);
 	private:
 		// Prepare render
 		void Prepare(const Entities::Camera& camera, const glm::vec4& clipPlane);
 		// Render entities
 		void RenderEntities();
-		// Render Terrains
-		void RenderTerrains();
 		// Render the skybox
 		void RenderSkybox();
 
 		// The entity map
 		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity*>> m_entities;
-		// The terrain vector
-		std::vector<Terrains::Terrain*> m_terrains;
 		// The Skybox
 		Entities::Skybox m_skybox;
 		// Matrix Uniform Buffer

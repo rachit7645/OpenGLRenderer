@@ -13,7 +13,6 @@ using namespace Entities;
 using Renderer::Model;
 using Renderer::MeshTextures;
 using Renderer::Material;
-using Terrains::Terrain;
 
 Player::Player
 (
@@ -26,14 +25,13 @@ Player::Player
 {
 }
 
-void Player::Move(const Terrain* terrain)
+void Player::Move()
 {
 	CheckInputs();
 	rotation.y  += turnSpeed * g_Delta;
 	f32 distance = runSpeed  * g_Delta;
 	position.x  += distance  * std::sin(glm::radians(rotation.y));
 	position.z  += distance  * std::cos(glm::radians(rotation.y));
-	Gravity(terrain);
 	ImGuiDisplay();
 }
 
@@ -52,16 +50,6 @@ void Player::ImGuiDisplay()
 		}
 		ImGui::EndMainMenuBar();
 	}
-}
-
-void Player::Gravity(const Terrain* terrain)
-{
-	// If a terrain is present below the player, get its height, else set the height to 0.0f
-	terrain != nullptr ? terrainHeight = terrain->GetHeight(*this) : terrainHeight = 0.0f;
-	// If player is above the terrain, apply gravity
-	if (position.y > terrainHeight) position.y += PLAYER_GRAVITY * g_Delta;
-	// If player is below the terrain, snap back to terrain height
-	if (position.y < terrainHeight) position.y = terrainHeight;
 }
 
 // FIXME: Prettify this one
