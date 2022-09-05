@@ -1,7 +1,7 @@
 #include "Shader.h"
 
-#include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
 #include <fmt/format.h>
 
@@ -46,7 +46,7 @@ void ShaderProgram::DumpToFile(const std::string& path) const
 	std::ofstream file(path);
 	file.write(binary.data(), length);
 
-	LOG_DEBUG("Dumping Shader to: ", path, "\n");
+	LOG_DEBUG("Dumping Shader to: {}\n", path);
 }
 
 u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
@@ -56,9 +56,12 @@ u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
 
 	if (!fs.is_open())
 	{
-		LOG_ERROR("Unable to open shader: ", path);
+		LOG_ERROR("Unable to open shader: {}\n", path);
 	}
-	std::string content = std::string(std::istreambuf_iterator<char>(fs), std::istreambuf_iterator<char>());
+
+	std::stringstream buffer;
+	buffer << fs.rdbuf();
+	std::string content = buffer.str();
 
 	u32 shaderID = glCreateShader(type);
 	const GLchar* cstr = content.c_str();
@@ -143,7 +146,6 @@ void ShaderProgram::LoadUniform(GLint location, const glm::mat4& matrix) const
 	glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
 }
 
-// Memory management
 ShaderProgram::~ShaderProgram()
 {
 	Stop();

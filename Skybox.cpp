@@ -8,16 +8,6 @@ using namespace Entities;
 using Renderer::VertexArray;
 using Renderer::CubeMap;
 
-constexpr std::array<const char*, 6> SKYBOX_TEXTURE_FILES =
-{
-	"gfx/right.png",
-	"gfx/left.png",
-	"gfx/top.png",
-	"gfx/bottom.png",
-	"gfx/back.png",
-	"gfx/front.png"
-};
-
 const std::vector<f32> SKYBOX_VERTICES =
 {
 	-SKYBOX_SIZE, SKYBOX_SIZE, -SKYBOX_SIZE,
@@ -63,7 +53,17 @@ const std::vector<f32> SKYBOX_VERTICES =
 	SKYBOX_SIZE, -SKYBOX_SIZE, SKYBOX_SIZE
 };
 
-Skybox::Skybox() 
+constexpr std::array<const char*, 6> SKYBOX_TEXTURE_FILES =
+{
+	"gfx/right.png",
+	"gfx/left.png",
+	"gfx/top.png",
+	"gfx/bottom.png",
+	"gfx/back.png",
+	"gfx/front.png"
+};
+
+Skybox::Skybox()
 	: vao(std::make_shared<VertexArray>(3, SKYBOX_VERTICES)),
 	  cubeMap(std::make_shared<CubeMap>(SKYBOX_TEXTURE_FILES))
 {

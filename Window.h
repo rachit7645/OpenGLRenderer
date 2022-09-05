@@ -2,10 +2,15 @@
 #define SDL_WINDOW_H
 
 #include <chrono>
+#include <vector>
 #include <SDL2/SDL.h>
 
 #include "GLM.h"
 #include "Util.h"
+#include "WaterTile.h"
+#include "WaterFrameBuffers.h"
+#include "MasterRenderer.h"
+#include "Camera.h"
 
 namespace Window
 {
@@ -31,6 +36,14 @@ namespace Window
 		bool PollEvents();
 		// Calculates the FPS and the frame delta
 		void CalculateFPS();
+		// Draws water framebuffers
+		void DrawWaterFBOs
+		(
+			const Waters::WaterFrameBuffers& waterFBOs,
+			const std::vector<Waters::WaterTile>& waters,
+			Renderer::MasterRenderer& renderer,
+			Entities::Camera& camera
+		);
 
 		// FPS Counting Variables
 		std::chrono::time_point<std::chrono::steady_clock> startTime, frameStartTime, endTime;

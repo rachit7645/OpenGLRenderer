@@ -38,11 +38,11 @@ namespace Entities
 		void ImGuiDisplay();
 		// Calculates zoom aka distance from player
 		void CalculateZoom();
-		// Calculates pitch (rotation.x)
+		// Calculates pitch (m_rotation.x)
 		void CalculatePitch();
 		// Calculates angle around player
 		void CalculateAAP();
-		// Calculates position, and rotation 
+		// Calculates position, and m_rotation
 		void CalculatePosition();
 	};
 }

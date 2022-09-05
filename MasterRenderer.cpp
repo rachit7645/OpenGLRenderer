@@ -105,7 +105,7 @@ void MasterRenderer::ProcessEntity(Entity& entity)
 	auto iter = m_entities.find(entity.model);
 	if (iter != m_entities.end())
 	{
-		iter->second.push_back(&entity);
+		iter->second.emplace_back(&entity);
 	}
 	else
 	{

@@ -1,20 +1,15 @@
 #include "Window.h"
 
-#include <vector>
-
 #include "Model.h"
 #include "Entity.h"
-#include "Camera.h"
 #include "Light.h"
-#include "MasterRenderer.h"
 #include "Material.h"
 #include "Player.h"
 #include "MeshTextures.h"
 #include "Resources.h"
 #include "imgui.h"
 #include "GUI.h"
-#include "WaterTile.h"
-#include "WaterFrameBuffers.h"
+#include "Random.h"
 
 using namespace Window;
 
@@ -30,11 +25,14 @@ using Renderer::MeshTextures;
 using Renderer::GUI;
 using Renderer::FrameBuffer;
 using Renderer::FBType;
+using Renderer::MasterRenderer;
 using Entities::Entity;
 using Entities::Player;
 using Entities::Skybox;
 using Entities::Light;
+using Entities::Camera;
 using Waters::WaterTile;
+using Waters::WaterFrameBuffers;
 
 // TODO: Move MainLoop to separate class, move data to said class
 // TODO: Live editing of entities, lights, etc. with ImGui
@@ -71,6 +69,7 @@ void SDLWindow::MainLoop()
 			entities.emplace_back(fernModel, glm::vec3(entityX, 0.0f, entityZ), glm::vec3(0.0f), 0.6f);
 		}
 	}
+
 	Player player
 	(
 		playerModel,
@@ -149,27 +148,8 @@ void SDLWindow::MainLoop()
 
 		// Begin render
 		renderer.BeginFrame(entities, lights, player);
-
-		// Enable clip plane 0
-		glEnable(GL_CLIP_DISTANCE0);
-
-		// Reflection pass
-		waterFBOs.BindReflection();
-		// Move the camera
-		f32 distance = 2.0f * (camera.position.y - waters[0].position.y);
-		camera.position.y -= distance;
-		camera.InvertPitch();
-		renderer.RenderScene(camera, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].position.y));
-		// Move it back to its original position
-		camera.position.y += distance;
-		camera.InvertPitch();
-
-		// Refraction pass
-		waterFBOs.BindRefraction();
-		renderer.RenderScene(camera, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].position.y));
-
-		// Disable clip plane 0
-		glDisable(GL_CLIP_DISTANCE0);
+		// Draw water framebuffers
+		DrawWaterFBOs(waterFBOs, waters, renderer, camera);
 
 		// Main render pass
 		waterFBOs.BindDefaultFBO();
@@ -188,6 +168,36 @@ void SDLWindow::MainLoop()
 		CalculateFPS();
 		if (PollEvents()) break;
 	}
+}
+
+void SDLWindow::DrawWaterFBOs
+(
+	const WaterFrameBuffers& waterFBOs,
+	const std::vector<WaterTile>& waters,
+	MasterRenderer& renderer,
+	Camera& camera
+)
+{
+	// Enable clip plane 0
+	glEnable(GL_CLIP_DISTANCE0);
+
+	// Reflection pass
+	waterFBOs.BindReflection();
+	// Move the camera
+	f32 distance = 2.0f * (camera.position.y - waters[0].position.y);
+	camera.position.y -= distance;
+	camera.InvertPitch();
+	renderer.RenderScene(camera, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].position.y));
+	// Move it back to its original position
+	camera.position.y += distance;
+	camera.InvertPitch();
+
+	// Refraction pass
+	waterFBOs.BindRefraction();
+	renderer.RenderScene(camera, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].position.y));
+
+	// Disable clip plane 0
+	glDisable(GL_CLIP_DISTANCE0);
 }
 
 void SDLWindow::CalculateFPS()

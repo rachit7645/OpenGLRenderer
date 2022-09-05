@@ -10,12 +10,6 @@ using namespace Renderer;
 
 CubeMap::CubeMap(const std::array<const char*, 6>& files)
 {
-	// Temporary variables
-	u8* data;
-	int width;
-	int height;
-	int channels;
-
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, id);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -29,7 +23,8 @@ CubeMap::CubeMap(const std::array<const char*, 6>& files)
 
 	for (usize i = 0; i < files.size(); ++i)
 	{
-		data = stbi_load
+		int width, height, channels;
+		u8* data = stbi_load
 		(
 			(Files::GetResourceDirectory() + files[i]).c_str(),
 			&width,

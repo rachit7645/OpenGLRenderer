@@ -11,7 +11,7 @@ namespace Maths
 	glm::mat4 CreateModelMatrix(const glm::vec3& translation, const glm::vec3& rotation, f32 scale);
 	// Create model matrix with only translation
 	glm::mat4 CreateModelMatrixT(const glm::vec3& translation);
-	// Create model matrix with only rotation
+	// Create model matrix with only m_rotation
 	glm::mat4 CreateModelMatrixR(const glm::vec3& rotation);
 	// Create model matrix with translation and scale
 	glm::mat4 CreateModelMatrixTS(const glm::vec3& translation, f32 scale);
