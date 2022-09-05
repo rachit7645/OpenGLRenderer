@@ -9,6 +9,7 @@
 #include "Resources.h"
 #include "imgui.h"
 #include "GUI.h"
+#include "Random.h"
 
 using namespace Window;
 
