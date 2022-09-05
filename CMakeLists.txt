@@ -48,7 +48,6 @@ add_executable(engine
 	Mesh.cpp
 	Player.cpp
 	Files.cpp
-	Image.cpp
 	SkyboxShader.cpp
 	SkyboxRenderer.cpp
 	CubeMap.cpp
