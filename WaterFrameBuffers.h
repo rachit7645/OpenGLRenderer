@@ -5,14 +5,9 @@
 
 #include "GLM.h"
 #include "FrameBuffer.h"
-#include "Window.h"
 
 namespace Waters
 {
-	// Render at 0.25x the resolution
-	constexpr glm::ivec2 WATER_REFLECTION_SIZE = {Window::DIMENSIONS / 4};
-	constexpr glm::ivec2 WATER_REFRACTION_SIZE = {Window::DIMENSIONS / 4};
-
 	class WaterFrameBuffers
 	{
 	public:

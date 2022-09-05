@@ -91,6 +91,7 @@ target_precompile_headers(engine PRIVATE
 	# FMT headers
 	<fmt/core.h>
 	<fmt/format.h>
+	<fmt/chrono.h>
 	# C++ STL Headers
 	<unordered_map>
 	<vector>

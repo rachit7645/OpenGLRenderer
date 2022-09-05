@@ -74,7 +74,7 @@ glm::mat4 Maths::CreateViewMatrix(const Camera& camera)
 	matrix = glm::rotate(matrix, glm::radians(camera.rotation.x), glm::vec3(1, 0, 0));
 	matrix = glm::rotate(matrix, glm::radians(camera.rotation.y), glm::vec3(0, 1, 0));
 	// I don't use roll, so this would be unnecessary calculation
-	// matrix = glm::rotate(matrix, glm::radians(camera.rotation.z), glm::vec3(0, 0, 1));
+	// matrix = glm::rotate(matrix, glm::radians(camera.m_rotation.z), glm::vec3(0, 0, 1));
 	// 3. Translate by the inverse of the camera position
 	matrix = glm::translate(matrix, -camera.position);
 	return matrix;

@@ -1,11 +1,11 @@
 #ifndef LOG_H
 #define LOG_H
 
-#include <iostream>
+#include <string>
+#include <string_view>
 #include <cstdlib>
 #include <fmt/format.h>
 
-#include "Util.h"
 #include "Files.h"
 #include "Time.h"
 
@@ -14,9 +14,9 @@ namespace Logger
 	template<typename... Args>
 	void Log
 	(
-		const std::string& type,
+		const std::string_view type,
 		const std::string& time,
-		const std::string& file,
+		const std::string_view file,
 		int line,
 		fmt::string_view format,
 		Args&&... args
@@ -65,4 +65,4 @@ namespace Logger
 	} \
 	while (0)
 
-#endif // LOG_H
+#endif

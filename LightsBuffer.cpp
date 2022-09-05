@@ -8,8 +8,6 @@ using namespace Renderer;
 
 using Entities::Light;
 
-// HACK: GLSL's alignment is fucking weird, so upload vec4's
-
 LightsBuffer::LightsBuffer()
 	: UniformBuffer(1, sizeof(Light) * SHADER_MAX_LIGHTS)
 {

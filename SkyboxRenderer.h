@@ -21,7 +21,7 @@ namespace Renderer
 		void LoadModelMatrix();
 		void UnbindSkybox();
 
-		f32 rotation = 0.0f;
+		f32 m_rotation = 0.0f;
 	};
 }
 
