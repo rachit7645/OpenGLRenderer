@@ -7,12 +7,10 @@ using Entities::Light;
 using Entities::Camera;
 using Entities::Skybox;
 using Entities::Player;
-using Terrains::Terrain;
 using Waters::WaterTile;
 
 MasterRenderer::MasterRenderer() 
 	: renderer(shader),
-	  terrainRenderer(terrainShader),
 	  skyboxRenderer(skyboxShader),
 	  guiRenderer(guiShader),
 	  waterRenderer(waterShader),
@@ -27,13 +25,11 @@ MasterRenderer::MasterRenderer()
 void MasterRenderer::BeginFrame
 (
 	std::vector<Entity>& entities,
-	std::vector<Terrain>& terrains,
 	const std::vector<Light>& lights,
 	Player& player
 )
 {
 	ProcessEntities(entities);
-	ProcessTerrains(terrains);
 	ProcessEntity(player);
 
 	m_lights->LoadLights(lights);
@@ -44,7 +40,6 @@ void MasterRenderer::RenderScene(const Camera& camera, const glm::vec4& clipPlan
 	Prepare(camera, clipPlane);
 
 	RenderEntities();
-	RenderTerrains();
 	RenderSkybox();
 }
 
@@ -52,7 +47,6 @@ void MasterRenderer::EndFrame()
 {
 	// Clear internal render data
 	m_entities.clear();
-	m_terrains.clear();
 }
 
 void MasterRenderer::Prepare(const Camera& camera, const glm::vec4& clipPlane)
@@ -70,13 +64,6 @@ void MasterRenderer::RenderEntities()
 	shader.Start();
 	renderer.Render(m_entities);
 	shader.Stop();
-}
-
-void MasterRenderer::RenderTerrains()
-{
-	terrainShader.Start();
-	terrainRenderer.Render(m_terrains);
-	terrainShader.Stop();
 }
 
 void MasterRenderer::RenderSkybox()
@@ -131,18 +118,5 @@ void MasterRenderer::ProcessEntities(std::vector<Entity>& entities)
 	for (auto& entity : entities)
 	{
 		ProcessEntity(entity);
-	}
-}
-
-void MasterRenderer::ProcessTerrain(Terrain& terrain)
-{
-	m_terrains.push_back(&terrain);
-}
-
-void MasterRenderer::ProcessTerrains(std::vector<Terrain>& terrains)
-{
-	for (auto& terrain : terrains)
-	{
-		m_terrains.push_back(&terrain);
 	}
 }

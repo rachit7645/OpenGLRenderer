@@ -44,9 +44,6 @@ add_executable(engine
 	Camera.cpp
 	MainLoop.cpp
 	MasterRenderer.cpp
-	Terrain.cpp
-	TerrainShader.cpp
-	TerrainRenderer.cpp
 	Material.cpp 
 	Mesh.cpp
 	Player.cpp
@@ -74,7 +71,6 @@ add_executable(engine
 	WaterFrameBuffers.cpp
 	SharedBuffer.cpp
 	MeshTextures.cpp
-	TerrainTextures.cpp
 	WaterTile.cpp
 )
 

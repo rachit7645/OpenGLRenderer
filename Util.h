@@ -5,7 +5,6 @@
 // Contains utility macros and defines
 
 #include <random>
-#include <vector>
 
 #include <cstdint>
 #include <cstddef>
@@ -43,7 +42,7 @@ namespace Util
 	template<typename T>
 	T Rand_Range(T min, T max)
 	{
-		static thread_local std::mt19937_64 generator(69420);
+		static thread_local std::mt19937_64 generator(777);
 		std::uniform_real_distribution<T> distributer(min, max);
 		return distributer(generator);
 	}
@@ -58,22 +57,6 @@ namespace Util
 		std::uniform_real_distribution<T> distributer(min, max);
 		return distributer(generator);
 	}
-
-	// TODO: Write a custom 2D array wrapper
-	// std::vector<std::vector<T>> is not contiguous in layout
-	// This wrecks havoc with the cpu cache
-	template<typename T>
-	using Array2D = std::vector<std::vector<T>>;
-
-	template<typename T>
-	constexpr void InitArray2D(Array2D<T>& array, usize size)
-	{
-		array = Array2D<T>(size);
-		for (auto& row : array)
-		{
-			row = std::vector<T>(size);
-		}
-	}
 }
 
-#endif // UTIL_H
+#endif
