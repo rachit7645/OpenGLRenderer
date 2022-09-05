@@ -88,10 +88,18 @@ target_precompile_headers(engine PRIVATE
 	<assimp/Importer.hpp>
 	<assimp/scene.h>
 	<assimp/postprocess.h>
-	# FMT headers
+	# FMT Headers
 	<fmt/core.h>
 	<fmt/format.h>
 	<fmt/chrono.h>
+	# GLM Headers
+	<glm/vec2.hpp>
+	<glm/vec3.hpp>
+	<glm/vec4.hpp>
+	<glm/mat4x4.hpp>
+	<glm/trigonometric.hpp>
+	<glm/ext/vector_int2.hpp>
+	<glm/gtc/matrix_transform.hpp>
 	# C++ STL Headers
 	<unordered_map>
 	<vector>
@@ -101,17 +109,14 @@ target_precompile_headers(engine PRIVATE
 	<memory>
 	<string_view>
 	<string>
-	<iostream>
 	<fstream>
-	<algorithm>
-	<limits>
 	<chrono>
+	<sstream>
 	# C STL Headers
 	<cstdint>
 	<cstddef>
 	<cassert>
 	<cmath>
-	<ctime>
 )
 
 # Library includes

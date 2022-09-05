@@ -69,7 +69,8 @@ void SDLWindow::MainLoop()
 			entities.emplace_back(fernModel, glm::vec3(entityX, 0.0f, entityZ), glm::vec3(0.0f), 0.6f);
 		}
 	}
-	Entities::Player player
+
+	Player player
 	(
 		playerModel,
 		glm::vec3(67.0f, 0.0f, 73.0f),
