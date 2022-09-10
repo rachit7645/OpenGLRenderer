@@ -71,6 +71,7 @@ add_executable(engine
 	SharedBuffer.cpp
 	MeshTextures.cpp
 	WaterTile.cpp
+	ShaderStorageBuffer.cpp
 )
 
 # Precompiled Headers
