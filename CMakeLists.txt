@@ -72,6 +72,8 @@ add_executable(engine
 	MeshTextures.cpp
 	WaterTile.cpp
 	ShaderStorageBuffer.cpp
+	InstancedRenderer.cpp
+	InstancedShader.cpp
 )
 
 # Precompiled Headers

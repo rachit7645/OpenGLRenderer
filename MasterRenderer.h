@@ -24,6 +24,8 @@
 #include "Player.h"
 #include "SharedBuffer.h"
 #include "WaterFrameBuffers.h"
+#include "InstancedRenderer.h"
+#include "InstancedShader.h"
 
 namespace Renderer
 {
@@ -41,9 +43,11 @@ namespace Renderer
 	public:
 		MasterRenderer();
 
-		// All shaders and renderers here 
 		Shader::StaticShader     shader;
 		Renderer::EntityRenderer renderer;
+
+		Shader::InstancedShader     instancedShader;
+		Renderer::InstancedRenderer instancedRenderer;
 
 		Shader::SkyboxShader     skyboxShader;
 		Renderer::SkyboxRenderer skyboxRenderer;

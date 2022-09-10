@@ -11,9 +11,10 @@ using Waters::WaterTile;
 
 MasterRenderer::MasterRenderer() 
 	: renderer(shader),
+	  waterRenderer(waterShader),
 	  skyboxRenderer(skyboxShader),
 	  guiRenderer(guiShader),
-	  waterRenderer(waterShader),
+	  instancedRenderer(instancedShader),
 	  m_matrices(std::make_shared<MatrixBuffer>()),
 	  m_lights(std::make_shared<LightsBuffer>()),
 	  m_shared(std::make_shared<SharedBuffer>())
