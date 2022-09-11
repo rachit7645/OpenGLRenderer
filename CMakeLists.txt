@@ -74,6 +74,7 @@ add_executable(engine
 	ShaderStorageBuffer.cpp
 	InstancedRenderer.cpp
 	InstancedShader.cpp
+	InstanceBuffer.cpp
 )
 
 # Precompiled Headers

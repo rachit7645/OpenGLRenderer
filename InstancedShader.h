@@ -6,7 +6,6 @@
 
 #include "GLM.h"
 #include "Shader.h"
-#include "Material.h"
 
 namespace Shader
 {
@@ -18,11 +17,6 @@ namespace Shader
 	public:
 		InstancedShader();
 
-		// Matrix loading functions
-		void LoadModelMatrix(const glm::mat4& matrix);
-
-		// Material and object loading functions
-		void LoadMaterials(const Renderer::Material& material);
 		void ConnectTextureUnits();
 
 		void GetUniformLocations() override;
@@ -31,4 +25,4 @@ namespace Shader
 	};
 }
 
-#endif // STATIC_SHADER_H 
+#endif

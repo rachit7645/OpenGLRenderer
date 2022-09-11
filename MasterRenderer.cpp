@@ -11,10 +11,10 @@ using Waters::WaterTile;
 
 MasterRenderer::MasterRenderer() 
 	: renderer(shader),
-	  waterRenderer(waterShader),
+	  instancedRenderer(instancedShader),
 	  skyboxRenderer(skyboxShader),
 	  guiRenderer(guiShader),
-	  instancedRenderer(instancedShader),
+	  waterRenderer(waterShader),
 	  m_matrices(std::make_shared<MatrixBuffer>()),
 	  m_lights(std::make_shared<LightsBuffer>()),
 	  m_shared(std::make_shared<SharedBuffer>())
@@ -62,9 +62,9 @@ void MasterRenderer::Prepare(const Camera& camera, const glm::vec4& clipPlane)
 
 void MasterRenderer::RenderEntities()
 {
-	shader.Start();
-	renderer.Render(m_entities);
-	shader.Stop();
+	instancedShader.Start();
+	instancedRenderer.Render(m_entities);
+	instancedShader.Stop();
 }
 
 void MasterRenderer::RenderSkybox()
