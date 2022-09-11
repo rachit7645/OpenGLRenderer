@@ -11,7 +11,7 @@ using Entities::Entity;
 using DataVector = InstanceBuffer::DataVector;
 
 InstanceBuffer::InstanceBuffer()
-	: ShaderStorageBuffer(4, NUM_MAX_ENTITIES * sizeof(InstancedDataGLSL), GL_DYNAMIC_DRAW)
+	: ShaderStorageBuffer(3, NUM_MAX_ENTITIES * sizeof(InstancedDataGLSL), GL_DYNAMIC_DRAW)
 {
 }
 
