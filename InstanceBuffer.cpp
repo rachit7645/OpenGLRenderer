@@ -41,11 +41,18 @@ DataVector InstanceBuffer::GenerateData(const EntityVector& entities)
 
 	for (usize i = 0; i < entities.size(); ++i)
 	{
+		// Load model matrix
 		data[i].modelMatrix = Maths::CreateModelMatrix
 		(
 			entities[i]->position,
 			entities[i]->rotation,
 			entities[i]->scale
+		);
+		// Load specular data
+		data[i].specular = glm::vec2
+		(
+			entities[i]->model->material.shineDamper,
+			entities[i]->model->material.reflectivity
 		);
 	}
 

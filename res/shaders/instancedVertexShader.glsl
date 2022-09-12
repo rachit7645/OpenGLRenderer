@@ -16,6 +16,7 @@ struct Light
 struct Instance
 {
 	mat4 modelMatrix;
+	vec2 specular;
 };
 
 layout(std140, binding = 0) uniform Matrices
@@ -45,9 +46,13 @@ layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 textureCoords;
 layout(location = 2) in vec3 normal;
 
+// Do not interpolate
+out flat int instanceID;
+
 out float visibility;
 out vec2  txCoords;
 out vec3  unitNormal;
+out vec3  unitCameraVector;
 out vec3  unitLightVector[MAX_LIGHTS];
 out vec4  worldPosition;
 
@@ -61,15 +66,17 @@ void main()
 	gl_Position        = projectionMatrix * posRelToCam;
 	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
 	txCoords           = textureCoords;
-	
+	instanceID         = gl_InstanceID;
+
 	CalculateLighting();
 	CalculateVisibility(posRelToCam);
 }
 
 void CalculateLighting()
 {
-	unitNormal = normalize((instances[gl_InstanceID].modelMatrix * vec4(normal, 0.0f)).xyz);
-	
+	unitNormal       = normalize((instances[gl_InstanceID].modelMatrix * vec4(normal, 0.0f)).xyz);
+	unitCameraVector = normalize(cameraPos.xyz - worldPosition.xyz);
+
 	for (int i = 0; i < MAX_LIGHTS; ++i)
 	{
 		unitLightVector[i] = normalize(lights[i].position.xyz - worldPosition.xyz);
