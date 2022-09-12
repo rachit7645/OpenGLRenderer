@@ -1,7 +1,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include <string>
+#include <string_view>
 #include <GL/glew.h>
 
 namespace Renderer
@@ -12,7 +12,7 @@ namespace Renderer
 	{
 	public:
 		// Loads a texture into memory, then an OpenGL object
-		explicit Texture(const std::string& path);
+		explicit Texture(const std::string_view path);
 		// Empty texture
 		Texture
 		(

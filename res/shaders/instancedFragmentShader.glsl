@@ -13,6 +13,12 @@ struct Light
 	vec4 attenuation;
 };
 
+struct Instance
+{
+	mat4 modelMatrix;
+	vec2 specular;
+};
+
 layout(std140, binding = 1) uniform Lights
 {
 	Light lights[MAX_LIGHTS];
@@ -25,18 +31,23 @@ layout(std140, binding = 2) uniform Shared
 	vec4 cameraPos;
 };
 
-in vec4  worldPosition;
-in vec3  unitLightVector[MAX_LIGHTS];
+layout(std430, binding = 3) buffer InstanceData
+{
+	Instance instances[];
+};
+
+// Do not interpolate
+in flat int instanceID;
+
+in float visibility;
+in vec2  txCoords;
 in vec3  unitNormal;
 in vec3  unitCameraVector;
-in vec2  txCoords;
-in float visibility;
+in vec3  unitLightVector[MAX_LIGHTS];
+in vec4  worldPosition;
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D specularTexture;
-
-uniform float shineDamper;
-uniform float reflectivity;
 
 out vec4 outColor;
 
@@ -49,18 +60,18 @@ vec4  CalculateSpecular(int index);
 
 void main()
 {
-	vec4 diffuseColor = texture(diffuseTexture, txCoords);
-	// HACK: Alpha transparency check, should probably be in a separate shader
+	vec4 diffuseColor  = texture(diffuseTexture,  txCoords);
+	vec4 specularColor = texture(specularTexture, txCoords);
+
 	if (diffuseColor.a < 0.5f)
 	{
 		discard;
 	}
-	vec4 specularColor = texture(specularTexture, txCoords);
-
-	vec4 totalAmbient  = vec4(0.0f);
-	vec4 totalDiffuse  = vec4(0.0f);
+	
+	vec4 totalAmbient = vec4(0.0f);
+	vec4 totalDiffuse = vec4(0.0f);
 	vec4 totalSpecular = vec4(0.0f);
-
+	
 	for (int i = 0; i < MAX_LIGHTS; ++i)
 	{
 		// Compute att factor
@@ -78,7 +89,7 @@ void main()
 	}
 
 	// Add all lighting
-	outColor = totalDiffuse + totalSpecular + totalAmbient;
+	outColor = totalAmbient + totalDiffuse + totalSpecular;
 	// Mix with fog colour
 	outColor = mix(skyColor, outColor, visibility);
 }
@@ -103,14 +114,16 @@ vec4 CalculateDiffuse(int index)
 	return vec4(brightness * lights[index].diffuse.rgb, 1.0f);
 }
 
+// specular.x = shineDamper
+// specular.y = reflectivity
 vec4 CalculateSpecular(int index)
 {
 	vec3 lightDirection  = unitLightVector[index];
 	vec3 halfwayDir      = normalize(lightDirection + unitCameraVector);
 	float specularFactor = dot(halfwayDir, unitNormal);
 	specularFactor       = max(specularFactor, MIN_SPECULAR);
-	float dampedFactor   = pow(specularFactor, shineDamper);
-	return vec4(dampedFactor * reflectivity * lights[index].specular.rgb, 1.0f);
+	float dampedFactor   = pow(specularFactor, instances[instanceID].specular.x);
+	return vec4(dampedFactor * instances[instanceID].specular.y * lights[index].specular.rgb, 1.0f);
 }
 
 // Branchless implementation of

@@ -2,7 +2,7 @@
 #define MODEL_H
 
 #include <vector>
-#include <string>
+#include <string_view>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -22,7 +22,7 @@ namespace Renderer
 	public:
 		Model
 		(
-			const std::string& path,
+			const std::string_view path,
 			const MeshTextures& textures,
 			const Material& material = Material()
 		);

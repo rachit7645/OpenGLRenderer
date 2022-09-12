@@ -9,12 +9,12 @@
 
 using namespace Renderer;
 
-Texture::Texture(const std::string& path)
+Texture::Texture(const std::string_view path)
 {
 	LOG_INFO("Loading texture: {}\n", path);
 	u8* data = stbi_load
 	(
-		(Files::GetResourceDirectory() + path).c_str(),
+		(Files::GetResourceDirectory() + path.data()).c_str(),
 		&width,
 		&height,
 		&channels,
@@ -23,7 +23,7 @@ Texture::Texture(const std::string& path)
 
 	if (data == nullptr)
 	{
-		LOG_ERROR("Unable to load texture: ", path);
+		LOG_ERROR("Unable to load texture: {}", path);
 	}
 
 	glGenTextures(1, &id);

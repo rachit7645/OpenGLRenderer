@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <unordered_map>
+#include <string_view>
 #include <GL/glew.h>
 
 #include "VertexBuffer.h"
@@ -31,8 +32,8 @@ namespace Renderer
 		GLuint  id          = 0;
 		GLsizei vertexCount = 0;
 
-		std::unordered_map<const char*, std::shared_ptr<VertexBuffer>> buffers;
+		std::unordered_map<std::string_view, std::shared_ptr<VertexBuffer>> buffers;
 	};
 }
 
-#endif // VERTEX_ARRAY_H
+#endif

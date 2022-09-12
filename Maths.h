@@ -19,14 +19,6 @@ namespace Maths
 	glm::mat4 CreateModelMatrix2D(const glm::vec2& translation, const glm::vec2& scale);
 	// Create view matrix from camera
 	glm::mat4 CreateViewMatrix(const Entities::Camera& camera);
-	// BarryCentric equation
-	f32 BarryCentric
-	(
-		const glm::vec3& vec1,
-		const glm::vec3& vec2,
-		const glm::vec3& vec3,
-		const glm::vec2& position
-	);
 }
 
 #endif

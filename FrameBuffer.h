@@ -10,13 +10,13 @@
 
 namespace Renderer
 {
-	enum FBType : usize
+	enum class FBType
 	{
-		None          = 0,
-		Color         = 1,
-		Depth         = 2,
-		ColorAndDepth = 3,
-		Empty         = 4
+		None,
+		Color,
+		Depth,
+		ColorAndDepth,
+		Empty
 	};
 
 	class FrameBuffer

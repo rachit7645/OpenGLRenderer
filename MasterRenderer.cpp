@@ -10,7 +10,7 @@ using Entities::Player;
 using Waters::WaterTile;
 
 MasterRenderer::MasterRenderer() 
-	: renderer(shader),
+	: instancedRenderer(instancedShader),
 	  skyboxRenderer(skyboxShader),
 	  guiRenderer(guiShader),
 	  waterRenderer(waterShader),
@@ -61,9 +61,9 @@ void MasterRenderer::Prepare(const Camera& camera, const glm::vec4& clipPlane)
 
 void MasterRenderer::RenderEntities()
 {
-	shader.Start();
-	renderer.Render(m_entities);
-	shader.Stop();
+	instancedShader.Start();
+	instancedRenderer.Render(m_entities);
+	instancedShader.Stop();
 }
 
 void MasterRenderer::RenderSkybox()

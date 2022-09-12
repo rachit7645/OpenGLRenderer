@@ -1,7 +1,7 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <string>
+#include <string_view>
 #include <GL/glew.h>
 
 #include "GLM.h"
@@ -14,7 +14,7 @@ namespace Shader
 	{
 	public:
 		// Creates a vertex and fragment shader and links em\' into a program
-		ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath);
+		ShaderProgram(const std::string_view vertexPath, const std::string_view fragmentPath);
 		~ShaderProgram();
 
 		GLuint programID;
@@ -23,7 +23,7 @@ namespace Shader
 		void Stop()  const;
 
 		GLint GetUniformLocation(const char* name) const;
-		void  DumpToFile(const std::string& path)  const;
+		void  DumpToFile(const std::string_view path)  const;
 
 		// Uniform loading functions 
 		void LoadUniform(GLint location, GLint value)             const;
@@ -37,9 +37,9 @@ namespace Shader
 		virtual void GetUniformLocations() = 0;
 	private:
 		// Function to load shaders from file
-		GLuint LoadShader(GLenum type, const std::string& path);
-		void   CheckProgram(const std::string& message, GLenum type)                 const;
-		void   CheckShader(const std::string& message, GLuint shaderID, GLenum type) const;
+		GLuint LoadShader(GLenum type, const std::string_view path);
+		void   CheckProgram(const std::string_view message, GLenum type)                 const;
+		void   CheckShader(const std::string_view message, GLuint shaderID, GLenum type) const;
 	};
 }
 

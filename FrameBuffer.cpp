@@ -33,7 +33,7 @@ FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type)
 		CreateDepthTexture();
 		break;
 
-	case Empty:
+	case FBType::Empty:
 		CreateColorBuffer();
 		CreateDepthBuffer();
 		break;

@@ -2,6 +2,7 @@
 #define GUI_SHADER_H
 
 #include <unordered_map>
+#include <string_view>
 #include <GL/glew.h>
 
 #include "Shader.h"
@@ -21,7 +22,7 @@ namespace Shader
 
 		void GetUniformLocations() override;
 	private:
-		std::unordered_map<const char*, GLint> uniforms;
+		std::unordered_map<std::string_view, GLint> uniforms;
 	};
 }
 

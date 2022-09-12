@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <array>
+#include <string_view>
 
 using namespace Entities;
 
@@ -53,7 +54,7 @@ const std::vector<f32> SKYBOX_VERTICES =
 	SKYBOX_SIZE, -SKYBOX_SIZE, SKYBOX_SIZE
 };
 
-constexpr std::array<const char*, 6> SKYBOX_TEXTURE_FILES =
+constexpr std::array<const std::string_view, 6> SKYBOX_TEXTURE_FILES =
 {
 	"gfx/right.png",
 	"gfx/left.png",

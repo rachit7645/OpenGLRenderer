@@ -32,10 +32,8 @@ add_subdirectory(libs/imgui/)
 add_executable(engine
 	Main.cpp
 	Window.cpp
-	EntityRenderer.cpp
 	Model.cpp
 	Shader.cpp
-	StaticShader.cpp
 	Texture.cpp
 	VertexArray.cpp
 	VertexBuffer.cpp
@@ -71,6 +69,10 @@ add_executable(engine
 	SharedBuffer.cpp
 	MeshTextures.cpp
 	WaterTile.cpp
+	ShaderStorageBuffer.cpp
+	InstancedRenderer.cpp
+	InstancedShader.cpp
+	InstanceBuffer.cpp
 )
 
 # Precompiled Headers

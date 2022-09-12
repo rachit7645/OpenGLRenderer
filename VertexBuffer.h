@@ -24,4 +24,4 @@ namespace Renderer
 	};
 }
 
-#endif // VERTEX_BUFFER_H
+#endif

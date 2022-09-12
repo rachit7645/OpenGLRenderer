@@ -15,7 +15,7 @@ namespace Logger
 	void Log
 	(
 		const std::string_view type,
-		const std::string& time,
+		const std::string_view time,
 		const std::string_view file,
 		int line,
 		fmt::string_view format,
