@@ -2,11 +2,9 @@
 
 using namespace Renderer;
 
-// TODO: Add culling
-
 InstancedRenderer::InstancedRenderer(Shader::InstancedShader& shader)
 	: shader(shader),
-	  buffer(std::make_shared<InstanceBuffer>())
+	  m_buffer(std::make_shared<InstanceBuffer>())
 {
 	shader.Start();
 	shader.ConnectTextureUnits();
@@ -17,17 +15,10 @@ void InstancedRenderer::Render(const Batch& batch)
 {
 	for (const auto& [model, entities] : batch)
 	{
-		buffer->LoadInstanceData(entities);
+		LoadData(entities);
 		for (const auto& mesh : model->meshes)
 		{
-			glBindVertexArray(mesh.vao->id);
-
-			const MeshTextures& textures = mesh.textures;
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, textures.diffuse->id);
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, textures.specular->id);
-
+			PrepareMesh(mesh);
 			glDrawElementsInstanced
 			(
 				GL_TRIANGLES,
@@ -36,8 +27,29 @@ void InstancedRenderer::Render(const Batch& batch)
 				nullptr,
 				static_cast<GLint>(entities.size())
 			);
-
-			glBindVertexArray(0);
+			UnbindMesh();
 		}
 	}
+}
+
+void InstancedRenderer::LoadData(const EntityVector& entities)
+{
+	m_buffer->LoadInstanceData(entities);
+}
+
+void InstancedRenderer::PrepareMesh(const Mesh& mesh)
+{
+	// Bind vao
+	glBindVertexArray(mesh.vao->id);
+	// Bind textures
+	const MeshTextures& textures = mesh.textures;
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures.diffuse->id);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, textures.specular->id);
+}
+
+void InstancedRenderer::UnbindMesh()
+{
+	glBindVertexArray(0);
 }

@@ -6,10 +6,8 @@
 #include <memory>
 #include <GL/glew.h>
 
-#include "EntityRenderer.h"
 #include "Util.h"
 #include "Entity.h"
-#include "StaticShader.h"
 #include "Skybox.h"
 #include "SkyboxRenderer.h"
 #include "SkyboxShader.h"
@@ -42,9 +40,6 @@ namespace Renderer
 	{
 	public:
 		MasterRenderer();
-
-		Shader::StaticShader     shader;
-		Renderer::EntityRenderer renderer;
 
 		Shader::InstancedShader     instancedShader;
 		Renderer::InstancedRenderer instancedRenderer;

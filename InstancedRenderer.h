@@ -15,15 +15,21 @@ namespace Renderer
 	class InstancedRenderer
 	{
 	public:
-		using Batch     = std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity*>>;
-		using BufferPtr = std::shared_ptr<InstanceBuffer>;
+		using BufferPtr    = std::shared_ptr<InstanceBuffer>;
+		using MdPtr        = std::shared_ptr<Model>;
+		using EntityVector = std::vector<Entities::Entity*>;
+		using Batch        = std::unordered_map<MdPtr, EntityVector>;
 
 		explicit InstancedRenderer(Shader::InstancedShader& shader);
 		Shader::InstancedShader& shader;
 
 		void Render(const Batch& batch);
 	private:
-		BufferPtr buffer;
+		void LoadData(const EntityVector& entities);
+		void PrepareMesh(const Mesh& mesh);
+		void UnbindMesh();
+
+		BufferPtr m_buffer;
 	};
 }
 

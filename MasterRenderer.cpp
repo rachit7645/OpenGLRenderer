@@ -10,8 +10,7 @@ using Entities::Player;
 using Waters::WaterTile;
 
 MasterRenderer::MasterRenderer() 
-	: renderer(shader),
-	  instancedRenderer(instancedShader),
+	: instancedRenderer(instancedShader),
 	  skyboxRenderer(skyboxShader),
 	  guiRenderer(guiShader),
 	  waterRenderer(waterShader),
