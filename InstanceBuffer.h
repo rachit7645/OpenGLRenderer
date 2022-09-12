@@ -16,7 +16,7 @@ namespace Renderer
 	{
 		struct InstancedDataGLSL
 		{
-			glm::mat4 modelMatrix;
+			alignas(16) glm::mat4 modelMatrix;
 		};
 	}
 

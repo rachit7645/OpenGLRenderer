@@ -2,6 +2,8 @@
 
 using namespace Renderer;
 
+// TODO: Add culling
+
 InstancedRenderer::InstancedRenderer(Shader::InstancedShader& shader)
 	: shader(shader),
 	  buffer(std::make_shared<InstanceBuffer>())
