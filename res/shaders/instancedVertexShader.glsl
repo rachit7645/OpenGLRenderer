@@ -37,7 +37,7 @@ layout(std140, binding = 2) uniform Shared
 	vec4 cameraPos;
 };
 
-layout(std430, binding = 3) buffer InstanceData
+layout(std430, binding = 3) readonly buffer InstanceData
 {
 	Instance instances[];
 };

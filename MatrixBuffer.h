@@ -22,7 +22,6 @@ namespace Renderer
 		{
 			glm::mat4 projectionMatrix;
 			glm::mat4 viewMatrix;
-			glm::vec4 cameraPos;
 		};
 	}
 }

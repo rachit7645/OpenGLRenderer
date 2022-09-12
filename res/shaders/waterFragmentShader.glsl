@@ -72,9 +72,9 @@ void main()
 	float refractFactor = CalculateRefractiveFactor(unitNormal);
 	vec3  specular      = CalculateSpecular(unitNormal);
 
-	outColor   = mix(reflectColor, refractColor, refractFactor);
-	outColor   = mix(outColor, vec4(0.0f, 0.3f, 0.5f, 0.0f), 0.2f);
-	outColor   = outColor + vec4(specular, 0.0f);
+	outColor = mix(reflectColor, refractColor, refractFactor);
+	outColor = mix(outColor, vec4(0.0f, 0.3f, 0.5f, 0.0f), 0.2f);
+	outColor = outColor + vec4(specular, 0.0f);
 }
 
 vec2 CalculateTotalDistortion(vec2 distortedCoords)
