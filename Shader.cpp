@@ -11,7 +11,7 @@
 
 using namespace Shader;
 
-ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath)
+ShaderProgram::ShaderProgram(const std::string_view vertexPath, const std::string_view fragmentPath)
 {
 	programID = glCreateProgram();
 	u32 vertexShaderID   = LoadShader(GL_VERTEX_SHADER,   vertexPath);
@@ -27,7 +27,7 @@ ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& f
 	CheckProgram(fmt::format("Shader validation failed for: {}, {}", vertexPath, fragmentPath), GL_VALIDATE_STATUS);
 }
 
-void ShaderProgram::DumpToFile(const std::string& path) const
+void ShaderProgram::DumpToFile(const std::string_view path) const
 {
 	GLint length;
 	glGetProgramiv(programID, GL_PROGRAM_BINARY_LENGTH, &length);
@@ -43,16 +43,16 @@ void ShaderProgram::DumpToFile(const std::string& path) const
 		reinterpret_cast<void*>(binary.data())
 	);
 
-	std::ofstream file(path);
+	std::ofstream file(path.data());
 	file.write(binary.data(), length);
 
 	LOG_DEBUG("Dumping Shader to: {}\n", path);
 }
 
-u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
+u32 ShaderProgram::LoadShader(GLenum type, const std::string_view path)
 {
 	LOG_INFO("Loading shader: {}\n", path);
-	std::ifstream fs(Files::GetResourceDirectory() + path, std::ios::in);
+	std::ifstream fs(Files::GetResourceDirectory() + path.data(), std::ios::in);
 
 	if (!fs.is_open())
 	{
@@ -72,7 +72,7 @@ u32 ShaderProgram::LoadShader(GLenum type, const std::string& path)
 	return shaderID;
 }
 
-void ShaderProgram::CheckShader(const std::string& message, u32 shaderID, GLenum type) const
+void ShaderProgram::CheckShader(const std::string_view message, u32 shaderID, GLenum type) const
 {
 	GLint status;
 	glGetShaderiv(shaderID, type, &status);
@@ -84,7 +84,7 @@ void ShaderProgram::CheckShader(const std::string& message, u32 shaderID, GLenum
 	}
 }
 
-void ShaderProgram::CheckProgram(const std::string& message, GLenum type) const
+void ShaderProgram::CheckProgram(const std::string_view message, GLenum type) const
 {
 	GLint status;
 	glGetProgramiv(programID, type, &status);

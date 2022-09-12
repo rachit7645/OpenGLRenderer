@@ -25,6 +25,8 @@ namespace Renderer
 
 		void Render(const Batch& batch);
 	private:
+		void BeginRender();
+		void EndRender();
 		void LoadData(const EntityVector& entities);
 		void PrepareMesh(const Mesh& mesh);
 		void UnbindMesh();

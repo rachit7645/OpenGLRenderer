@@ -8,7 +8,7 @@
 
 using namespace Renderer;
 
-CubeMap::CubeMap(const std::array<const char*, 6>& files)
+CubeMap::CubeMap(const std::array<const std::string_view, 6>& files)
 {
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, id);
@@ -26,7 +26,7 @@ CubeMap::CubeMap(const std::array<const char*, 6>& files)
 		int width, height, channels;
 		u8* data = stbi_load
 		(
-			(Files::GetResourceDirectory() + files[i]).c_str(),
+			(Files::GetResourceDirectory() + files[i].data()).c_str(),
 			&width,
 			&height,
 			&channels,
@@ -35,7 +35,7 @@ CubeMap::CubeMap(const std::array<const char*, 6>& files)
 
 		if (data == nullptr)
 		{
-			LOG_ERROR("Unable to open file: ", files[i]);
+			LOG_ERROR("Unable to open file: {}", files[i]);
 		}
 
 		glTexImage2D

@@ -18,8 +18,6 @@ InstanceBuffer::InstanceBuffer()
 void InstanceBuffer::LoadInstanceData(const EntityVector& entities)
 {
 	auto data = GenerateData(entities);
-
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, id);
 	glBufferSubData
 	(
 		GL_SHADER_STORAGE_BUFFER,
@@ -27,7 +25,6 @@ void InstanceBuffer::LoadInstanceData(const EntityVector& entities)
 		GetSize(data),
 		reinterpret_cast<const void*>(&data[0])
 	);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
 GLsizeiptr InstanceBuffer::GetSize(const DataVector& data)
@@ -57,4 +54,14 @@ DataVector InstanceBuffer::GenerateData(const EntityVector& entities)
 	}
 
 	return data;
+}
+
+void InstanceBuffer::Bind() const
+{
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, id);
+}
+
+void InstanceBuffer::Unbind() const
+{
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }

@@ -29,6 +29,9 @@ namespace Renderer
 
 		InstanceBuffer();
 
+		void Bind()   const;
+		void Unbind() const;
+
 		void LoadInstanceData(const EntityVector& entities);
 	private:
 		DataVector GenerateData(const EntityVector& entities);

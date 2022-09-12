@@ -3,6 +3,8 @@
 #include "Util.h"
 #include "Maths.h"
 
+// TODO: Use instancing to draw these
+
 using namespace Renderer;
 
 const std::vector<f32> QUAD_VERTICES =

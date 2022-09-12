@@ -13,6 +13,7 @@ InstancedRenderer::InstancedRenderer(Shader::InstancedShader& shader)
 
 void InstancedRenderer::Render(const Batch& batch)
 {
+	BeginRender();
 	for (const auto& [model, entities] : batch)
 	{
 		LoadData(entities);
@@ -30,6 +31,17 @@ void InstancedRenderer::Render(const Batch& batch)
 			UnbindMesh();
 		}
 	}
+	EndRender();
+}
+
+void InstancedRenderer::BeginRender()
+{
+	m_buffer->Bind();
+}
+
+void InstancedRenderer::EndRender()
+{
+	m_buffer->Unbind();
 }
 
 void InstancedRenderer::LoadData(const EntityVector& entities)
