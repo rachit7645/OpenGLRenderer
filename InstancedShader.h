@@ -20,9 +20,9 @@ namespace Shader
 		InstancedShader();
 
 		void ConnectTextureUnits();
+		void LoadMaterial(const Renderer::Material& material);
 
 		void GetUniformLocations() override;
-		void LoadMaterial(const Renderer::Material& material);
 	private:
 		std::unordered_map<std::string_view, GLint> uniforms;
 	};

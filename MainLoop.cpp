@@ -10,6 +10,7 @@
 #include "imgui.h"
 #include "GUI.h"
 #include "Random.h"
+#include "RenderConstants.h"
 
 using namespace Window;
 
@@ -26,6 +27,7 @@ using Renderer::GUI;
 using Renderer::FrameBuffer;
 using Renderer::FBType;
 using Renderer::MasterRenderer;
+using Renderer::Mode;
 using Entities::Entity;
 using Entities::Player;
 using Entities::Skybox;
@@ -184,14 +186,14 @@ void SDLWindow::DrawWaterFBOs
 	f32 distance = 2.0f * (camera.position.y - waters[0].position.y);
 	camera.position.y -= distance;
 	camera.InvertPitch();
-	renderer.RenderScene(camera, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].position.y));
+	renderer.RenderScene(camera, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].position.y), Mode::Fast);
 	// Move it back to its original position
 	camera.position.y += distance;
 	camera.InvertPitch();
 
 	// Refraction pass
 	waterFBOs.BindRefraction();
-	renderer.RenderScene(camera, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].position.y));
+	renderer.RenderScene(camera, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].position.y), Mode::Fast);
 
 	// Disable clip plane 0
 	glDisable(GL_CLIP_DISTANCE0);

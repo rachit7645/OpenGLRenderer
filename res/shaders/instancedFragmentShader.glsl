@@ -56,11 +56,6 @@ void main()
 {
 	vec4 diffuseColor  = texture(diffuseTexture,  txCoords);
 	vec4 specularColor = texture(specularTexture, txCoords);
-
-	if (diffuseColor.a < 0.5f)
-	{
-		discard;
-	}
 	
 	vec4 totalAmbient = vec4(0.0f);
 	vec4 totalDiffuse = vec4(0.0f);
@@ -90,7 +85,7 @@ void main()
 
 float CalculateAttFactor(int index)
 {
-	#define ATT lights[index].attenuation
+	vec4  ATT       = lights[index].attenuation;
 	float distance  = length(lights[index].position.xyz - worldPosition.xyz);
 	float attFactor = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
 	return 1.0f / attFactor;
@@ -108,8 +103,6 @@ vec4 CalculateDiffuse(int index)
 	return vec4(brightness * lights[index].diffuse.rgb, 1.0f);
 }
 
-// specular.x = shineDamper
-// specular.y = reflectivity
 vec4 CalculateSpecular(int index)
 {
 	vec3 lightDirection  = unitLightVector[index];
