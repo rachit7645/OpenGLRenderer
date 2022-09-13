@@ -1,5 +1,7 @@
 #include "MasterRenderer.h"
 
+#include <GL/glew.h>
+
 using namespace Renderer;
 
 using Entities::Entity;
@@ -10,7 +12,7 @@ using Entities::Player;
 using Waters::WaterTile;
 
 MasterRenderer::MasterRenderer() 
-	: instancedRenderer(instancedShader),
+	: instancedRenderer(instancedShader, fastInstancedShader),
 	  skyboxRenderer(skyboxShader),
 	  guiRenderer(guiShader),
 	  waterRenderer(waterShader),
@@ -35,11 +37,11 @@ void MasterRenderer::BeginFrame
 	m_lights->LoadLights(lights);
 }
 
-void MasterRenderer::RenderScene(const Camera& camera, const glm::vec4& clipPlane)
+void MasterRenderer::RenderScene(const Camera& camera, const glm::vec4& clipPlane, Mode mode)
 {
 	Prepare(camera, clipPlane);
 
-	RenderEntities();
+	RenderEntities(mode);
 	RenderSkybox();
 }
 
@@ -59,11 +61,9 @@ void MasterRenderer::Prepare(const Camera& camera, const glm::vec4& clipPlane)
 	m_shared->LoadCameraPos(camera);
 }
 
-void MasterRenderer::RenderEntities()
+void MasterRenderer::RenderEntities(Mode mode)
 {
-	instancedShader.Start();
-	instancedRenderer.Render(m_entities);
-	instancedShader.Stop();
+	instancedRenderer.Render(m_entities, mode);
 }
 
 void MasterRenderer::RenderSkybox()

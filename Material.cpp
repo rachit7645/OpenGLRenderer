@@ -7,9 +7,3 @@ Material::Material(f32 shineDamper, f32 reflectivity)
 	  reflectivity(reflectivity)
 {
 }
-
-Material::Material(bool isTransparent, bool useFakeLighting)
-	: isTransparent(isTransparent),
-	  useFakeLighting(useFakeLighting)
-{
-}

@@ -4,9 +4,8 @@
 #include <unordered_map>
 #include <vector>
 #include <memory>
-#include <GL/glew.h>
 
-#include "Util.h"
+#include "GLM.h"
 #include "Entity.h"
 #include "Skybox.h"
 #include "SkyboxRenderer.h"
@@ -24,24 +23,18 @@
 #include "WaterFrameBuffers.h"
 #include "InstancedRenderer.h"
 #include "InstancedShader.h"
+#include "FastInstancedShader.h"
+#include "RenderConstants.h"
 
 namespace Renderer
 {
-	constexpr glm::vec4  GL_CLEAR_COLOR = {0.0f,  0.0f,  0.0f,  1.0f};
-	constexpr glm::vec4  GL_SKY_COLOR   = {0.53f, 0.81f, 0.92f, 1.0f};
-	constexpr GLbitfield GL_CLEAR_FLAGS = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
-
-	constexpr f32 FOV          = 70.0f;
-	constexpr f32 ASPECT_RATIO = 16.0 / 9.0;
-	constexpr f32 NEAR_PLANE   = 0.1f;
-	constexpr f32 FAR_PLANE    = 1000.0f;
-
 	class MasterRenderer
 	{
 	public:
 		MasterRenderer();
 
 		Shader::InstancedShader     instancedShader;
+		Shader::FastInstancedShader fastInstancedShader;
 		Renderer::InstancedRenderer instancedRenderer;
 
 		Shader::SkyboxShader     skyboxShader;
@@ -61,7 +54,7 @@ namespace Renderer
 			Entities::Player& player
 		);
 		// Render Scene
-		void RenderScene(const Entities::Camera& camera, const glm::vec4& clipPlane = glm::vec4(0.0f));
+		void RenderScene(const Entities::Camera& camera, const glm::vec4& clipPlane = glm::vec4(0.0f), Mode mode = Mode::Normal);
 		// Render the water
 		void RenderWaters(const std::vector<Waters::WaterTile>& waters, const Waters::WaterFrameBuffers& waterFBOs);
 		// Render the guis
@@ -76,7 +69,7 @@ namespace Renderer
 		// Prepare render
 		void Prepare(const Entities::Camera& camera, const glm::vec4& clipPlane);
 		// Render entities
-		void RenderEntities();
+		void RenderEntities(Mode mode);
 		// Render the skybox
 		void RenderSkybox();
 

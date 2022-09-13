@@ -28,27 +28,35 @@ namespace Renderer
 		);
 
 		std::vector<Mesh> meshes;
-		Material          material;
 	private:
 		void ProcessNode
 		(
 			aiNode* node,
 			const aiScene* scene,
-			const MeshTextures& textures
+			const MeshTextures& textures,
+			const Material& material
 		);
 
 		Mesh ProcessMesh
 		(
 			aiMesh* mesh,
 			const aiScene* scene,
-			const MeshTextures& textures
+			const MeshTextures& textures,
+			const Material& material
 		);
 
-		MeshTextures ProcessMaterial
+		MeshTextures ProcessTextures
 		(
 			aiMesh* mesh,
 			const aiScene* scene,
 			const MeshTextures& pTextures
+		);
+
+		Material ProcessMaterial
+		(
+			aiMesh* mesh,
+			const aiScene* scene,
+			const Material& pMaterial
 		);
 	};
 }

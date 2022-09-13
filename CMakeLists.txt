@@ -73,6 +73,7 @@ add_executable(engine
 	InstancedRenderer.cpp
 	InstancedShader.cpp
 	InstanceBuffer.cpp
+	FastInstancedShader.cpp
 )
 
 # Precompiled Headers

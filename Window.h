@@ -11,6 +11,7 @@
 #include "WaterFrameBuffers.h"
 #include "MasterRenderer.h"
 #include "Camera.h"
+#include "Light.h"
 
 namespace Window
 {
@@ -29,7 +30,7 @@ namespace Window
 		void MainLoop();
 	private:
 		// Display ImGui Widgets
-		void ImGuiDisplay();
+		void ImGuiDisplay(std::vector<Entities::Light>& lights);
 		// Update options menu
 		void ImGuiUpdate() const;
 		// Function to process SDL Events
@@ -45,8 +46,13 @@ namespace Window
 			Entities::Camera& camera
 		);
 
-		// FPS Counting Variables
-		std::chrono::time_point<std::chrono::steady_clock> startTime, frameStartTime, endTime;
+		using Clock     = std::chrono::steady_clock;
+		using TimePoint = std::chrono::time_point<Clock>;
+
+		TimePoint startTime;
+		TimePoint frameStartTime;
+		TimePoint endTime;
+
 		f32 frameTime = 0.0f;
 		f32 FPS       = 0.0f;
 		f32 finalFPS  = 0.0f;

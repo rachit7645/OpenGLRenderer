@@ -10,6 +10,7 @@
 #include "imgui.h"
 #include "GUI.h"
 #include "Random.h"
+#include "RenderConstants.h"
 
 using namespace Window;
 
@@ -26,6 +27,7 @@ using Renderer::GUI;
 using Renderer::FrameBuffer;
 using Renderer::FBType;
 using Renderer::MasterRenderer;
+using Renderer::Mode;
 using Entities::Entity;
 using Entities::Player;
 using Entities::Skybox;
@@ -37,36 +39,33 @@ using Waters::WaterFrameBuffers;
 // TODO: Move MainLoop to separate class, move data to said class
 // TODO: Live editing of entities, lights, etc. with ImGui
 
-constexpr usize MAX_ENTITIES    = 25;
-constexpr f32   ENTITY_DISTANCE = 196.0f;
+constexpr usize MAX_ENTITIES    = 50;
+constexpr f32   ENTITY_DISTANCE = 256.0f;
 
 void SDLWindow::MainLoop()
 {
 	// Put Models and Textures here 
 	auto treeTexture  = Resources::GetTexture("gfx/tree.png");
-	auto grassTexture = Resources::GetTexture("gfx/grassTexture.png");
-	auto fernTexture  = Resources::GetTexture("gfx/fern.png");
 	auto defDiffuse   = Resources::GetTexture("gfx/dragon.png");
 	auto defSpecular  = Resources::GetTexture("gfx/dSpec.png");
 
 	auto treeModel   = Resources::GetModel("gfx/tree.obj",       MeshTextures(treeTexture,  defSpecular));
 	auto playerModel = Resources::GetModel("gfx/Link/Link.obj",  MeshTextures(defDiffuse,   defSpecular));
-	auto grassModel  = Resources::GetModel("gfx/grassModel.obj", MeshTextures(grassTexture, defSpecular),  Material(true, true));
-	auto fernModel   = Resources::GetModel("gfx/fern.obj",       MeshTextures(fernTexture,  defSpecular),  Material(true, true));
 
 	// All objects go here
 	std::vector<Entity> entities;
 	{
-		f32 entityX, entityZ;
 		for (usize i = 0; i < MAX_ENTITIES; ++i)
 		{
-			entityX = Util::Rand_Range<f32>(-1.0f, 1.0f) * ENTITY_DISTANCE;
-			entityZ = Util::Rand_Range<f32>(-1.0f, 1.0f) * ENTITY_DISTANCE;
-			entities.emplace_back(treeModel, glm::vec3(entityX, 0.0f, entityZ), glm::vec3(0.0f), 3.0f);
-
-			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * ENTITY_DISTANCE;
-			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * ENTITY_DISTANCE;
-			entities.emplace_back(fernModel, glm::vec3(entityX, 0.0f, entityZ), glm::vec3(0.0f), 0.6f);
+			f32 entityX = Util::Rand_Range<f32>(-1.0f, 1.0f) * ENTITY_DISTANCE;
+			f32 entityZ = Util::Rand_Range<f32>(-1.0f, 1.0f) * ENTITY_DISTANCE;
+			entities.emplace_back
+			(
+				treeModel,
+				glm::vec3(entityX, 0.0f, entityZ),
+				glm::vec3(0.0f),
+				3.0f
+			);
 		}
 	}
 
@@ -142,7 +141,7 @@ void SDLWindow::MainLoop()
 		ImGui::NewFrame();
 
 		// Update
-		ImGuiDisplay();
+		ImGuiDisplay(lights);
 		player.Move();
 		camera.Move();
 
@@ -187,14 +186,14 @@ void SDLWindow::DrawWaterFBOs
 	f32 distance = 2.0f * (camera.position.y - waters[0].position.y);
 	camera.position.y -= distance;
 	camera.InvertPitch();
-	renderer.RenderScene(camera, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].position.y));
+	renderer.RenderScene(camera, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].position.y), Mode::Fast);
 	// Move it back to its original position
 	camera.position.y += distance;
 	camera.InvertPitch();
 
 	// Refraction pass
 	waterFBOs.BindRefraction();
-	renderer.RenderScene(camera, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].position.y));
+	renderer.RenderScene(camera, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].position.y), Mode::Fast);
 
 	// Disable clip plane 0
 	glDisable(GL_CLIP_DISTANCE0);
@@ -217,7 +216,7 @@ void SDLWindow::CalculateFPS()
 	++FPS;
 }
 
-void SDLWindow::ImGuiDisplay()
+void SDLWindow::ImGuiDisplay(std::vector<Light>& lights)
 {
 	if (ImGui::BeginMainMenuBar())
 	{
@@ -229,6 +228,32 @@ void SDLWindow::ImGuiDisplay()
 			ImGui::Checkbox("Wireframe", &wireframe);
 			ImGui::EndMenu();
 		}
+
+		if (ImGui::BeginMenu("Editor"))
+		{
+			if (ImGui::BeginMenu("Lights"))
+			{
+				static int current = 0;
+				static const char* const items[] =
+				{
+					"[0]",
+					"[1]",
+					"[2]",
+					"[3]"
+				};
+
+				ImGui::Combo("Current", &current, items, IM_ARRAYSIZE(items));
+				ImGui::InputFloat3("Position",    &lights[current].position[0],    "%.1f");
+				ImGui::InputFloat3("Ambient",     &lights[current].ambient[0],     "%.1f");
+				ImGui::InputFloat3("Diffuse",     &lights[current].diffuse[0],     "%.1f");
+				ImGui::InputFloat3("Specular",    &lights[current].specular[0],    "%.1f");
+				ImGui::InputFloat3("Attenuation", &lights[current].attenuation[0], "%.1f");
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMenu();
+		}
+
 		ImGui::EndMainMenuBar();
 	}
 	ImGuiUpdate();

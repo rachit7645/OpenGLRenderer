@@ -10,14 +10,13 @@
 
 namespace Renderer
 {
-	constexpr auto NUM_MAX_ENTITIES = 500;
+	constexpr auto NUM_MAX_ENTITIES = 512;
 
 	namespace Detail
 	{
 		struct InstancedDataGLSL
 		{
 			alignas(16) glm::mat4 modelMatrix;
-			alignas(16) glm::vec2 specular;
 		};
 	}
 
@@ -35,7 +34,7 @@ namespace Renderer
 		void LoadInstanceData(const EntityVector& entities);
 	private:
 		DataVector GenerateData(const EntityVector& entities);
-		GLsizeiptr GetSize(const DataVector& data);
+		GLsizeiptr GetSize(const EntityVector& entities, const DataVector& data);
 	};
 }
 
