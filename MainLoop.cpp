@@ -139,7 +139,7 @@ void SDLWindow::MainLoop()
 		ImGui::NewFrame();
 
 		// Update
-		ImGuiDisplay();
+		ImGuiDisplay(lights);
 		player.Move();
 		camera.Move();
 
@@ -214,7 +214,7 @@ void SDLWindow::CalculateFPS()
 	++FPS;
 }
 
-void SDLWindow::ImGuiDisplay()
+void SDLWindow::ImGuiDisplay(std::vector<Light>& lights)
 {
 	if (ImGui::BeginMainMenuBar())
 	{
@@ -226,6 +226,32 @@ void SDLWindow::ImGuiDisplay()
 			ImGui::Checkbox("Wireframe", &wireframe);
 			ImGui::EndMenu();
 		}
+
+		if (ImGui::BeginMenu("Editor"))
+		{
+			if (ImGui::BeginMenu("Lights"))
+			{
+				static int current = 0;
+				static const char* const items[] =
+				{
+					"[0]",
+					"[1]",
+					"[2]",
+					"[3]"
+				};
+
+				ImGui::Combo("Current", &current, items, IM_ARRAYSIZE(items));
+				ImGui::InputFloat3("Position",    &lights[current].position[0],    "%.1f");
+				ImGui::InputFloat3("Ambient",     &lights[current].ambient[0],     "%.1f");
+				ImGui::InputFloat3("Diffuse",     &lights[current].diffuse[0],     "%.1f");
+				ImGui::InputFloat3("Specular",    &lights[current].specular[0],    "%.1f");
+				ImGui::InputFloat3("Attenuation", &lights[current].attenuation[0], "%.1f");
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMenu();
+		}
+
 		ImGui::EndMainMenuBar();
 	}
 	ImGuiUpdate();
