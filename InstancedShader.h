@@ -7,6 +7,7 @@
 
 #include "GLM.h"
 #include "Shader.h"
+#include "Material.h"
 
 namespace Shader
 {
@@ -21,6 +22,7 @@ namespace Shader
 		void ConnectTextureUnits();
 
 		void GetUniformLocations() override;
+		void LoadMaterial(const Renderer::Material& material);
 	private:
 		std::unordered_map<std::string_view, GLint> uniforms;
 	};

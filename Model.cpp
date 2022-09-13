@@ -12,7 +12,6 @@ Model::Model
 	const MeshTextures& textures,
 	const Material& material
 )
-	: material(material)
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile((Files::GetResourceDirectory() + path.data()).c_str(), ASSIMP_FLAGS);
@@ -23,26 +22,27 @@ Model::Model
 		LOG_ERROR("Model Load Failed: {}", importer.GetErrorString());
 	}
 
-	ProcessNode(scene->mRootNode, scene, textures);
+	ProcessNode(scene->mRootNode, scene, textures, material);
 }
 
 void Model::ProcessNode
 (
 	aiNode* node,
 	const aiScene* scene,
-	const MeshTextures& textures
+	const MeshTextures& textures,
+	const Material& material
 )
 {
 	// Iterate over all the node's meshes
-	for (u32 i = 0; i < node->mNumMeshes; i++)
+	for (u32 i = 0; i < node->mNumMeshes; ++i)
 	{
-		meshes.emplace_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], scene, textures));
+		meshes.emplace_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], scene, textures, material));
 	}
 
 	// Iterate over all the child meshes
-	for (u32 i = 0; i < node->mNumChildren; i++)
+	for (u32 i = 0; i < node->mNumChildren; ++i)
 	{
-		ProcessNode(node->mChildren[i], scene, textures);
+		ProcessNode(node->mChildren[i], scene, textures, material);
 	}
 }
 
@@ -50,7 +50,8 @@ Mesh Model::ProcessMesh
 (
 	aiMesh* mesh,
 	const aiScene* scene,
-	const MeshTextures& textures
+	const MeshTextures& textures,
+	const Material& material
 )
 {
 	std::vector<f32> vertices;
@@ -86,10 +87,15 @@ Mesh Model::ProcessMesh
 		indices.push_back(face.mIndices[2]);
 	}
 
-	return Mesh(vertices, indices, txCoords, normals, ProcessMaterial(mesh, scene, textures));
+	return Mesh
+	(
+		vertices, indices, txCoords, normals,
+		ProcessTextures(mesh, scene, textures),
+		ProcessMaterial(mesh, scene, material)
+	);
 }
 
-MeshTextures Model::ProcessMaterial
+MeshTextures Model::ProcessTextures
 (
 	aiMesh* mesh,
 	const aiScene* scene,
@@ -114,4 +120,23 @@ MeshTextures Model::ProcessMaterial
 	}
 
 	return textures;
+}
+
+Material Model::ProcessMaterial
+(
+	aiMesh* mesh,
+	const aiScene* scene,
+	const Material& pMaterial
+)
+{
+	Material material = pMaterial;
+	aiMaterial* mat   = scene->mMaterials[mesh->mMaterialIndex];
+
+	mat->Get(AI_MATKEY_SHININESS,          &material.shineDamper,  nullptr);
+	mat->Get(AI_MATKEY_SHININESS_STRENGTH, &material.reflectivity, nullptr);
+
+	material.shineDamper  = std::max(material.shineDamper,  1.0f);
+	material.reflectivity = std::max(material.reflectivity, 0.0f);
+
+	return material;
 }

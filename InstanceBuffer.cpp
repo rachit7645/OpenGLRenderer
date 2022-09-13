@@ -22,14 +22,19 @@ void InstanceBuffer::LoadInstanceData(const EntityVector& entities)
 	(
 		GL_SHADER_STORAGE_BUFFER,
 		static_cast<GLintptr>(0),
-		GetSize(data),
+		GetSize(entities, data),
 		reinterpret_cast<const void*>(&data[0])
 	);
 }
 
-GLsizeiptr InstanceBuffer::GetSize(const DataVector& data)
+GLsizeiptr InstanceBuffer::GetSize(const EntityVector& entities, const DataVector& data)
 {
-	return static_cast<GLsizeiptr>(data.size() * sizeof(InstancedDataGLSL));
+	// Choose the one with the length size
+	auto length= std::min(data.size(), entities.size());
+	// Calculate the size of the data
+	auto size  = length * sizeof(InstancedDataGLSL);
+	// Return as GLsizeiptr
+	return static_cast<GLsizeiptr>(size);
 }
 
 DataVector InstanceBuffer::GenerateData(const EntityVector& entities)
@@ -44,12 +49,6 @@ DataVector InstanceBuffer::GenerateData(const EntityVector& entities)
 			entities[i]->position,
 			entities[i]->rotation,
 			entities[i]->scale
-		);
-		// Load specular data
-		data[i].specular = glm::vec2
-		(
-			entities[i]->model->material.shineDamper,
-			entities[i]->model->material.reflectivity
 		);
 	}
 

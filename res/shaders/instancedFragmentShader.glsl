@@ -16,7 +16,6 @@ struct Light
 struct Instance
 {
 	mat4 modelMatrix;
-	vec2 specular;
 };
 
 layout(std140, binding = 1) uniform Lights
@@ -31,14 +30,6 @@ layout(std140, binding = 2) uniform Shared
 	vec4 cameraPos;
 };
 
-layout(std430, binding = 3) readonly buffer InstanceData
-{
-	Instance instances[];
-};
-
-// Do not interpolate
-in flat int instanceID;
-
 in float visibility;
 in vec2  txCoords;
 in vec3  unitNormal;
@@ -48,6 +39,9 @@ in vec4  worldPosition;
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D specularTexture;
+
+uniform float shineDamper;
+uniform float reflectivity;
 
 out vec4 outColor;
 
@@ -122,8 +116,8 @@ vec4 CalculateSpecular(int index)
 	vec3 halfwayDir      = normalize(lightDirection + unitCameraVector);
 	float specularFactor = dot(halfwayDir, unitNormal);
 	specularFactor       = max(specularFactor, MIN_SPECULAR);
-	float dampedFactor   = pow(specularFactor, instances[instanceID].specular.x);
-	return vec4(dampedFactor * instances[instanceID].specular.y * lights[index].specular.rgb, 1.0f);
+	float dampedFactor   = pow(specularFactor, shineDamper);
+	return vec4(dampedFactor * reflectivity * lights[index].specular.rgb, 1.0f);
 }
 
 // Branchless implementation of

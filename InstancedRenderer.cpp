@@ -59,6 +59,8 @@ void InstancedRenderer::PrepareMesh(const Mesh& mesh)
 	glBindTexture(GL_TEXTURE_2D, textures.diffuse->id);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, textures.specular->id);
+	// Load materials
+	shader.LoadMaterial(mesh.material);
 }
 
 void InstancedRenderer::UnbindMesh()

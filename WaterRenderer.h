@@ -30,7 +30,7 @@ namespace Renderer
 		void Unbind();
 
 		VAO vao;
-		f32 moveFactor;
+		f32 moveFactor = 0.0f;
 	};
 }
 

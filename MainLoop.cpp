@@ -37,36 +37,33 @@ using Waters::WaterFrameBuffers;
 // TODO: Move MainLoop to separate class, move data to said class
 // TODO: Live editing of entities, lights, etc. with ImGui
 
-constexpr usize MAX_ENTITIES    = 25;
-constexpr f32   ENTITY_DISTANCE = 196.0f;
+constexpr usize MAX_ENTITIES    = 50;
+constexpr f32   ENTITY_DISTANCE = 256.0f;
 
 void SDLWindow::MainLoop()
 {
 	// Put Models and Textures here 
 	auto treeTexture  = Resources::GetTexture("gfx/tree.png");
-	auto grassTexture = Resources::GetTexture("gfx/grassTexture.png");
-	auto fernTexture  = Resources::GetTexture("gfx/fern.png");
 	auto defDiffuse   = Resources::GetTexture("gfx/dragon.png");
 	auto defSpecular  = Resources::GetTexture("gfx/dSpec.png");
 
 	auto treeModel   = Resources::GetModel("gfx/tree.obj",       MeshTextures(treeTexture,  defSpecular));
 	auto playerModel = Resources::GetModel("gfx/Link/Link.obj",  MeshTextures(defDiffuse,   defSpecular));
-	auto grassModel  = Resources::GetModel("gfx/grassModel.obj", MeshTextures(grassTexture, defSpecular),  Material(true, true));
-	auto fernModel   = Resources::GetModel("gfx/fern.obj",       MeshTextures(fernTexture,  defSpecular),  Material(true, true));
 
 	// All objects go here
 	std::vector<Entity> entities;
 	{
-		f32 entityX, entityZ;
 		for (usize i = 0; i < MAX_ENTITIES; ++i)
 		{
-			entityX = Util::Rand_Range<f32>(-1.0f, 1.0f) * ENTITY_DISTANCE;
-			entityZ = Util::Rand_Range<f32>(-1.0f, 1.0f) * ENTITY_DISTANCE;
-			entities.emplace_back(treeModel, glm::vec3(entityX, 0.0f, entityZ), glm::vec3(0.0f), 3.0f);
-
-			entityX = Util::Rand_Range<f32>(0.0f, 1.0f) * ENTITY_DISTANCE;
-			entityZ = Util::Rand_Range<f32>(0.0f, 1.0f) * ENTITY_DISTANCE;
-			entities.emplace_back(fernModel, glm::vec3(entityX, 0.0f, entityZ), glm::vec3(0.0f), 0.6f);
+			f32 entityX = Util::Rand_Range<f32>(-1.0f, 1.0f) * ENTITY_DISTANCE;
+			f32 entityZ = Util::Rand_Range<f32>(-1.0f, 1.0f) * ENTITY_DISTANCE;
+			entities.emplace_back
+			(
+				treeModel,
+				glm::vec3(entityX, 0.0f, entityZ),
+				glm::vec3(0.0f),
+				3.0f
+			);
 		}
 	}
 

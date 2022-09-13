@@ -6,10 +6,10 @@
 
 #include "VertexArray.h"
 #include "MeshTextures.h"
+#include "Material.h"
 
 namespace Renderer
 {
-	// TODO: Add materials from assimp
 	class Mesh
 	{
 	public:
@@ -20,11 +20,13 @@ namespace Renderer
 			const std::vector<u32>& indices,
 			const std::vector<f32>& txCoords,
 			const std::vector<f32>& normals,
-			const MeshTextures& textures
+			const MeshTextures& textures,
+			const Material& material
 		);
 
 		VAO          vao;
 		MeshTextures textures;
+		Material     material;
 	};
 }
 
