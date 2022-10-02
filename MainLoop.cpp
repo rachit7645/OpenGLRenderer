@@ -57,8 +57,9 @@ void SDLWindow::MainLoop()
 	{
 		for (usize i = 0; i < MAX_ENTITIES; ++i)
 		{
-			f32 entityX = Util::Rand_Range<f32>(-1.0f, 1.0f) * ENTITY_DISTANCE;
-			f32 entityZ = Util::Rand_Range<f32>(-1.0f, 1.0f) * ENTITY_DISTANCE;
+			auto entityX = Util::RandRange(-1.0f, 1.0f) * ENTITY_DISTANCE;
+			auto entityZ = Util::RandRange(-1.0f, 1.0f) * ENTITY_DISTANCE;
+
 			entities.emplace_back
 			(
 				treeModel,

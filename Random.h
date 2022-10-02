@@ -7,7 +7,7 @@ namespace Util
 {
 	// Random number between a range
 	template<typename T>
-	T Rand_Range(T min, T max)
+	T RandRange(T min, T max)
 	{
 		static thread_local std::mt19937_64 generator(777);
 		std::uniform_real_distribution<T> distributer(min, max);
@@ -16,7 +16,7 @@ namespace Util
 
 	// Truly random number between a range
 	template<typename T>
-	T True_Rand_Range(T min, T max)
+	T TrueRandRange(T min, T max)
 	{
 		std::random_device rd;
 		std::seed_seq ss{ rd(), rd() };

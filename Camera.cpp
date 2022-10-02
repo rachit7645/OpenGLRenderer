@@ -69,9 +69,6 @@ void Camera::CalculateZoom()
 {
 	auto& mouseScroll = Inputs::MouseScroll();
 
-	// If there is no scrolling input, return
-	if (mouseScroll.y == 0) return;
-
 	// If scroll direction is positive, reduce distance from player
 	if (mouseScroll.y > 0)
 	{

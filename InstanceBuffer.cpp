@@ -30,16 +30,16 @@ void InstanceBuffer::LoadInstanceData(const EntityVector& entities)
 GLsizeiptr InstanceBuffer::GetSize(const EntityVector& entities, const DataVector& data)
 {
 	// Choose the one with the length size
-	auto length= std::min(data.size(), entities.size());
+	auto length = std::min(data.size(), entities.size());
 	// Calculate the size of the data
-	auto size  = length * sizeof(InstancedDataGLSL);
+	auto size = length * sizeof(InstancedDataGLSL);
 	// Return as GLsizeiptr
 	return static_cast<GLsizeiptr>(size);
 }
 
 DataVector InstanceBuffer::GenerateData(const EntityVector& entities)
 {
-	DataVector data(entities.size());
+	auto data = DataVector(entities.size());
 
 	for (usize i = 0; i < entities.size(); ++i)
 	{

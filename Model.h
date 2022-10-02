@@ -61,4 +61,4 @@ namespace Renderer
 	};
 }
 
-#endif // MODEL_H
+#endif

@@ -142,7 +142,7 @@ void FrameBuffer::CheckStatus()
 	if(status != GL_FRAMEBUFFER_COMPLETE)
 	{
 		auto errorStr = GL_FRAMEBUFFER_ERROR_TYPES.find(status)->second;
-		LOG_ERROR("{} Framebuffer [ID={}] is incomplete!", errorStr, id);
+		LOG_ERROR("{} Framebuffer [ID={}] is incomplete!\n", errorStr, id);
 	}
 }
 

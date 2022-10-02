@@ -59,7 +59,7 @@ void WaterRenderer::PrepareWater(const WaterTile& water)
 	// Bind maps
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, water.dudvMap->id);
-	glActiveTexture(GL_TEXTURE2);
+	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, water.normalMap->id);
 	// Load model matrix
 	glm::mat4 matrix = Maths::CreateModelMatrixTS

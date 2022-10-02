@@ -14,6 +14,7 @@ using namespace Shader;
 ShaderProgram::ShaderProgram(const std::string_view vertexPath, const std::string_view fragmentPath)
 {
 	programID = glCreateProgram();
+
 	u32 vertexShaderID   = LoadShader(GL_VERTEX_SHADER,   vertexPath);
 	u32 fragmentShaderID = LoadShader(GL_FRAGMENT_SHADER, fragmentPath);
 
@@ -21,6 +22,7 @@ ShaderProgram::ShaderProgram(const std::string_view vertexPath, const std::strin
 	glAttachShader(programID, fragmentShaderID);
 	glLinkProgram(programID);
 	CheckProgram(fmt::format("Shader link failed for: {}, {}", vertexPath, fragmentPath), GL_LINK_STATUS);
+
 	glDeleteShader(vertexShaderID);
 	glDeleteShader(fragmentShaderID);
 	glValidateProgram(programID);
@@ -33,7 +35,7 @@ void ShaderProgram::DumpToFile(const std::string_view path) const
 	glGetProgramiv(programID, GL_PROGRAM_BINARY_LENGTH, &length);
 
 	GLenum format;
-	std::vector<char> binary(length);
+	auto binary = std::vector<char>(length);
 	glGetProgramBinary
 	(
 		programID,
@@ -43,16 +45,15 @@ void ShaderProgram::DumpToFile(const std::string_view path) const
 		reinterpret_cast<void*>(binary.data())
 	);
 
-	std::ofstream file(path.data());
-	file.write(binary.data(), length);
-
 	LOG_DEBUG("Dumping Shader to: {}\n", path);
+	auto file = std::ofstream(path.data());
+	file.write(binary.data(), length);
 }
 
 u32 ShaderProgram::LoadShader(GLenum type, const std::string_view path)
 {
 	LOG_INFO("Loading shader: {}\n", path);
-	std::ifstream fs(Files::GetResourceDirectory() + path.data(), std::ios::in);
+	auto fs = std::ifstream(Files::GetResourceDirectory() + path.data(), std::ios::in);
 
 	if (!fs.is_open())
 	{
