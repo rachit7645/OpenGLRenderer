@@ -26,7 +26,7 @@ find_package(assimp REQUIRED)
 find_package(fmt REQUIRED)
 
 # Add sub-projects
-add_subdirectory(libs/imgui/)
+add_subdirectory(libs/)
 
 # Source files
 add_executable(engine
@@ -136,5 +136,7 @@ target_compile_options(engine PRIVATE -Wpedantic)
 target_compile_options(engine PRIVATE -O3)
 # Enable debug output
 target_compile_options(engine PRIVATE -g)
+# Enable SSE2
+target_compile_options(engine PRIVATE -msse2)
 # Link libraries
 target_link_libraries(engine OpenGL::GL GLEW::GLEW SDL2::SDL2 fmt::fmt assimp imgui)
