@@ -82,7 +82,7 @@ target_precompile_headers(engine PRIVATE
 	libs/imgui/imgui.h
 	libs/imgui/backends/imgui_impl_sdl.h
 	libs/imgui/backends/imgui_impl_opengl3.h
-	libs/imgui/misc/imgui_stdlib.h
+	libs/imgui/misc/cpp/imgui_stdlib.h
 	# STB Headers
 	libs/stb/stb_image.h
 	# GLEW Headers
