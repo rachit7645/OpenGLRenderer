@@ -25,6 +25,7 @@
 #include "InstancedShader.h"
 #include "FastInstancedShader.h"
 #include "RenderConstants.h"
+#include "ShadowFrameBuffer.h"
 
 namespace Renderer
 {
@@ -57,6 +58,8 @@ namespace Renderer
 		void RenderScene(const Entities::Camera& camera, const glm::vec4& clipPlane = glm::vec4(0.0f), Mode mode = Mode::Normal);
 		// Render the water
 		void RenderWaters(const std::vector<Waters::WaterTile>& waters, const Waters::WaterFrameBuffers& waterFBOs);
+		// Render shadows
+		void RenderShadows(const Renderer::ShadowFrameBuffer& shadowFBO, const Entities::Camera& camera);
 		// Render the guis
 		void RenderGUIs(const std::vector<GUI>& guis);
 		// Finish frame

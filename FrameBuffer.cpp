@@ -24,7 +24,7 @@ FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type)
 		break;
 
 	case FBType::Depth:
-		CreateColorBuffer();
+		SetColorBuffer();
 		CreateDepthTexture();
 		break;
 
@@ -122,6 +122,12 @@ void FrameBuffer::CreateDepthBuffer()
 		GL_RENDERBUFFER,
 		depthRenderBuffer->id
 	);
+}
+
+void FrameBuffer::SetColorBuffer()
+{
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
 }
 
 void FrameBuffer::CheckStatus()

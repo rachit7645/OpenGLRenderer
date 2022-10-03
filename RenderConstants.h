@@ -20,7 +20,8 @@ namespace Renderer
 	enum class Mode
 	{
 		Normal,
-		Fast
+		Fast,
+		Shadow
 	};
 }
 

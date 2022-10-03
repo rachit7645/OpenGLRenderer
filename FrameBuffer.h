@@ -56,6 +56,7 @@ namespace Renderer
 		void CreateDepthTexture();
 		void CreateColorBuffer();
 		void CreateDepthBuffer();
+		void SetColorBuffer();
 		void CheckStatus();
 	};
 }

@@ -10,7 +10,7 @@
 #include "imgui.h"
 #include "GUI.h"
 #include "Random.h"
-#include "RenderConstants.h"
+#include "ShadowFrameBuffer.h"
 
 using namespace Window;
 
@@ -98,20 +98,19 @@ void SDLWindow::MainLoop()
 		);
 	}
 
-	// Check FrameBuffers
 	auto waterFBOs = Waters::WaterFrameBuffers();
+	auto shadowFBO = Renderer::ShadowFrameBuffer();
 
 	std::vector<GUI> guis;
 	{
-		/* Use for debugging
 		guis.emplace_back
 		(
-			waterFBOs.reflectionFBO->colorTexture,
+			shadowFBO.buffer->depthTexture,
 			glm::vec2(-0.5f, 0.5f),
 			glm::vec2(0.5f, 0.5f)
 		);
 
-		guis.emplace_back
+		/* guis.emplace_back
 		(
 			waterFBOs.refractionFBO->colorTexture,
 			glm::vec2(-0.5f, -0.5f),
@@ -148,6 +147,8 @@ void SDLWindow::MainLoop()
 
 		// Begin render
 		renderer.BeginFrame(entities, lights, player);
+		// Draw shadow fbo
+		renderer.RenderShadows(shadowFBO, camera);
 		// Draw water framebuffers
 		DrawWaterFBOs(waterFBOs, waters, renderer, camera);
 

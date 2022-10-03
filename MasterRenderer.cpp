@@ -100,6 +100,13 @@ void MasterRenderer::RenderWaters(const std::vector<WaterTile>& waters, const Wa
 	waterShader.Stop();
 }
 
+void MasterRenderer::RenderShadows(const ShadowFrameBuffer& shadowFBO, const Camera& camera)
+{
+	shadowFBO.BindShadowFBO();
+	RenderScene(camera, glm::vec4(0.0f), Mode::Shadow);
+	shadowFBO.BindDefaultFBO();
+}
+
 void MasterRenderer::ProcessEntity(Entity& entity)
 {
 	auto iter = m_entities.find(entity.model);
