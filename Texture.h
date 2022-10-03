@@ -20,7 +20,8 @@ namespace Renderer
 			GLsizei height,
 			GLint internalFormat,
 			GLint format,
-			GLint type
+			GLint type,
+			GLint filter
 		);
 		// Destructor 
 		~Texture();

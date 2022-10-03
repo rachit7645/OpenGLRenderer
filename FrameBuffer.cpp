@@ -7,10 +7,11 @@ using namespace Renderer;
 
 using Window::DIMENSIONS;
 
-FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type)
+FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type, FBFilter filter)
 	: width(width),
 	  height(height),
-	  type(type)
+	  type(type),
+	  filter(filter)
 {
 	// Generate Framebuffer
 	glGenFramebuffers(1, &id);
@@ -54,7 +55,8 @@ void FrameBuffer::CreateColorTexture()
 		height,
 		GL_RGBA,
 		GL_RGBA,
-		GL_UNSIGNED_BYTE
+		GL_UNSIGNED_BYTE,
+		filter
 	);
 
 	glFramebufferTexture2D
@@ -75,7 +77,8 @@ void FrameBuffer::CreateDepthTexture()
 		height,
 		GL_DEPTH_COMPONENT24,
 		GL_DEPTH_COMPONENT,
-		GL_FLOAT
+		GL_FLOAT,
+		filter
 	);
 
 	glFramebufferTexture2D

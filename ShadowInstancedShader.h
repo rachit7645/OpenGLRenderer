@@ -19,12 +19,7 @@ namespace Shader
 	public:
 		ShadowInstancedShader();
 
-		void LoadProjection(f32 nearPlane, f32 farPlane);
-		void LoadView(const Entities::Light& light);
-
 		void GetUniformLocations() override;
-	private:
-		std::unordered_map<std::string_view, GLint> uniforms;
 	};
 }
 

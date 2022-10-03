@@ -4,6 +4,8 @@ layout(std140, binding = 0) uniform Matrices
 {
 	mat4 projectionMatrix;
 	mat4 viewMatrix;
+	mat4 lightProj;
+	mat4 lightView;
 };
 
 layout (location = 0) in vec3 position;

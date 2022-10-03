@@ -4,6 +4,7 @@
 #include "GLM.h"
 #include "UniformBuffer.h"
 #include "Camera.h"
+#include "Light.h"
 
 namespace Renderer
 {
@@ -14,6 +15,9 @@ namespace Renderer
 
 		void LoadView(const Entities::Camera& camera);
 		void LoadProjection(const glm::mat4& projection);
+
+		void LoadLightProjection(const glm::mat4& projection);
+		void LoadLightView(const glm::mat4& view);
 	};
 
 	namespace Detail
@@ -22,6 +26,8 @@ namespace Renderer
 		{
 			glm::mat4 projectionMatrix;
 			glm::mat4 viewMatrix;
+			glm::mat4 lightProj;
+			glm::mat4 lightView;
 		};
 	}
 }

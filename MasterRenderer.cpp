@@ -2,6 +2,8 @@
 
 #include <GL/glew.h>
 
+#include "Maths.h"
+
 using namespace Renderer;
 
 using Entities::Entity;
@@ -11,8 +13,8 @@ using Entities::Skybox;
 using Entities::Player;
 using Waters::WaterTile;
 
-MasterRenderer::MasterRenderer() 
-	: instancedRenderer(instancedShader, fastInstancedShader, shadowInstancedShader),
+MasterRenderer::MasterRenderer(Renderer::ShadowFrameBuffer& shadowFBO)
+	: instancedRenderer(instancedShader, fastInstancedShader, shadowInstancedShader, shadowFBO),
 	  skyboxRenderer(skyboxShader),
 	  guiRenderer(guiShader),
 	  waterRenderer(waterShader),
@@ -21,6 +23,7 @@ MasterRenderer::MasterRenderer()
 	  m_shared(std::make_shared<SharedBuffer>())
 {
 	m_matrices->LoadProjection(glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
+	m_matrices->LoadLightProjection(Maths::CreateOrthoMatrix(1.0f, 10.0f));
 	m_shared->LoadSkyColor(GL_SKY_COLOR);
 }
 
@@ -35,10 +38,7 @@ void MasterRenderer::BeginFrame
 	ProcessEntity(player);
 
 	m_lights->LoadLights(lights);
-
-	shadowInstancedShader.Start();
-	shadowInstancedShader.LoadView(lights[0]);
-	shadowInstancedShader.Stop();
+	m_matrices->LoadLightView(Maths::CreateLookAtMatrix(lights[0].position));
 }
 
 void MasterRenderer::RenderScene(const Camera& camera, const glm::vec4& clipPlane, Mode mode)

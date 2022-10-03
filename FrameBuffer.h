@@ -19,6 +19,12 @@ namespace Renderer
 		Empty
 	};
 
+	enum FBFilter : GLint
+	{
+		Linear  = GL_LINEAR,
+		Nearest = GL_NEAREST
+	};
+
 	class FrameBuffer
 	{
 	public:
@@ -28,7 +34,7 @@ namespace Renderer
 		// Default constructor
 		FrameBuffer() = default;
 		// Main constructor
-		FrameBuffer(GLsizei width, GLsizei height, FBType type);
+		FrameBuffer(GLsizei width, GLsizei height, FBType type, FBFilter filter = FBFilter::Linear);
 		// Destructor
 		~FrameBuffer();
 
@@ -40,7 +46,8 @@ namespace Renderer
 		GLsizei height = 0;
 
 		// Framebuffer type
-		FBType type = FBType::None;
+		FBType   type   = FBType::None;
+		FBFilter filter = FBFilter::Linear;
 		// Framebuffer ID
 		GLuint id = 0;
 

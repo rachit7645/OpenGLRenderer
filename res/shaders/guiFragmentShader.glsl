@@ -8,5 +8,5 @@ out vec4 outColor;
 
 void main()
 {
-    outColor = texture(guiTexture, txCoords);
+    outColor = vec4(vec3(texture(guiTexture, txCoords).r), 1.0f);
 }

@@ -10,20 +10,18 @@ InstancedRenderer::InstancedRenderer
 (
 	InstancedShader& shader,
 	FastInstancedShader& fastShader,
-	ShadowInstancedShader& shadowShader
+	ShadowInstancedShader& shadowShader,
+	ShadowFrameBuffer& shadowFBO
 )
 	: shader(shader),
 	  fastShader(fastShader),
 	  shadowShader(shadowShader),
+	  shadowFBO(shadowFBO),
 	  m_buffer(std::make_shared<InstanceBuffer>())
 {
 	shader.Start();
 	shader.ConnectTextureUnits();
 	shader.Stop();
-
-	shadowShader.Start();
-	shadowShader.LoadProjection(1.0f, 10.0f);
-	shadowShader.Stop();
 }
 
 void InstancedRenderer::Render(const Batch& batch, Mode mode)
@@ -104,6 +102,7 @@ void InstancedRenderer::PrepareMesh(const Mesh& mesh, Mode mode)
 	case Mode::Normal:
 		LoadDiffuse(mesh);
 		LoadSpecular(mesh);
+		LoadShadowMap();
 		break;
 
 	case Mode::Fast:
@@ -131,4 +130,10 @@ void InstancedRenderer::LoadSpecular(const Mesh& mesh)
 void InstancedRenderer::UnbindMesh()
 {
 	glBindVertexArray(0);
+}
+
+void InstancedRenderer::LoadShadowMap()
+{
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, shadowFBO.buffer->id);
 }

@@ -36,9 +36,11 @@ in vec3  unitNormal;
 in vec3  unitCameraVector;
 in vec3  unitLightVector[MAX_LIGHTS];
 in vec4  worldPosition;
+in vec4  lightSpacePos;
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D specularTexture;
+uniform sampler2D shadowMap;
 
 uniform float shineDamper;
 uniform float reflectivity;
@@ -51,36 +53,23 @@ float CalculateAttFactor(int index);
 vec4  CalculateAmbient(int index);
 vec4  CalculateDiffuse(int index);
 vec4  CalculateSpecular(int index);
+float CalculateShadow();
 
 void main()
 {
 	vec4 diffuseColor  = texture(diffuseTexture,  txCoords);
 	vec4 specularColor = texture(specularTexture, txCoords);
-	
-	vec4 totalAmbient = vec4(0.0f);
-	vec4 totalDiffuse = vec4(0.0f);
-	vec4 totalSpecular = vec4(0.0f);
-	
-	for (int i = 0; i < MAX_LIGHTS; ++i)
-	{
-		// Compute att factor
-		float attFactor = CalculateAttFactor(i);
-		// Compute ambient
-		totalAmbient += CalculateAmbient(i) * diffuseColor * attFactor;
-		// Compute diffuse and store it for later
-		vec4 curDiff = CalculateDiffuse(i) * diffuseColor * attFactor;
-		// Add curDiff to total
-		totalDiffuse += curDiff;
-		// Calculate curSpec
-		vec4 curSpec = CalculateSpecular(i) * specularColor * attFactor;
-		// Add it if diffuse != 0.0f
-		totalSpecular += curSpec * WhenNotEqual(curDiff, vec4(0.0f));
-	}
 
+	vec4  ambient   = CalculateAmbient(0)  * diffuseColor;
+	vec4  diffuse   = CalculateDiffuse(0)  * diffuseColor;
+	vec4  specular  = CalculateSpecular(0) * specularColor * WhenNotEqual(diffuse, vec4(0.0f));
+
+	float shadow = CalculateShadow();
 	// Add all lighting
-	outColor = totalAmbient + totalDiffuse + totalSpecular;
+	outColor = ambient + diffuse * shadow + specular * shadow;
+	// outColor = outColor * attFactor;
 	// Mix with fog colour
-	outColor = mix(skyColor, outColor, visibility);
+	// outColor = mix(skyColor, outColor, visibility);
 }
 
 float CalculateAttFactor(int index)
@@ -111,6 +100,16 @@ vec4 CalculateSpecular(int index)
 	specularFactor       = max(specularFactor, MIN_SPECULAR);
 	float dampedFactor   = pow(specularFactor, shineDamper);
 	return vec4(dampedFactor * reflectivity * lights[index].specular.rgb, 1.0f);
+}
+
+float CalculateShadow()
+{
+	vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
+	projCoords = projCoords * 0.5f + 0.5f;
+	float closestDepth = texture(shadowMap, projCoords.xy).r;
+	float currentDepth = projCoords.z;
+	float shadow = currentDepth > closestDepth ? 1.0f : 0.0f;
+	return shadow;
 }
 
 // Branchless implementation of

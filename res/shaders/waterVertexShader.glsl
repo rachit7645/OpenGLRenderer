@@ -16,6 +16,8 @@ layout(std140, binding = 0) uniform Matrices
 {
 	mat4 projectionMatrix;
 	mat4 viewMatrix;
+	mat4 lightProj;
+	mat4 lightView;
 };
 
 layout(std140, binding = 1) uniform Lights

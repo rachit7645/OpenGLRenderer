@@ -82,7 +82,7 @@ void SDLWindow::MainLoop()
 	{
 		lights.emplace_back
 		(
-			glm::vec3(0.0f, 1000.0f, -7000.0f),
+			glm::vec3(0.0f, 100.0f, -100.0f),
 			glm::vec3(0.2f, 0.2f, 0.2f),
 			glm::vec3(0.3f, 0.3f, 0.3f),
 			glm::vec3(1.0f, 1.0f, 1.0f),
@@ -128,8 +128,8 @@ void SDLWindow::MainLoop()
 		);
 	}
 
-	Entities::Camera camera(&player);
-	Renderer::MasterRenderer renderer;
+	auto camera   = Entities::Camera(&player);
+	auto renderer = Renderer::MasterRenderer(shadowFBO);
 
 	startTime = frameStartTime = steady_clock::now();
 
