@@ -12,7 +12,7 @@ using Entities::Player;
 using Waters::WaterTile;
 
 MasterRenderer::MasterRenderer() 
-	: instancedRenderer(instancedShader, fastInstancedShader),
+	: instancedRenderer(instancedShader, fastInstancedShader, shadowInstancedShader),
 	  skyboxRenderer(skyboxShader),
 	  guiRenderer(guiShader),
 	  waterRenderer(waterShader),
@@ -35,14 +35,21 @@ void MasterRenderer::BeginFrame
 	ProcessEntity(player);
 
 	m_lights->LoadLights(lights);
+
+	shadowInstancedShader.Start();
+	shadowInstancedShader.LoadView(lights[0]);
+	shadowInstancedShader.Stop();
 }
 
 void MasterRenderer::RenderScene(const Camera& camera, const glm::vec4& clipPlane, Mode mode)
 {
 	Prepare(camera, clipPlane);
-
 	RenderEntities(mode);
-	RenderSkybox();
+
+	if (mode != Mode::Shadow)
+	{
+		RenderSkybox();
+	}
 }
 
 void MasterRenderer::EndFrame()

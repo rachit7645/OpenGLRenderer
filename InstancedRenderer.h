@@ -11,6 +11,7 @@
 #include "InstanceBuffer.h"
 #include "FastInstancedShader.h"
 #include "RenderConstants.h"
+#include "ShadowInstancedShader.h"
 
 namespace Renderer
 {
@@ -22,10 +23,16 @@ namespace Renderer
 		using EntityVector = std::vector<Entities::Entity*>;
 		using Batch        = std::unordered_map<MdPtr, EntityVector>;
 
-		explicit InstancedRenderer(Shader::InstancedShader& shader, Shader::FastInstancedShader& fastShader);
+		InstancedRenderer
+		(
+			Shader::InstancedShader& shader,
+			Shader::FastInstancedShader& fastShader,
+			Shader::ShadowInstancedShader& shadowShader
+		);
 
 		Shader::InstancedShader& shader;
 		Shader::FastInstancedShader& fastShader;
+		Shader::ShadowInstancedShader& shadowShader;
 
 		void Render(const Batch& batch, Mode mode);
 	private:
@@ -33,6 +40,8 @@ namespace Renderer
 		void EndRender(Mode mode);
 		void LoadData(const EntityVector& entities);
 		void PrepareMesh(const Mesh& mesh, Mode mode);
+		void LoadDiffuse(const Mesh& mesh);
+		void LoadSpecular(const Mesh& mesh);
 		void UnbindMesh();
 
 		BufferPtr m_buffer;

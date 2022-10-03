@@ -26,6 +26,7 @@
 #include "FastInstancedShader.h"
 #include "RenderConstants.h"
 #include "ShadowFrameBuffer.h"
+#include "ShadowInstancedShader.h"
 
 namespace Renderer
 {
@@ -34,9 +35,10 @@ namespace Renderer
 	public:
 		MasterRenderer();
 
-		Shader::InstancedShader     instancedShader;
-		Shader::FastInstancedShader fastInstancedShader;
-		Renderer::InstancedRenderer instancedRenderer;
+		Shader::InstancedShader       instancedShader;
+		Shader::FastInstancedShader   fastInstancedShader;
+		Shader::ShadowInstancedShader shadowInstancedShader;
+		Renderer::InstancedRenderer   instancedRenderer;
 
 		Shader::SkyboxShader     skyboxShader;
 		Renderer::SkyboxRenderer skyboxRenderer;

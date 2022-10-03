@@ -19,6 +19,10 @@ namespace Maths
 	glm::mat4 CreateModelMatrix2D(const glm::vec2& translation, const glm::vec2& scale);
 	// Create view matrix from camera
 	glm::mat4 CreateViewMatrix(const Entities::Camera& camera);
+	// Create light ortho matrix
+	glm::mat4 CreateOrthoMatrix(f32 nearPlane, f32 farPlane);
+	// Create light lookAt matrix
+	glm::mat4 CreateLookAtMatrix(const glm::vec3& position);
 }
 
 #endif
