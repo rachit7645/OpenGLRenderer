@@ -80,9 +80,9 @@ glm::mat4 Maths::CreateViewMatrix(const Camera& camera)
 	return matrix;
 }
 
-glm::mat4 Maths::CreateOrthoMatrix(f32 nearPlane, f32 farPlane)
+glm::mat4 Maths::CreateOrthoMatrix(f32 nearPlane, f32 farPlane, f32 orthoVal)
 {
-	return glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, nearPlane, farPlane);
+	return glm::ortho(-orthoVal, orthoVal, -orthoVal, orthoVal, nearPlane, farPlane);
 }
 
 glm::mat4 Maths::CreateLookAtMatrix(const glm::vec3& position)

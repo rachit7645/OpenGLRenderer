@@ -65,7 +65,7 @@ void main()
 	gl_Position        = projectionMatrix * posRelToCam;
 	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
 	txCoords           = textureCoords;
-	lightSpacePos      = lightProj * lightView * vec4(position, 1.0f);
+	lightSpacePos      = lightProj * lightView * instances[gl_InstanceID].modelMatrix * vec4(position, 1.0f);
 
 	CalculateLighting();
 	CalculateVisibility(posRelToCam);

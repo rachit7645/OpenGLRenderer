@@ -20,7 +20,7 @@ namespace Maths
 	// Create view matrix from camera
 	glm::mat4 CreateViewMatrix(const Entities::Camera& camera);
 	// Create light ortho matrix
-	glm::mat4 CreateOrthoMatrix(f32 nearPlane, f32 farPlane);
+	glm::mat4 CreateOrthoMatrix(f32 nearPlane, f32 farPlane, f32 orthoVal);
 	// Create light lookAt matrix
 	glm::mat4 CreateLookAtMatrix(const glm::vec3& position);
 }

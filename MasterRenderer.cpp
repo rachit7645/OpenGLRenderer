@@ -23,7 +23,7 @@ MasterRenderer::MasterRenderer(Renderer::ShadowFrameBuffer& shadowFBO)
 	  m_shared(std::make_shared<SharedBuffer>())
 {
 	m_matrices->LoadProjection(glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
-	m_matrices->LoadLightProjection(Maths::CreateOrthoMatrix(1.0f, 10.0f));
+	m_matrices->LoadLightProjection(Maths::CreateOrthoMatrix(0.1f, 50.0f, 20.0f));
 	m_shared->LoadSkyColor(GL_SKY_COLOR);
 }
 
@@ -88,16 +88,16 @@ void MasterRenderer::RenderSkybox()
 
 void MasterRenderer::RenderGUIs(const std::vector<GUI>& guis)
 {
+	// Disable depth test
+	glDisable(GL_DEPTH_TEST);
 	// Enable blending
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	// Disable depth test
-	glDisable(GL_DEPTH_TEST);
 	guiShader.Start();
 	guiRenderer.Render(guis);
 	guiShader.Stop();
-	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void MasterRenderer::RenderWaters(const std::vector<WaterTile>& waters, const Waters::WaterFrameBuffers& waterFBOs)

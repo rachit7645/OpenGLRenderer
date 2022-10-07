@@ -127,13 +127,13 @@ void InstancedRenderer::LoadSpecular(const Mesh& mesh)
 	shader.LoadMaterial(mesh.material);
 }
 
-void InstancedRenderer::UnbindMesh()
-{
-	glBindVertexArray(0);
-}
-
 void InstancedRenderer::LoadShadowMap()
 {
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, shadowFBO.buffer->id);
+	glBindTexture(GL_TEXTURE_2D, shadowFBO.buffer->depthTexture->id);
+}
+
+void InstancedRenderer::UnbindMesh()
+{
+	glBindVertexArray(0);
 }

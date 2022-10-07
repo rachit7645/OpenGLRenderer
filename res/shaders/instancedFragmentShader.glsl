@@ -60,13 +60,14 @@ void main()
 	vec4 diffuseColor  = texture(diffuseTexture,  txCoords);
 	vec4 specularColor = texture(specularTexture, txCoords);
 
-	vec4  ambient   = CalculateAmbient(0)  * diffuseColor;
-	vec4  diffuse   = CalculateDiffuse(0)  * diffuseColor;
-	vec4  specular  = CalculateSpecular(0) * specularColor * WhenNotEqual(diffuse, vec4(0.0f));
+	vec4 ambient   = CalculateAmbient(0)  * diffuseColor;
+	vec4 diffuse   = CalculateDiffuse(0)  * diffuseColor;
+	vec4 specular  = CalculateSpecular(0) * specularColor * WhenNotEqual(diffuse, vec4(0.0f));
 
 	float shadow = CalculateShadow();
 	// Add all lighting
-	outColor = ambient + diffuse * shadow + specular * shadow;
+	// outColor = vec4(vec3(1.0f - shadow), 1.0f);
+	outColor = ambient + (diffuse + specular) * (1.0f - shadow);
 	// outColor = outColor * attFactor;
 	// Mix with fog colour
 	// outColor = mix(skyColor, outColor, visibility);
@@ -108,7 +109,7 @@ float CalculateShadow()
 	projCoords = projCoords * 0.5f + 0.5f;
 	float closestDepth = texture(shadowMap, projCoords.xy).r;
 	float currentDepth = projCoords.z;
-	float shadow = currentDepth > closestDepth ? 1.0f : 0.0f;
+	float shadow = currentDepth > closestDepth ? 1.0f : 0.7f;
 	return shadow;
 }
 

@@ -39,9 +39,6 @@ using Waters::WaterFrameBuffers;
 // TODO: Move MainLoop to separate class, move data to said class
 // TODO: Live editing of entities, lights, etc. with ImGui
 
-constexpr usize MAX_ENTITIES    = 50;
-constexpr f32   ENTITY_DISTANCE = 256.0f;
-
 void SDLWindow::MainLoop()
 {
 	// Put Models and Textures here 
@@ -55,19 +52,29 @@ void SDLWindow::MainLoop()
 	// All objects go here
 	std::vector<Entity> entities;
 	{
-		for (usize i = 0; i < MAX_ENTITIES; ++i)
-		{
-			auto entityX = Util::RandRange(-1.0f, 1.0f) * ENTITY_DISTANCE;
-			auto entityZ = Util::RandRange(-1.0f, 1.0f) * ENTITY_DISTANCE;
+		#define ADD(x, y) \
+			do \
+			{ \
+				entities.emplace_back \
+				( \
+					treeModel, \
+					glm::vec3(x, 0.0f, y), \
+					glm::vec3(0.0f), \
+					3.0f \
+				); \
+			} \
+			while (0) \
 
-			entities.emplace_back
-			(
-				treeModel,
-				glm::vec3(entityX, 0.0f, entityZ),
-				glm::vec3(0.0f),
-				3.0f
-			);
-		}
+		ADD(0.0f, 10.0f);
+		ADD(14.0f, 10.0f);
+		ADD(-4.0f, 00.0f);
+		ADD(0.0f, 0.0f);
+		ADD(-9.0f, 5.0f);
+		ADD(5.0f, 8.0f);
+		ADD(-5.0f, 12.0f);
+		ADD(14.0f, 9.0f);
+		ADD(-17.0f, 4.0f);
+		ADD(7.0f, 16.0f);
 	}
 
 	Player player
@@ -82,19 +89,11 @@ void SDLWindow::MainLoop()
 	{
 		lights.emplace_back
 		(
-			glm::vec3(0.0f, 100.0f, -100.0f),
+			glm::vec3(-2.0f, 4.0f, -1.0f),
 			glm::vec3(0.2f, 0.2f, 0.2f),
 			glm::vec3(0.3f, 0.3f, 0.3f),
 			glm::vec3(1.0f, 1.0f, 1.0f),
 			glm::vec3(1.0f, 0.0f, 0.0f)
-		);
-		lights.emplace_back
-		(
-			glm::vec3(250.0f, 5.0f, 235.0f),
-			glm::vec3(0.2f, 0.2f, 0.2f),
-			glm::vec3(0.0f, 2.0f, 2.0f),
-			glm::vec3(1.0f, 1.0f, 1.0f),
-			glm::vec3(1.0f, 0.01f, 0.002f)
 		);
 	}
 
@@ -107,7 +106,7 @@ void SDLWindow::MainLoop()
 		(
 			shadowFBO.buffer->depthTexture,
 			glm::vec2(-0.5f, 0.5f),
-			glm::vec2(0.5f, 0.5f)
+			glm::vec2(0.5f, 0.4f)
 		);
 
 		/* guis.emplace_back

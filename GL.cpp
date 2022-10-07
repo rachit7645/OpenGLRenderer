@@ -79,6 +79,7 @@ void GL::Init(const glm::ivec2& dimensions)
 	// Enable Depth test
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
+	glDepthRange(0.0, 1.0);
 	// Enable back-face culling
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);

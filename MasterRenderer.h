@@ -33,7 +33,7 @@ namespace Renderer
 	class MasterRenderer
 	{
 	public:
-		MasterRenderer(Renderer::ShadowFrameBuffer& shadowFBO);
+		explicit MasterRenderer(Renderer::ShadowFrameBuffer& shadowFBO);
 
 		Shader::InstancedShader       instancedShader;
 		Shader::FastInstancedShader   fastInstancedShader;

@@ -44,6 +44,11 @@ FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type, FBFilter fi
 	}
 
 	CheckStatus();
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDepthRange(0.0, 1.0);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
