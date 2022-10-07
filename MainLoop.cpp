@@ -52,35 +52,12 @@ void SDLWindow::MainLoop()
 	// All objects go here
 	std::vector<Entity> entities;
 	{
-		#define ADD(x, y) \
-			do \
-			{ \
-				entities.emplace_back \
-				( \
-					treeModel, \
-					glm::vec3(x, 0.0f, y), \
-					glm::vec3(0.0f), \
-					3.0f \
-				); \
-			} \
-			while (0) \
-
-		ADD(0.0f, 10.0f);
-		ADD(14.0f, 10.0f);
-		ADD(-4.0f, 00.0f);
-		ADD(0.0f, 0.0f);
-		ADD(-9.0f, 5.0f);
-		ADD(5.0f, 8.0f);
-		ADD(-5.0f, 12.0f);
-		ADD(14.0f, 9.0f);
-		ADD(-17.0f, 4.0f);
-		ADD(7.0f, 16.0f);
 	}
 
 	Player player
 	(
 		playerModel,
-		glm::vec3(67.0f, 0.0f, 73.0f),
+		glm::vec3(13.0f, 0.0f, 17.0f),
 		glm::vec3(0.0f, 180.0f, 0.0f),
 		1.0f
 	);
@@ -106,7 +83,7 @@ void SDLWindow::MainLoop()
 		(
 			shadowFBO.buffer->depthTexture,
 			glm::vec2(-0.5f, 0.5f),
-			glm::vec2(0.5f, 0.4f)
+			glm::vec2(0.5f, 0.5f)
 		);
 
 		/* guis.emplace_back

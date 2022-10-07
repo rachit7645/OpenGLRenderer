@@ -83,7 +83,8 @@ void FrameBuffer::CreateDepthTexture()
 		GL_DEPTH_COMPONENT24,
 		GL_DEPTH_COMPONENT,
 		GL_FLOAT,
-		filter
+		filter,
+		true
 	);
 
 	glFramebufferTexture2D

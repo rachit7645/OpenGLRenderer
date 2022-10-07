@@ -110,7 +110,9 @@ void MasterRenderer::RenderWaters(const std::vector<WaterTile>& waters, const Wa
 void MasterRenderer::RenderShadows(const ShadowFrameBuffer& shadowFBO, const Camera& camera)
 {
 	shadowFBO.BindShadowFBO();
+	glCullFace(GL_FRONT);
 	RenderScene(camera, glm::vec4(0.0f), Mode::Shadow);
+	glCullFace(GL_BACK);
 	shadowFBO.BindDefaultFBO();
 }
 

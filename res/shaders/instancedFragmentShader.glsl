@@ -60,17 +60,14 @@ void main()
 	vec4 diffuseColor  = texture(diffuseTexture,  txCoords);
 	vec4 specularColor = texture(specularTexture, txCoords);
 
-	vec4 ambient   = CalculateAmbient(0)  * diffuseColor;
-	vec4 diffuse   = CalculateDiffuse(0)  * diffuseColor;
-	vec4 specular  = CalculateSpecular(0) * specularColor * WhenNotEqual(diffuse, vec4(0.0f));
+	float attFactor = CalculateAttFactor(0);
+	vec4 ambient    = CalculateAmbient(0)  * diffuseColor  * attFactor;
+	vec4 diffuse    = CalculateDiffuse(0)  * diffuseColor  * attFactor;
+	vec4 specular   = CalculateSpecular(0) * specularColor * attFactor * WhenNotEqual(diffuse, vec4(0.0f));
 
-	float shadow = CalculateShadow();
-	// Add all lighting
-	// outColor = vec4(vec3(1.0f - shadow), 1.0f);
-	outColor = ambient + (diffuse + specular) * (1.0f - shadow);
-	// outColor = outColor * attFactor;
+	outColor = ambient + (diffuse + specular) * (1.0f - CalculateShadow());
 	// Mix with fog colour
-	// outColor = mix(skyColor, outColor, visibility);
+	outColor = mix(skyColor, outColor, visibility);
 }
 
 float CalculateAttFactor(int index)
@@ -106,11 +103,32 @@ vec4 CalculateSpecular(int index)
 float CalculateShadow()
 {
 	vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
-	projCoords = projCoords * 0.5f + 0.5f;
-	float closestDepth = texture(shadowMap, projCoords.xy).r;
+	projCoords      = projCoords * 0.5f + 0.5f;
+
+	if (projCoords.z > 1.0)
+	{
+		return 0.0f;
+	}
+
 	float currentDepth = projCoords.z;
-	float shadow = currentDepth > closestDepth ? 1.0f : 0.7f;
-	return shadow;
+	float closestDepth = texture(shadowMap, projCoords.xy).r;
+
+	vec3  lightDir = unitLightVector[0];
+	float bias     = max(0.05 * (1.0 - dot(unitNormal, lightDir)), 0.005);
+
+	float shadow   = 0.0f;
+	vec2 texelSize = 1.0f / textureSize(shadowMap, 0);
+
+	for (int x = -1; x <= 1; ++x)
+	{
+		for (int y = -1; y <= 1; ++y)
+		{
+			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow        += currentDepth - bias > pcfDepth ? 1.0f : 0.0f;
+		}
+	}
+
+	return shadow / 9.0f;
 }
 
 // Branchless implementation of

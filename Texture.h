@@ -21,7 +21,8 @@ namespace Renderer
 			GLint internalFormat,
 			GLint format,
 			GLint type,
-			GLint filter
+			GLint filter,
+			bool border = false
 		);
 		// Destructor 
 		~Texture();
