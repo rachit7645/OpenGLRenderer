@@ -21,7 +21,7 @@ const std::vector<f32> TILE_VERTICES =
 
 WaterRenderer::WaterRenderer(Shader::WaterShader& shader)
 	: shader(shader),
-	  vao(std::make_shared<VertexArray>(2, TILE_VERTICES))
+	  m_vao(std::make_shared<VertexArray>(2, TILE_VERTICES))
 {
 	shader.Start();
 	shader.ConnectTextureUnits();
@@ -34,7 +34,7 @@ void WaterRenderer::Render(const std::vector<WaterTile>& waters, const WaterFram
 	for (const auto& water : waters)
 	{
 		PrepareWater(water);
-		glDrawArrays(GL_TRIANGLES, 0,vao->vertexCount);
+		glDrawArrays(GL_TRIANGLES, 0, m_vao->vertexCount);
 	}
 	Unbind();
 }
@@ -42,16 +42,16 @@ void WaterRenderer::Render(const std::vector<WaterTile>& waters, const WaterFram
 void WaterRenderer::Prepare(const WaterFrameBuffers& waterFBOs)
 {
 	// Bind vao
-	glBindVertexArray(vao->id);
+	glBindVertexArray(m_vao->id);
 	// Bind framebuffers
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, waterFBOs.reflectionFBO->colorTexture->id);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, waterFBOs.refractionFBO->colorTexture->id);
 	// Load dudv move factor
-	moveFactor += WATER_WAVE_SPEED * g_Delta;
-	moveFactor = std::fmod(moveFactor, 1.0f);
-	shader.LoadMoveFactor(moveFactor);
+	m_moveFactor += WATER_WAVE_SPEED * g_Delta;
+	m_moveFactor = std::fmod(m_moveFactor, 1.0f);
+	shader.LoadMoveFactor(m_moveFactor);
 }
 
 void WaterRenderer::PrepareWater(const WaterTile& water)

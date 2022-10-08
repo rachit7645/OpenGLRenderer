@@ -2,18 +2,21 @@
 
 using namespace Shader;
 
+constexpr auto VERTEX_PATH = "shaders/skyboxVertexShader.glsl",
+	FRAGMENT_PATH = "shaders/skyboxFragmentShader.glsl";
+
 SkyboxShader::SkyboxShader()
-	: ShaderProgram(SKYBOX_VERTEX_SHADER_PATH, SKYBOX_FRAGMENT_SHADER_PATH)
+	: ShaderProgram(VERTEX_PATH, FRAGMENT_PATH)
 {
 	GetUniformLocations();
 }
 
 void SkyboxShader::GetUniformLocations()
 {
-	uniforms["modelMatrix"] = GetUniformLocation("modelMatrix");
+	m_uniforms["modelMatrix"] = GetUniformLocation("modelMatrix");
 }
 
 void SkyboxShader::LoadModelMatrix(const glm::mat4& matrix)
 {
-	LoadUniform(uniforms["modelMatrix"], matrix);
+	LoadUniform(m_uniforms["modelMatrix"], matrix);
 }

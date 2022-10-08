@@ -2,10 +2,11 @@
 
 using namespace Shader;
 
-using Entities::Light;
+constexpr auto VERTEX_PATH = "shaders/shadowInstancedVertexShader.glsl",
+	FRAGMENT_PATH = "shaders/shadowInstancedFragmentShader.glsl";
 
 ShadowInstancedShader::ShadowInstancedShader()
-	: ShaderProgram(SHADOW_INSTANCED_SHADER_VERTEX_PATH, SHADOW_INSTANCED_SHADER_FRAGMENT_PATH)
+	: ShaderProgram(VERTEX_PATH, FRAGMENT_PATH)
 {
 	GetUniformLocations();
 }

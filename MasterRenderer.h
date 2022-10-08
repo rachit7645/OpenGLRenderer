@@ -56,6 +56,8 @@ namespace Renderer
 			const std::vector<Entities::Light>& lights,
 			Entities::Player& player
 		);
+		// Finish frame
+		void EndFrame();
 		// Render Scene
 		void RenderScene(const Entities::Camera& camera, const glm::vec4& clipPlane = glm::vec4(0.0f), Mode mode = Mode::Normal);
 		// Render the water
@@ -64,8 +66,6 @@ namespace Renderer
 		void RenderShadows(const Renderer::ShadowFrameBuffer& shadowFBO, const Entities::Camera& camera);
 		// Render the guis
 		void RenderGUIs(const std::vector<GUI>& guis);
-		// Finish frame
-		void EndFrame();
 		// Process entities into the entity map
 		void ProcessEntity(Entities::Entity& entity);
 		// Process a vector of entities

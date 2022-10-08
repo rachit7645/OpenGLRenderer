@@ -37,7 +37,7 @@ using Waters::WaterTile;
 using Waters::WaterFrameBuffers;
 
 // TODO: Move MainLoop to separate class, move data to said class
-// TODO: Live editing of entities, lights, etc. with ImGui
+// TODO: Live editing of entities, etc. with ImGui
 
 void SDLWindow::MainLoop()
 {
@@ -80,6 +80,7 @@ void SDLWindow::MainLoop()
 		);
 	}
 
+	// TODO: Move to master renderer
 	auto waterFBOs = Waters::WaterFrameBuffers();
 	auto shadowFBO = Renderer::ShadowFrameBuffer();
 
@@ -128,7 +129,6 @@ void SDLWindow::MainLoop()
 		DrawWaterFBOs(waterFBOs, waters, renderer, camera);
 
 		// Main render pass
-		waterFBOs.BindDefaultFBO();
 		renderer.RenderScene(camera);
 		renderer.RenderWaters(waters, waterFBOs);
 		renderer.RenderGUIs(guis);
@@ -146,6 +146,7 @@ void SDLWindow::MainLoop()
 	}
 }
 
+// TODO: Move to master renderer
 void SDLWindow::DrawWaterFBOs
 (
 	const WaterFrameBuffers& waterFBOs,
@@ -174,6 +175,8 @@ void SDLWindow::DrawWaterFBOs
 
 	// Disable clip plane 0
 	glDisable(GL_CLIP_DISTANCE0);
+	// Bind default FBO
+	waterFBOs.BindDefaultFBO();
 }
 
 void SDLWindow::CalculateFPS()

@@ -1,7 +1,5 @@
 #version 430 core
 
-// TODO: Optimise refractionTx
-
 const float WAVE_STRENGTH   = 0.04f;
 const float REFRACT_AMOUNT  = 0.7f;
 const float SHINE_DAMPER    = 16.0f;

@@ -29,8 +29,8 @@ namespace Renderer
 		void PrepareWater(const Waters::WaterTile& water);
 		void Unbind();
 
-		VAO vao;
-		f32 moveFactor = 0.0f;
+		VAO m_vao;
+		f32 m_moveFactor = 0.0f;
 	};
 }
 

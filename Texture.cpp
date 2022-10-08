@@ -81,17 +81,14 @@ Texture::Texture
 	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+		constexpr std::array<f32, 4> borderColor = {1.0f, 1.0f, 1.0f, 1.0f};
+		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor.data());
 	}
 	else
 	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	}
-
-	if (border)
-	{
-		constexpr std::array<f32, 4> borderColor = {1.0f, 1.0f, 1.0f, 1.0f};
-		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor.data());
 	}
 
 	glTexImage2D

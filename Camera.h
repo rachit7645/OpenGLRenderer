@@ -11,10 +11,6 @@ inline bool g_ToZoomCamera = true;
 
 namespace Entities
 {
-	constexpr auto CAMERA_ZOOM_SPEED = 1.0f;
-	constexpr auto CAMERA_PITCH_MIN  = 0.0f;
-	constexpr auto CAMERA_PITCH_MAX  = 90.0f;
-
 	class Camera
 	{
 	public:
@@ -29,10 +25,10 @@ namespace Entities
 		// Invert pitch
 		void InvertPitch();
 	private:
-		f32 distanceFromPlayer = 35.0f;
-		f32 angleAroundPlayer  = 0.0f;
+		f32 m_distance = 35.0f;
+		f32 m_angle    = 0.0f;
 
-		bool capPitch = true;
+		bool m_capPitch = true;
 
 		// Display ImGui widgets
 		void ImGuiDisplay();

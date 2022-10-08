@@ -5,6 +5,10 @@
 
 using namespace Entities;
 
+constexpr auto CAMERA_ZOOM_SPEED = 1.0f;
+constexpr auto CAMERA_PITCH_MIN  = 0.0f;
+constexpr auto CAMERA_PITCH_MAX  = 90.0f;
+
 Camera::Camera(Player* player)
     : player(player)
 {
@@ -40,10 +44,10 @@ void Camera::ImGuiDisplay()
 			ImGui::Text("Rotation:");
 			ImGui::InputFloat3("##crot", &rotation[0], "%.1f");
 			ImGui::Text("Distance From Player:");
-			ImGui::InputFloat("##cdfp", &distanceFromPlayer, 0.0f, 0.0f, "%.1f");
+			ImGui::InputFloat("##cdfp", &m_distance, 0.0f, 0.0f, "%.1f");
 			ImGui::Text("Angle Around Player:");
-			ImGui::InputFloat("##carp", &angleAroundPlayer, 0.0f, 0.0f, "%.1f");
-			ImGui::Checkbox("Cap Pitch", &capPitch);
+			ImGui::InputFloat("##carp", &m_angle, 0.0f, 0.0f, "%.1f");
+			ImGui::Checkbox("Cap Pitch", &m_capPitch);
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
@@ -52,29 +56,29 @@ void Camera::ImGuiDisplay()
 
 void Camera::CalculatePosition()
 {
-	f32 hDistance = distanceFromPlayer * std::cos(glm::radians(rotation.x));
-	f32 vDistance = distanceFromPlayer * std::sin(glm::radians(rotation.x));
+	f32 hDistance = m_distance * std::cos(glm::radians(rotation.x));
+	f32 vDistance = m_distance * std::sin(glm::radians(rotation.x));
 
-	f32 theta   = player->rotation.y + angleAroundPlayer;
+	f32 theta   = player->rotation.y + m_angle;
 	f32 offsetX = hDistance * std::sin(glm::radians(theta));
 	f32 offsetZ = hDistance * std::cos(glm::radians(theta));
 
 	position.x = player->position.x - offsetX;
 	position.z = player->position.z - offsetZ;
 	position.y = player->position.y + vDistance;
-	rotation.y = 180.0f - (player->rotation.y + angleAroundPlayer);
+	rotation.y = 180.0f - (player->rotation.y + m_angle);
 }
 
 void Camera::CalculateZoom()
 {
-	auto& mouseScroll = Inputs::MouseScroll();
+	auto& mouseScroll = Inputs::GetMouseScroll();
 
 	// If scroll direction is positive, reduce distance from player
 	if (mouseScroll.y > 0)
 	{
 		for (ssize i = 0; i < mouseScroll.y; ++i)
 		{
-			distanceFromPlayer -= CAMERA_ZOOM_SPEED;
+			m_distance -= CAMERA_ZOOM_SPEED;
 		}
 	}
 	// If scroll direction is negative, increase distance from player
@@ -82,17 +86,17 @@ void Camera::CalculateZoom()
 	{
 		for (ssize i = 0; i < -mouseScroll.y; ++i)
 		{
-			distanceFromPlayer += CAMERA_ZOOM_SPEED;
+			m_distance += CAMERA_ZOOM_SPEED;
 		}
 	}
 }
 
 void Camera::CalculatePitch()
 {
-	auto& mousePos = Inputs::MousePos();
+	auto& mousePos = Inputs::GetMousePos();
 	rotation.x    -= static_cast<f32>(mousePos.y * 0.1);
 
-	if (capPitch)
+	if (m_capPitch)
 	{
 		rotation.x = glm::clamp<f32>(rotation.x, CAMERA_PITCH_MIN, CAMERA_PITCH_MAX);
 	}
@@ -100,8 +104,8 @@ void Camera::CalculatePitch()
 
 void Camera::CalculateAAP()
 {
-	auto& mousePos     = Inputs::MousePos();
-	angleAroundPlayer -= static_cast<f32>(mousePos.x * 0.3);
+	auto& mousePos     = Inputs::GetMousePos();
+	m_angle -= static_cast<f32>(mousePos.x * 0.3);
 }
 
 void Camera::InvertPitch()

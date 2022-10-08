@@ -1,5 +1,7 @@
 #version 430 core
 
+// TODO: Add back muliple lights
+
 const float AMBIENT_STRENGTH = 0.2f;
 const float MIN_SPECULAR     = 0.0f;
 const int   MAX_LIGHTS       = 4;
@@ -14,11 +16,6 @@ struct Light
 	vec4 diffuse;
 	vec4 specular;
 	vec4 attenuation;
-};
-
-struct Instance
-{
-	mat4 modelMatrix;
 };
 
 layout(std140, binding = 1) uniform Lights
@@ -109,7 +106,8 @@ float CalculateShadow()
 	vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
 	projCoords      = projCoords * 0.5f + 0.5f;
 
-	if (projCoords.z > 1.0)
+	// TODO: Remove branch
+	if (projCoords.z > 1.0f)
 	{
 		return 0.0f;
 	}

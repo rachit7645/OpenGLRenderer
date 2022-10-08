@@ -9,8 +9,8 @@ namespace Inputs
 {
 	void Init();
 
-	glm::ivec2& MousePos();
-	glm::ivec2& MouseScroll();
+	glm::ivec2& GetMousePos();
+	glm::ivec2& GetMouseScroll();
 
 	bool IsKeyPressed(SDL_Scancode key);
 }

@@ -11,6 +11,8 @@
 
 using namespace Shader;
 
+constexpr auto SHADER_ERROR_BUFFER_SIZE = 4096;
+
 ShaderProgram::ShaderProgram(const std::string_view vertexPath, const std::string_view fragmentPath)
 {
 	programID = glCreateProgram();

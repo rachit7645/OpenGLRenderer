@@ -11,6 +11,7 @@
 
 namespace Renderer
 {
+	// TODO: Add Bind and Unbind functions
 	class VertexArray
 	{
 	public:

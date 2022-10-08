@@ -11,9 +11,6 @@
 
 namespace Shader
 {
-	constexpr auto INSTANCED_VERTEX_SHADER_PATH = "shaders/instancedVertexShader.glsl",
-		INSTANCED_FRAGMENT_SHADER_PATH = "shaders/instancedFragmentShader.glsl";
-
 	class InstancedShader : public ShaderProgram
 	{
 	public:
@@ -24,7 +21,7 @@ namespace Shader
 
 		void GetUniformLocations() override;
 	private:
-		std::unordered_map<std::string_view, GLint> uniforms;
+		std::unordered_map<std::string_view, GLint> m_uniforms;
 	};
 }
 

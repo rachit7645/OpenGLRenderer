@@ -5,6 +5,7 @@
 
 namespace Renderer
 {
+	// Make macro for glBufferSubData
 	class UniformBuffer
 	{
 	public:

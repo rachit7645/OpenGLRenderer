@@ -2,18 +2,21 @@
 
 using namespace Shader;
 
+constexpr auto VERTEX_PATH = "shaders/guiVertexShader.glsl",
+	FRAGMENT_PATH = "shaders/guiFragmentShader.glsl";
+
 GUIShader::GUIShader()
-	: ShaderProgram(GUI_VERTEX_SHADER_PATH, GUI_FRAGMENT_SHADER_PATH)
+	: ShaderProgram(VERTEX_PATH, FRAGMENT_PATH)
 {
 	GetUniformLocations();
 }
 
 void GUIShader::GetUniformLocations()
 {
-	uniforms["modelMatrix"] = GetUniformLocation("modelMatrix");
+	m_uniforms["modelMatrix"] = GetUniformLocation("modelMatrix");
 }
 
 void GUIShader::LoadModelMatrix(const glm::mat4& matrix)
 {
-	LoadUniform(uniforms["modelMatrix"], matrix);
+	LoadUniform(m_uniforms["modelMatrix"], matrix);
 }

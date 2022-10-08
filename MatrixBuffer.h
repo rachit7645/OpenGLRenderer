@@ -26,7 +26,9 @@ namespace Renderer
 		{
 			glm::mat4 projectionMatrix;
 			glm::mat4 viewMatrix;
+			// TODO: Move to LightsBuffer
 			glm::mat4 lightProj;
+			// TODO: Move to LightsBuffer
 			glm::mat4 lightView;
 		};
 	}

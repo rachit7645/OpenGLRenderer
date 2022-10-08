@@ -13,6 +13,8 @@
 
 using namespace Window;
 
+constexpr u32 SDL_WINDOW_FLAGS  = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
+
 SDLWindow::SDLWindow()
 {
 	// Get SDL version
@@ -143,12 +145,12 @@ bool SDLWindow::PollEvents()
 			break;
 
 		case SDL_MOUSEWHEEL:
-			Inputs::MouseScroll() = glm::ivec2(event.wheel.x, event.wheel.y);
+			Inputs::GetMouseScroll() = glm::ivec2(event.wheel.x, event.wheel.y);
 			g_ToZoomCamera = true;
 			break;
 
 		case SDL_MOUSEMOTION:
-			Inputs::MousePos() = glm::ivec2(event.motion.xrel, event.motion.yrel);
+			Inputs::GetMousePos() = glm::ivec2(event.motion.xrel, event.motion.yrel);
 			g_ToMoveCamera = true;
 			break;
 
