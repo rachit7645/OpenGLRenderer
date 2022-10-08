@@ -2,7 +2,10 @@
 
 const float AMBIENT_STRENGTH = 0.2f;
 const float MIN_SPECULAR     = 0.0f;
-const int   MAX_LIGHTS       = 4; 
+const int   MAX_LIGHTS       = 4;
+
+const float PCF_COUNT    = 3.5f;
+const float TOTAL_TEXELS = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.0f);
 
 struct Light
 {
@@ -48,6 +51,7 @@ uniform float reflectivity;
 out vec4 outColor;
 
 vec4 WhenNotEqual(vec4 x, vec4 y);
+vec4 WhenGreater(vec4 x, vec4 y);
 
 float CalculateAttFactor(int index);
 vec4  CalculateAmbient(int index);
@@ -62,10 +66,10 @@ void main()
 
 	float attFactor = CalculateAttFactor(0);
 	vec4 ambient    = CalculateAmbient(0)  * diffuseColor  * attFactor;
-	vec4 diffuse    = CalculateDiffuse(0)  * diffuseColor  * attFactor;
+	vec4 diffuse    = CalculateDiffuse(0)  * diffuseColor  * attFactor * (1.0f - CalculateShadow());
 	vec4 specular   = CalculateSpecular(0) * specularColor * attFactor * WhenNotEqual(diffuse, vec4(0.0f));
 
-	outColor = ambient + (diffuse + specular) * (1.0f - CalculateShadow());
+	outColor = ambient + diffuse + specular;
 	// Mix with fog colour
 	outColor = mix(skyColor, outColor, visibility);
 }
@@ -114,21 +118,22 @@ float CalculateShadow()
 	float closestDepth = texture(shadowMap, projCoords.xy).r;
 
 	vec3  lightDir = unitLightVector[0];
-	float bias     = max(0.05 * (1.0 - dot(unitNormal, lightDir)), 0.005);
+	float bias     = max(0.05f * (1.0f - dot(unitNormal, lightDir)), 0.005f);
 
-	float shadow   = 0.0f;
-	vec2 texelSize = 1.0f / textureSize(shadowMap, 0);
+	float shadow    = 0.0f;
+	vec2  texelSize = 1.0f / textureSize(shadowMap, 0);
 
-	for (int x = -1; x <= 1; ++x)
+	for (float x = -PCF_COUNT; x <= PCF_COUNT; ++x)
 	{
-		for (int y = -1; y <= 1; ++y)
+		for (float y = -PCF_COUNT; y <= PCF_COUNT; ++y)
 		{
 			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
-			shadow        += currentDepth - bias > pcfDepth ? 1.0f : 0.0f;
+			shadow        += WhenGreater(vec4(currentDepth - bias), vec4(pcfDepth)).x;
 		}
 	}
 
-	return shadow / 9.0f;
+	shadow /= TOTAL_TEXELS;
+	return shadow;
 }
 
 // Branchless implementation of
@@ -139,4 +144,14 @@ float CalculateShadow()
 vec4 WhenNotEqual(vec4 x, vec4 y)
 {
 	return abs(sign(x - y));
+}
+
+// Branchless implementation of
+// if (x > y)
+//	 return 1;
+// else
+// 	 return 0;
+vec4 WhenGreater(vec4 x, vec4 y)
+{
+	return max(sign(x - y), 0.0f);
 }

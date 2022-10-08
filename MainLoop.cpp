@@ -41,17 +41,23 @@ using Waters::WaterFrameBuffers;
 
 void SDLWindow::MainLoop()
 {
-	// Put Models and Textures here 
-	auto treeTexture  = Resources::GetTexture("gfx/tree.png");
-	auto defDiffuse   = Resources::GetTexture("gfx/dragon.png");
-	auto defSpecular  = Resources::GetTexture("gfx/dSpec.png");
+	// Put Models and Textures here
+	auto defDiffuse  = Resources::GetTexture("gfx/dragon.png");
+	auto defSpecular = Resources::GetTexture("gfx/dSpec.png");
 
-	auto treeModel   = Resources::GetModel("gfx/tree.obj",       MeshTextures(treeTexture,  defSpecular));
-	auto playerModel = Resources::GetModel("gfx/Link/Link.obj",  MeshTextures(defDiffuse,   defSpecular));
+	auto playerModel = Resources::GetModel("gfx/Link/Link.obj",   MeshTextures(defDiffuse, defSpecular));
+	auto stageModel  = Resources::GetModel("gfx/Stage/stage.obj", MeshTextures(defDiffuse, defSpecular));
 
 	// All objects go here
 	std::vector<Entity> entities;
 	{
+		entities.emplace_back
+		(
+			stageModel,
+			glm::vec3(0.0f, -0.3f, 0.0f),
+			glm::vec3(0.0f),
+			1.0f
+		);
 	}
 
 	Player player
@@ -79,17 +85,10 @@ void SDLWindow::MainLoop()
 
 	std::vector<GUI> guis;
 	{
-		guis.emplace_back
+		/* guis.emplace_back
 		(
 			shadowFBO.buffer->depthTexture,
 			glm::vec2(-0.5f, 0.5f),
-			glm::vec2(0.5f, 0.5f)
-		);
-
-		/* guis.emplace_back
-		(
-			waterFBOs.refractionFBO->colorTexture,
-			glm::vec2(-0.5f, -0.5f),
 			glm::vec2(0.5f, 0.5f)
 		); */
 	}
