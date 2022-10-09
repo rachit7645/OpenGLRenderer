@@ -1,6 +1,5 @@
 #include "WaterRenderer.h"
 
-#include "GLM.h"
 #include "Maths.h"
 #include "Util.h"
 
@@ -8,6 +7,8 @@ using namespace Renderer;
 
 using Waters::WaterTile;
 using Waters::WaterFrameBuffers;
+
+constexpr auto WATER_WAVE_SPEED = 0.04f;
 
 const std::vector<f32> TILE_VERTICES =
 {
@@ -19,8 +20,9 @@ const std::vector<f32> TILE_VERTICES =
 	1.0f, 1.0f
 };
 
-WaterRenderer::WaterRenderer(Shader::WaterShader& shader)
+WaterRenderer::WaterRenderer(Shader::WaterShader& shader, Waters::WaterFrameBuffers& waterFBOs)
 	: shader(shader),
+	  waterFBOs(waterFBOs),
 	  m_vao(std::make_shared<VertexArray>(2, TILE_VERTICES))
 {
 	shader.Start();
@@ -28,9 +30,9 @@ WaterRenderer::WaterRenderer(Shader::WaterShader& shader)
 	shader.Stop();
 }
 
-void WaterRenderer::Render(const std::vector<WaterTile>& waters, const WaterFrameBuffers& waterFBOs)
+void WaterRenderer::Render(const std::vector<WaterTile>& waters)
 {
-	Prepare(waterFBOs);
+	Prepare();
 	for (const auto& water : waters)
 	{
 		PrepareWater(water);
@@ -39,7 +41,7 @@ void WaterRenderer::Render(const std::vector<WaterTile>& waters, const WaterFram
 	Unbind();
 }
 
-void WaterRenderer::Prepare(const WaterFrameBuffers& waterFBOs)
+void WaterRenderer::Prepare()
 {
 	// Bind vao
 	glBindVertexArray(m_vao->id);
@@ -62,7 +64,7 @@ void WaterRenderer::PrepareWater(const WaterTile& water)
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, water.normalMap->id);
 	// Load model matrix
-	glm::mat4 matrix = Maths::CreateModelMatrixTS
+	auto matrix = Maths::CreateModelMatrixTS
 	(
 		water.position,
 		Waters::WATER_TILE_SIZE

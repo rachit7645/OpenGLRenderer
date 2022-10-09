@@ -12,18 +12,19 @@ using Entities::Camera;
 using Entities::Skybox;
 using Entities::Player;
 using Waters::WaterTile;
+using Waters::WaterFrameBuffers;
 
-MasterRenderer::MasterRenderer(Renderer::ShadowFrameBuffer& shadowFBO)
-	: instancedRenderer(instancedShader, fastInstancedShader, shadowInstancedShader, shadowFBO),
+MasterRenderer::MasterRenderer()
+	: instancedRenderer(instancedShader, fastInstancedShader, shadowInstancedShader, m_shadowFBO),
 	  skyboxRenderer(skyboxShader),
 	  guiRenderer(guiShader),
-	  waterRenderer(waterShader),
+	  waterRenderer(waterShader, m_waterFBOs),
 	  m_matrices(std::make_shared<MatrixBuffer>()),
 	  m_lights(std::make_shared<LightsBuffer>()),
 	  m_shared(std::make_shared<SharedBuffer>())
 {
 	m_matrices->LoadProjection(glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
-	m_matrices->LoadLightProjection(Maths::CreateOrthoMatrix(0.1f, 50.0f, 20.0f));
+	m_lights->LoadLightProjection(Maths::CreateOrthoMatrix(0.1f, 50.0f, 20.0f));
 	m_shared->LoadSkyColor(GL_SKY_COLOR);
 }
 
@@ -38,7 +39,7 @@ void MasterRenderer::BeginFrame
 	ProcessEntity(player);
 
 	m_lights->LoadLights(lights);
-	m_matrices->LoadLightView(Maths::CreateLookAtMatrix(lights[0].position));
+	m_lights->LoadLightView(Maths::CreateLookAtMatrix(lights[0].position));
 }
 
 void MasterRenderer::RenderScene(const Camera& camera, const glm::vec4& clipPlane, Mode mode)
@@ -100,20 +101,48 @@ void MasterRenderer::RenderGUIs(const std::vector<GUI>& guis)
 	glEnable(GL_DEPTH_TEST);
 }
 
-void MasterRenderer::RenderWaters(const std::vector<WaterTile>& waters, const Waters::WaterFrameBuffers& waterFBOs)
+void MasterRenderer::RenderWaters(const std::vector<WaterTile>& waters)
 {
 	waterShader.Start();
-	waterRenderer.Render(waters, waterFBOs);
+	waterRenderer.Render(waters);
 	waterShader.Stop();
 }
 
-void MasterRenderer::RenderShadows(const ShadowFrameBuffer& shadowFBO, const Camera& camera)
+// TODO: Render multiple FBOs for water tiles
+void MasterRenderer::RenderWaterFBOs(const std::vector<WaterTile>& waters,Camera& camera)
 {
-	shadowFBO.BindShadowFBO();
+	// Enable clip plane 0
+	glEnable(GL_CLIP_DISTANCE0);
+
+	// Reflection pass
+	m_waterFBOs.BindReflection();
+	// Move the camera
+	f32 distance = 2.0f * (camera.position.y - waters[0].position.y);
+	camera.position.y -= distance;
+	camera.InvertPitch();
+	// Render
+	RenderScene(camera, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].position.y), Mode::Fast);
+	// Move it back to its original position
+	camera.position.y += distance;
+	camera.InvertPitch();
+
+	// Refraction pass
+	m_waterFBOs.BindRefraction();
+	RenderScene(camera, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].position.y), Mode::Fast);
+
+	// Disable clip plane 0
+	glDisable(GL_CLIP_DISTANCE0);
+	// Bind default FBO
+	m_waterFBOs.BindDefaultFBO();
+}
+
+void MasterRenderer::RenderShadows(const Camera& camera)
+{
+	m_shadowFBO.BindShadowFBO();
 	glCullFace(GL_FRONT);
 	RenderScene(camera, glm::vec4(0.0f), Mode::Shadow);
 	glCullFace(GL_BACK);
-	shadowFBO.BindDefaultFBO();
+	m_shadowFBO.BindDefaultFBO();
 }
 
 void MasterRenderer::ProcessEntity(Entity& entity)

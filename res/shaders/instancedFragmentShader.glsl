@@ -21,6 +21,8 @@ struct Light
 layout(std140, binding = 1) uniform Lights
 {
 	Light lights[MAX_LIGHTS];
+	mat4  lightProj;
+	mat4  lightView;
 };
 
 layout(std140, binding = 2) uniform Shared
@@ -49,6 +51,7 @@ out vec4 outColor;
 
 vec4 WhenNotEqual(vec4 x, vec4 y);
 vec4 WhenGreater(vec4 x, vec4 y);
+vec4 WhenLesser(vec4 x, vec4 y);
 
 float CalculateAttFactor(int index);
 vec4  CalculateAmbient(int index);
@@ -106,12 +109,6 @@ float CalculateShadow()
 	vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
 	projCoords      = projCoords * 0.5f + 0.5f;
 
-	// TODO: Remove branch
-	if (projCoords.z > 1.0f)
-	{
-		return 0.0f;
-	}
-
 	float currentDepth = projCoords.z;
 	float closestDepth = texture(shadowMap, projCoords.xy).r;
 
@@ -131,7 +128,7 @@ float CalculateShadow()
 	}
 
 	shadow /= TOTAL_TEXELS;
-	return shadow;
+	return shadow * WhenLesser(vec4(projCoords.z), vec4(1.0f)).x;
 }
 
 // Branchless implementation of
@@ -152,4 +149,14 @@ vec4 WhenNotEqual(vec4 x, vec4 y)
 vec4 WhenGreater(vec4 x, vec4 y)
 {
 	return max(sign(x - y), 0.0f);
+}
+
+// Branchless implementation of
+// if (x < y)
+//	 return 1;
+// else
+// 	 return 0;
+vec4 WhenLesser(vec4 x, vec4 y)
+{
+	return max(sign(y - x), 0.0f);
 }

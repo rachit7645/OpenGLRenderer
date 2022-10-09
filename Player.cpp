@@ -1,8 +1,5 @@
 #include "Player.h"
 
-#include <string>
-
-#include "Imgui.h"
 #include "MeshTextures.h"
 #include "Model.h"
 #include "Material.h"
@@ -31,10 +28,16 @@ Player::Player
 void Player::Move()
 {
 	CheckInputs();
+
 	rotation.y  += m_turnSpeed * g_Delta;
-	f32 distance = m_runSpeed * g_Delta;
+	f32 distance = m_runSpeed  * g_Delta;
+
 	position.x  += distance  * std::sin(glm::radians(rotation.y));
 	position.z  += distance  * std::cos(glm::radians(rotation.y));
+
+	m_turnSpeed = 0.0f;
+	m_runSpeed  = 0.0f;
+
 	ImGuiDisplay();
 }
 
@@ -65,10 +68,6 @@ void Player::CheckInputs()
 	{
 		m_runSpeed = -PLAYER_RUN_SPEED;
 	}
-	else
-	{
-		m_runSpeed = 0.0f;
-	}
 
 	if (Inputs::IsKeyPressed(SDL_SCANCODE_A))
 	{
@@ -77,9 +76,5 @@ void Player::CheckInputs()
 	else if (Inputs::IsKeyPressed(SDL_SCANCODE_D))
 	{
 		m_turnSpeed = -PLAYER_TURN_SPEED;
-	}
-	else
-	{
-		m_turnSpeed = 0.0f;
 	}
 }

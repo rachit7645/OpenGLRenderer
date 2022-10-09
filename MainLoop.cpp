@@ -2,15 +2,15 @@
 
 #include "Model.h"
 #include "Entity.h"
-#include "Light.h"
 #include "Material.h"
 #include "Player.h"
 #include "MeshTextures.h"
 #include "Resources.h"
 #include "imgui.h"
 #include "GUI.h"
-#include "Random.h"
-#include "ShadowFrameBuffer.h"
+#include "WaterTile.h"
+#include "MasterRenderer.h"
+#include "Camera.h"
 
 using namespace Window;
 
@@ -29,12 +29,10 @@ using Renderer::FBType;
 using Renderer::MasterRenderer;
 using Renderer::Mode;
 using Entities::Entity;
-using Entities::Player;
 using Entities::Skybox;
 using Entities::Light;
 using Entities::Camera;
 using Waters::WaterTile;
-using Waters::WaterFrameBuffers;
 
 // TODO: Move MainLoop to separate class, move data to said class
 // TODO: Live editing of entities, etc. with ImGui
@@ -60,7 +58,7 @@ void SDLWindow::MainLoop()
 		);
 	}
 
-	Player player
+	auto player = Entities::Player
 	(
 		playerModel,
 		glm::vec3(13.0f, 0.0f, 17.0f),
@@ -79,10 +77,6 @@ void SDLWindow::MainLoop()
 			glm::vec3(1.0f, 0.0f, 0.0f)
 		);
 	}
-
-	// TODO: Move to master renderer
-	auto waterFBOs = Waters::WaterFrameBuffers();
-	auto shadowFBO = Renderer::ShadowFrameBuffer();
 
 	std::vector<GUI> guis;
 	{
@@ -105,7 +99,7 @@ void SDLWindow::MainLoop()
 	}
 
 	auto camera   = Entities::Camera(&player);
-	auto renderer = Renderer::MasterRenderer(shadowFBO);
+	auto renderer = Renderer::MasterRenderer();
 
 	startTime = frameStartTime = steady_clock::now();
 
@@ -123,14 +117,14 @@ void SDLWindow::MainLoop()
 
 		// Begin render
 		renderer.BeginFrame(entities, lights, player);
-		// Draw shadow fbo
-		renderer.RenderShadows(shadowFBO, camera);
 		// Draw water framebuffers
-		DrawWaterFBOs(waterFBOs, waters, renderer, camera);
+		renderer.RenderWaterFBOs(waters, camera);
+		// Draw shadow framebuffer
+		renderer.RenderShadows(camera);
 
 		// Main render pass
 		renderer.RenderScene(camera);
-		renderer.RenderWaters(waters, waterFBOs);
+		renderer.RenderWaters(waters);
 		renderer.RenderGUIs(guis);
 
 		// End render
@@ -144,39 +138,6 @@ void SDLWindow::MainLoop()
 		CalculateFPS();
 		if (PollEvents()) break;
 	}
-}
-
-// TODO: Move to master renderer
-void SDLWindow::DrawWaterFBOs
-(
-	const WaterFrameBuffers& waterFBOs,
-	const std::vector<WaterTile>& waters,
-	MasterRenderer& renderer,
-	Camera& camera
-)
-{
-	// Enable clip plane 0
-	glEnable(GL_CLIP_DISTANCE0);
-
-	// Reflection pass
-	waterFBOs.BindReflection();
-	// Move the camera
-	f32 distance = 2.0f * (camera.position.y - waters[0].position.y);
-	camera.position.y -= distance;
-	camera.InvertPitch();
-	renderer.RenderScene(camera, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].position.y), Mode::Fast);
-	// Move it back to its original position
-	camera.position.y += distance;
-	camera.InvertPitch();
-
-	// Refraction pass
-	waterFBOs.BindRefraction();
-	renderer.RenderScene(camera, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].position.y), Mode::Fast);
-
-	// Disable clip plane 0
-	glDisable(GL_CLIP_DISTANCE0);
-	// Bind default FBO
-	waterFBOs.BindDefaultFBO();
 }
 
 void SDLWindow::CalculateFPS()
@@ -241,21 +202,6 @@ void SDLWindow::ImGuiDisplay(std::vector<Light>& lights)
 
 void SDLWindow::ImGuiUpdate() const
 {
-	if (wireframe)
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	}
-	else
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
-
-	if (!vsync)
-	{
-		SDL_GL_SetSwapInterval(0);
-	}
-	else
-	{
-		SDL_GL_SetSwapInterval(1);
-	}
+	glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
+	SDL_GL_SetSwapInterval(vsync);
 }

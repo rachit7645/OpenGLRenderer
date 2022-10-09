@@ -15,21 +15,14 @@ namespace Renderer
 
 		void LoadView(const Entities::Camera& camera);
 		void LoadProjection(const glm::mat4& projection);
-
-		void LoadLightProjection(const glm::mat4& projection);
-		void LoadLightView(const glm::mat4& view);
 	};
 
 	namespace Detail
 	{
 		struct MatrixBufferGLSL
 		{
-			glm::mat4 projectionMatrix;
-			glm::mat4 viewMatrix;
-			// TODO: Move to LightsBuffer
-			glm::mat4 lightProj;
-			// TODO: Move to LightsBuffer
-			glm::mat4 lightView;
+			alignas(16) glm::mat4 projectionMatrix;
+			alignas(16) glm::mat4 viewMatrix;
 		};
 	}
 }

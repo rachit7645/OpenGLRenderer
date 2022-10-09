@@ -33,7 +33,7 @@ namespace Renderer
 	class MasterRenderer
 	{
 	public:
-		explicit MasterRenderer(Renderer::ShadowFrameBuffer& shadowFBO);
+		explicit MasterRenderer();
 
 		Shader::InstancedShader       instancedShader;
 		Shader::FastInstancedShader   fastInstancedShader;
@@ -61,9 +61,11 @@ namespace Renderer
 		// Render Scene
 		void RenderScene(const Entities::Camera& camera, const glm::vec4& clipPlane = glm::vec4(0.0f), Mode mode = Mode::Normal);
 		// Render the water
-		void RenderWaters(const std::vector<Waters::WaterTile>& waters, const Waters::WaterFrameBuffers& waterFBOs);
+		void RenderWaters(const std::vector<Waters::WaterTile>& waters);
+		// Render water fbos
+		void RenderWaterFBOs(const std::vector<Waters::WaterTile>& waters, Entities::Camera& camera);
 		// Render shadows
-		void RenderShadows(const Renderer::ShadowFrameBuffer& shadowFBO, const Entities::Camera& camera);
+		void RenderShadows(const Entities::Camera& camera);
 		// Render the guis
 		void RenderGUIs(const std::vector<GUI>& guis);
 		// Process entities into the entity map
@@ -82,6 +84,9 @@ namespace Renderer
 		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity*>> m_entities;
 		// The Skybox
 		Entities::Skybox m_skybox;
+		// Framebuffers
+		Renderer::ShadowFrameBuffer m_shadowFBO;
+		Waters::WaterFrameBuffers   m_waterFBOs;
 		// Matrix Uniform Buffer
 		std::shared_ptr<MatrixBuffer> m_matrices;
 		// Lights Uniform Buffer

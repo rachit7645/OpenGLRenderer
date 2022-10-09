@@ -16,7 +16,19 @@ namespace Renderer
 		LightsBuffer();
 		
 		void LoadLights(const std::vector<Entities::Light>& lights);
+		void LoadLightProjection(const glm::mat4& projection);
+		void LoadLightView(const glm::mat4& view);
 	};
+
+	namespace Detail
+	{
+		struct LightsBufferGLSL
+		{
+			alignas(16) Entities::Light lights[SHADER_MAX_LIGHTS];
+			alignas(16) glm::mat4       lightProj;
+			alignas(16) glm::mat4       lightView;
+		};
+	}
 }
 
 #endif
