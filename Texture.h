@@ -20,7 +20,9 @@ namespace Renderer
 			GLsizei height,
 			GLint internalFormat,
 			GLint format,
-			GLint type
+			GLint type,
+			GLint filter,
+			bool border = false
 		);
 		// Destructor 
 		~Texture();
@@ -32,4 +34,4 @@ namespace Renderer
 		int channels = 0;
 	};
 }
-#endif // TEXTURE_H
+#endif

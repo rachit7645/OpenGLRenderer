@@ -1,8 +1,5 @@
 #include "Player.h"
 
-#include <string>
-
-#include "Imgui.h"
 #include "MeshTextures.h"
 #include "Model.h"
 #include "Material.h"
@@ -13,6 +10,9 @@ using namespace Entities;
 using Renderer::Model;
 using Renderer::MeshTextures;
 using Renderer::Material;
+
+constexpr auto PLAYER_RUN_SPEED  = 45.0f;
+constexpr auto PLAYER_TURN_SPEED = 160.0f;
 
 Player::Player
 (
@@ -28,10 +28,16 @@ Player::Player
 void Player::Move()
 {
 	CheckInputs();
-	rotation.y  += turnSpeed * g_Delta;
-	f32 distance = runSpeed  * g_Delta;
+
+	rotation.y  += m_turnSpeed * g_Delta;
+	f32 distance = m_runSpeed  * g_Delta;
+
 	position.x  += distance  * std::sin(glm::radians(rotation.y));
 	position.z  += distance  * std::cos(glm::radians(rotation.y));
+
+	m_turnSpeed = 0.0f;
+	m_runSpeed  = 0.0f;
+
 	ImGuiDisplay();
 }
 
@@ -52,32 +58,23 @@ void Player::ImGuiDisplay()
 	}
 }
 
-// FIXME: Prettify this one
 void Player::CheckInputs()
 {
 	if (Inputs::IsKeyPressed(SDL_SCANCODE_W))
 	{
-		runSpeed = PLAYER_RUN_SPEED;
+		m_runSpeed = PLAYER_RUN_SPEED;
 	}
 	else if (Inputs::IsKeyPressed(SDL_SCANCODE_S))
 	{
-		runSpeed = -PLAYER_RUN_SPEED;
-	}
-	else
-	{
-		runSpeed = 0.0f;
+		m_runSpeed = -PLAYER_RUN_SPEED;
 	}
 
 	if (Inputs::IsKeyPressed(SDL_SCANCODE_A))
 	{
-		turnSpeed = PLAYER_TURN_SPEED;
+		m_turnSpeed = PLAYER_TURN_SPEED;
 	}
 	else if (Inputs::IsKeyPressed(SDL_SCANCODE_D))
 	{
-		turnSpeed = -PLAYER_TURN_SPEED;
-	}
-	else
-	{
-		turnSpeed = 0.0f;
+		m_turnSpeed = -PLAYER_TURN_SPEED;
 	}
 }

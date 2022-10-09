@@ -8,9 +8,6 @@
 
 namespace Entities
 {
-	constexpr auto PLAYER_RUN_SPEED  = 45.0f;
-	constexpr auto PLAYER_TURN_SPEED = 160.0f;
-
 	class Player : public Entity
 	{
 	public:
@@ -24,8 +21,8 @@ namespace Entities
 
 		void Move();
 	private:
-		f32 runSpeed      = 0.0f;
-		f32 turnSpeed     = 0.0f;
+		f32 m_runSpeed  = 0.0f;
+		f32 m_turnSpeed = 0.0f;
 
 		void CheckInputs();
 		void ImGuiDisplay();

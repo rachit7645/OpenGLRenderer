@@ -11,9 +11,6 @@
 
 namespace Shader
 {
-	constexpr auto WATER_VERTEX_SHADER_PATH = "shaders/waterVertexShader.glsl",
-		WATER_FRAGMENT_SHADER_PATH = "shaders/waterFragmentShader.glsl";
-
 	class WaterShader : public ShaderProgram
 	{
 	public:
@@ -25,7 +22,7 @@ namespace Shader
 
 		void GetUniformLocations() override;
 	private:
-		std::unordered_map<std::string_view, GLint> uniforms;
+		std::unordered_map<std::string_view, GLint> m_uniforms;
 	};
 }
 

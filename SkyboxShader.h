@@ -10,9 +10,6 @@
 
 namespace Shader
 {
-	constexpr auto SKYBOX_VERTEX_SHADER_PATH = "shaders/skyboxVertexShader.glsl",
-		SKYBOX_FRAGMENT_SHADER_PATH = "shaders/skyboxFragmentShader.glsl";
-
 	class SkyboxShader : public ShaderProgram
 	{
 	public:
@@ -22,7 +19,7 @@ namespace Shader
 
 		void GetUniformLocations() override;
 	private:
-		std::unordered_map<std::string_view, GLint> uniforms;
+		std::unordered_map<std::string_view, GLint> m_uniforms;
 	};
 }
 

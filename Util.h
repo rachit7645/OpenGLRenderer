@@ -15,6 +15,9 @@
 #define UNUSED __attribute__((unused))
 #endif
 
+#define STRINGIFY_HELPER(x) #x
+#define STRINGIFY(x) STRINGIFY_HELPER(x)
+
 using s8  = std::int8_t;
 using s16 = std::int16_t;
 using s32 = std::int32_t;

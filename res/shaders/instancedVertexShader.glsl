@@ -27,6 +27,8 @@ layout(std140, binding = 0) uniform Matrices
 layout(std140, binding = 1) uniform Lights
 {
 	Light lights[MAX_LIGHTS];
+	mat4  lightProj;
+	mat4  lightView;
 };
 
 layout(std140, binding = 2) uniform Shared
@@ -51,6 +53,7 @@ out vec3  unitNormal;
 out vec3  unitCameraVector;
 out vec3  unitLightVector[MAX_LIGHTS];
 out vec4  worldPosition;
+out vec4  lightSpacePos;
 
 void CalculateLighting();
 void CalculateVisibility(vec4 posRelToCam);
@@ -62,6 +65,7 @@ void main()
 	gl_Position        = projectionMatrix * posRelToCam;
 	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
 	txCoords           = textureCoords;
+	lightSpacePos      = lightProj * lightView * instances[gl_InstanceID].modelMatrix * vec4(position, 1.0f);
 
 	CalculateLighting();
 	CalculateVisibility(posRelToCam);

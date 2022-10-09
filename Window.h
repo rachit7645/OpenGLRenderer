@@ -1,23 +1,18 @@
 #ifndef SDL_WINDOW_H
 #define SDL_WINDOW_H
 
-#include <chrono>
 #include <vector>
+#include <chrono>
 #include <SDL2/SDL.h>
 
 #include "GLM.h"
 #include "Util.h"
-#include "WaterTile.h"
-#include "WaterFrameBuffers.h"
-#include "MasterRenderer.h"
-#include "Camera.h"
 #include "Light.h"
 
 namespace Window
 {
 	// Choosing a 16:9 Resolution
 	constexpr glm::ivec2 DIMENSIONS = {1024, 576};
-	constexpr u32 SDL_WINDOW_FLAGS  = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
 	class SDLWindow
 	{
@@ -37,14 +32,6 @@ namespace Window
 		bool PollEvents();
 		// Calculates the FPS and the frame delta
 		void CalculateFPS();
-		// Draws water framebuffers
-		void DrawWaterFBOs
-		(
-			const Waters::WaterFrameBuffers& waterFBOs,
-			const std::vector<Waters::WaterTile>& waters,
-			Renderer::MasterRenderer& renderer,
-			Entities::Camera& camera
-		);
 
 		using Clock     = std::chrono::steady_clock;
 		using TimePoint = std::chrono::time_point<Clock>;

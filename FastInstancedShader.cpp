@@ -2,8 +2,11 @@
 
 using namespace Shader;
 
+constexpr auto VERTEX_PATH = "shaders/fastInstancedVertexShader.glsl",
+	FRAGMENT_PATH = "shaders/fastInstancedFragmentShader.glsl";
+
 FastInstancedShader::FastInstancedShader()
-	: ShaderProgram(FAST_INSTANCED_VERTEX_SHADER_PATH, FAST_INSTANCED_FRAGMENT_SHADER_PATH)
+	: ShaderProgram(VERTEX_PATH, FRAGMENT_PATH)
 {
 	GetUniformLocations();
 }

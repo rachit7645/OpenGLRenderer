@@ -21,9 +21,9 @@ namespace Renderer
 	{
 		struct SharedBufferGLSL
 		{
-			glm::vec4 clipPlane;
-			glm::vec4 skyColor;
-			glm::vec4 cameraPos;
+			alignas(16) glm::vec4 clipPlane;
+			alignas(16) glm::vec4 skyColor;
+			alignas(16) glm::vec4 cameraPos;
 		};
 	}
 }

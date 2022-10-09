@@ -79,3 +79,18 @@ glm::mat4 Maths::CreateViewMatrix(const Camera& camera)
 	matrix = glm::translate(matrix, -camera.position);
 	return matrix;
 }
+
+glm::mat4 Maths::CreateOrthoMatrix(f32 nearPlane, f32 farPlane, f32 orthoVal)
+{
+	return glm::ortho(-orthoVal, orthoVal, -orthoVal, orthoVal, nearPlane, farPlane);
+}
+
+glm::mat4 Maths::CreateLookAtMatrix(const glm::vec3& position)
+{
+	return glm::lookAt
+	(
+		position,
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f)
+	);
+}

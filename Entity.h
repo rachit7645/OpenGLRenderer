@@ -12,6 +12,7 @@ namespace Entities
 	{
 	public:
         using MdPtr = std::shared_ptr<Renderer::Model>;
+
 		Entity
         (
 			MdPtr sharedModel,

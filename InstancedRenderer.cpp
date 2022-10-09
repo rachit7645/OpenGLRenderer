@@ -4,10 +4,19 @@ using namespace Renderer;
 
 using Shader::InstancedShader;
 using Shader::FastInstancedShader;
+using Shader::ShadowInstancedShader;
 
-InstancedRenderer::InstancedRenderer(InstancedShader& shader, FastInstancedShader& fastShader)
+InstancedRenderer::InstancedRenderer
+(
+	InstancedShader& shader,
+	FastInstancedShader& fastShader,
+	ShadowInstancedShader& shadowShader,
+	ShadowFrameBuffer& shadowFBO
+)
 	: shader(shader),
 	  fastShader(fastShader),
+	  shadowShader(shadowShader),
+	  shadowFBO(shadowFBO),
 	  m_buffer(std::make_shared<InstanceBuffer>())
 {
 	shader.Start();
@@ -51,6 +60,10 @@ void InstancedRenderer::BeginRender(Mode mode)
 	case Mode::Fast:
 		fastShader.Start();
 		break;
+
+	case Mode::Shadow:
+		shadowShader.Start();
+		break;
 	}
 }
 
@@ -67,6 +80,10 @@ void InstancedRenderer::EndRender(Mode mode)
 	case Mode::Fast:
 		fastShader.Stop();
 		break;
+
+	case Mode::Shadow:
+		shadowShader.Stop();
+		break;
 	}
 }
 
@@ -80,19 +97,40 @@ void InstancedRenderer::PrepareMesh(const Mesh& mesh, Mode mode)
 	// Bind vao
 	glBindVertexArray(mesh.vao->id);
 
-	// Bind diffuse
-	const MeshTextures& textures = mesh.textures;
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textures.diffuse->id);
-
-	if (mode == Mode::Normal)
+	switch (mode)
 	{
-		// Bind specular
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, textures.specular->id);
-		// Load materials
-		shader.LoadMaterial(mesh.material);
+	case Mode::Normal:
+		LoadDiffuse(mesh);
+		LoadSpecular(mesh);
+		LoadShadowMap();
+		break;
+
+	case Mode::Fast:
+		LoadDiffuse(mesh);
+		break;
+
+	case Mode::Shadow:
+		break;
 	}
+}
+
+void InstancedRenderer::LoadDiffuse(const Mesh& mesh)
+{
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, mesh.textures.diffuse->id);
+}
+
+void InstancedRenderer::LoadSpecular(const Mesh& mesh)
+{
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, mesh.textures.specular->id);
+	shader.LoadMaterial(mesh.material);
+}
+
+void InstancedRenderer::LoadShadowMap()
+{
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, shadowFBO.buffer->depthTexture->id);
 }
 
 void InstancedRenderer::UnbindMesh()

@@ -2,10 +2,10 @@
 
 const float WAVE_STRENGTH   = 0.04f;
 const float REFRACT_AMOUNT  = 0.7f;
-const float SHINE_DAMPER    = 20.0f;
+const float SHINE_DAMPER    = 16.0f;
 const float REFLECTIVITY    = 0.2f;
 const float MIN_SPECULAR    = 0.0f;
-const float NORMAL_FACTOR_Y = 0.5f;
+const float NORMAL_FACTOR_Y = 0.1f;
 const int   MAX_LIGHTS      = 4;
 
 struct Light
@@ -20,6 +20,8 @@ struct Light
 layout(std140, binding = 1) uniform Lights
 {
 	Light lights[MAX_LIGHTS];
+	mat4  lightProj;
+	mat4  lightView;
 };
 
 layout(std140, binding = 2) uniform Shared

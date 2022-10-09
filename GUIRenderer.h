@@ -21,7 +21,7 @@ namespace Renderer
 		// Render GUIs
 		void Render(const std::vector<GUI>& guis);
 	private:
-		VAO vao;
+		VAO m_vao;
 	};
 }
 

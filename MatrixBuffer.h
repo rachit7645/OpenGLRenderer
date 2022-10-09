@@ -4,6 +4,7 @@
 #include "GLM.h"
 #include "UniformBuffer.h"
 #include "Camera.h"
+#include "Light.h"
 
 namespace Renderer
 {
@@ -20,8 +21,8 @@ namespace Renderer
 	{
 		struct MatrixBufferGLSL
 		{
-			glm::mat4 projectionMatrix;
-			glm::mat4 viewMatrix;
+			alignas(16) glm::mat4 projectionMatrix;
+			alignas(16) glm::mat4 viewMatrix;
 		};
 	}
 }

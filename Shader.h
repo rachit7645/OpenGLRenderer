@@ -8,8 +8,6 @@
 
 namespace Shader
 {
-	constexpr auto SHADER_ERROR_BUFFER_SIZE = 4096;
-
 	class ShaderProgram
 	{
 	public:
@@ -22,8 +20,9 @@ namespace Shader
 		void Start() const;
 		void Stop()  const;
 
+		void DumpToFile(const std::string_view path) const;
+	protected:
 		GLint GetUniformLocation(const char* name) const;
-		void  DumpToFile(const std::string_view path)  const;
 
 		// Uniform loading functions 
 		void LoadUniform(GLint location, GLint value)             const;
@@ -43,4 +42,4 @@ namespace Shader
 	};
 }
 
-#endif // SHADER_H
+#endif

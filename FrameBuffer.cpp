@@ -7,10 +7,11 @@ using namespace Renderer;
 
 using Window::DIMENSIONS;
 
-FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type)
+FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type, FBFilter filter)
 	: width(width),
 	  height(height),
-	  type(type)
+	  type(type),
+	  filter(filter)
 {
 	// Generate Framebuffer
 	glGenFramebuffers(1, &id);
@@ -24,7 +25,7 @@ FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type)
 		break;
 
 	case FBType::Depth:
-		CreateColorBuffer();
+		SetColorBuffer();
 		CreateDepthTexture();
 		break;
 
@@ -43,6 +44,11 @@ FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type)
 	}
 
 	CheckStatus();
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDepthRange(0.0, 1.0);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -54,7 +60,8 @@ void FrameBuffer::CreateColorTexture()
 		height,
 		GL_RGBA,
 		GL_RGBA,
-		GL_UNSIGNED_BYTE
+		GL_UNSIGNED_BYTE,
+		filter
 	);
 
 	glFramebufferTexture2D
@@ -75,7 +82,9 @@ void FrameBuffer::CreateDepthTexture()
 		height,
 		GL_DEPTH_COMPONENT24,
 		GL_DEPTH_COMPONENT,
-		GL_FLOAT
+		GL_FLOAT,
+		filter,
+		true
 	);
 
 	glFramebufferTexture2D
@@ -124,6 +133,12 @@ void FrameBuffer::CreateDepthBuffer()
 	);
 }
 
+void FrameBuffer::SetColorBuffer()
+{
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+}
+
 void FrameBuffer::CheckStatus()
 {
 	static const std::unordered_map<GLenum, const char*> GL_FRAMEBUFFER_ERROR_TYPES
@@ -142,7 +157,7 @@ void FrameBuffer::CheckStatus()
 	if(status != GL_FRAMEBUFFER_COMPLETE)
 	{
 		auto errorStr = GL_FRAMEBUFFER_ERROR_TYPES.find(status)->second;
-		LOG_ERROR("{} Framebuffer [ID={}] is incomplete!", errorStr, id);
+		LOG_ERROR("{} Framebuffer [ID={}] is incomplete!\n", errorStr, id);
 	}
 }
 

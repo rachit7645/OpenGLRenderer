@@ -12,25 +12,25 @@
 
 namespace Renderer
 {
-	constexpr auto WATER_WAVE_SPEED = 0.04f;
-
 	class WaterRenderer
 	{
 	public:
 		// Usings
 		using VAO = std::shared_ptr<VertexArray>;
 		// Main constructor
-		explicit WaterRenderer(Shader::WaterShader& shader);
-		Shader::WaterShader& shader;
+		explicit WaterRenderer(Shader::WaterShader& shader, Waters::WaterFrameBuffers& waterFBOs);
 
-		void Render(const std::vector<Waters::WaterTile>& waters, const Waters::WaterFrameBuffers& waterFBOs);
+		Shader::WaterShader& shader;
+		Waters::WaterFrameBuffers& waterFBOs;
+
+		void Render(const std::vector<Waters::WaterTile>& waters);
 	private:
-		void Prepare(const Waters::WaterFrameBuffers& waterFBOs);
+		void Prepare();
 		void PrepareWater(const Waters::WaterTile& water);
 		void Unbind();
 
-		VAO vao;
-		f32 moveFactor = 0.0f;
+		VAO m_vao;
+		f32 m_moveFactor = 0.0f;
 	};
 }
 

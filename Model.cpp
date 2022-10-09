@@ -14,9 +14,10 @@ Model::Model
 )
 {
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile((Files::GetResourceDirectory() + path.data()).c_str(), ASSIMP_FLAGS);
 
 	LOG_INFO("Loading model: {}\n", path);
+	const aiScene* scene = importer.ReadFile((Files::GetResourceDirectory() + path.data()).c_str(), ASSIMP_FLAGS);
+
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
 		LOG_ERROR("Model Load Failed: {}", importer.GetErrorString());
@@ -55,36 +56,36 @@ Mesh Model::ProcessMesh
 )
 {
 	std::vector<f32> vertices;
-	std::vector<u32> indices;
 	std::vector<f32> txCoords;
 	std::vector<f32> normals;
+	std::vector<u32> indices;
 
-	const aiVector3D aiZeroVector(0.0f, 0.0f, 0.0f);
 	for (u32 i = 0; i < mesh->mNumVertices; i++)
 	{
-		const aiVector3D* pPos = &(mesh->mVertices[i]);
-		const aiVector3D* pNormal = &(mesh->mNormals[i]);
-		const aiVector3D* pTexCoord = mesh->HasTextureCoords(0) ? &(mesh->mTextureCoords[0][i]) : &aiZeroVector;
+		const auto aiZeroVector = aiVector3D(0.0f, 0.0f, 0.0f);
 
-		vertices.push_back(pPos->x);
-		vertices.push_back(pPos->y);
-		vertices.push_back(pPos->z);
+		const aiVector3D& pos      = mesh->mVertices[i];
+		const aiVector3D& normal   = mesh->mNormals[i];
+		const aiVector3D& texCoord = mesh->HasTextureCoords(0) ? mesh->mTextureCoords[0][i] : aiZeroVector;
 
-		txCoords.push_back(pTexCoord->x);
-		txCoords.push_back(pTexCoord->y);
+		vertices.emplace_back(pos.x);
+		vertices.emplace_back(pos.y);
+		vertices.emplace_back(pos.z);
 
-		normals.push_back(pNormal->x);
-		normals.push_back(pNormal->y);
-		normals.push_back(pNormal->z);
+		txCoords.emplace_back(texCoord.x);
+		txCoords.emplace_back(texCoord.y);
+
+		normals.emplace_back(normal.x);
+		normals.emplace_back(normal.y);
+		normals.emplace_back(normal.z);
 	}
 
 	for (u32 i = 0; i < mesh->mNumFaces; ++i)
 	{
 		const aiFace& face = mesh->mFaces[i];
-		assert(face.mNumIndices == 3);
-		indices.push_back(face.mIndices[0]);
-		indices.push_back(face.mIndices[1]);
-		indices.push_back(face.mIndices[2]);
+		indices.emplace_back(face.mIndices[0]);
+		indices.emplace_back(face.mIndices[1]);
+		indices.emplace_back(face.mIndices[2]);
 	}
 
 	return Mesh
@@ -129,8 +130,8 @@ Material Model::ProcessMaterial
 	const Material& pMaterial
 )
 {
-	Material material = pMaterial;
-	aiMaterial* mat   = scene->mMaterials[mesh->mMaterialIndex];
+	Material    material = pMaterial;
+	aiMaterial* mat      = scene->mMaterials[mesh->mMaterialIndex];
 
 	mat->Get(AI_MATKEY_SHININESS,          &material.shineDamper,  nullptr);
 	mat->Get(AI_MATKEY_SHININESS_STRENGTH, &material.reflectivity, nullptr);

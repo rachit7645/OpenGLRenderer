@@ -9,9 +9,6 @@
 
 namespace Shader
 {
-	constexpr auto GUI_VERTEX_SHADER_PATH = "shaders/guiVertexShader.glsl",
-		GUI_FRAGMENT_SHADER_PATH = "shaders/guiFragmentShader.glsl";
-
 	class GUIShader : public ShaderProgram
 	{
 	public:
@@ -22,7 +19,7 @@ namespace Shader
 
 		void GetUniformLocations() override;
 	private:
-		std::unordered_map<std::string_view, GLint> uniforms;
+		std::unordered_map<std::string_view, GLint> m_uniforms;
 	};
 }
 
