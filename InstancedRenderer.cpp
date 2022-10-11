@@ -130,7 +130,7 @@ void InstancedRenderer::LoadSpecular(const Mesh& mesh)
 void InstancedRenderer::LoadShadowMap()
 {
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, shadowMap.buffer->depthTexture->id);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, shadowMap.buffer->depthTexture->id);
 }
 
 void InstancedRenderer::UnbindMesh()

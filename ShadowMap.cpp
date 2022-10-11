@@ -15,11 +15,14 @@ constexpr glm::ivec2 SHADOW_DIMENSIONS = {1024, 1024};
 
 constexpr std::array<f32, 4> shadowLevels =
 {
-	FAR_PLANE / 50.0f, FAR_PLANE / 25.0f, FAR_PLANE / 10.0f, FAR_PLANE / 2.0f
+	FAR_PLANE / 50.0f,
+	FAR_PLANE / 25.0f,
+	FAR_PLANE / 10.0f,
+	FAR_PLANE / 2.0f
 };
 
 ShadowMap::ShadowMap()
-	: buffer(std::make_shared<FrameBuffer>(SHADOW_DIMENSIONS.x, SHADOW_DIMENSIONS.y, FBType::Depth, FBFilter::Nearest))
+	: buffer(std::make_shared<FrameBuffer>(SHADOW_DIMENSIONS.x, SHADOW_DIMENSIONS.y, shadowLevels.size() + 1))
 {
 }
 
