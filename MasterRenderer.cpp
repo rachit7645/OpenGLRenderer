@@ -15,7 +15,7 @@ using Waters::WaterTile;
 using Waters::WaterFrameBuffers;
 
 MasterRenderer::MasterRenderer()
-	: instancedRenderer(instancedShader, fastInstancedShader, shadowInstancedShader, m_shadowFBO),
+	: instancedRenderer(instancedShader, fastInstancedShader, shadowInstancedShader, m_shadowMap),
 	  skyboxRenderer(skyboxShader),
 	  guiRenderer(guiShader),
 	  waterRenderer(waterShader, m_waterFBOs),
@@ -138,11 +138,11 @@ void MasterRenderer::RenderWaterFBOs(const std::vector<WaterTile>& waters,Camera
 
 void MasterRenderer::RenderShadows(const Camera& camera)
 {
-	m_shadowFBO.BindShadowFBO();
+	m_shadowMap.BindShadowFBO();
 	glCullFace(GL_FRONT);
 	RenderScene(camera, glm::vec4(0.0f), Mode::Shadow);
 	glCullFace(GL_BACK);
-	m_shadowFBO.BindDefaultFBO();
+	m_shadowMap.BindDefaultFBO();
 }
 
 void MasterRenderer::ProcessEntity(Entity& entity)

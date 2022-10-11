@@ -12,7 +12,7 @@
 #include "FastInstancedShader.h"
 #include "RenderConstants.h"
 #include "ShadowInstancedShader.h"
-#include "ShadowFrameBuffer.h"
+#include "ShadowMap.h"
 
 namespace Renderer
 {
@@ -29,14 +29,14 @@ namespace Renderer
 			Shader::InstancedShader& shader,
 			Shader::FastInstancedShader& fastShader,
 			Shader::ShadowInstancedShader& shadowShader,
-			Renderer::ShadowFrameBuffer& shadowFBO
+			Renderer::ShadowMap& shadowMap
 		);
 
 		Shader::InstancedShader& shader;
 		Shader::FastInstancedShader& fastShader;
 		Shader::ShadowInstancedShader& shadowShader;
 
-		Renderer::ShadowFrameBuffer& shadowFBO;
+		Renderer::ShadowMap& shadowMap;
 
 		void Render(const Batch& batch, Mode mode);
 	private:

@@ -1,18 +1,20 @@
-#include "ShadowFrameBuffer.h"
+#include "ShadowMap.h"
 
 using namespace Renderer;
 
-ShadowFrameBuffer::ShadowFrameBuffer()
+constexpr glm::ivec2 SHADOW_DIMENSIONS = {1024, 1024};
+
+ShadowMap::ShadowMap()
 	: buffer(std::make_shared<FrameBuffer>(SHADOW_DIMENSIONS.x, SHADOW_DIMENSIONS.y, FBType::Depth, FBFilter::Nearest))
 {
 }
 
-void ShadowFrameBuffer::BindShadowFBO() const
+void ShadowMap::BindShadowFBO() const
 {
 	buffer->Bind();
 }
 
-void ShadowFrameBuffer::BindDefaultFBO() const
+void ShadowMap::BindDefaultFBO() const
 {
 	buffer->Unbind();
 }

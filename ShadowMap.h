@@ -1,5 +1,5 @@
-#ifndef SHADOW_FRAME_BUFFER_H
-#define SHADOW_FRAME_BUFFER_H
+#ifndef SHADOW_MAP_H
+#define SHADOW_MAP_H
 
 #include <memory>
 
@@ -8,14 +8,12 @@
 
 namespace Renderer
 {
-	constexpr glm::ivec2 SHADOW_DIMENSIONS = {1024, 1024};
-
-	class ShadowFrameBuffer
+	class ShadowMap
 	{
 	public:
 		using FbPtr = std::shared_ptr<FrameBuffer>;
 
-		ShadowFrameBuffer();
+		ShadowMap();
 
 		void BindShadowFBO()  const;
 		void BindDefaultFBO() const;

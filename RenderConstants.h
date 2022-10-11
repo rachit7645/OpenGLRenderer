@@ -17,6 +17,7 @@ namespace Renderer
 	constexpr f32 NEAR_PLANE   = 0.1f;
 	constexpr f32 FAR_PLANE    = 1000.0f;
 
+	// TODO: Store current mode in renderers
 	enum class Mode
 	{
 		Normal,

@@ -25,7 +25,7 @@
 #include "InstancedShader.h"
 #include "FastInstancedShader.h"
 #include "RenderConstants.h"
-#include "ShadowFrameBuffer.h"
+#include "ShadowMap.h"
 #include "ShadowInstancedShader.h"
 
 namespace Renderer
@@ -85,8 +85,8 @@ namespace Renderer
 		// The Skybox
 		Entities::Skybox m_skybox;
 		// Framebuffers
-		Renderer::ShadowFrameBuffer m_shadowFBO;
-		Waters::WaterFrameBuffers   m_waterFBOs;
+		Renderer::ShadowMap       m_shadowMap;
+		Waters::WaterFrameBuffers m_waterFBOs;
 		// Matrix Uniform Buffer
 		std::shared_ptr<MatrixBuffer> m_matrices;
 		// Lights Uniform Buffer
