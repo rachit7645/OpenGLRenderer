@@ -6,15 +6,17 @@
 #include "GLM.h"
 #include "FrameBuffer.h"
 #include "Camera.h"
+#include "ShadowMatrixBuffer.h"
 
 namespace Renderer
 {
 	class ShadowMap
 	{
 	public:
-		using FbPtr = std::shared_ptr<FrameBuffer>;
-		using Vec4s = std::vector<glm::vec4>;
-		using Mat4s = std::vector<glm::mat4>;
+		using FbPtr  = std::shared_ptr<FrameBuffer>;
+		using MtxPtr = std::shared_ptr<ShadowMatrixBuffer>;
+		using Vec4s  = std::vector<glm::vec4>;
+		using Mat4s  = std::vector<glm::mat4>;
 
 		ShadowMap();
 
@@ -25,6 +27,8 @@ namespace Renderer
 
 		FbPtr buffer;
 	private:
+		MtxPtr m_matrixBuffer;
+
 		Mat4s CalculateLightSpaceMatrices
 		(
 			const Entities::Camera& camera,

@@ -1,8 +1,9 @@
 #version 430 core
 
-const float FOG_DENSITY  = 0.0035f;
-const float FOG_GRADIENT = 1.5f;
-const int   MAX_LIGHTS   = 4;
+const float FOG_DENSITY     = 0.0035f;
+const float FOG_GRADIENT    = 1.5f;
+const int   MAX_LIGHTS      = 4;
+const int   MAX_LAYER_COUNT = 16;
 
 struct Light
 {
@@ -27,8 +28,6 @@ layout(std140, binding = 0) uniform Matrices
 layout(std140, binding = 1) uniform Lights
 {
 	Light lights[MAX_LIGHTS];
-	mat4  lightProj;
-	mat4  lightView;
 };
 
 layout(std140, binding = 2) uniform Shared
@@ -41,6 +40,11 @@ layout(std140, binding = 2) uniform Shared
 layout(std430, binding = 3) readonly buffer InstanceData
 {
 	Instance instances[];
+};
+
+layout (std140, binding = 4) uniform ShadowMatrices
+{
+	mat4 shadowMatrices[MAX_LAYER_COUNT];
 };
 
 layout(location = 0) in vec3 position;
@@ -65,7 +69,7 @@ void main()
 	gl_Position        = projectionMatrix * posRelToCam;
 	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
 	txCoords           = textureCoords;
-	lightSpacePos      = lightProj * lightView * instances[gl_InstanceID].modelMatrix * vec4(position, 1.0f);
+	lightSpacePos      = shadowMatrices[0] * instances[gl_InstanceID].modelMatrix * vec4(position, 1.0f);
 
 	CalculateLighting();
 	CalculateVisibility(posRelToCam);

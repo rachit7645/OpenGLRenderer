@@ -44,29 +44,3 @@ void LightsBuffer::LoadLights(const std::vector<Light>& lights)
 	}
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
-
-void LightsBuffer::LoadLightProjection(const glm::mat4& projection)
-{
-	glBindBuffer(GL_UNIFORM_BUFFER, id);
-	glBufferSubData
-	(
-		GL_UNIFORM_BUFFER,
-		static_cast<GLint>(offsetof(LightsBufferGLSL, lightProj)),
-		static_cast<GLsizeiptr>(sizeof(glm::mat4)),
-		reinterpret_cast<const void*>(&projection[0][0])
-	);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-}
-
-void LightsBuffer::LoadLightView(const glm::mat4& view)
-{
-	glBindBuffer(GL_UNIFORM_BUFFER, id);
-	glBufferSubData
-	(
-		GL_UNIFORM_BUFFER,
-		static_cast<GLint>(offsetof(LightsBufferGLSL, lightView)),
-		static_cast<GLsizeiptr>(sizeof(glm::mat4)),
-		reinterpret_cast<const void*>(&view[0][0])
-	);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-}

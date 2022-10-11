@@ -22,13 +22,15 @@ constexpr std::array<f32, 4> shadowLevels =
 };
 
 ShadowMap::ShadowMap()
-	: buffer(std::make_shared<FrameBuffer>(SHADOW_DIMENSIONS.x, SHADOW_DIMENSIONS.y, shadowLevels.size() + 1))
+	: buffer(std::make_shared<FrameBuffer>(SHADOW_DIMENSIONS.x, SHADOW_DIMENSIONS.y, shadowLevels.size() + 1)),
+	  m_matrixBuffer(std::make_shared<ShadowMatrixBuffer>())
 {
 }
 
 void ShadowMap::Update(const Camera& camera, const glm::vec3& lightPos)
 {
 	auto matrices = CalculateLightSpaceMatrices(camera, glm::normalize(lightPos));
+	m_matrixBuffer->LoadMatrices(matrices);
 }
 
 Mat4s ShadowMap::CalculateLightSpaceMatrices

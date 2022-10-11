@@ -17,18 +17,48 @@ ShaderProgram::ShaderProgram(const std::string_view vertexPath, const std::strin
 {
 	programID = glCreateProgram();
 
-	u32 vertexShaderID   = LoadShader(GL_VERTEX_SHADER,   vertexPath);
-	u32 fragmentShaderID = LoadShader(GL_FRAGMENT_SHADER, fragmentPath);
+	GLuint vertexShaderID   = LoadShader(GL_VERTEX_SHADER,   vertexPath);
+	GLuint fragmentShaderID = LoadShader(GL_FRAGMENT_SHADER, fragmentPath);
 
 	glAttachShader(programID, vertexShaderID);
 	glAttachShader(programID, fragmentShaderID);
+
 	glLinkProgram(programID);
 	CheckProgram(fmt::format("Shader link failed for: {}, {}", vertexPath, fragmentPath), GL_LINK_STATUS);
 
 	glDeleteShader(vertexShaderID);
 	glDeleteShader(fragmentShaderID);
+
 	glValidateProgram(programID);
 	CheckProgram(fmt::format("Shader validation failed for: {}, {}", vertexPath, fragmentPath), GL_VALIDATE_STATUS);
+}
+
+ShaderProgram::ShaderProgram
+(
+	const std::string_view vertexPath,
+	const std::string_view fragmentPath,
+	const std::string_view geometryPath
+)
+{
+	programID = glCreateProgram();
+
+	GLuint vertexShaderID   = LoadShader(GL_VERTEX_SHADER,   vertexPath);
+	GLuint fragmentShaderID = LoadShader(GL_FRAGMENT_SHADER, fragmentPath);
+	GLuint geometryShaderID = LoadShader(GL_GEOMETRY_SHADER, geometryPath);
+
+	glAttachShader(programID, vertexShaderID);
+	glAttachShader(programID, fragmentShaderID);
+	glAttachShader(programID, geometryShaderID);
+
+	glLinkProgram(programID);
+	CheckProgram(fmt::format("Shader link failed for: {}, {}, {}", vertexPath, fragmentPath, geometryPath), GL_LINK_STATUS);
+
+	glDeleteShader(vertexShaderID);
+	glDeleteShader(fragmentShaderID);
+	glDeleteShader(geometryShaderID);
+
+	glValidateProgram(programID);
+	CheckProgram(fmt::format("Shader validation failed for: {}, {}, {}", vertexPath, fragmentPath, geometryPath), GL_VALIDATE_STATUS);
 }
 
 void ShaderProgram::DumpToFile(const std::string_view path) const
@@ -52,7 +82,7 @@ void ShaderProgram::DumpToFile(const std::string_view path) const
 	file.write(binary.data(), length);
 }
 
-u32 ShaderProgram::LoadShader(GLenum type, const std::string_view path)
+GLuint ShaderProgram::LoadShader(GLenum type, const std::string_view path)
 {
 	LOG_INFO("Loading shader: {}\n", path);
 	auto fs = std::ifstream(Files::GetResourceDirectory() + path.data(), std::ios::in);
@@ -66,7 +96,7 @@ u32 ShaderProgram::LoadShader(GLenum type, const std::string_view path)
 	buffer << fs.rdbuf();
 	std::string content = buffer.str();
 
-	u32 shaderID = glCreateShader(type);
+	GLuint shaderID    = glCreateShader(type);
 	const GLchar* cstr = content.c_str();
 	glShaderSource(shaderID, 1, &cstr, nullptr);
 	glCompileShader(shaderID);

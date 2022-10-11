@@ -24,7 +24,6 @@ MasterRenderer::MasterRenderer()
 	  m_shared(std::make_shared<SharedBuffer>())
 {
 	m_matrices->LoadProjection(glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
-	m_lights->LoadLightProjection(Maths::CreateOrthoMatrix(0.1f, 50.0f, 20.0f));
 	m_shared->LoadSkyColor(GL_SKY_COLOR);
 }
 
@@ -39,7 +38,6 @@ void MasterRenderer::BeginFrame
 	ProcessEntity(player);
 
 	m_lights->LoadLights(lights);
-	m_lights->LoadLightView(Maths::CreateLookAtMatrix(lights[0].position));
 }
 
 void MasterRenderer::RenderScene(const Camera& camera, const glm::vec4& clipPlane, Mode mode)

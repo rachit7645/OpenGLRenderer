@@ -21,8 +21,6 @@ layout(std140, binding = 0) uniform Matrices
 layout(std140, binding = 1) uniform Lights
 {
 	Light lights[MAX_LIGHTS];
-	mat4  lightProj;
-	mat4  lightView;
 };
 
 layout(std140, binding = 2) uniform Shared
