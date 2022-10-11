@@ -65,7 +65,7 @@ namespace Renderer
 		// Render water fbos
 		void RenderWaterFBOs(const std::vector<Waters::WaterTile>& waters, Entities::Camera& camera);
 		// Render shadows
-		void RenderShadows(const Entities::Camera& camera);
+		void RenderShadows(const Entities::Camera& camera, const Entities::Light& light);
 		// Render the guis
 		void RenderGUIs(const std::vector<GUI>& guis);
 		// Process entities into the entity map

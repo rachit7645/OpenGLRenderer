@@ -120,7 +120,7 @@ void SDLWindow::MainLoop()
 		// Draw water framebuffers
 		renderer.RenderWaterFBOs(waters, camera);
 		// Draw shadow framebuffer
-		renderer.RenderShadows(camera);
+		renderer.RenderShadows(camera, lights[0]);
 
 		// Main render pass
 		renderer.RenderScene(camera);
