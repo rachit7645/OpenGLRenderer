@@ -2,6 +2,7 @@
 #define SHADOW_MATRIX_BUFFER_H
 
 #include <vector>
+#include <array>
 
 #include "GLM.h"
 #include "UniformBuffer.h"
@@ -19,6 +20,7 @@ namespace Renderer
 		ShadowMatrixBuffer();
 
 		void LoadMatrices(const Mat4s& matrices);
+		void LoadDistances(const std::array<f32, 4>& distances);
 	};
 
 	namespace Detail
@@ -26,6 +28,9 @@ namespace Renderer
 		struct ShadowMatrixBufferGLSL
 		{
 			alignas(16) glm::mat4 matrices[SHADOW_MAX_FRUSTUMS];
+			// FIXME: These are issues
+			alignas(16) f32       cascadeDistances[SHADOW_MAX_FRUSTUMS];
+			alignas(16) s32       cascadeCount;
 		};
 	}
 }

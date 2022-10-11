@@ -25,6 +25,7 @@ ShadowMap::ShadowMap()
 	: buffer(std::make_shared<FrameBuffer>(SHADOW_DIMENSIONS.x, SHADOW_DIMENSIONS.y, shadowLevels.size() + 1)),
 	  m_matrixBuffer(std::make_shared<ShadowMatrixBuffer>())
 {
+	m_matrixBuffer->LoadDistances(shadowLevels);
 }
 
 void ShadowMap::Update(const Camera& camera, const glm::vec3& lightPos)

@@ -25,9 +25,10 @@ layout(std140, binding = 1) uniform Lights
 
 layout(std140, binding = 2) uniform Shared
 {
-	vec4 clipPlane;
-	vec4 skyColor;
-	vec4 cameraPos;
+	vec4  clipPlane;
+	vec4  skyColor;
+	vec4  cameraPos;
+	float farPlane;
 };
 
 layout(location = 0) in vec2 position;

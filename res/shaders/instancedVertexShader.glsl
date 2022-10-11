@@ -32,9 +32,10 @@ layout(std140, binding = 1) uniform Lights
 
 layout(std140, binding = 2) uniform Shared
 {
-	vec4 clipPlane;
-	vec4 skyColor;
-	vec4 cameraPos;
+	vec4  clipPlane;
+	vec4  skyColor;
+	vec4  cameraPos;
+	float farPlane;
 };
 
 layout(std430, binding = 3) readonly buffer InstanceData
@@ -44,7 +45,9 @@ layout(std430, binding = 3) readonly buffer InstanceData
 
 layout (std140, binding = 4) uniform ShadowMatrices
 {
-	mat4 shadowMatrices[MAX_LAYER_COUNT];
+	mat4  shadowMatrices[MAX_LAYER_COUNT];
+	float cascadeDistances[MAX_LAYER_COUNT];
+	int   cascadeCount;
 };
 
 layout(location = 0) in vec3 position;
@@ -57,7 +60,6 @@ out vec3  unitNormal;
 out vec3  unitCameraVector;
 out vec3  unitLightVector[MAX_LIGHTS];
 out vec4  worldPosition;
-out vec4  lightSpacePos;
 
 void CalculateLighting();
 void CalculateVisibility(vec4 posRelToCam);
@@ -69,7 +71,6 @@ void main()
 	gl_Position        = projectionMatrix * posRelToCam;
 	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
 	txCoords           = textureCoords;
-	lightSpacePos      = shadowMatrices[0] * instances[gl_InstanceID].modelMatrix * vec4(position, 1.0f);
 
 	CalculateLighting();
 	CalculateVisibility(posRelToCam);

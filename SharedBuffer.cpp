@@ -40,14 +40,27 @@ void SharedBuffer::LoadSkyColor(const glm::vec4& skyColor)
 
 void SharedBuffer::LoadCameraPos(const Camera& camera)
 {
+	auto position = glm::vec4(camera.position, 1.0f);
 	glBindBuffer(GL_UNIFORM_BUFFER, id);
-	glm::vec4 position = glm::vec4(camera.position, 1.0f);
 	glBufferSubData
 	(
 		GL_UNIFORM_BUFFER,
 		static_cast<GLint>(offsetof(SharedBufferGLSL, cameraPos)),
 		static_cast<GLsizeiptr>(sizeof(glm::vec4)),
 		reinterpret_cast<const void*>(&position[0])
+	);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void SharedBuffer::LoadFarPlane(f32 farPlane)
+{
+	glBindBuffer(GL_UNIFORM_BUFFER, id);
+	glBufferSubData
+	(
+		GL_UNIFORM_BUFFER,
+		static_cast<GLint>(offsetof(SharedBufferGLSL, farPlane)),
+		static_cast<GLsizeiptr>(sizeof(f32)),
+		reinterpret_cast<const void*>(&farPlane)
 	);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }

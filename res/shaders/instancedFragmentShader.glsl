@@ -5,9 +5,11 @@
 const float AMBIENT_STRENGTH = 0.2f;
 const float MIN_SPECULAR     = 0.0f;
 const int   MAX_LIGHTS       = 4;
+const int   MAX_LAYER_COUNT  = 16;
 
-const float PCF_COUNT    = 3.5f;
-const float TOTAL_TEXELS = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.0f);
+const float BIAS_MODIFIER = 0.5f;
+const float PCF_COUNT     = 3.5f;
+const float TOTAL_TEXELS  = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.0f);
 
 struct Light
 {
@@ -18,6 +20,12 @@ struct Light
 	vec4 attenuation;
 };
 
+layout(std140, binding = 0) uniform Matrices
+{
+	mat4 projectionMatrix;
+	mat4 viewMatrix;
+};
+
 layout(std140, binding = 1) uniform Lights
 {
 	Light lights[MAX_LIGHTS];
@@ -25,9 +33,17 @@ layout(std140, binding = 1) uniform Lights
 
 layout(std140, binding = 2) uniform Shared
 {
-	vec4 clipPlane;
-	vec4 skyColor;
-	vec4 cameraPos;
+	vec4  clipPlane;
+	vec4  skyColor;
+	vec4  cameraPos;
+	float farPlane;
+};
+
+layout (std140, binding = 4) uniform ShadowMatrices
+{
+	mat4  shadowMatrices[MAX_LAYER_COUNT];
+	float cascadeDistances[MAX_LAYER_COUNT];
+	int   cascadeCount;
 };
 
 in float visibility;
@@ -36,7 +52,6 @@ in vec3  unitNormal;
 in vec3  unitCameraVector;
 in vec3  unitLightVector[MAX_LIGHTS];
 in vec4  worldPosition;
-in vec4  lightSpacePos;
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D specularTexture;
@@ -104,14 +119,42 @@ vec4 CalculateSpecular(int index)
 
 float CalculateShadow()
 {
-	vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
-	projCoords      = projCoords * 0.5f + 0.5f;
+	vec4  viewPosition = viewMatrix * worldPosition;
+	float depthValue   = abs(viewPosition.z);
+
+	int layer = -1;
+	for (int i = 0; i < cascadeCount; ++i)
+	{
+		if (depthValue < cascadeDistances[i])
+		{
+			layer = i;
+			break;
+		}
+	}
+
+	if (layer == -1)
+	{
+		layer = cascadeCount;
+	}
+
+	vec4 lightSpacePos = shadowMatrices[layer] * worldPosition;
+	vec3 projCoords    = lightSpacePos.xyz / lightSpacePos.w;
+	projCoords         = projCoords * 0.5f + 0.5f;
 
 	float currentDepth = projCoords.z;
 	float closestDepth = texture(shadowMap, projCoords.xy).r;
 
 	vec3  lightDir = unitLightVector[0];
 	float bias     = max(0.05f * (1.0f - dot(unitNormal, lightDir)), 0.005f);
+
+	if (layer == cascadeCount)
+	{
+		bias *= 1.0f / (farPlane * BIAS_MODIFIER);
+	}
+	else
+	{
+		bias *= 1.0f / (cascadeDistances[layer] * BIAS_MODIFIER);
+	}
 
 	float shadow    = 0.0f;
 	vec2  texelSize = 1.0f / textureSize(shadowMap, 0);
@@ -120,7 +163,7 @@ float CalculateShadow()
 	{
 		for (float y = -PCF_COUNT; y <= PCF_COUNT; ++y)
 		{
-			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize, layer).r;
 			shadow        += WhenGreater(vec4(currentDepth - bias), vec4(pcfDepth)).x;
 		}
 	}
