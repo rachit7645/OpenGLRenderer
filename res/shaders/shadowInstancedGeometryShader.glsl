@@ -7,9 +7,9 @@ layout(triangle_strip, max_vertices = 3) out;
 
 layout (std140, binding = 4) uniform ShadowMatrices
 {
+	int   cascadeCount;
 	mat4  shadowMatrices[MAX_LAYER_COUNT];
 	float cascadeDistances[MAX_LAYER_COUNT];
-	int   cascadeCount;
 };
 
 void main()

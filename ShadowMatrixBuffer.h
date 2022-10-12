@@ -3,10 +3,12 @@
 
 #include <vector>
 #include <array>
+#include <GL/glew.h>
 
 #include "GLM.h"
 #include "UniformBuffer.h"
 #include "Util.h"
+#include "GL.h"
 
 namespace Renderer
 {
@@ -27,10 +29,9 @@ namespace Renderer
 	{
 		struct ShadowMatrixBufferGLSL
 		{
-			alignas(16) glm::mat4 matrices[SHADOW_MAX_FRUSTUMS];
-			// FIXME: These are issues
-			alignas(16) f32       cascadeDistances[SHADOW_MAX_FRUSTUMS];
-			alignas(16) s32       cascadeCount;
+			alignas(16) GL::IntGLSL   cascadeCount;
+			alignas(16) glm::mat4     matrices[SHADOW_MAX_FRUSTUMS];
+			alignas(16) GL::FloatGLSL cascadeDistances[SHADOW_MAX_FRUSTUMS];
 		};
 	}
 }

@@ -15,7 +15,7 @@ namespace Renderer
 	constexpr f32 FOV          = 70.0f;
 	constexpr f32 ASPECT_RATIO = 16.0 / 9.0;
 	constexpr f32 NEAR_PLANE   = 0.1f;
-	constexpr f32 FAR_PLANE    = 1000.0f;
+	constexpr f32 FAR_PLANE    = 300.0f;
 
 	// TODO: Store current mode in renderers
 	enum class Mode

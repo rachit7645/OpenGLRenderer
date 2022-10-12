@@ -28,6 +28,18 @@ namespace GL
 	void Init(const glm::ivec2& dimensions);
 	// Log debug information
 	void LogDebugInfo();
+
+	namespace Detail
+	{
+		template<typename T>
+		struct DataSTD140
+		{
+			alignas(16) T data;
+		};
+	}
+
+	using FloatGLSL = Detail::DataSTD140<GLfloat>;
+	using IntGLSL   = Detail::DataSTD140<GLint>;
 }
 
 #endif

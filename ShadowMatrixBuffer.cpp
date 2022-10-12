@@ -28,7 +28,12 @@ void ShadowMatrixBuffer::LoadMatrices(const ShadowMatrixBuffer::Mat4s& matrices)
 
 void ShadowMatrixBuffer::LoadDistances(const std::array<f32, 4>& distances)
 {
-	auto size = static_cast<s32>(distances.size());
+	std::array<GL::FloatGLSL, 4> distancesGLSL = {};
+
+	for (usize i = 0; i < distances.size(); ++i)
+	{
+		distancesGLSL[i] = {distances[i]};
+	}
 
 	glBindBuffer(GL_UNIFORM_BUFFER, id);
 
@@ -36,16 +41,18 @@ void ShadowMatrixBuffer::LoadDistances(const std::array<f32, 4>& distances)
 	(
 		GL_UNIFORM_BUFFER,
 		static_cast<GLintptr>(offsetof(ShadowMatrixBufferGLSL, cascadeDistances)),
-		static_cast<GLsizeiptr>(size),
-		reinterpret_cast<const void*>(&distances[0])
+		static_cast<GLsizeiptr>(distancesGLSL.size() * sizeof(GL::FloatGLSL)),
+		reinterpret_cast<const void*>(distancesGLSL.data())
 	);
+
+	GL::IntGLSL count = {static_cast<GLint>(distances.size())};
 
 	glBufferSubData
 	(
 		GL_UNIFORM_BUFFER,
 		static_cast<GLintptr>(offsetof(ShadowMatrixBufferGLSL, cascadeCount)),
-		static_cast<GLsizeiptr>(sizeof(s32)),
-		reinterpret_cast<const void*>(&size)
+		static_cast<GLsizeiptr>(sizeof(GL::IntGLSL)),
+		reinterpret_cast<const void*>(&count)
 	);
 
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);

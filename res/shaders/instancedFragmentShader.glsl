@@ -1,6 +1,7 @@
 #version 430 core
 
 // TODO: Add back muliple lights
+// FIXME: When camera gets too close the shadow clips :(
 
 const float AMBIENT_STRENGTH = 0.2f;
 const float MIN_SPECULAR     = 0.0f;
@@ -41,9 +42,9 @@ layout(std140, binding = 2) uniform Shared
 
 layout (std140, binding = 4) uniform ShadowMatrices
 {
+	int   cascadeCount;
 	mat4  shadowMatrices[MAX_LAYER_COUNT];
 	float cascadeDistances[MAX_LAYER_COUNT];
-	int   cascadeCount;
 };
 
 in float visibility;
@@ -55,7 +56,8 @@ in vec4  worldPosition;
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D specularTexture;
-uniform sampler2D shadowMap;
+
+uniform sampler2DArray shadowMap;
 
 uniform float shineDamper;
 uniform float reflectivity;
@@ -140,9 +142,7 @@ float CalculateShadow()
 	vec4 lightSpacePos = shadowMatrices[layer] * worldPosition;
 	vec3 projCoords    = lightSpacePos.xyz / lightSpacePos.w;
 	projCoords         = projCoords * 0.5f + 0.5f;
-
 	float currentDepth = projCoords.z;
-	float closestDepth = texture(shadowMap, projCoords.xy).r;
 
 	vec3  lightDir = unitLightVector[0];
 	float bias     = max(0.05f * (1.0f - dot(unitNormal, lightDir)), 0.005f);
@@ -157,19 +157,19 @@ float CalculateShadow()
 	}
 
 	float shadow    = 0.0f;
-	vec2  texelSize = 1.0f / textureSize(shadowMap, 0);
+	vec2  texelSize = 1.0f / vec2(textureSize(shadowMap, 0));
 
 	for (float x = -PCF_COUNT; x <= PCF_COUNT; ++x)
 	{
 		for (float y = -PCF_COUNT; y <= PCF_COUNT; ++y)
 		{
-			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize, layer).r;
+			float pcfDepth = texture(shadowMap, vec3(projCoords.xy + vec2(x, y) * texelSize, layer)).r;
 			shadow        += WhenGreater(vec4(currentDepth - bias), vec4(pcfDepth)).x;
 		}
 	}
 
 	shadow /= TOTAL_TEXELS;
-	return shadow * WhenLesser(vec4(projCoords.z), vec4(1.0f)).x;
+	return shadow * WhenLesser(vec4(currentDepth), vec4(1.0f)).x;
 }
 
 // Branchless implementation of

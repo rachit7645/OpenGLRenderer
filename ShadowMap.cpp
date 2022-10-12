@@ -11,7 +11,7 @@ using Entities::Camera;
 using Vec4s = ShadowMap::Vec4s;
 using Mat4s = ShadowMap::Mat4s;
 
-constexpr glm::ivec2 SHADOW_DIMENSIONS = {1024, 1024};
+constexpr glm::ivec2 SHADOW_DIMENSIONS = {2048, 2048};
 
 constexpr std::array<f32, 4> shadowLevels =
 {

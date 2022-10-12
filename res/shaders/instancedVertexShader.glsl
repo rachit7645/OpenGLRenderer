@@ -45,9 +45,9 @@ layout(std430, binding = 3) readonly buffer InstanceData
 
 layout (std140, binding = 4) uniform ShadowMatrices
 {
+	int   cascadeCount;
 	mat4  shadowMatrices[MAX_LAYER_COUNT];
 	float cascadeDistances[MAX_LAYER_COUNT];
-	int   cascadeCount;
 };
 
 layout(location = 0) in vec3 position;
