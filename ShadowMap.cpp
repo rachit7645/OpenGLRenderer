@@ -1,5 +1,8 @@
 #include "ShadowMap.h"
 
+#include <limits>
+#include <vector>
+
 #include "Util.h"
 #include "RenderConstants.h"
 #include "Maths.h"
@@ -12,8 +15,9 @@ using Vec4s = ShadowMap::Vec4s;
 using Mat4s = ShadowMap::Mat4s;
 
 constexpr glm::ivec2 SHADOW_DIMENSIONS = {2048, 2048};
+constexpr f32        SHADOW_OFFSET     = 10.0f;
 
-constexpr std::array<f32, 4> shadowLevels =
+const std::vector<f32> shadowLevels =
 {
 	FAR_PLANE / 50.0f,
 	FAR_PLANE / 25.0f,
@@ -23,7 +27,7 @@ constexpr std::array<f32, 4> shadowLevels =
 
 ShadowMap::ShadowMap()
 	: buffer(std::make_shared<FrameBuffer>(SHADOW_DIMENSIONS.x, SHADOW_DIMENSIONS.y, shadowLevels.size() + 1)),
-	  m_matrixBuffer(std::make_shared<ShadowMatrixBuffer>())
+	  m_matrixBuffer(std::make_shared<ShadowBuffer>())
 {
 	m_matrixBuffer->LoadDistances(shadowLevels);
 }
@@ -40,22 +44,14 @@ Mat4s ShadowMap::CalculateLightSpaceMatrices
 	const glm::vec3& lightDir
 )
 {
-	Mat4s matrices;
+	auto matrices = Mat4s(shadowLevels.size() + 1);
 
-	for (usize i = 0; i < shadowLevels.size() + 1; ++i)
+	matrices.front() = CalculateLightSpaceMatrix(NEAR_PLANE,          shadowLevels.front(), camera, lightDir);
+	matrices.back()  = CalculateLightSpaceMatrix(shadowLevels.back(), FAR_PLANE,            camera, lightDir);
+
+	for (usize i = 1; i < shadowLevels.size(); ++i)
 	{
-		if (i == 0)
-		{
-			matrices.emplace_back(CalculateLightSpaceMatrix(NEAR_PLANE, shadowLevels[i], camera, lightDir));
-		}
-		else if (i < shadowLevels.size())
-		{
-			matrices.emplace_back(CalculateLightSpaceMatrix(shadowLevels[i - 1], shadowLevels[i], camera, lightDir));
-		}
-		else
-		{
-			matrices.emplace_back(CalculateLightSpaceMatrix(shadowLevels[i - 1], FAR_PLANE, camera, lightDir));
-		}
+		matrices[i] = CalculateLightSpaceMatrix(shadowLevels[i - 1], shadowLevels[i], camera, lightDir);
 	}
 
 	return matrices;
@@ -71,7 +67,7 @@ glm::mat4 ShadowMap::CalculateLightSpaceMatrix
 {
 	auto proj = glm::perspective
 	(
-		glm::radians(camera.distance),
+		glm::radians(FOV),
 		ASPECT_RATIO,
 		nearPlane,
 		farPlane
@@ -79,56 +75,71 @@ glm::mat4 ShadowMap::CalculateLightSpaceMatrix
 
 	auto corners = CalculateFrustumCorners(proj, Maths::CreateViewMatrix(camera));
 
+	auto lightView = CalculateViewMatrix(corners, lightDir);
+	auto lightProj = CalculateProjMatrix(corners, lightView);
+
+	return lightProj * lightView;
+}
+
+glm::vec3 ShadowMap::CalculateCenter(const Vec4s& corners)
+{
 	auto center = glm::vec3(0.0f);
-	for (const auto& v : corners)
+
+	for (const auto& corner : corners)
 	{
-		center += glm::vec3(v);
-	}
-	center /= corners.size();
-
-	auto lightView = glm::lookAt(center + lightDir, center, glm::vec3(0.0f, 1.0f, 0.0f));
-
-	f32 minX, minY, minZ;
-	f32 maxX, maxY, maxZ;
-
-	minX = minY = minZ = std::numeric_limits<f32>::max();
-	maxX = maxY = maxZ = std::numeric_limits<f32>::min();
-
-	for (const auto& v : corners)
-	{
-		auto trf = lightView * v;
-		minX = std::min(minX, trf.x);
-		maxX = std::max(maxX, trf.x);
-		minY = std::min(minY, trf.y);
-		maxY = std::max(maxY, trf.y);
-		minZ = std::min(minZ, trf.z);
-		maxZ = std::max(maxZ, trf.z);
+		center += glm::vec3(corner);
 	}
 
-	// Tune this parameter according to the scene
-	constexpr f32 zMult = 10.0f;
+	return center /= corners.size();
+}
 
-	if (minZ < 0.0f)
+glm::mat4 ShadowMap::CalculateViewMatrix(const Vec4s& corners, const glm::vec3& lightDir)
+{
+	auto center = CalculateCenter(corners);
+	auto matrix = glm::lookAt(center + lightDir, center, glm::vec3(0.0f, 1.0f, 0.0f));
+	return matrix;
+}
+
+glm::mat4 ShadowMap::CalculateProjMatrix(const Vec4s& corners, const glm::mat4& lightView)
+{
+	auto min = glm::vec3(std::numeric_limits<f32>::max());
+	auto max = glm::vec3(std::numeric_limits<f32>::min());
+
+	for (const auto& corner : corners)
 	{
-		minZ *= zMult;
-	}
-	else
-	{
-		minZ /= zMult;
+		auto cornerLS = lightView * corner;
+		min.x = std::min(min.x, cornerLS.x);
+		max.x = std::max(max.x, cornerLS.x);
+		min.y = std::min(min.y, cornerLS.y);
+		max.y = std::max(max.y, cornerLS.y);
+		min.z = std::min(min.z, cornerLS.z);
+		max.z = std::max(max.z, cornerLS.z);
 	}
 
-	if (maxZ < 0.0f)
+	if (min.z < 0.0f)
 	{
-		maxZ /= zMult;
+		min.z *= SHADOW_OFFSET;
 	}
 	else
 	{
-		maxZ *= zMult;
+		min.z /= SHADOW_OFFSET;
 	}
 
-	auto lightProjection = glm::ortho(minX, maxX, minY, maxY, minZ, maxZ);
+	if (max.z < 0.0f)
+	{
+		max.z /= SHADOW_OFFSET;
+	}
+	else
+	{
+		max.z *= SHADOW_OFFSET;
+	}
 
-	return lightProjection * lightView;
+	return glm::ortho
+	(
+		min.x, max.x,
+		min.y, max.y,
+		min.z, max.z
+	);
 }
 
 Vec4s ShadowMap::CalculateFrustumCorners(const glm::mat4& proj, const glm::mat4& view)

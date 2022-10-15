@@ -1,17 +1,17 @@
-#include "ShadowMatrixBuffer.h"
+#include "ShadowBuffer.h"
 
 using namespace Renderer;
 
-using Detail::ShadowMatrixBufferGLSL;
+using Detail::ShadowBufferGLSL;
 
-using Mat4s = ShadowMatrixBuffer::Mat4s;
+using Mat4s = ShadowBuffer::Mat4s;
 
-ShadowMatrixBuffer::ShadowMatrixBuffer()
-	: UniformBuffer(4, sizeof(ShadowMatrixBufferGLSL))
+ShadowBuffer::ShadowBuffer()
+	: UniformBuffer(4, sizeof(ShadowBufferGLSL))
 {
 }
 
-void ShadowMatrixBuffer::LoadMatrices(const ShadowMatrixBuffer::Mat4s& matrices)
+void ShadowBuffer::LoadMatrices(const ShadowBuffer::Mat4s& matrices)
 {
 	auto size = std::min(matrices.size(), SHADOW_MAX_FRUSTUMS) * sizeof(glm::mat4);
 
@@ -19,17 +19,18 @@ void ShadowMatrixBuffer::LoadMatrices(const ShadowMatrixBuffer::Mat4s& matrices)
 	glBufferSubData
 	(
 		GL_UNIFORM_BUFFER,
-		static_cast<GLintptr>(offsetof(ShadowMatrixBufferGLSL, matrices)),
+		static_cast<GLintptr>(offsetof(ShadowBufferGLSL, matrices)),
 		static_cast<GLsizeiptr>(size),
 		reinterpret_cast<const void*>(&matrices[0])
 	);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void ShadowMatrixBuffer::LoadDistances(const std::array<f32, 4>& distances)
+void ShadowBuffer::LoadDistances(const std::vector<f32>& distances)
 {
-	std::array<GL::FloatGLSL, 4> distancesGLSL = {};
+	auto distancesGLSL = std::vector<GL::FloatGLSL>(distances.size());
 
+	// Convert to glsl friendly data
 	for (usize i = 0; i < distances.size(); ++i)
 	{
 		distancesGLSL[i] = {distances[i]};
@@ -40,17 +41,18 @@ void ShadowMatrixBuffer::LoadDistances(const std::array<f32, 4>& distances)
 	glBufferSubData
 	(
 		GL_UNIFORM_BUFFER,
-		static_cast<GLintptr>(offsetof(ShadowMatrixBufferGLSL, cascadeDistances)),
+		static_cast<GLintptr>(offsetof(ShadowBufferGLSL, cascadeDistances)),
 		static_cast<GLsizeiptr>(distancesGLSL.size() * sizeof(GL::FloatGLSL)),
 		reinterpret_cast<const void*>(distancesGLSL.data())
 	);
 
+	// Convert to glsl friendly data
 	GL::IntGLSL count = {static_cast<GLint>(distances.size())};
 
 	glBufferSubData
 	(
 		GL_UNIFORM_BUFFER,
-		static_cast<GLintptr>(offsetof(ShadowMatrixBufferGLSL, cascadeCount)),
+		static_cast<GLintptr>(offsetof(ShadowBufferGLSL, cascadeCount)),
 		static_cast<GLsizeiptr>(sizeof(GL::IntGLSL)),
 		reinterpret_cast<const void*>(&count)
 	);

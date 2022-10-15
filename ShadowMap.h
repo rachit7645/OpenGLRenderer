@@ -6,7 +6,7 @@
 #include "GLM.h"
 #include "FrameBuffer.h"
 #include "Camera.h"
-#include "ShadowMatrixBuffer.h"
+#include "ShadowBuffer.h"
 
 namespace Renderer
 {
@@ -14,7 +14,7 @@ namespace Renderer
 	{
 	public:
 		using FbPtr  = std::shared_ptr<FrameBuffer>;
-		using MtxPtr = std::shared_ptr<ShadowMatrixBuffer>;
+		using MtxPtr = std::shared_ptr<ShadowBuffer>;
 		using Vec4s  = std::vector<glm::vec4>;
 		using Mat4s  = std::vector<glm::mat4>;
 
@@ -43,7 +43,10 @@ namespace Renderer
 			const glm::vec3& lightDir
 		);
 
-		Vec4s CalculateFrustumCorners(const glm::mat4& proj, const glm::mat4& view);
+		glm::vec3 CalculateCenter(const Vec4s& corners);
+		glm::mat4 CalculateViewMatrix(const Vec4s& corners, const glm::vec3& lightDir);
+		glm::mat4 CalculateProjMatrix(const Vec4s& corners, const glm::mat4& lightView);
+		Vec4s     CalculateFrustumCorners(const glm::mat4& proj, const glm::mat4& view);
 	};
 }
 

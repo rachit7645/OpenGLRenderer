@@ -5,7 +5,7 @@ const int MAX_LAYER_COUNT = 16;
 layout(triangles,      invocations = 5)  in;
 layout(triangle_strip, max_vertices = 3) out;
 
-layout (std140, binding = 4) uniform ShadowMatrices
+layout (std140, binding = 4) uniform ShadowBuffer
 {
 	int   cascadeCount;
 	mat4  shadowMatrices[MAX_LAYER_COUNT];

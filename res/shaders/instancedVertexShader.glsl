@@ -43,7 +43,7 @@ layout(std430, binding = 3) readonly buffer InstanceData
 	Instance instances[];
 };
 
-layout (std140, binding = 4) uniform ShadowMatrices
+layout (std140, binding = 4) uniform ShadowBuffer
 {
 	int   cascadeCount;
 	mat4  shadowMatrices[MAX_LAYER_COUNT];

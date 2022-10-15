@@ -14,20 +14,20 @@ namespace Renderer
 {
 	constexpr usize SHADOW_MAX_FRUSTUMS = 16;
 
-	class ShadowMatrixBuffer : public UniformBuffer
+	class ShadowBuffer : public UniformBuffer
 	{
 	public:
 		using Mat4s = std::vector<glm::mat4>;
 
-		ShadowMatrixBuffer();
+		ShadowBuffer();
 
 		void LoadMatrices(const Mat4s& matrices);
-		void LoadDistances(const std::array<f32, 4>& distances);
+		void LoadDistances(const std::vector<f32>& distances);
 	};
 
 	namespace Detail
 	{
-		struct ShadowMatrixBufferGLSL
+		struct ShadowBufferGLSL
 		{
 			alignas(16) GL::IntGLSL   cascadeCount;
 			alignas(16) glm::mat4     matrices[SHADOW_MAX_FRUSTUMS];

@@ -70,27 +70,11 @@ glm::mat4 Maths::CreateViewMatrix(const Camera& camera)
 {
 	// 1. Create an identity matrix
 	glm::mat4 matrix(1.0f);
-	// 2. Rotate by x (pitch), y (yaw) and optionally z (roll)
+	// 2. Rotate by x (pitch), y (yaw) and z (roll)
 	matrix = glm::rotate(matrix, glm::radians(camera.rotation.x), glm::vec3(1, 0, 0));
 	matrix = glm::rotate(matrix, glm::radians(camera.rotation.y), glm::vec3(0, 1, 0));
-	// I don't use roll, so this would be an unnecessary calculation
-	// matrix = glm::rotate(matrix, glm::radians(camera.m_rotation.z), glm::vec3(0, 0, 1));
+	matrix = glm::rotate(matrix, glm::radians(camera.rotation.z), glm::vec3(0, 0, 1));
 	// 3. Translate by the inverse of the camera position
 	matrix = glm::translate(matrix, -camera.position);
 	return matrix;
-}
-
-glm::mat4 Maths::CreateOrthoMatrix(f32 nearPlane, f32 farPlane, f32 orthoVal)
-{
-	return glm::ortho(-orthoVal, orthoVal, -orthoVal, orthoVal, nearPlane, farPlane);
-}
-
-glm::mat4 Maths::CreateLookAtMatrix(const glm::vec3& position)
-{
-	return glm::lookAt
-	(
-		position,
-		glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f)
-	);
 }

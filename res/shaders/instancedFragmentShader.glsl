@@ -40,7 +40,7 @@ layout(std140, binding = 2) uniform Shared
 	float farPlane;
 };
 
-layout (std140, binding = 4) uniform ShadowMatrices
+layout (std140, binding = 4) uniform ShadowBuffer
 {
 	int   cascadeCount;
 	mat4  shadowMatrices[MAX_LAYER_COUNT];
@@ -72,6 +72,9 @@ float CalculateAttFactor(int index);
 vec4  CalculateAmbient(int index);
 vec4  CalculateDiffuse(int index);
 vec4  CalculateSpecular(int index);
+
+int   GetCurrentLayer();
+float CalculateBias(int layer);
 float CalculateShadow();
 
 void main()
@@ -119,7 +122,8 @@ vec4 CalculateSpecular(int index)
 	return vec4(dampedFactor * reflectivity * lights[index].specular.rgb, 1.0f);
 }
 
-float CalculateShadow()
+// FIXME: Remove branching
+int GetCurrentLayer()
 {
 	vec4  viewPosition = viewMatrix * worldPosition;
 	float depthValue   = abs(viewPosition.z);
@@ -139,13 +143,13 @@ float CalculateShadow()
 		layer = cascadeCount;
 	}
 
-	vec4 lightSpacePos = shadowMatrices[layer] * worldPosition;
-	vec3 projCoords    = lightSpacePos.xyz / lightSpacePos.w;
-	projCoords         = projCoords * 0.5f + 0.5f;
-	float currentDepth = projCoords.z;
+	return layer;
+}
 
-	vec3  lightDir = unitLightVector[0];
-	float bias     = max(0.05f * (1.0f - dot(unitNormal, lightDir)), 0.005f);
+// FIXME: Remove branching
+float CalculateBias(int layer)
+{
+	float bias = max(0.05f * (1.0f - dot(unitNormal, unitLightVector[0])), 0.005f);
 
 	if (layer == cascadeCount)
 	{
@@ -155,6 +159,19 @@ float CalculateShadow()
 	{
 		bias *= 1.0f / (cascadeDistances[layer] * BIAS_MODIFIER);
 	}
+
+	return bias;
+}
+
+float CalculateShadow()
+{
+	int layer = GetCurrentLayer();
+
+	vec4 lightSpacePos = shadowMatrices[layer] * worldPosition;
+	vec3 projCoords    = lightSpacePos.xyz / lightSpacePos.w;
+	projCoords         = projCoords * 0.5f + 0.5f;
+	float currentDepth = projCoords.z;
+	float bias         = CalculateBias(layer);
 
 	float shadow    = 0.0f;
 	vec2  texelSize = 1.0f / vec2(textureSize(shadowMap, 0));

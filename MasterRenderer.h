@@ -33,7 +33,7 @@ namespace Renderer
 	class MasterRenderer
 	{
 	public:
-		explicit MasterRenderer();
+		MasterRenderer();
 
 		Shader::InstancedShader       instancedShader;
 		Shader::FastInstancedShader   fastInstancedShader;
