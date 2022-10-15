@@ -1,16 +1,18 @@
 #version 430 core
 
 // TODO: Add back muliple lights
-// FIXME: When camera gets too close the shadow clips :(
 
 const float AMBIENT_STRENGTH = 0.2f;
 const float MIN_SPECULAR     = 0.0f;
 const int   MAX_LIGHTS       = 4;
-const int   MAX_LAYER_COUNT  = 16;
 
-const float BIAS_MODIFIER = 0.5f;
-const float PCF_COUNT     = 3.5f;
-const float TOTAL_TEXELS  = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.0f);
+const int   MAX_LAYER_COUNT = 16;
+const float MIN_BIAS        = 0.005f;
+const float MAX_BIAS        = 0.05f;
+const float SHADOW_AMOUNT   = 0.5f;
+const float BIAS_MODIFIER   = 0.5f;
+const float PCF_COUNT       = 3.5f;
+const float TOTAL_TEXELS    = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.0f);
 
 struct Light
 {
@@ -149,7 +151,7 @@ int GetCurrentLayer()
 // FIXME: Remove branching
 float CalculateBias(int layer)
 {
-	float bias = max(0.05f * (1.0f - dot(unitNormal, unitLightVector[0])), 0.005f);
+	float bias = max(MAX_BIAS * (1.0f - dot(unitNormal, unitLightVector[0])), MIN_BIAS);
 
 	if (layer == cascadeCount)
 	{
@@ -181,7 +183,7 @@ float CalculateShadow()
 		for (float y = -PCF_COUNT; y <= PCF_COUNT; ++y)
 		{
 			float pcfDepth = texture(shadowMap, vec3(projCoords.xy + vec2(x, y) * texelSize, layer)).r;
-			shadow        += WhenGreater(vec4(currentDepth - bias), vec4(pcfDepth)).x;
+			shadow        += SHADOW_AMOUNT * WhenGreater(vec4(currentDepth - bias), vec4(pcfDepth)).x;
 		}
 	}
 
