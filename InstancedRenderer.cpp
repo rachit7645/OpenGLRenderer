@@ -11,12 +11,12 @@ InstancedRenderer::InstancedRenderer
 	InstancedShader& shader,
 	FastInstancedShader& fastShader,
 	ShadowInstancedShader& shadowShader,
-	ShadowFrameBuffer& shadowFBO
+	ShadowMap& shadowMap
 )
 	: shader(shader),
 	  fastShader(fastShader),
 	  shadowShader(shadowShader),
-	  shadowFBO(shadowFBO),
+	  shadowMap(shadowMap),
 	  m_buffer(std::make_shared<InstanceBuffer>())
 {
 	shader.Start();
@@ -130,7 +130,7 @@ void InstancedRenderer::LoadSpecular(const Mesh& mesh)
 void InstancedRenderer::LoadShadowMap()
 {
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, shadowFBO.buffer->depthTexture->id);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, shadowMap.buffer->depthTexture->id);
 }
 
 void InstancedRenderer::UnbindMesh()

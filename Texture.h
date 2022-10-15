@@ -20,9 +20,17 @@ namespace Renderer
 			GLsizei height,
 			GLint internalFormat,
 			GLint format,
-			GLint type,
-			GLint filter,
-			bool border = false
+			GLint type
+		);
+		// Empty array texture
+		Texture
+		(
+			GLsizei width,
+			GLsizei height,
+			GLsizei depth,
+			GLint internalFormat,
+			GLint format,
+			GLint type
 		);
 		// Destructor 
 		~Texture();
@@ -31,6 +39,7 @@ namespace Renderer
 
 		int width    = 0;
 		int height   = 0;
+		int depth    = 0;
 		int channels = 0;
 	};
 }

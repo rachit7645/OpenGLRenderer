@@ -1,6 +1,6 @@
 #include "Texture.h"
 
-#include <array>
+#include "GLM.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
@@ -10,6 +10,8 @@
 #include "Util.h"
 
 using namespace Renderer;
+
+constexpr glm::vec4 borderColor = {1.0f, 1.0f, 1.0f, 1.0f};
 
 Texture::Texture(const std::string_view path)
 {
@@ -63,33 +65,18 @@ Texture::Texture
 	GLsizei height,
 	GLint internalFormat,
 	GLint format,
-	GLint type,
-	GLint filter,
-	bool border
+	GLint type
 )
 	: width(width),
-	  height(height),
-	  channels(STBI_rgb_alpha)
+	  height(height)
 {
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
-
-	if (border)
-	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-
-		constexpr std::array<f32, 4> borderColor = {1.0f, 1.0f, 1.0f, 1.0f};
-		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor.data());
-	}
-	else
-	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	}
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,     GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,     GL_REPEAT);
 
 	glTexImage2D
 	(
@@ -105,6 +92,46 @@ Texture::Texture
 	);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+Texture::Texture
+(
+	GLsizei width,
+	GLsizei height,
+	GLsizei depth,
+	GLint internalFormat,
+	GLint format,
+	GLint type
+)
+	: width(width),
+  	  height(height),
+	  depth(depth)
+{
+	glGenTextures(1, &id);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, id);
+
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S,     GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T,     GL_CLAMP_TO_BORDER);
+
+	glTexParameterfv(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BORDER_COLOR, &borderColor[0]);
+
+	glTexImage3D
+	(
+		GL_TEXTURE_2D_ARRAY,
+		0,
+		internalFormat,
+		width,
+		height,
+		depth,
+		0,
+		format,
+		type,
+		nullptr
+	);
+
+	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 }
 
 Texture::~Texture()

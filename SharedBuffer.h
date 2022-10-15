@@ -15,6 +15,7 @@ namespace Renderer
 		void LoadClipPlane(const glm::vec4& clipPlane);
 		void LoadSkyColor(const glm::vec4& skyColor);
 		void LoadCameraPos(const Entities::Camera& camera);
+		void LoadFarPlane(f32 farPlane);
 	};
 
 	namespace Detail
@@ -24,6 +25,7 @@ namespace Renderer
 			alignas(16) glm::vec4 clipPlane;
 			alignas(16) glm::vec4 skyColor;
 			alignas(16) glm::vec4 cameraPos;
+			alignas(16) f32       farPlane;
 		};
 	}
 }

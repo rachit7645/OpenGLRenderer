@@ -16,13 +16,8 @@ namespace Renderer
 		Color,
 		Depth,
 		ColorAndDepth,
+		DepthArray,
 		Empty
-	};
-
-	enum FBFilter : GLint
-	{
-		Linear  = GL_LINEAR,
-		Nearest = GL_NEAREST
 	};
 
 	class FrameBuffer
@@ -34,7 +29,9 @@ namespace Renderer
 		// Default constructor
 		FrameBuffer() = default;
 		// Main constructor
-		FrameBuffer(GLsizei width, GLsizei height, FBType type, FBFilter filter = FBFilter::Linear);
+		FrameBuffer(GLsizei width, GLsizei height, FBType type);
+		// Array texture constructor
+		FrameBuffer(GLsizei width, GLsizei height, GLsizei depth);
 		// Destructor
 		~FrameBuffer();
 
@@ -44,10 +41,10 @@ namespace Renderer
 		// Framebuffer dimensions
 		GLsizei width  = 0;
 		GLsizei height = 0;
+		GLsizei depth  = 0;
 
 		// Framebuffer type
-		FBType   type   = FBType::None;
-		FBFilter filter = FBFilter::Linear;
+		FBType type = FBType::None;
 		// Framebuffer ID
 		GLuint id = 0;
 
@@ -63,6 +60,7 @@ namespace Renderer
 		void CreateDepthTexture();
 		void CreateColorBuffer();
 		void CreateDepthBuffer();
+		void CreateDepthArrayTexture();
 		void SetColorBuffer();
 		void CheckStatus();
 	};

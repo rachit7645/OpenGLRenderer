@@ -25,7 +25,7 @@
 #include "InstancedShader.h"
 #include "FastInstancedShader.h"
 #include "RenderConstants.h"
-#include "ShadowFrameBuffer.h"
+#include "ShadowMap.h"
 #include "ShadowInstancedShader.h"
 
 namespace Renderer
@@ -33,7 +33,7 @@ namespace Renderer
 	class MasterRenderer
 	{
 	public:
-		explicit MasterRenderer();
+		MasterRenderer();
 
 		Shader::InstancedShader       instancedShader;
 		Shader::FastInstancedShader   fastInstancedShader;
@@ -65,7 +65,7 @@ namespace Renderer
 		// Render water fbos
 		void RenderWaterFBOs(const std::vector<Waters::WaterTile>& waters, Entities::Camera& camera);
 		// Render shadows
-		void RenderShadows(const Entities::Camera& camera);
+		void RenderShadows(const Entities::Camera& camera, const Entities::Light& light);
 		// Render the guis
 		void RenderGUIs(const std::vector<GUI>& guis);
 		// Process entities into the entity map
@@ -85,8 +85,8 @@ namespace Renderer
 		// The Skybox
 		Entities::Skybox m_skybox;
 		// Framebuffers
-		Renderer::ShadowFrameBuffer m_shadowFBO;
-		Waters::WaterFrameBuffers   m_waterFBOs;
+		Renderer::ShadowMap       m_shadowMap;
+		Waters::WaterFrameBuffers m_waterFBOs;
 		// Matrix Uniform Buffer
 		std::shared_ptr<MatrixBuffer> m_matrices;
 		// Lights Uniform Buffer

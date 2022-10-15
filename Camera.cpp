@@ -44,7 +44,7 @@ void Camera::ImGuiDisplay()
 			ImGui::Text("Rotation:");
 			ImGui::InputFloat3("##crot", &rotation[0], "%.1f");
 			ImGui::Text("Distance From Player:");
-			ImGui::InputFloat("##cdfp", &m_distance, 0.0f, 0.0f, "%.1f");
+			ImGui::InputFloat("##cdfp", &distance, 0.0f, 0.0f, "%.1f");
 			ImGui::Text("Angle Around Player:");
 			ImGui::InputFloat("##carp", &m_angle, 0.0f, 0.0f, "%.1f");
 			ImGui::Checkbox("Cap Pitch", &m_capPitch);
@@ -56,8 +56,8 @@ void Camera::ImGuiDisplay()
 
 void Camera::CalculatePosition()
 {
-	f32 hDistance = m_distance * std::cos(glm::radians(rotation.x));
-	f32 vDistance = m_distance * std::sin(glm::radians(rotation.x));
+	f32 hDistance = distance * std::cos(glm::radians(rotation.x));
+	f32 vDistance = distance * std::sin(glm::radians(rotation.x));
 
 	f32 theta   = player->rotation.y + m_angle;
 	f32 offsetX = hDistance * std::sin(glm::radians(theta));
@@ -78,7 +78,7 @@ void Camera::CalculateZoom()
 	{
 		for (ssize i = 0; i < mouseScroll.y; ++i)
 		{
-			m_distance -= CAMERA_ZOOM_SPEED;
+			distance -= CAMERA_ZOOM_SPEED;
 		}
 	}
 	// If scroll direction is negative, increase distance from player
@@ -86,7 +86,7 @@ void Camera::CalculateZoom()
 	{
 		for (ssize i = 0; i < -mouseScroll.y; ++i)
 		{
-			m_distance += CAMERA_ZOOM_SPEED;
+			distance += CAMERA_ZOOM_SPEED;
 		}
 	}
 }

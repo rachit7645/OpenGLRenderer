@@ -15,7 +15,7 @@ using Waters::WaterTile;
 using Waters::WaterFrameBuffers;
 
 MasterRenderer::MasterRenderer()
-	: instancedRenderer(instancedShader, fastInstancedShader, shadowInstancedShader, m_shadowFBO),
+	: instancedRenderer(instancedShader, fastInstancedShader, shadowInstancedShader, m_shadowMap),
 	  skyboxRenderer(skyboxShader),
 	  guiRenderer(guiShader),
 	  waterRenderer(waterShader, m_waterFBOs),
@@ -23,9 +23,9 @@ MasterRenderer::MasterRenderer()
 	  m_lights(std::make_shared<LightsBuffer>()),
 	  m_shared(std::make_shared<SharedBuffer>())
 {
-	m_matrices->LoadProjection(glm::perspective(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
-	m_lights->LoadLightProjection(Maths::CreateOrthoMatrix(0.1f, 50.0f, 20.0f));
+	m_matrices->LoadProjection(glm::perspective(glm::radians(FOV), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
 	m_shared->LoadSkyColor(GL_SKY_COLOR);
+	m_shared->LoadFarPlane(FAR_PLANE);
 }
 
 void MasterRenderer::BeginFrame
@@ -39,7 +39,6 @@ void MasterRenderer::BeginFrame
 	ProcessEntity(player);
 
 	m_lights->LoadLights(lights);
-	m_lights->LoadLightView(Maths::CreateLookAtMatrix(lights[0].position));
 }
 
 void MasterRenderer::RenderScene(const Camera& camera, const glm::vec4& clipPlane, Mode mode)
@@ -136,13 +135,14 @@ void MasterRenderer::RenderWaterFBOs(const std::vector<WaterTile>& waters,Camera
 	m_waterFBOs.BindDefaultFBO();
 }
 
-void MasterRenderer::RenderShadows(const Camera& camera)
+void MasterRenderer::RenderShadows(const Camera& camera, const Light& light)
 {
-	m_shadowFBO.BindShadowFBO();
+	m_shadowMap.BindShadowFBO();
+	m_shadowMap.Update(camera, light.position);
 	glCullFace(GL_FRONT);
 	RenderScene(camera, glm::vec4(0.0f), Mode::Shadow);
 	glCullFace(GL_BACK);
-	m_shadowFBO.BindDefaultFBO();
+	m_shadowMap.BindDefaultFBO();
 }
 
 void MasterRenderer::ProcessEntity(Entity& entity)

@@ -13,9 +13,10 @@ layout(std140, binding = 0) uniform Matrices
 
 layout(std140, binding = 2) uniform Shared
 {
-	vec4 clipPlane;
-	vec4 skyColor;
-	vec4 cameraPos;
+	vec4  clipPlane;
+	vec4  skyColor;
+	vec4  cameraPos;
+	float farPlane;
 };
 
 layout(std430, binding = 3) readonly buffer InstanceData

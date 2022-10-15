@@ -7,11 +7,10 @@ using namespace Renderer;
 
 using Window::DIMENSIONS;
 
-FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type, FBFilter filter)
+FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type)
 	: width(width),
 	  height(height),
-	  type(type),
-	  filter(filter)
+	  type(type)
 {
 	// Generate Framebuffer
 	glGenFramebuffers(1, &id);
@@ -40,8 +39,31 @@ FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type, FBFilter fi
 		break;
 
 	case FBType::None:
-		LOG_ERROR("FBType is equal to \"{}\"\n", "None");
+	case FBType::DepthArray:
+		LOG_ERROR("{}\n", "FBType is invalid");
 	}
+
+	CheckStatus();
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDepthRange(0.0, 1.0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, GLsizei depth)
+	: width(width),
+	  height(height),
+	  depth(depth),
+	  type(FBType::DepthArray)
+{
+	// Generate Framebuffer
+	glGenFramebuffers(1, &id);
+	glBindFramebuffer(GL_FRAMEBUFFER, id);
+
+	SetColorBuffer();
+	CreateDepthArrayTexture();
 
 	CheckStatus();
 
@@ -60,8 +82,7 @@ void FrameBuffer::CreateColorTexture()
 		height,
 		GL_RGBA,
 		GL_RGBA,
-		GL_UNSIGNED_BYTE,
-		filter
+		GL_UNSIGNED_BYTE
 	);
 
 	glFramebufferTexture2D
@@ -82,9 +103,7 @@ void FrameBuffer::CreateDepthTexture()
 		height,
 		GL_DEPTH_COMPONENT24,
 		GL_DEPTH_COMPONENT,
-		GL_FLOAT,
-		filter,
-		true
+		GL_FLOAT
 	);
 
 	glFramebufferTexture2D
@@ -133,6 +152,27 @@ void FrameBuffer::CreateDepthBuffer()
 	);
 }
 
+void FrameBuffer::CreateDepthArrayTexture()
+{
+	depthTexture = std::make_shared<Texture>
+	(
+		width,
+		height,
+		depth,
+		GL_DEPTH_COMPONENT24,
+		GL_DEPTH_COMPONENT,
+		GL_FLOAT
+	);
+
+	glFramebufferTexture
+	(
+		GL_FRAMEBUFFER,
+		GL_DEPTH_ATTACHMENT,
+		depthTexture->id,
+		0
+	);
+}
+
 void FrameBuffer::SetColorBuffer()
 {
 	glDrawBuffer(GL_NONE);
@@ -154,7 +194,7 @@ void FrameBuffer::CheckStatus()
 	};
 
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if(status != GL_FRAMEBUFFER_COMPLETE)
+	if (status != GL_FRAMEBUFFER_COMPLETE)
 	{
 		auto errorStr = GL_FRAMEBUFFER_ERROR_TYPES.find(status)->second;
 		LOG_ERROR("{} Framebuffer [ID={}] is incomplete!\n", errorStr, id);
