@@ -4,8 +4,8 @@ using namespace Shader;
 
 using Renderer::Material;
 
-constexpr auto VERTEX_PATH = "shaders/instancedVertexShader.glsl",
-	FRAGMENT_PATH = "shaders/instancedFragmentShader.glsl";
+constexpr auto VERTEX_PATH = "shaders/InstancedVS.glsl",
+	FRAGMENT_PATH = "shaders/InstancedFS.glsl";
 
 InstancedShader::InstancedShader()
 	: ShaderProgram(VERTEX_PATH, FRAGMENT_PATH)

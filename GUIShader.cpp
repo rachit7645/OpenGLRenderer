@@ -2,8 +2,8 @@
 
 using namespace Shader;
 
-constexpr auto VERTEX_PATH = "shaders/guiVertexShader.glsl",
-	FRAGMENT_PATH = "shaders/guiFragmentShader.glsl";
+constexpr auto VERTEX_PATH = "shaders/GuiVS.glsl",
+	FRAGMENT_PATH = "shaders/GuiFS.glsl";
 
 GUIShader::GUIShader()
 	: ShaderProgram(VERTEX_PATH, FRAGMENT_PATH)

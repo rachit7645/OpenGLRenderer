@@ -2,8 +2,8 @@
 
 using namespace Shader;
 
-constexpr auto VERTEX_PATH = "shaders/skyboxVertexShader.glsl",
-	FRAGMENT_PATH = "shaders/skyboxFragmentShader.glsl";
+constexpr auto VERTEX_PATH = "shaders/SkyboxVS.glsl",
+	FRAGMENT_PATH = "shaders/SkyboxFS.glsl";
 
 SkyboxShader::SkyboxShader()
 	: ShaderProgram(VERTEX_PATH, FRAGMENT_PATH)

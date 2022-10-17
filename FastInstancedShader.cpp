@@ -2,8 +2,8 @@
 
 using namespace Shader;
 
-constexpr auto VERTEX_PATH = "shaders/fastInstancedVertexShader.glsl",
-	FRAGMENT_PATH = "shaders/fastInstancedFragmentShader.glsl";
+constexpr auto VERTEX_PATH = "shaders/FastInstancedVS.glsl",
+	FRAGMENT_PATH = "shaders/FastInstancedFS.glsl";
 
 FastInstancedShader::FastInstancedShader()
 	: ShaderProgram(VERTEX_PATH, FRAGMENT_PATH)
