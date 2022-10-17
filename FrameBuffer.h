@@ -8,18 +8,13 @@
 #include "RenderBuffer.h"
 #include "Util.h"
 
+namespace Waters
+{
+	class WaterFrameBuffers;
+}
+
 namespace Renderer
 {
-	enum class FBType
-	{
-		None,
-		Color,
-		Depth,
-		ColorAndDepth,
-		DepthArray,
-		Empty
-	};
-
 	class FrameBuffer
 	{
 	public:
@@ -28,10 +23,6 @@ namespace Renderer
 
 		// Default constructor
 		FrameBuffer() = default;
-		// Main constructor
-		FrameBuffer(GLsizei width, GLsizei height, FBType type);
-		// Array texture constructor
-		FrameBuffer(GLsizei width, GLsizei height, GLsizei depth);
 		// Destructor
 		~FrameBuffer();
 
@@ -43,8 +34,6 @@ namespace Renderer
 		GLsizei height = 0;
 		GLsizei depth  = 0;
 
-		// Framebuffer type
-		FBType type = FBType::None;
 		// Framebuffer ID
 		GLuint id = 0;
 
@@ -55,14 +44,24 @@ namespace Renderer
 		// RenderBuffers
 		RdBufPtr colorRenderBuffer;
 		RdBufPtr depthRenderBuffer;
-	private:
+
+	protected:
+		void CreateFrameBuffer();
+
 		void CreateColorTexture();
-		void CreateDepthTexture();
 		void CreateColorBuffer();
+		void SetColorBuffer(GLenum value);
+
+		void CreateDepthTexture();
 		void CreateDepthBuffer();
 		void CreateDepthArrayTexture();
-		void SetColorBuffer();
+
+		void EnableDepth();
+
 		void CheckStatus();
+	public:
+		friend class ShadowMap;
+		friend class Waters::WaterFrameBuffers;
 	};
 }
 

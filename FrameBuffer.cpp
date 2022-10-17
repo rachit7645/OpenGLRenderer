@@ -7,7 +7,7 @@ using namespace Renderer;
 
 using Window::DIMENSIONS;
 
-FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type)
+/*FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type)
 	: width(width),
 	  height(height),
 	  type(type)
@@ -72,6 +72,11 @@ FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, GLsizei depth)
 	glDepthRange(0.0, 1.0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}*/
+
+void FrameBuffer::CreateFrameBuffer()
+{
+	glGenFramebuffers(1, &id);
 }
 
 void FrameBuffer::CreateColorTexture()
@@ -95,6 +100,30 @@ void FrameBuffer::CreateColorTexture()
 	);
 }
 
+void FrameBuffer::CreateColorBuffer()
+{
+	colorRenderBuffer = std::make_shared<RenderBuffer>
+	(
+		width,
+		height,
+		GL_RGBA
+	);
+
+	glFramebufferRenderbuffer
+	(
+		GL_FRAMEBUFFER,
+		GL_COLOR_ATTACHMENT0,
+		GL_RENDERBUFFER,
+		colorRenderBuffer->id
+	);
+}
+
+void FrameBuffer::SetColorBuffer(GLenum value)
+{
+	glDrawBuffer(value);
+	glReadBuffer(value);
+}
+
 void FrameBuffer::CreateDepthTexture()
 {
 	depthTexture = std::make_shared<Texture>
@@ -113,24 +142,6 @@ void FrameBuffer::CreateDepthTexture()
 		GL_TEXTURE_2D,
 		depthTexture->id,
 		0
-	);
-}
-
-void FrameBuffer::CreateColorBuffer()
-{
-	colorRenderBuffer = std::make_shared<RenderBuffer>
-	(
-		width,
-		height,
-		GL_RGBA
-	);
-
-	glFramebufferRenderbuffer
-	(
-		GL_FRAMEBUFFER,
-		GL_COLOR_ATTACHMENT0,
-		GL_RENDERBUFFER,
-		colorRenderBuffer->id
 	);
 }
 
@@ -173,10 +184,11 @@ void FrameBuffer::CreateDepthArrayTexture()
 	);
 }
 
-void FrameBuffer::SetColorBuffer()
+void FrameBuffer::EnableDepth()
 {
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDepthRange(0.0, 1.0);
 }
 
 void FrameBuffer::CheckStatus()

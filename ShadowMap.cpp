@@ -26,9 +26,21 @@ const std::vector<f32> shadowLevels =
 };
 
 ShadowMap::ShadowMap()
-	: buffer(std::make_shared<FrameBuffer>(SHADOW_DIMENSIONS.x, SHADOW_DIMENSIONS.y, shadowLevels.size() + 1)),
+	: buffer(std::make_shared<FrameBuffer>()),
 	  m_matrixBuffer(std::make_shared<ShadowBuffer>())
 {
+	buffer->width  = SHADOW_DIMENSIONS.x;
+	buffer->height = SHADOW_DIMENSIONS.y;
+	buffer->depth  = static_cast<GLsizei>(shadowLevels.size() + 1);
+
+	buffer->CreateFrameBuffer();
+	buffer->Bind();
+	buffer->SetColorBuffer(GL_NONE);
+	buffer->CreateDepthArrayTexture();
+	buffer->CheckStatus();
+	buffer->EnableDepth();
+	buffer->Unbind();
+
 	m_matrixBuffer->LoadDistances(shadowLevels);
 }
 

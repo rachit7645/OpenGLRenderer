@@ -25,7 +25,6 @@ using Renderer::Material;
 using Renderer::MeshTextures;
 using Renderer::GUI;
 using Renderer::FrameBuffer;
-using Renderer::FBType;
 using Renderer::MasterRenderer;
 using Renderer::Mode;
 using Entities::Entity;
