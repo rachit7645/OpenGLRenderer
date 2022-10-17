@@ -2,12 +2,15 @@
 #define FRAMEBUFFER_H
 
 #include <memory>
+#include <array>
 #include <GL/glew.h>
 
 #include "Texture.h"
 #include "RenderBuffer.h"
 #include "Util.h"
+#include "FBOAttachment.h"
 
+// Forward declare to avoid circular includes
 namespace Waters
 {
 	class WaterFrameBuffers;
@@ -15,6 +18,7 @@ namespace Waters
 
 namespace Renderer
 {
+	// This class is constructed in a pipeline-like form, thus providing absolute control
 	class FrameBuffer
 	{
 	public:
@@ -34,32 +38,29 @@ namespace Renderer
 		GLsizei height = 0;
 		GLsizei depth  = 0;
 
-		GLint filter = GL_LINEAR;
-
 		// Framebuffer ID
 		GLuint id = 0;
 
-		// Textures
-		TxPtr colorTexture;
+		// OpenGL spec guarantees that there will be at least 8 color attachments
+		std::array<TxPtr, 8> colorTextures;
+		// Only one depth texture is supported
 		TxPtr depthTexture;
 
 		// RenderBuffers
 		RdBufPtr colorRenderBuffer;
 		RdBufPtr depthRenderBuffer;
-
 	protected:
 		void CreateFrameBuffer();
 
-		void CreateColorTexture();
-		void CreateColorBuffer();
-		void SetColorBuffer(GLenum value);
+		void AddTexture(TxPtr& texture, const FBOAttachment& attachment);
+		void AddArrayTexture(TxPtr& texture, const FBOAttachment& attachment);
+		void AddBuffer(RdBufPtr& buffer, const FBOAttachment& attachment);
 
-		void CreateDepthTexture();
-		void CreateDepthBuffer();
-		void CreateDepthArrayTexture();
+		void SetDrawBuffer(GLenum value);
+		void SetReadBuffer(GLenum value);
+		void SetDrawBuffers(const std::vector<GLenum>& buffers);
 
 		void EnableDepth();
-
 		void CheckStatus();
 	public:
 		friend class ShadowMap;

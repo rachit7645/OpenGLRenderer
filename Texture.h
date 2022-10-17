@@ -10,6 +10,7 @@ namespace Renderer
 {
 	constexpr auto TEXTURE_LOD_BIAS = -0.5f;
 
+	// This class can be constructed in a pipeline-like form, thus providing absolute control
 	class Texture
 	{
 	public:

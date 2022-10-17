@@ -2,148 +2,120 @@
 
 #include "Log.h"
 #include "Window.h"
-#include "GLM.h"
 
 using namespace Renderer;
 
 using Window::DIMENSIONS;
-
-constexpr glm::vec4 borderColor = {1.0f, 1.0f, 1.0f, 1.0f};
 
 void FrameBuffer::CreateFrameBuffer()
 {
 	glGenFramebuffers(1, &id);
 }
 
-void FrameBuffer::CreateColorTexture()
+void FrameBuffer::AddTexture(TxPtr& texture, const FBOAttachment& attachment)
 {
-	colorTexture = std::make_shared<Texture>();
-	colorTexture->width  = width;
-	colorTexture->height = height;
+	texture = std::make_shared<Texture>();
+	texture->width  = width;
+	texture->height = height;
+	texture->type   = GL_TEXTURE_2D;
 
-	colorTexture->CreateTexture();
-	colorTexture->Bind();
-	colorTexture->SetParameter(GL_TEXTURE_MIN_FILTER, filter);
-	colorTexture->SetParameter(GL_TEXTURE_MAG_FILTER, filter);
-	colorTexture->SetParameter(GL_TEXTURE_WRAP_S,     GL_REPEAT);
-	colorTexture->SetParameter(GL_TEXTURE_WRAP_T,     GL_REPEAT);
-	colorTexture->LoadImageData(nullptr, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
-	colorTexture->Unbind();
+	texture->CreateTexture();
+	texture->Bind();
+	texture->SetParameter(GL_TEXTURE_MIN_FILTER, attachment.minFilter);
+	texture->SetParameter(GL_TEXTURE_MAG_FILTER, attachment.maxFilter);
+	texture->SetParameter(GL_TEXTURE_WRAP_S,     attachment.wrapMode);
+	texture->SetParameter(GL_TEXTURE_WRAP_T,     attachment.wrapMode);
+
+	texture->LoadImageData
+	(
+		nullptr,
+		attachment.internalFormat,
+		attachment.format,
+		attachment.dataType
+	);
+
+	texture->Unbind();
 
 	glFramebufferTexture2D
 	(
 		GL_FRAMEBUFFER,
-		GL_COLOR_ATTACHMENT0,
-		GL_TEXTURE_2D,
-		colorTexture->id,
+		attachment.slot,
+		texture->type,
+		texture->id,
 		0
 	);
 }
 
-void FrameBuffer::CreateColorBuffer()
+void FrameBuffer::AddArrayTexture(TxPtr& texture, const FBOAttachment& attachment)
 {
-	colorRenderBuffer = std::make_shared<RenderBuffer>
-	(
-		width,
-		height,
-		GL_RGBA
-	);
+	texture = std::make_shared<Texture>();
+	texture->width  = width;
+	texture->height = height;
+	texture->depth  = depth;
+	texture->type   = GL_TEXTURE_2D_ARRAY;
 
-	glFramebufferRenderbuffer
-	(
-		GL_FRAMEBUFFER,
-		GL_COLOR_ATTACHMENT0,
-		GL_RENDERBUFFER,
-		colorRenderBuffer->id
-	);
-}
+	texture->CreateTexture();
+	texture->Bind();
+	texture->SetParameter(GL_TEXTURE_MIN_FILTER, attachment.minFilter);
+	texture->SetParameter(GL_TEXTURE_MAG_FILTER, attachment.maxFilter);
+	texture->SetParameter(GL_TEXTURE_WRAP_S,     attachment.wrapMode);
+	texture->SetParameter(GL_TEXTURE_WRAP_T,     attachment.wrapMode);
 
-void FrameBuffer::SetColorBuffer(GLenum value)
-{
-	glDrawBuffer(value);
-	glReadBuffer(value);
-}
+	if (attachment.border != nullptr)
+	{
+		texture->SetParameter(GL_TEXTURE_BORDER_COLOR, attachment.border);
+	}
 
-void FrameBuffer::CreateDepthTexture()
-{
-	depthTexture = std::make_shared<Texture>();
-	depthTexture->width  = width;
-	depthTexture->height = height;
-
-	depthTexture->CreateTexture();
-	depthTexture->Bind();
-	depthTexture->SetParameter(GL_TEXTURE_MIN_FILTER, filter);
-	depthTexture->SetParameter(GL_TEXTURE_MAG_FILTER, filter);
-	depthTexture->SetParameter(GL_TEXTURE_WRAP_S,     GL_REPEAT);
-	depthTexture->SetParameter(GL_TEXTURE_WRAP_T,     GL_REPEAT);
-	depthTexture->LoadImageData
+	texture->LoadImageData3D
 	(
 		nullptr,
-		GL_DEPTH_COMPONENT24,
-		GL_DEPTH_COMPONENT,
-		GL_FLOAT
-	);
-	depthTexture->Unbind();
-
-	glFramebufferTexture2D
-	(
-		GL_FRAMEBUFFER,
-		GL_DEPTH_ATTACHMENT,
-		GL_TEXTURE_2D,
-		depthTexture->id,
-		0
-	);
-}
-
-void FrameBuffer::CreateDepthBuffer()
-{
-	depthRenderBuffer = std::make_shared<RenderBuffer>
-	(
-		width,
-		height,
-		GL_DEPTH_COMPONENT24
+		attachment.internalFormat,
+		attachment.format,
+		attachment.dataType
 	);
 
-	glFramebufferRenderbuffer
-	(
-		GL_FRAMEBUFFER,
-		GL_DEPTH_ATTACHMENT,
-		GL_RENDERBUFFER,
-		depthRenderBuffer->id
-	);
-}
-
-void FrameBuffer::CreateDepthArrayTexture()
-{
-	depthTexture = std::make_shared<Texture>();
-	depthTexture->width  = width;
-	depthTexture->height = height;
-	depthTexture->depth  = depth;
-	depthTexture->type   = GL_TEXTURE_2D_ARRAY;
-
-	depthTexture->CreateTexture();
-	depthTexture->Bind();
-	depthTexture->SetParameter(GL_TEXTURE_MIN_FILTER,   filter);
-	depthTexture->SetParameter(GL_TEXTURE_MAG_FILTER,   filter);
-	depthTexture->SetParameter(GL_TEXTURE_WRAP_S,       GL_CLAMP_TO_BORDER);
-	depthTexture->SetParameter(GL_TEXTURE_WRAP_T,       GL_CLAMP_TO_BORDER);
-	depthTexture->SetParameter(GL_TEXTURE_BORDER_COLOR, &borderColor[0]);
-	depthTexture->LoadImageData3D
-	(
-		nullptr,
-		GL_DEPTH_COMPONENT24,
-		GL_DEPTH_COMPONENT,
-		GL_FLOAT
-	);
-	depthTexture->Unbind();
+	texture->Unbind();
 
 	glFramebufferTexture
 	(
 		GL_FRAMEBUFFER,
-		GL_DEPTH_ATTACHMENT,
+		attachment.slot,
 		depthTexture->id,
 		0
 	);
+}
+
+void FrameBuffer::AddBuffer(RdBufPtr& buffer, const FBOAttachment& attachment)
+{
+	buffer = std::make_shared<RenderBuffer>
+	(
+		width,
+		height,
+		attachment.internalFormat
+	);
+
+	glFramebufferRenderbuffer
+	(
+		GL_FRAMEBUFFER,
+		attachment.slot,
+		GL_RENDERBUFFER,
+		buffer->id
+	);
+}
+
+void FrameBuffer::SetDrawBuffer(GLenum value)
+{
+	glDrawBuffer(value);
+}
+
+void FrameBuffer::SetReadBuffer(GLenum value)
+{
+	glReadBuffer(value);
+}
+
+void FrameBuffer::SetDrawBuffers(const std::vector<GLenum>& buffers)
+{
+	glDrawBuffers(static_cast<GLsizei>(buffers.size()), buffers.data());
 }
 
 void FrameBuffer::EnableDepth()
