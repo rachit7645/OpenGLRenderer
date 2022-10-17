@@ -32,6 +32,7 @@ ShadowMap::ShadowMap()
 	buffer->width  = SHADOW_DIMENSIONS.x;
 	buffer->height = SHADOW_DIMENSIONS.y;
 	buffer->depth  = static_cast<GLsizei>(shadowLevels.size() + 1);
+	buffer->filter = GL_NEAREST;
 
 	buffer->CreateFrameBuffer();
 	buffer->Bind();

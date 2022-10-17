@@ -2,77 +2,13 @@
 
 #include "Log.h"
 #include "Window.h"
+#include "GLM.h"
 
 using namespace Renderer;
 
 using Window::DIMENSIONS;
 
-/*FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type)
-	: width(width),
-	  height(height),
-	  type(type)
-{
-	// Generate Framebuffer
-	glGenFramebuffers(1, &id);
-	glBindFramebuffer(GL_FRAMEBUFFER, id);
-
-	switch (type)
-	{
-	case FBType::Color:
-		CreateColorTexture();
-		CreateDepthBuffer();
-		break;
-
-	case FBType::Depth:
-		SetColorBuffer();
-		CreateDepthTexture();
-		break;
-
-	case FBType::ColorAndDepth:
-		CreateColorTexture();
-		CreateDepthTexture();
-		break;
-
-	case FBType::Empty:
-		CreateColorBuffer();
-		CreateDepthBuffer();
-		break;
-
-	case FBType::None:
-	case FBType::DepthArray:
-		LOG_ERROR("{}\n", "FBType is invalid");
-	}
-
-	CheckStatus();
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-	glDepthRange(0.0, 1.0);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, GLsizei depth)
-	: width(width),
-	  height(height),
-	  depth(depth),
-	  type(FBType::DepthArray)
-{
-	// Generate Framebuffer
-	glGenFramebuffers(1, &id);
-	glBindFramebuffer(GL_FRAMEBUFFER, id);
-
-	SetColorBuffer();
-	CreateDepthArrayTexture();
-
-	CheckStatus();
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-	glDepthRange(0.0, 1.0);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}*/
+constexpr glm::vec4 borderColor = {1.0f, 1.0f, 1.0f, 1.0f};
 
 void FrameBuffer::CreateFrameBuffer()
 {
@@ -81,14 +17,18 @@ void FrameBuffer::CreateFrameBuffer()
 
 void FrameBuffer::CreateColorTexture()
 {
-	colorTexture = std::make_shared<Texture>
-	(
-		width,
-		height,
-		GL_RGBA,
-		GL_RGBA,
-		GL_UNSIGNED_BYTE
-	);
+	colorTexture = std::make_shared<Texture>();
+	colorTexture->width  = width;
+	colorTexture->height = height;
+
+	colorTexture->CreateTexture();
+	colorTexture->Bind();
+	colorTexture->SetParameter(GL_TEXTURE_MIN_FILTER, filter);
+	colorTexture->SetParameter(GL_TEXTURE_MAG_FILTER, filter);
+	colorTexture->SetParameter(GL_TEXTURE_WRAP_S,     GL_REPEAT);
+	colorTexture->SetParameter(GL_TEXTURE_WRAP_T,     GL_REPEAT);
+	colorTexture->LoadImageData(nullptr, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+	colorTexture->Unbind();
 
 	glFramebufferTexture2D
 	(
@@ -126,14 +66,24 @@ void FrameBuffer::SetColorBuffer(GLenum value)
 
 void FrameBuffer::CreateDepthTexture()
 {
-	depthTexture = std::make_shared<Texture>
+	depthTexture = std::make_shared<Texture>();
+	depthTexture->width  = width;
+	depthTexture->height = height;
+
+	depthTexture->CreateTexture();
+	depthTexture->Bind();
+	depthTexture->SetParameter(GL_TEXTURE_MIN_FILTER, filter);
+	depthTexture->SetParameter(GL_TEXTURE_MAG_FILTER, filter);
+	depthTexture->SetParameter(GL_TEXTURE_WRAP_S,     GL_REPEAT);
+	depthTexture->SetParameter(GL_TEXTURE_WRAP_T,     GL_REPEAT);
+	depthTexture->LoadImageData
 	(
-		width,
-		height,
+		nullptr,
 		GL_DEPTH_COMPONENT24,
 		GL_DEPTH_COMPONENT,
 		GL_FLOAT
 	);
+	depthTexture->Unbind();
 
 	glFramebufferTexture2D
 	(
@@ -165,15 +115,27 @@ void FrameBuffer::CreateDepthBuffer()
 
 void FrameBuffer::CreateDepthArrayTexture()
 {
-	depthTexture = std::make_shared<Texture>
+	depthTexture = std::make_shared<Texture>();
+	depthTexture->width  = width;
+	depthTexture->height = height;
+	depthTexture->depth  = depth;
+	depthTexture->type   = GL_TEXTURE_2D_ARRAY;
+
+	depthTexture->CreateTexture();
+	depthTexture->Bind();
+	depthTexture->SetParameter(GL_TEXTURE_MIN_FILTER,   filter);
+	depthTexture->SetParameter(GL_TEXTURE_MAG_FILTER,   filter);
+	depthTexture->SetParameter(GL_TEXTURE_WRAP_S,       GL_CLAMP_TO_BORDER);
+	depthTexture->SetParameter(GL_TEXTURE_WRAP_T,       GL_CLAMP_TO_BORDER);
+	depthTexture->SetParameter(GL_TEXTURE_BORDER_COLOR, &borderColor[0]);
+	depthTexture->LoadImageData3D
 	(
-		width,
-		height,
-		depth,
+		nullptr,
 		GL_DEPTH_COMPONENT24,
 		GL_DEPTH_COMPONENT,
 		GL_FLOAT
 	);
+	depthTexture->Unbind();
 
 	glFramebufferTexture
 	(

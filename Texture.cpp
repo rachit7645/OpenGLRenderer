@@ -1,7 +1,5 @@
 #include "Texture.h"
 
-#include "GLM.h"
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
@@ -11,11 +9,31 @@
 
 using namespace Renderer;
 
-constexpr glm::vec4 borderColor = {1.0f, 1.0f, 1.0f, 1.0f};
-
 Texture::Texture(const std::string_view path)
 {
+	auto data = LoadImage(path);
+
+	CreateTexture();
+	Bind();
+
+	SetParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	SetParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	SetParameter(GL_TEXTURE_WRAP_S,     GL_REPEAT);
+	SetParameter(GL_TEXTURE_WRAP_T,     GL_REPEAT);
+	SetParameter(GL_TEXTURE_LOD_BIAS,   TEXTURE_LOD_BIAS);
+
+	SetPixelParameter(GL_UNPACK_ALIGNMENT, 1);
+	LoadImageData(data, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+	GenerateMipmaps();
+
+	Unbind();
+	stbi_image_free(data);
+}
+
+u8* Texture::LoadImage(const std::string_view path)
+{
 	LOG_INFO("Loading texture: {}\n", path);
+
 	u8* data = stbi_load
 	(
 		(Files::GetResourceDirectory() + path.data()).c_str(),
@@ -27,99 +45,58 @@ Texture::Texture(const std::string_view path)
 
 	if (data == nullptr)
 	{
-		LOG_ERROR("Unable to load texture: {}", path);
+		LOG_ERROR("Unable to load texture: {}\n", path);
 	}
 
-	glGenTextures(1, &id);
-	glBindTexture(GL_TEXTURE_2D, id);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,     GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,     GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS,   TEXTURE_LOD_BIAS);
-
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexImage2D
-	(
-		GL_TEXTURE_2D,
-		0,
-		GL_RGBA,
-		width,
-		height,
-		0,
-		GL_RGBA,
-		GL_UNSIGNED_BYTE,
-		data
-	);
-	
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	stbi_image_free(data);
+	return data;
 }
 
-Texture::Texture
-(
-	GLsizei width,
-	GLsizei height,
-	GLint internalFormat,
-	GLint format,
-	GLint type
-)
-	: width(width),
-	  height(height)
+void Texture::CreateTexture()
 {
 	glGenTextures(1, &id);
-	glBindTexture(GL_TEXTURE_2D, id);
+}
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,     GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,     GL_REPEAT);
+void Texture::SetPixelParameter(GLenum name, GLint param)
+{
+	glPixelStorei(name, param);
+}
 
+void Texture::SetParameter(GLenum name, GLint param)
+{
+	glTexParameteri(type, name, param);
+}
+
+void Texture::SetParameter(GLenum name, GLfloat param)
+{
+	glTexParameterf(type, name, param);
+}
+
+void Texture::SetParameter(GLenum name, const GLfloat* param)
+{
+	glTexParameterfv(type, name, param);
+}
+
+void Texture::LoadImageData(u8* data, GLint internalFormat, GLint format, GLint dataType)
+{
 	glTexImage2D
 	(
-		GL_TEXTURE_2D,
+		type,
 		0,
 		internalFormat,
 		width,
 		height,
 		0,
 		format,
-		type,
-		nullptr
+		dataType,
+		data
 	);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-Texture::Texture
-(
-	GLsizei width,
-	GLsizei height,
-	GLsizei depth,
-	GLint internalFormat,
-	GLint format,
-	GLint type
-)
-	: width(width),
-  	  height(height),
-	  depth(depth)
+void Texture::LoadImageData3D(u8* data, GLint internalFormat, GLint format, GLint dataType)
 {
-	glGenTextures(1, &id);
-	glBindTexture(GL_TEXTURE_2D_ARRAY, id);
-
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S,     GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T,     GL_CLAMP_TO_BORDER);
-
-	glTexParameterfv(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BORDER_COLOR, &borderColor[0]);
-
 	glTexImage3D
 	(
-		GL_TEXTURE_2D_ARRAY,
+		type,
 		0,
 		internalFormat,
 		width,
@@ -127,11 +104,24 @@ Texture::Texture
 		depth,
 		0,
 		format,
-		type,
-		nullptr
+		dataType,
+		data
 	);
+}
 
-	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+void Texture::GenerateMipmaps()
+{
+	glGenerateMipmap(type);
+}
+
+void Texture::Bind() const
+{
+	glBindTexture(type, id);
+}
+
+void Texture::Unbind() const
+{
+	glBindTexture(type, 0);
 }
 
 Texture::~Texture()

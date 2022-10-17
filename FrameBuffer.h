@@ -34,6 +34,8 @@ namespace Renderer
 		GLsizei height = 0;
 		GLsizei depth  = 0;
 
+		GLint filter = GL_LINEAR;
+
 		// Framebuffer ID
 		GLuint id = 0;
 
