@@ -2,9 +2,9 @@
 
 using namespace Shader;
 
-constexpr auto VERTEX_PATH = "shaders/shadowInstancedVertexShader.glsl",
-	FRAGMENT_PATH = "shaders/shadowInstancedFragmentShader.glsl",
-	GEOMETRY_PATH = "shaders/shadowInstancedGeometryShader.glsl";
+constexpr auto VERTEX_PATH = "shaders/ShadowInstancedVS.glsl",
+	FRAGMENT_PATH = "shaders/ShadowInstancedFS.glsl",
+	GEOMETRY_PATH = "shaders/ShadowInstancedGS.glsl";
 
 ShadowInstancedShader::ShadowInstancedShader()
 	: ShaderProgram(VERTEX_PATH, FRAGMENT_PATH, GEOMETRY_PATH)

@@ -1,7 +1,5 @@
 #version 430 core
 
-// TODO: Add back muliple lights
-
 const float AMBIENT_STRENGTH = 0.2f;
 const float MIN_SPECULAR     = 0.0f;
 const int   MAX_LIGHTS       = 4;
@@ -9,7 +7,7 @@ const int   MAX_LIGHTS       = 4;
 const int   MAX_LAYER_COUNT = 16;
 const float MIN_BIAS        = 0.005f;
 const float MAX_BIAS        = 0.05f;
-const float SHADOW_AMOUNT   = 0.5f;
+const float SHADOW_AMOUNT   = 0.525f;
 const float BIAS_MODIFIER   = 0.5f;
 const float PCF_COUNT       = 3.5f;
 const float TOTAL_TEXELS    = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.0f);
@@ -84,12 +82,24 @@ void main()
 	vec4 diffuseColor  = texture(diffuseTexture,  txCoords);
 	vec4 specularColor = texture(specularTexture, txCoords);
 
-	float attFactor = CalculateAttFactor(0);
-	vec4 ambient    = CalculateAmbient(0)  * diffuseColor  * attFactor;
-	vec4 diffuse    = CalculateDiffuse(0)  * diffuseColor  * attFactor * (1.0f - CalculateShadow());
-	vec4 specular   = CalculateSpecular(0) * specularColor * attFactor * WhenNotEqual(diffuse, vec4(0.0f));
+	vec4 ambient  = vec4(0.0f);
+	vec4 diffuse  = vec4(0.0f);
+	vec4 specular = vec4(0.0f);
 
-	outColor = ambient + diffuse + specular;
+	for (int i = 0; i < MAX_LIGHTS; ++i)
+	{
+		// Light attenuation factor
+		float attFactor = CalculateAttFactor(i);
+		// Light ambient factor
+		ambient += CalculateAmbient(i) * diffuseColor * attFactor;
+		// Light diffuse factor
+		vec4 cDiff = CalculateDiffuse(i);
+		diffuse += cDiff * diffuseColor * attFactor;
+		// Light specular factor
+		specular += CalculateSpecular(i) * specularColor * attFactor * WhenNotEqual(cDiff, vec4(0.0f));
+	}
+
+	outColor = ambient + (diffuse + specular) * (1.0f - CalculateShadow());
 	// Mix with fog colour
 	outColor = mix(skyColor, outColor, visibility);
 }

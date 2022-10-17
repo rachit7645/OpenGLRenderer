@@ -2,8 +2,8 @@
 
 using namespace Shader;
 
-constexpr auto VERTEX_PATH = "shaders/waterVertexShader.glsl",
-	FRAGMENT_PATH = "shaders/waterFragmentShader.glsl";
+constexpr auto VERTEX_PATH = "shaders/WaterVS.glsl",
+	FRAGMENT_PATH = "shaders/WaterFS.glsl";
 
 WaterShader::WaterShader()
 	: ShaderProgram(VERTEX_PATH, FRAGMENT_PATH)
