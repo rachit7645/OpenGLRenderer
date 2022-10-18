@@ -32,6 +32,8 @@
 
 namespace Renderer
 {
+	// TODO: Rewrite a lot of stuff for deferred rendering
+
 	class MasterRenderer
 	{
 	public:
@@ -83,6 +85,8 @@ namespace Renderer
 		void RenderEntities(Mode mode);
 		// Render the skybox
 		void RenderSkybox();
+		// Draw ImGui Windows
+		void RenderImGui();
 
 		// The entity map
 		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity*>> m_entities;

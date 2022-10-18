@@ -60,6 +60,8 @@ void MasterRenderer::EndFrame()
 {
 	// Clear internal render data
 	m_entities.clear();
+	// Update ImGui windows
+	RenderImGui();
 }
 
 void MasterRenderer::Prepare(const Camera& camera, const glm::vec4& clipPlane)
@@ -147,6 +149,40 @@ void MasterRenderer::RenderShadows(const Camera& camera, const Light& light)
 	RenderScene(camera, glm::vec4(0.0f), Mode::Shadow);
 	glCullFace(GL_BACK);
 	m_shadowMap.BindDefaultFBO();
+}
+void MasterRenderer::RenderImGui()
+{
+	if (ImGui::Begin("WaterReflection"))
+	{
+		if (ImGui::BeginChild("Reflection"))
+		{
+			ImGui::Image
+			(
+				(ImTextureID) m_waterFBOs.reflectionFBO->colorTextures[0]->id,
+				ImGui::GetWindowSize(),
+				ImVec2(0, 1),
+				ImVec2(1, 0)
+			);
+			ImGui::EndChild();
+		}
+		ImGui::End();
+	}
+
+	if (ImGui::Begin("WaterRefraction"))
+	{
+		if (ImGui::BeginChild("Refraction"))
+		{
+			ImGui::Image
+			(
+				(ImTextureID) m_waterFBOs.refractionFBO->colorTextures[0]->id,
+				ImGui::GetWindowSize(),
+				ImVec2(0, 1),
+				ImVec2(1, 0)
+			);
+			ImGui::EndChild();
+		}
+		ImGui::End();
+	}
 }
 
 void MasterRenderer::ProcessEntity(Entity& entity)
