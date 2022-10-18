@@ -28,6 +28,7 @@
 #include "ShadowMap.h"
 #include "ShadowInstancedShader.h"
 #include "GBuffer.h"
+#include "GeometryPassShader.h"
 
 namespace Renderer
 {
@@ -49,6 +50,8 @@ namespace Renderer
 
 		Shader::WaterShader     waterShader;
 		Renderer::WaterRenderer waterRenderer;
+
+		Shader::GeometryPassShader gShader;
 
 		// Prepare frame
 		void BeginFrame
