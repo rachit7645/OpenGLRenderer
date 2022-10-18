@@ -27,6 +27,7 @@
 #include "RenderConstants.h"
 #include "ShadowMap.h"
 #include "ShadowInstancedShader.h"
+#include "GBuffer.h"
 
 namespace Renderer
 {
@@ -87,6 +88,7 @@ namespace Renderer
 		// Framebuffers
 		Renderer::ShadowMap       m_shadowMap;
 		Waters::WaterFrameBuffers m_waterFBOs;
+		Renderer::GBuffer         m_gBuffer;
 		// Matrix Uniform Buffer
 		std::shared_ptr<MatrixBuffer> m_matrices;
 		// Lights Uniform Buffer

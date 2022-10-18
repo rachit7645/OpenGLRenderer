@@ -64,6 +64,7 @@ namespace Renderer
 		void CheckStatus();
 	public:
 		friend class ShadowMap;
+		friend class GBuffer;
 		friend class Waters::WaterFrameBuffers;
 	};
 }

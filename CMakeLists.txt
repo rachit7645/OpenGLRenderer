@@ -77,6 +77,7 @@ add_executable(engine
 	ShadowMap.cpp
 	ShadowInstancedShader.cpp
     ShadowBuffer.cpp
+	GBuffer.cpp
 )
 
 # Precompiled Headers

@@ -26,6 +26,10 @@ MasterRenderer::MasterRenderer()
 	m_matrices->LoadProjection(glm::perspective(glm::radians(FOV), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
 	m_shared->LoadSkyColor(GL_SKY_COLOR);
 	m_shared->LoadFarPlane(FAR_PLANE);
+
+	// FIXME: Please remove this
+	m_gBuffer.BindGBuffer();
+	m_gBuffer.BindDefaultFBO();
 }
 
 void MasterRenderer::BeginFrame

@@ -6,6 +6,7 @@
 #include "Util.h"
 #include "RenderConstants.h"
 #include "Maths.h"
+#include "FBOAttachment.h"
 
 using namespace Renderer;
 
