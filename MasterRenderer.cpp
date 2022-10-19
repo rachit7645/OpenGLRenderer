@@ -18,6 +18,7 @@ using Waters::WaterFrameBuffers;
 MasterRenderer::MasterRenderer()
 	: instancedRenderer(instancedShader, fastInstancedShader, shadowInstancedShader, m_shadowMap),
 	  gRenderer(gShader),
+	  lightRenderer(lightShader, m_gBuffer),
 	  skyboxRenderer(skyboxShader),
 	  guiRenderer(guiShader),
 	  waterRenderer(waterShader, m_waterFBOs),
@@ -155,6 +156,14 @@ void MasterRenderer::RenderGBuffer(const Camera& camera)
 	Prepare(camera, glm::vec4(0.0f));
 	gRenderer.Render(m_entities);
 	m_gBuffer.BindDefaultFBO();
+}
+
+void MasterRenderer::RenderLighting(const Camera& camera)
+{
+	Prepare(camera, glm::vec4(0.0f));
+	lightShader.Start();
+	lightRenderer.Render();
+	lightShader.Stop();
 }
 
 void MasterRenderer::RenderImGui()

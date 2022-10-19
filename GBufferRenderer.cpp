@@ -2,7 +2,9 @@
 
 using namespace Renderer;
 
-GBufferRenderer::GBufferRenderer(Shader::GBufferShader& shader)
+using Shader::GBufferShader;
+
+GBufferRenderer::GBufferRenderer(GBufferShader& shader)
 	: shader(shader),
 	  m_buffer(std::make_shared<InstanceBuffer>())
 {

@@ -123,6 +123,8 @@ void SDLWindow::MainLoop()
 
 		// Deferred geometry pass
 		renderer.RenderGBuffer(camera);
+		// Deferred lighting pass
+		renderer.RenderLighting(camera);
 
 		// End render
 		renderer.EndFrame();

@@ -30,6 +30,8 @@
 #include "GBuffer.h"
 #include "GBufferShader.h"
 #include "GBufferRenderer.h"
+#include "LightingShader.h"
+#include "LightingRenderer.h"
 
 namespace Renderer
 {
@@ -50,6 +52,9 @@ namespace Renderer
 
 		Shader::GBufferShader     gShader;
 		Renderer::GBufferRenderer gRenderer;
+
+		Shader::LightingShader     lightShader;
+		Renderer::LightingRenderer lightRenderer;
 
 		Shader::SkyboxShader     skyboxShader;
 		Renderer::SkyboxRenderer skyboxRenderer;
@@ -79,6 +84,8 @@ namespace Renderer
 		void RenderShadows(const Entities::Camera& camera, const Entities::Light& light);
 		// Render global buffer
 		void RenderGBuffer(const Entities::Camera& camera);
+		// Render lighting pass
+		void RenderLighting(const Entities::Camera& camera);
 		// Render the guis
 		void RenderGUIs(const std::vector<GUI>& guis);
 		// Process entities into the entity map

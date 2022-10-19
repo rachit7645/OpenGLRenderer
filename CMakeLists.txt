@@ -80,6 +80,8 @@ add_executable(engine
 	GBuffer.cpp
 	GBufferShader.cpp
 	GBufferRenderer.cpp
+	LightingRenderer.cpp
+	LightingShader.cpp
 )
 
 # Precompiled Headers
