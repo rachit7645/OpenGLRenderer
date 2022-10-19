@@ -37,6 +37,9 @@ namespace Renderer
 	class MasterRenderer
 	{
 	public:
+		// Usings
+		using TxPtr = std::shared_ptr<Texture>;
+
 		MasterRenderer();
 
 		Shader::InstancedShader       instancedShader;

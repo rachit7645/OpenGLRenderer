@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 
 #include "Maths.h"
+#include "Resources.h"
 
 using namespace Renderer;
 
@@ -152,37 +153,57 @@ void MasterRenderer::RenderShadows(const Camera& camera, const Light& light)
 }
 void MasterRenderer::RenderImGui()
 {
-	if (ImGui::Begin("WaterReflection"))
+	static TxPtr current = Resources::GetTexture("gfx/def.png");
+
+	if (ImGui::BeginMainMenuBar())
 	{
-		if (ImGui::BeginChild("Reflection"))
+		if (ImGui::BeginMenu("Renderer"))
 		{
-			ImGui::Image
-			(
-				(ImTextureID) m_waterFBOs.reflectionFBO->colorTextures[0]->id,
-				ImGui::GetWindowSize(),
-				ImVec2(0, 1),
-				ImVec2(1, 0)
-			);
-			ImGui::EndChild();
+			if (ImGui::Button("WaterReflection"))
+			{
+				current = m_waterFBOs.reflectionFBO->colorTextures[0];
+			}
+
+			if (ImGui::Button("WaterRefraction"))
+			{
+				current = m_waterFBOs.refractionFBO->colorTextures[0];
+			}
+
+			if (ImGui::Button("GPosition"))
+			{
+				current = m_gBuffer.buffer->colorTextures[0];
+			}
+
+			if (ImGui::Button("GNormal"))
+			{
+				current = m_gBuffer.buffer->colorTextures[1];
+			}
+
+			if (ImGui::Button("GAlbedoSpec"))
+			{
+				current = m_gBuffer.buffer->colorTextures[2];
+			}
+
+			ImGui::EndMenu();
 		}
-		ImGui::End();
+		ImGui::EndMainMenuBar();
 	}
 
-	if (ImGui::Begin("WaterRefraction"))
+	if (ImGui::Begin("CurrentFBO"))
 	{
-		if (ImGui::BeginChild("Refraction"))
+		if (ImGui::BeginChild("Current"))
 		{
 			ImGui::Image
 			(
-				(ImTextureID) m_waterFBOs.refractionFBO->colorTextures[0]->id,
+				reinterpret_cast<ImTextureID>(current->id),
 				ImGui::GetWindowSize(),
 				ImVec2(0, 1),
 				ImVec2(1, 0)
 			);
 			ImGui::EndChild();
 		}
-		ImGui::End();
 	}
+	ImGui::End();
 }
 
 void MasterRenderer::ProcessEntity(Entity& entity)
