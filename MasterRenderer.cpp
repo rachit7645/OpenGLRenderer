@@ -17,6 +17,7 @@ using Waters::WaterFrameBuffers;
 
 MasterRenderer::MasterRenderer()
 	: instancedRenderer(instancedShader, fastInstancedShader, shadowInstancedShader, m_shadowMap),
+	  gRenderer(gShader),
 	  skyboxRenderer(skyboxShader),
 	  guiRenderer(guiShader),
 	  waterRenderer(waterShader, m_waterFBOs),
@@ -27,10 +28,6 @@ MasterRenderer::MasterRenderer()
 	m_matrices->LoadProjection(glm::perspective(glm::radians(FOV), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
 	m_shared->LoadSkyColor(GL_SKY_COLOR);
 	m_shared->LoadFarPlane(FAR_PLANE);
-
-	// FIXME: Please remove this
-	m_gBuffer.BindGBuffer();
-	m_gBuffer.BindDefaultFBO();
 }
 
 void MasterRenderer::BeginFrame
@@ -151,6 +148,15 @@ void MasterRenderer::RenderShadows(const Camera& camera, const Light& light)
 	glCullFace(GL_BACK);
 	m_shadowMap.BindDefaultFBO();
 }
+
+void MasterRenderer::RenderGBuffer(const Camera& camera)
+{
+	m_gBuffer.BindGBuffer();
+	Prepare(camera, glm::vec4(0.0f));
+	gRenderer.Render(m_entities);
+	m_gBuffer.BindDefaultFBO();
+}
+
 void MasterRenderer::RenderImGui()
 {
 	static TxPtr current = Resources::GetTexture("gfx/def.png");

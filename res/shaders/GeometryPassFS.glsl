@@ -13,7 +13,6 @@ uniform sampler2D specularTexture;
 
 void main()
 {
-
 	gPosition       = worldPosition;
 	gNormal         = unitNormal;
 	gAlbedoSpec.rgb = texture(diffuseTexture, txCoords).rgb;

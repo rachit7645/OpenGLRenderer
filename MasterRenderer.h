@@ -28,7 +28,8 @@
 #include "ShadowMap.h"
 #include "ShadowInstancedShader.h"
 #include "GBuffer.h"
-#include "GeometryPassShader.h"
+#include "GBufferShader.h"
+#include "GBufferRenderer.h"
 
 namespace Renderer
 {
@@ -47,6 +48,9 @@ namespace Renderer
 		Shader::ShadowInstancedShader shadowInstancedShader;
 		Renderer::InstancedRenderer   instancedRenderer;
 
+		Shader::GBufferShader     gShader;
+		Renderer::GBufferRenderer gRenderer;
+
 		Shader::SkyboxShader     skyboxShader;
 		Renderer::SkyboxRenderer skyboxRenderer;
 
@@ -55,8 +59,6 @@ namespace Renderer
 
 		Shader::WaterShader     waterShader;
 		Renderer::WaterRenderer waterRenderer;
-
-		Shader::GeometryPassShader gShader;
 
 		// Prepare frame
 		void BeginFrame
@@ -75,6 +77,8 @@ namespace Renderer
 		void RenderWaterFBOs(const std::vector<Waters::WaterTile>& waters, Entities::Camera& camera);
 		// Render shadows
 		void RenderShadows(const Entities::Camera& camera, const Entities::Light& light);
+		// Render global buffer
+		void RenderGBuffer(const Entities::Camera& camera);
 		// Render the guis
 		void RenderGUIs(const std::vector<GUI>& guis);
 		// Process entities into the entity map

@@ -10,10 +10,10 @@
 
 namespace Shader
 {
-	class GeometryPassShader : public ShaderProgram
+	class GBufferShader : public ShaderProgram
 	{
 	public:
-		GeometryPassShader();
+		GBufferShader();
 
 		void ConnectTextureUnits();
 

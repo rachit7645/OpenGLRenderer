@@ -78,7 +78,8 @@ add_executable(engine
 	ShadowInstancedShader.cpp
     ShadowBuffer.cpp
 	GBuffer.cpp
-	GeometryPassShader.cpp
+	GBufferShader.cpp
+	GBufferRenderer.cpp
 )
 
 # Precompiled Headers

@@ -121,10 +121,8 @@ void SDLWindow::MainLoop()
 		// Draw shadow framebuffer
 		renderer.RenderShadows(camera, lights[0]);
 
-		// Main render pass
-		renderer.RenderScene(camera);
-		renderer.RenderWaters(waters);
-		renderer.RenderGUIs(guis);
+		// Deferred geometry pass
+		renderer.RenderGBuffer(camera);
 
 		// End render
 		renderer.EndFrame();
