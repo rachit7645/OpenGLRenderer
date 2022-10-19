@@ -14,8 +14,14 @@ const std::vector<f32> QUAD_VERTICES =
 	1.0f, -1.0f
 };
 
-LightingRenderer::LightingRenderer(LightingShader& shader, GBuffer& gBuffer)
+LightingRenderer::LightingRenderer
+(
+	LightingShader& shader,
+	Renderer::ShadowMap& shadowMap,
+	GBuffer& gBuffer
+)
 	: shader(shader),
+	  shadowMap(shadowMap),
 	  gBuffer(gBuffer),
 	  m_vao(std::make_shared<VertexArray>(2, QUAD_VERTICES))
 {
@@ -35,7 +41,10 @@ void LightingRenderer::Render()
 	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[1]->id);
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[2]->id);
-	// Render
+	// Activate shadow map
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, shadowMap.buffer->depthTexture->id);
+	// Render quad
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, m_vao->vertexCount);
 	// Unbind vao
 	glBindVertexArray(0);

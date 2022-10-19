@@ -11,13 +11,14 @@ InstancedRenderer::InstancedRenderer
 	InstancedShader& shader,
 	FastInstancedShader& fastShader,
 	ShadowInstancedShader& shadowShader,
-	ShadowMap& shadowMap
+	ShadowMap& shadowMap,
+	BufferPtr instances
 )
 	: shader(shader),
 	  fastShader(fastShader),
 	  shadowShader(shadowShader),
 	  shadowMap(shadowMap),
-	  m_buffer(std::make_shared<InstanceBuffer>())
+	  instances(instances)
 {
 	shader.Start();
 	shader.ConnectTextureUnits();
@@ -49,7 +50,7 @@ void InstancedRenderer::Render(const Batch& batch, Mode mode)
 
 void InstancedRenderer::BeginRender(Mode mode)
 {
-	m_buffer->Bind();
+	instances->Bind();
 
 	switch (mode)
 	{
@@ -69,7 +70,7 @@ void InstancedRenderer::BeginRender(Mode mode)
 
 void InstancedRenderer::EndRender(Mode mode)
 {
-	m_buffer->Unbind();
+	instances->Unbind();
 
 	switch (mode)
 	{
@@ -89,7 +90,7 @@ void InstancedRenderer::EndRender(Mode mode)
 
 void InstancedRenderer::LoadData(const EntityVector& entities)
 {
-	m_buffer->LoadInstanceData(entities);
+	instances->LoadInstanceData(entities);
 }
 
 void InstancedRenderer::PrepareMesh(const Mesh& mesh, Mode mode)

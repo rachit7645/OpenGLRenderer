@@ -6,6 +6,7 @@
 #include "LightingShader.h"
 #include "VertexArray.h"
 #include "GBuffer.h"
+#include "ShadowMap.h"
 
 namespace Renderer
 {
@@ -15,9 +16,15 @@ namespace Renderer
 		// Usings
 		using VAO = std::shared_ptr<VertexArray>;
 		// Main constructor
-		LightingRenderer(Shader::LightingShader& shader, Renderer::GBuffer&);
+		LightingRenderer
+		(
+			Shader::LightingShader& shader,
+			Renderer::ShadowMap& shadowMap,
+			Renderer::GBuffer& gBuffer
+		);
 		// Data
 		Shader::LightingShader& shader;
+		Renderer::ShadowMap&    shadowMap;
 		Renderer::GBuffer&      gBuffer;
 
 		// Render light pass

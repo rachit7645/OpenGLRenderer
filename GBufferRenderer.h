@@ -18,8 +18,10 @@ namespace Renderer
 		using EntityVector = std::vector<Entities::Entity*>;
 		using Batch        = std::unordered_map<MdPtr, EntityVector>;
 
-		GBufferRenderer(Shader::GBufferShader& shader);
+		GBufferRenderer(Shader::GBufferShader& shader, BufferPtr instances);
+
 		Shader::GBufferShader& shader;
+		BufferPtr              instances;
 
 		void Render(const Batch& batch);
 	private:
@@ -30,8 +32,6 @@ namespace Renderer
 		void LoadDiffuse(const Mesh& mesh);
 		void LoadSpecular(const Mesh& mesh);
 		void UnbindMesh();
-
-		BufferPtr m_buffer;
 	};
 }
 

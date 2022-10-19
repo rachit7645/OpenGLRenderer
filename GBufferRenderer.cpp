@@ -4,9 +4,9 @@ using namespace Renderer;
 
 using Shader::GBufferShader;
 
-GBufferRenderer::GBufferRenderer(GBufferShader& shader)
+GBufferRenderer::GBufferRenderer(GBufferShader& shader, BufferPtr instances)
 	: shader(shader),
-	  m_buffer(std::make_shared<InstanceBuffer>())
+	  instances(instances)
 {
 	shader.Start();
 	shader.ConnectTextureUnits();
@@ -38,19 +38,19 @@ void GBufferRenderer::Render(const Batch& batch)
 
 void GBufferRenderer::BeginRender()
 {
-	m_buffer->Bind();
+	instances->Bind();
 	shader.Start();
 }
 
 void GBufferRenderer::EndRender()
 {
-	m_buffer->Unbind();
+	instances->Unbind();
 	shader.Stop();
 }
 
 void GBufferRenderer::LoadData(const EntityVector& entities)
 {
-	m_buffer->LoadInstanceData(entities);
+	instances->LoadInstanceData(entities);
 }
 
 void GBufferRenderer::PrepareMesh(const Mesh& mesh)

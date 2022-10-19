@@ -16,9 +16,10 @@ using Waters::WaterTile;
 using Waters::WaterFrameBuffers;
 
 MasterRenderer::MasterRenderer()
-	: instancedRenderer(instancedShader, fastInstancedShader, shadowInstancedShader, m_shadowMap),
-	  gRenderer(gShader),
-	  lightRenderer(lightShader, m_gBuffer),
+	: m_instances(std::make_shared<InstanceBuffer>()),
+	  instancedRenderer(instancedShader, fastInstancedShader, shadowInstancedShader, m_shadowMap, m_instances),
+	  gRenderer(gShader, m_instances),
+	  lightRenderer(lightShader, m_shadowMap, m_gBuffer),
 	  skyboxRenderer(skyboxShader),
 	  guiRenderer(guiShader),
 	  waterRenderer(waterShader, m_waterFBOs),
@@ -168,7 +169,7 @@ void MasterRenderer::RenderLighting(const Camera& camera)
 
 void MasterRenderer::RenderImGui()
 {
-	static TxPtr current = Resources::GetTexture("gfx/def.png");
+	static auto current = Resources::GetTexture("gfx/def.png");
 
 	if (ImGui::BeginMainMenuBar())
 	{

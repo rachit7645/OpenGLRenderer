@@ -32,17 +32,22 @@
 #include "GBufferRenderer.h"
 #include "LightingShader.h"
 #include "LightingRenderer.h"
+#include "InstanceBuffer.h"
 
 namespace Renderer
 {
 	// TODO: Rewrite a lot of stuff for deferred rendering
-
 	class MasterRenderer
 	{
+	private:
+		// Note: These be initialised before everything
+		// Framebuffers
+		Renderer::ShadowMap       m_shadowMap;
+		Waters::WaterFrameBuffers m_waterFBOs;
+		Renderer::GBuffer         m_gBuffer;
+		// Instances Shader Storage Buffer
+		std::shared_ptr<InstanceBuffer> m_instances;
 	public:
-		// Usings
-		using TxPtr = std::shared_ptr<Texture>;
-
 		MasterRenderer();
 
 		Shader::InstancedShader       instancedShader;
@@ -106,10 +111,6 @@ namespace Renderer
 		std::unordered_map<std::shared_ptr<Model>, std::vector<Entities::Entity*>> m_entities;
 		// The Skybox
 		Entities::Skybox m_skybox;
-		// Framebuffers
-		Renderer::ShadowMap       m_shadowMap;
-		Waters::WaterFrameBuffers m_waterFBOs;
-		Renderer::GBuffer         m_gBuffer;
 		// Matrix Uniform Buffer
 		std::shared_ptr<MatrixBuffer> m_matrices;
 		// Lights Uniform Buffer

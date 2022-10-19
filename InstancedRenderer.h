@@ -29,7 +29,8 @@ namespace Renderer
 			Shader::InstancedShader& shader,
 			Shader::FastInstancedShader& fastShader,
 			Shader::ShadowInstancedShader& shadowShader,
-			Renderer::ShadowMap& shadowMap
+			Renderer::ShadowMap& shadowMap,
+			BufferPtr instances
 		);
 
 		Shader::InstancedShader& shader;
@@ -37,6 +38,7 @@ namespace Renderer
 		Shader::ShadowInstancedShader& shadowShader;
 
 		Renderer::ShadowMap& shadowMap;
+		BufferPtr            instances;
 
 		void Render(const Batch& batch, Mode mode);
 	private:
@@ -48,8 +50,6 @@ namespace Renderer
 		void LoadSpecular(const Mesh& mesh);
 		void LoadShadowMap();
 		void UnbindMesh();
-
-		BufferPtr m_buffer;
 	};
 }
 
