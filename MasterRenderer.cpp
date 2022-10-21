@@ -3,7 +3,6 @@
 #include <GL/glew.h>
 
 #include "Maths.h"
-#include "Resources.h"
 
 using namespace Renderer;
 
@@ -169,7 +168,7 @@ void MasterRenderer::RenderLighting(const Camera& camera)
 
 void MasterRenderer::RenderImGui()
 {
-	static auto current = Resources::GetTexture("gfx/def.png");
+	static auto current = m_waterFBOs.reflectionFBO->colorTextures[0];
 
 	if (ImGui::BeginMainMenuBar())
 	{

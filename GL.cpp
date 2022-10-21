@@ -74,8 +74,6 @@ void GL::Init(const glm::ivec2& dimensions)
 {
 	// Setup viewport
 	glViewport(0, 0, dimensions.x, dimensions.y);
-	// Enable MSAA
-	glEnable(GL_MULTISAMPLE);
 	// Enable Depth test
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);

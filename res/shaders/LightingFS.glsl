@@ -7,9 +7,9 @@ const int   MAX_LIGHTS       = 4;
 const int   MAX_LAYER_COUNT = 16;
 const float MIN_BIAS        = 0.005f;
 const float MAX_BIAS        = 0.05f;
-const float SHADOW_AMOUNT   = 0.525f;
+const float SHADOW_AMOUNT   = 0.35f;
 const float BIAS_MODIFIER   = 0.5f;
-const float PCF_COUNT       = 3.5f;
+const float PCF_COUNT       = 2.0f;
 const float TOTAL_TEXELS    = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.0f);
 
 struct Light
@@ -19,6 +19,14 @@ struct Light
 	vec4 diffuse;
 	vec4 specular;
 	vec4 attenuation;
+};
+
+struct LightData
+{
+	float attFactor;
+	vec3  lightDir;
+	vec4  ambient;
+	vec4  diffuse;
 };
 
 layout(std140, binding = 0) uniform Matrices
@@ -57,51 +65,69 @@ uniform sampler2DArray shadowMap;
 
 out vec4 outColor;
 
+// Branchless functions
 vec4 WhenGreater(vec4 x, vec4 y);
 vec4 WhenLesser(vec4 x, vec4 y);
 
-float CalculateAttFactor(int index, vec3 worldPosition);
-vec4  CalculateAmbient(int index);
-vec4  CalculateDiffuse(int index, vec3 unitNormal, vec3 unitLightVector);
+// Lighting functions
+LightData CalculateLightData(int index, vec3 fragPos, vec3 normal, vec4 albedo);
 
-int   GetCurrentLayer(vec3 worldPosition);
-float CalculateBias(int layer, vec3 unitNormal, vec3 unitLightVector);
-float CalculateShadow(vec3 worldPosition, vec3 unitNormal, vec3 unitLightVector);
+// Light component functions
+float CalculateAttFactor(int index, vec3 fragPos);
+vec4  CalculateAmbient(int index);
+vec4  CalculateDiffuse(int index, vec3 normal, vec3 lightDir);
+
+// Shadow functions
+int   GetCurrentLayer(vec3 fragPos);
+float CalculateBias(int layer, vec3 normal, vec3 lightDir);
+float CalculateShadow(vec3 fragPos, vec3 normal, vec3 lightDir);
 
 void main()
 {
-	// Retrieve data from G-buffer
-	vec3  fragPos    = texture(gPosition,   txCoords).rgb;
-	vec3  normal     = texture(gNormal,     txCoords).rgb;
-	vec4  albedoSpec = texture(gAlbedoSpec, txCoords);
-	vec3  albedo     = albedoSpec.rgb;
-	float spec       = albedoSpec.a;
+	// Light data
+	LightData lightData[MAX_LIGHTS];
 
-	vec4 ambient  = vec4(0.0f);
-	vec4 diffuse  = vec4(0.0f);
+	// Retrieve data from G-buffer
+	vec3 fragPos = texture(gPosition,   txCoords).rgb;
+	vec3 normal  = texture(gNormal,     txCoords).rgb;
+	vec3 albedo  = texture(gAlbedoSpec, txCoords).rgb;
+
+	// Total light factors
+	vec4 ambient = vec4(0.0f);
+	vec4 diffuse = vec4(0.0f);
 
 	for (int i = 0; i < MAX_LIGHTS; ++i)
 	{
-		// Light direction
-		vec3 lightDir = normalize(lights[i].position.xyz - fragPos);
-		// Light attenuation factor
-		float attFactor = CalculateAttFactor(i, fragPos);
-		// Light ambient factor
-		ambient += CalculateAmbient(i) * vec4(albedo, 1.0f) * attFactor;
-		// Light diffuse factor
-		diffuse += CalculateDiffuse(i, normal, lightDir) * vec4(albedo, 1.0f) * attFactor;
+		// Calculate light data
+		lightData[i] = CalculateLightData(i, fragPos, normal, vec4(albedo, 1.0f));
+		// Add to total
+		ambient += lightData[i].ambient;
+		diffuse += lightData[i].diffuse;
 	}
 
-	vec3  lightDir0 = normalize(lights[0].position.xyz - fragPos);
-	float shadow    = CalculateShadow(fragPos, normal, lightDir0);
-
-	outColor = ambient + diffuse * (1.0f - shadow);
+	// Output lighting
+	outColor = ambient + diffuse * (1.0f - CalculateShadow(fragPos, normal, lightData[0].lightDir));
 }
 
-float CalculateAttFactor(int index, vec3 worldPosition)
+LightData CalculateLightData(int index, vec3 fragPos, vec3 normal, vec4 albedo)
+{
+	LightData data;
+	// Light direction
+	data.lightDir = normalize(lights[index].position.xyz - fragPos);
+	// Light attenuation factor
+	data.attFactor = CalculateAttFactor(index, fragPos);
+	// Light ambient factor
+	data.ambient = CalculateAmbient(index) * albedo * data.attFactor;
+	// Light diffuse factor
+	data.diffuse = CalculateDiffuse(index, normal, data.lightDir) * albedo * data.attFactor;
+	// Return
+	return data;
+}
+
+float CalculateAttFactor(int index, vec3 fragPos)
 {
 	vec4  ATT       = lights[index].attenuation;
-	float distance  = length(lights[index].position.xyz - worldPosition.xyz);
+	float distance  = length(lights[index].position.xyz - fragPos.xyz);
 	float attFactor = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
 	return 1.0f / attFactor;
 }
@@ -111,17 +137,17 @@ vec4 CalculateAmbient(int index)
 	return vec4(AMBIENT_STRENGTH * lights[index].ambient.rgb, 1.0f);
 }
 
-vec4 CalculateDiffuse(int index, vec3 unitNormal, vec3 unitLightVector)
+vec4 CalculateDiffuse(int index, vec3 normal, vec3 lightDir)
 {
-	float nDot1      = dot(unitNormal, unitLightVector);
+	float nDot1      = dot(normal, lightDir);
 	float brightness = max(nDot1, 0.0f);
 	return vec4(brightness * lights[index].diffuse.rgb, 1.0f);
 }
 
 // FIXME: Remove branching
-int GetCurrentLayer(vec3 worldPosition)
+int GetCurrentLayer(vec3 fragPos)
 {
-	vec4  viewPosition = viewMatrix * vec4(worldPosition, 1.0f);
+	vec4  viewPosition = viewMatrix * vec4(fragPos, 1.0f);
 	float depthValue   = abs(viewPosition.z);
 
 	int layer = -1;
@@ -143,9 +169,9 @@ int GetCurrentLayer(vec3 worldPosition)
 }
 
 // FIXME: Remove branching
-float CalculateBias(int layer, vec3 unitNormal, vec3 unitLightVector)
+float CalculateBias(int layer, vec3 normal, vec3 lightDir)
 {
-	float bias = max(MAX_BIAS * (1.0f - dot(unitNormal, unitLightVector)), MIN_BIAS);
+	float bias = max(MAX_BIAS * (1.0f - dot(normal, lightDir)), MIN_BIAS);
 
 	if (layer == cascadeCount)
 	{
@@ -159,15 +185,15 @@ float CalculateBias(int layer, vec3 unitNormal, vec3 unitLightVector)
 	return bias;
 }
 
-float CalculateShadow(vec3 worldPosition, vec3 unitNormal, vec3 unitLightVector)
+float CalculateShadow(vec3 fragPos, vec3 normal, vec3 lightDir)
 {
-	int layer = GetCurrentLayer(worldPosition);
+	int layer = GetCurrentLayer(fragPos);
 
-	vec4 lightSpacePos = shadowMatrices[layer] * vec4(worldPosition, 1.0f);
+	vec4 lightSpacePos = shadowMatrices[layer] * vec4(fragPos, 1.0f);
 	vec3 projCoords    = lightSpacePos.xyz / lightSpacePos.w;
 	projCoords         = projCoords * 0.5f + 0.5f;
 	float currentDepth = projCoords.z;
-	float bias         = CalculateBias(layer, unitNormal, unitLightVector);
+	float bias         = CalculateBias(layer, normal, lightDir);
 
 	float shadow    = 0.0f;
 	vec2  texelSize = 1.0f / vec2(textureSize(shadowMap, 0));
@@ -177,11 +203,12 @@ float CalculateShadow(vec3 worldPosition, vec3 unitNormal, vec3 unitLightVector)
 		for (float y = -PCF_COUNT; y <= PCF_COUNT; ++y)
 		{
 			float pcfDepth = texture(shadowMap, vec3(projCoords.xy + vec2(x, y) * texelSize, layer)).r;
-			shadow        += SHADOW_AMOUNT * WhenGreater(vec4(currentDepth - bias), vec4(pcfDepth)).x;
+			shadow        += WhenGreater(vec4(currentDepth - bias), vec4(pcfDepth)).x;
 		}
 	}
 
 	shadow /= TOTAL_TEXELS;
+	shadow *= SHADOW_AMOUNT;
 	return shadow * WhenLesser(vec4(currentDepth), vec4(1.0f)).x;
 }
 
