@@ -22,7 +22,6 @@
 #include "SharedBuffer.h"
 #include "WaterFrameBuffers.h"
 #include "InstancedRenderer.h"
-#include "InstancedShader.h"
 #include "FastInstancedShader.h"
 #include "RenderConstants.h"
 #include "ShadowMap.h"
@@ -34,9 +33,11 @@
 #include "LightingRenderer.h"
 #include "InstanceBuffer.h"
 
+// TODO: Rewrite a lot of stuff for deferred rendering
+// TODO: Create separate shadow renderer
+
 namespace Renderer
 {
-	// TODO: Rewrite a lot of stuff for deferred rendering
 	class MasterRenderer
 	{
 	private:
@@ -50,14 +51,12 @@ namespace Renderer
 	public:
 		MasterRenderer();
 
-		Shader::InstancedShader       instancedShader;
 		Shader::FastInstancedShader   fastInstancedShader;
 		Shader::ShadowInstancedShader shadowInstancedShader;
 		Renderer::InstancedRenderer   instancedRenderer;
 
 		Shader::GBufferShader     gShader;
 		Renderer::GBufferRenderer gRenderer;
-
 		Shader::LightingShader     lightShader;
 		Renderer::LightingRenderer lightRenderer;
 
@@ -79,8 +78,6 @@ namespace Renderer
 		);
 		// Finish frame
 		void EndFrame();
-		// Render Scene
-		void RenderScene(const Entities::Camera& camera, const glm::vec4& clipPlane = glm::vec4(0.0f), Mode mode = Mode::Normal);
 		// Render the water
 		void RenderWaters(const std::vector<Waters::WaterTile>& waters);
 		// Render water fbos
@@ -91,19 +88,23 @@ namespace Renderer
 		void RenderGBuffer(const Entities::Camera& camera);
 		// Render lighting pass
 		void RenderLighting(const Entities::Camera& camera);
+		// Render skybox
+		void RenderSkybox();
 		// Render the guis
 		void RenderGUIs(const std::vector<GUI>& guis);
+		// Copy depth
+		void CopyDepth();
 		// Process entities into the entity map
 		void ProcessEntity(Entities::Entity& entity);
 		// Process a vector of entities
 		void ProcessEntities(std::vector<Entities::Entity>& entities);
 	private:
+		// Render Scene
+		void RenderScene(const Entities::Camera& camera, Mode mode, const glm::vec4& clipPlane = glm::vec4(0.0f));
 		// Prepare render
-		void Prepare(const Entities::Camera& camera, const glm::vec4& clipPlane);
+		void Prepare(const Entities::Camera& camera, const glm::vec4& clipPlane = glm::vec4(0.0f));
 		// Render entities
 		void RenderEntities(Mode mode);
-		// Render the skybox
-		void RenderSkybox();
 		// Draw ImGui Windows
 		void RenderImGui();
 

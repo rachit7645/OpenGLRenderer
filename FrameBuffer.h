@@ -49,6 +49,9 @@ namespace Renderer
 		// RenderBuffers
 		RdBufPtr colorRenderBuffer;
 		RdBufPtr depthRenderBuffer;
+
+		void SetDrawBuffer(GLenum value);
+		void SetReadBuffer(GLenum value);
 	protected:
 		void CreateFrameBuffer();
 
@@ -56,11 +59,9 @@ namespace Renderer
 		void AddArrayTexture(TxPtr& texture, const FBOAttachment& attachment);
 		void AddBuffer(RdBufPtr& buffer, const FBOAttachment& attachment);
 
-		void SetDrawBuffer(GLenum value);
-		void SetReadBuffer(GLenum value);
 		void SetDrawBuffers(const std::vector<GLenum>& buffers);
-
 		void EnableDepth();
+
 		void CheckStatus();
 	public:
 		friend class ShadowMap;

@@ -7,7 +7,6 @@
 
 #include "Entity.h"
 #include "Model.h"
-#include "InstancedShader.h"
 #include "InstanceBuffer.h"
 #include "FastInstancedShader.h"
 #include "RenderConstants.h"
@@ -26,14 +25,12 @@ namespace Renderer
 
 		InstancedRenderer
 		(
-			Shader::InstancedShader& shader,
 			Shader::FastInstancedShader& fastShader,
 			Shader::ShadowInstancedShader& shadowShader,
 			Renderer::ShadowMap& shadowMap,
 			BufferPtr instances
 		);
 
-		Shader::InstancedShader& shader;
 		Shader::FastInstancedShader& fastShader;
 		Shader::ShadowInstancedShader& shadowShader;
 
@@ -47,8 +44,6 @@ namespace Renderer
 		void LoadData(const EntityVector& entities);
 		void PrepareMesh(const Mesh& mesh, Mode mode);
 		void LoadDiffuse(const Mesh& mesh);
-		void LoadSpecular(const Mesh& mesh);
-		void LoadShadowMap();
 		void UnbindMesh();
 	};
 }

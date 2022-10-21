@@ -1,28 +1,24 @@
 #include "InstancedRenderer.h"
 
+#include <utility>
+
 using namespace Renderer;
 
-using Shader::InstancedShader;
 using Shader::FastInstancedShader;
 using Shader::ShadowInstancedShader;
 
 InstancedRenderer::InstancedRenderer
 (
-	InstancedShader& shader,
 	FastInstancedShader& fastShader,
 	ShadowInstancedShader& shadowShader,
 	ShadowMap& shadowMap,
 	BufferPtr instances
 )
-	: shader(shader),
-	  fastShader(fastShader),
+	: fastShader(fastShader),
 	  shadowShader(shadowShader),
 	  shadowMap(shadowMap),
-	  instances(instances)
+	  instances(std::move(instances))
 {
-	shader.Start();
-	shader.ConnectTextureUnits();
-	shader.Stop();
 }
 
 void InstancedRenderer::Render(const Batch& batch, Mode mode)
@@ -54,10 +50,6 @@ void InstancedRenderer::BeginRender(Mode mode)
 
 	switch (mode)
 	{
-	case Mode::Normal:
-		shader.Start();
-		break;
-
 	case Mode::Fast:
 		fastShader.Start();
 		break;
@@ -74,10 +66,6 @@ void InstancedRenderer::EndRender(Mode mode)
 
 	switch (mode)
 	{
-	case Mode::Normal:
-		shader.Stop();
-		break;
-
 	case Mode::Fast:
 		fastShader.Stop();
 		break;
@@ -100,12 +88,6 @@ void InstancedRenderer::PrepareMesh(const Mesh& mesh, Mode mode)
 
 	switch (mode)
 	{
-	case Mode::Normal:
-		LoadDiffuse(mesh);
-		LoadSpecular(mesh);
-		LoadShadowMap();
-		break;
-
 	case Mode::Fast:
 		LoadDiffuse(mesh);
 		break;
@@ -119,19 +101,6 @@ void InstancedRenderer::LoadDiffuse(const Mesh& mesh)
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, mesh.textures.diffuse->id);
-}
-
-void InstancedRenderer::LoadSpecular(const Mesh& mesh)
-{
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, mesh.textures.specular->id);
-	shader.LoadMaterial(mesh.material);
-}
-
-void InstancedRenderer::LoadShadowMap()
-{
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D_ARRAY, shadowMap.buffer->depthTexture->id);
 }
 
 void InstancedRenderer::UnbindMesh()

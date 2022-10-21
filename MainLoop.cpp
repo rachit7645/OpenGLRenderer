@@ -126,6 +126,14 @@ void SDLWindow::MainLoop()
 		// Deferred lighting pass
 		renderer.RenderLighting(camera);
 
+		// Copy depth from gBuffer
+		renderer.CopyDepth();
+		// Render waters
+		renderer.RenderWaters(waters);
+		// Render skybox
+		renderer.RenderSkybox();
+		// Render GUIs
+		renderer.RenderGUIs(guis);
 		// End render
 		renderer.EndFrame();
 

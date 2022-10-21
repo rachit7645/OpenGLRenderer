@@ -20,7 +20,6 @@ namespace Renderer
 	// TODO: Store current mode in renderers
 	enum class Mode
 	{
-		Normal,
 		Fast,
 		Shadow
 	};

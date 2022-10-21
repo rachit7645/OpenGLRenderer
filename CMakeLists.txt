@@ -71,7 +71,6 @@ add_executable(engine
 	WaterTile.cpp
 	ShaderStorageBuffer.cpp
 	InstancedRenderer.cpp
-	InstancedShader.cpp
 	InstanceBuffer.cpp
 	FastInstancedShader.cpp
 	ShadowMap.cpp
