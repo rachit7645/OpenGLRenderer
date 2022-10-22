@@ -9,6 +9,8 @@
 
 using namespace Renderer;
 
+// TODO: Add view layer functionality
+
 Texture::Texture(const std::string_view path)
 {
 	auto data = LoadImage(path);

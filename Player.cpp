@@ -52,6 +52,8 @@ void Player::ImGuiDisplay()
 			ImGui::InputFloat3("##pos", &position[0], "%.1f");
 			ImGui::Text("Rotation:");
 			ImGui::InputFloat3("##rot", &rotation[0], "%.1f");
+			ImGui::Text("Scale:");
+			ImGui::InputFloat("##scl", &scale, 0.0f, 0.0f, "%.1f");
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
