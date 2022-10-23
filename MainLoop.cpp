@@ -43,6 +43,7 @@ void SDLWindow::MainLoop()
 
 	auto playerModel = Resources::GetModel("gfx/Link/Link.obj",   MeshTextures(defDiffuse, defSpecular));
 	auto stageModel  = Resources::GetModel("gfx/Stage/stage.obj", MeshTextures(defDiffuse, defSpecular));
+	auto stallModel  = Resources::GetModel("gfx/Stall/stall.obj", MeshTextures(defDiffuse, defSpecular));
 
 	// All objects go here
 	std::vector<Entity> entities;
@@ -50,8 +51,16 @@ void SDLWindow::MainLoop()
 		entities.emplace_back
 		(
 			stageModel,
-			glm::vec3(0.0f, -0.3f, 0.0f),
+			glm::vec3(0.0f, -0.6f, 0.0f),
 			glm::vec3(0.0f),
+			1.0f
+		);
+
+		entities.emplace_back
+		(
+			stallModel,
+			glm::vec3(-3.0f, 0.0f, -15.0f),
+			glm::vec3(0.0f, 90.0f, 0.0f),
 			1.0f
 		);
 	}
