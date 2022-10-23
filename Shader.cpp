@@ -77,7 +77,7 @@ void ShaderProgram::DumpToFile(const std::string_view path) const
 		reinterpret_cast<void*>(binary.data())
 	);
 
-	LOG_DEBUG("Dumping Shader to: {}\n", path);
+	LOG_DEBUG("Dumping Shader: {}\n", path);
 	auto file = std::ofstream(path.data());
 	file.write(binary.data(), length);
 }

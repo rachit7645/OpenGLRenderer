@@ -33,7 +33,6 @@
 #include "LightingRenderer.h"
 #include "InstanceBuffer.h"
 
-// TODO: Rewrite a lot of stuff for deferred rendering
 // TODO: Create separate shadow renderer
 
 namespace Renderer
@@ -55,8 +54,8 @@ namespace Renderer
 		Shader::ShadowInstancedShader shadowInstancedShader;
 		Renderer::InstancedRenderer   instancedRenderer;
 
-		Shader::GBufferShader     gShader;
-		Renderer::GBufferRenderer gRenderer;
+		Shader::GBufferShader      gShader;
+		Renderer::GBufferRenderer  gRenderer;
 		Shader::LightingShader     lightShader;
 		Renderer::LightingRenderer lightRenderer;
 

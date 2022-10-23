@@ -30,6 +30,16 @@ MasterRenderer::MasterRenderer()
 	m_matrices->LoadProjection(glm::perspective(glm::radians(FOV), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
 	m_shared->LoadSkyColor(GL_SKY_COLOR);
 	m_shared->LoadFarPlane(FAR_PLANE);
+
+	#ifdef _DEBUG
+	fastInstancedShader.DumpToFile("dumps/FIS.s");
+	shadowInstancedShader.DumpToFile("dumps/SIS.s");
+	gShader.DumpToFile("dumps/GS.s");
+	lightShader.DumpToFile("dumps/LS.s");
+	skyboxShader.DumpToFile("dumps/SKB.s");
+	guiShader.DumpToFile("dumps/GUI.s");
+	waterShader.DumpToFile("dumps/WTR.s");
+	#endif
 }
 
 void MasterRenderer::BeginFrame
@@ -195,7 +205,7 @@ void MasterRenderer::RenderImGui()
 				current = m_gBuffer.buffer->colorTextures[1];
 			}
 
-			if (ImGui::Button("GAlbedoSpec"))
+			if (ImGui::Button("GAlbedo"))
 			{
 				current = m_gBuffer.buffer->colorTextures[2];
 			}
@@ -219,6 +229,7 @@ void MasterRenderer::RenderImGui()
 			ImGui::EndChild();
 		}
 	}
+
 	ImGui::End();
 }
 

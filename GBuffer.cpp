@@ -34,7 +34,7 @@ GBuffer::GBuffer()
 		GL_COLOR_ATTACHMENT1
 	};
 
-	Renderer::FBOAttachment albedoSpec =
+	Renderer::FBOAttachment albedo =
 	{
 		GL_NEAREST,
 		GL_NEAREST,
@@ -55,7 +55,7 @@ GBuffer::GBuffer()
 	{
 		position.slot,
 		normal.slot,
-		albedoSpec.slot
+		albedo.slot
 	};
 
 	buffer->width  = Window::DIMENSIONS.x;
@@ -65,7 +65,7 @@ GBuffer::GBuffer()
 	buffer->Bind();
 	buffer->AddTexture(buffer->colorTextures[0], position);
 	buffer->AddTexture(buffer->colorTextures[1], normal);
-	buffer->AddTexture(buffer->colorTextures[2], albedoSpec);
+	buffer->AddTexture(buffer->colorTextures[2], albedo);
 	buffer->AddBuffer(buffer->depthRenderBuffer, depth);
 	buffer->SetDrawBuffers(drawBuffers);
 	buffer->CheckStatus();
