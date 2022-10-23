@@ -51,5 +51,7 @@ target_compile_options(imgui PRIVATE -w)
 target_compile_options(imgui PRIVATE -O3)
 # Debug output
 target_compile_options(imgui PRIVATE -g)
+# Enable SSE2
+target_compile_options(imgui PRIVATE -msse2)
 # Link libraries
 target_link_libraries(imgui OpenGL::GL SDL2::SDL2)

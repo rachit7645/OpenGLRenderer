@@ -10,7 +10,7 @@ using Entities::Light;
 using Detail::LightsBufferGLSL;
 
 LightsBuffer::LightsBuffer()
-	: UniformBuffer(1, sizeof(LightsBufferGLSL))
+	: UniformBuffer(1, sizeof(LightsBufferGLSL), GL_STATIC_DRAW)
 {
 }
 

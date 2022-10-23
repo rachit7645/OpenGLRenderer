@@ -2,6 +2,8 @@
 
 using namespace Renderer;
 
+// TODO: Add pipeline style functions for flecibility
+
 VertexBuffer::VertexBuffer(GLuint slot, GLint coordSize, const std::vector<f32>& data)
 {
 	glGenBuffers(1, &id);

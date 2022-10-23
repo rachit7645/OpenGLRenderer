@@ -4,7 +4,8 @@ using namespace Renderer;
 
 ShaderStorageBuffer::ShaderStorageBuffer(GLuint slot, GLsizeiptr size, GLenum usage)
 	: slot(slot),
-	  size(size)
+	  size(size),
+	  usage(usage)
 {
 	glGenBuffers(1, &id);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, id);

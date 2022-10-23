@@ -18,7 +18,7 @@ namespace Renderer
 		// Usings
 		using VAO = std::shared_ptr<VertexArray>;
 		// Main constructor
-		explicit WaterRenderer(Shader::WaterShader& shader, Waters::WaterFrameBuffers& waterFBOs);
+		WaterRenderer(Shader::WaterShader& shader, Waters::WaterFrameBuffers& waterFBOs);
 
 		Shader::WaterShader& shader;
 		Waters::WaterFrameBuffers& waterFBOs;

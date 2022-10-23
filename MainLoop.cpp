@@ -2,7 +2,6 @@
 
 #include "Model.h"
 #include "Entity.h"
-#include "Material.h"
 #include "Player.h"
 #include "MeshTextures.h"
 #include "Resources.h"
@@ -25,7 +24,6 @@ using Renderer::Material;
 using Renderer::MeshTextures;
 using Renderer::GUI;
 using Renderer::FrameBuffer;
-using Renderer::FBType;
 using Renderer::MasterRenderer;
 using Renderer::Mode;
 using Entities::Entity;
@@ -122,11 +120,19 @@ void SDLWindow::MainLoop()
 		// Draw shadow framebuffer
 		renderer.RenderShadows(camera, lights[0]);
 
-		// Main render pass
-		renderer.RenderScene(camera);
-		renderer.RenderWaters(waters);
-		renderer.RenderGUIs(guis);
+		// Deferred geometry pass
+		renderer.RenderGBuffer(camera);
+		// Deferred lighting pass
+		renderer.RenderLighting(camera);
 
+		// Copy depth from gBuffer
+		renderer.CopyDepth();
+		// Render waters
+		renderer.RenderWaters(waters);
+		// Render skybox
+		renderer.RenderSkybox();
+		// Render GUIs
+		renderer.RenderGUIs(guis);
 		// End render
 		renderer.EndFrame();
 

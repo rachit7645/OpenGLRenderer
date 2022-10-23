@@ -7,176 +7,122 @@ using namespace Renderer;
 
 using Window::DIMENSIONS;
 
-FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, FBType type)
-	: width(width),
-	  height(height),
-	  type(type)
+void FrameBuffer::CreateFrameBuffer()
 {
-	// Generate Framebuffer
 	glGenFramebuffers(1, &id);
-	glBindFramebuffer(GL_FRAMEBUFFER, id);
+}
 
-	switch (type)
+void FrameBuffer::AddTexture(TxPtr& texture, const FBOAttachment& attachment)
+{
+	texture = std::make_shared<Texture>();
+	texture->width  = width;
+	texture->height = height;
+	texture->type   = GL_TEXTURE_2D;
+
+	texture->CreateTexture();
+	texture->Bind();
+	texture->SetParameter(GL_TEXTURE_MIN_FILTER, attachment.minFilter);
+	texture->SetParameter(GL_TEXTURE_MAG_FILTER, attachment.maxFilter);
+	texture->SetParameter(GL_TEXTURE_WRAP_S,     attachment.wrapMode);
+	texture->SetParameter(GL_TEXTURE_WRAP_T,     attachment.wrapMode);
+
+	texture->LoadImageData
+	(
+		nullptr,
+		attachment.internalFormat,
+		attachment.format,
+		attachment.dataType
+	);
+
+	texture->Unbind();
+
+	glFramebufferTexture2D
+	(
+		GL_FRAMEBUFFER,
+		attachment.slot,
+		texture->type,
+		texture->id,
+		0
+	);
+}
+
+void FrameBuffer::AddArrayTexture(TxPtr& texture, const FBOAttachment& attachment)
+{
+	texture = std::make_shared<Texture>();
+	texture->width  = width;
+	texture->height = height;
+	texture->depth  = depth;
+	texture->type   = GL_TEXTURE_2D_ARRAY;
+
+	texture->CreateTexture();
+	texture->Bind();
+	texture->SetParameter(GL_TEXTURE_MIN_FILTER, attachment.minFilter);
+	texture->SetParameter(GL_TEXTURE_MAG_FILTER, attachment.maxFilter);
+	texture->SetParameter(GL_TEXTURE_WRAP_S,     attachment.wrapMode);
+	texture->SetParameter(GL_TEXTURE_WRAP_T,     attachment.wrapMode);
+
+	if (attachment.border != nullptr)
 	{
-	case FBType::Color:
-		CreateColorTexture();
-		CreateDepthBuffer();
-		break;
-
-	case FBType::Depth:
-		SetColorBuffer();
-		CreateDepthTexture();
-		break;
-
-	case FBType::ColorAndDepth:
-		CreateColorTexture();
-		CreateDepthTexture();
-		break;
-
-	case FBType::Empty:
-		CreateColorBuffer();
-		CreateDepthBuffer();
-		break;
-
-	case FBType::None:
-	case FBType::DepthArray:
-		LOG_ERROR("{}\n", "FBType is invalid");
+		texture->SetParameter(GL_TEXTURE_BORDER_COLOR, attachment.border);
 	}
 
-	CheckStatus();
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-	glDepthRange(0.0, 1.0);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-FrameBuffer::FrameBuffer(GLsizei width, GLsizei height, GLsizei depth)
-	: width(width),
-	  height(height),
-	  depth(depth),
-	  type(FBType::DepthArray)
-{
-	// Generate Framebuffer
-	glGenFramebuffers(1, &id);
-	glBindFramebuffer(GL_FRAMEBUFFER, id);
-
-	SetColorBuffer();
-	CreateDepthArrayTexture();
-
-	CheckStatus();
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-	glDepthRange(0.0, 1.0);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void FrameBuffer::CreateColorTexture()
-{
-	colorTexture = std::make_shared<Texture>
+	texture->LoadImageData3D
 	(
-		width,
-		height,
-		GL_RGBA,
-		GL_RGBA,
-		GL_UNSIGNED_BYTE
+		nullptr,
+		attachment.internalFormat,
+		attachment.format,
+		attachment.dataType
 	);
 
-	glFramebufferTexture2D
-	(
-		GL_FRAMEBUFFER,
-		GL_COLOR_ATTACHMENT0,
-		GL_TEXTURE_2D,
-		colorTexture->id,
-		0
-	);
-}
-
-void FrameBuffer::CreateDepthTexture()
-{
-	depthTexture = std::make_shared<Texture>
-	(
-		width,
-		height,
-		GL_DEPTH_COMPONENT24,
-		GL_DEPTH_COMPONENT,
-		GL_FLOAT
-	);
-
-	glFramebufferTexture2D
-	(
-		GL_FRAMEBUFFER,
-		GL_DEPTH_ATTACHMENT,
-		GL_TEXTURE_2D,
-		depthTexture->id,
-		0
-	);
-}
-
-void FrameBuffer::CreateColorBuffer()
-{
-	colorRenderBuffer = std::make_shared<RenderBuffer>
-	(
-		width,
-		height,
-		GL_RGBA
-	);
-
-	glFramebufferRenderbuffer
-	(
-		GL_FRAMEBUFFER,
-		GL_COLOR_ATTACHMENT0,
-		GL_RENDERBUFFER,
-		colorRenderBuffer->id
-	);
-}
-
-void FrameBuffer::CreateDepthBuffer()
-{
-	depthRenderBuffer = std::make_shared<RenderBuffer>
-	(
-		width,
-		height,
-		GL_DEPTH_COMPONENT24
-	);
-
-	glFramebufferRenderbuffer
-	(
-		GL_FRAMEBUFFER,
-		GL_DEPTH_ATTACHMENT,
-		GL_RENDERBUFFER,
-		depthRenderBuffer->id
-	);
-}
-
-void FrameBuffer::CreateDepthArrayTexture()
-{
-	depthTexture = std::make_shared<Texture>
-	(
-		width,
-		height,
-		depth,
-		GL_DEPTH_COMPONENT24,
-		GL_DEPTH_COMPONENT,
-		GL_FLOAT
-	);
+	texture->Unbind();
 
 	glFramebufferTexture
 	(
 		GL_FRAMEBUFFER,
-		GL_DEPTH_ATTACHMENT,
+		attachment.slot,
 		depthTexture->id,
 		0
 	);
 }
 
-void FrameBuffer::SetColorBuffer()
+void FrameBuffer::AddBuffer(RdBufPtr& buffer, const FBOAttachment& attachment)
 {
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
+	buffer = std::make_shared<RenderBuffer>
+	(
+		width,
+		height,
+		attachment.internalFormat
+	);
+
+	glFramebufferRenderbuffer
+	(
+		GL_FRAMEBUFFER,
+		attachment.slot,
+		GL_RENDERBUFFER,
+		buffer->id
+	);
+}
+
+void FrameBuffer::SetDrawBuffer(GLenum value)
+{
+	glDrawBuffer(value);
+}
+
+void FrameBuffer::SetReadBuffer(GLenum value)
+{
+	glReadBuffer(value);
+}
+
+void FrameBuffer::SetDrawBuffers(const std::vector<GLenum>& buffers)
+{
+	glDrawBuffers(static_cast<GLsizei>(buffers.size()), buffers.data());
+}
+
+void FrameBuffer::EnableDepth()
+{
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDepthRange(0.0, 1.0);
 }
 
 void FrameBuffer::CheckStatus()

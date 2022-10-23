@@ -29,9 +29,9 @@ namespace Renderer
 	{
 		struct ShadowBufferGLSL
 		{
-			alignas(16) GL::IntGLSL   cascadeCount;
-			alignas(16) glm::mat4     matrices[SHADOW_MAX_FRUSTUMS];
-			alignas(16) GL::FloatGLSL cascadeDistances[SHADOW_MAX_FRUSTUMS];
+			alignas(16) GL::Int   cascadeCount;
+			alignas(16) glm::mat4 matrices[SHADOW_MAX_FRUSTUMS];
+			alignas(16) GL::Float cascadeDistances[SHADOW_MAX_FRUSTUMS];
 		};
 	}
 }

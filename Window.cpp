@@ -48,10 +48,6 @@ SDLWindow::SDLWindow()
 	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-	// 4x MSAA Anti-Aliasing
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
-
 	window = SDL_CreateWindow
 	(
 		"Rachit's Engine",

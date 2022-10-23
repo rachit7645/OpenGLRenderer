@@ -6,6 +6,7 @@
 #include "Util.h"
 #include "RenderConstants.h"
 #include "Maths.h"
+#include "FBOAttachment.h"
 
 using namespace Renderer;
 
@@ -14,6 +15,7 @@ using Entities::Camera;
 using Vec4s = ShadowMap::Vec4s;
 using Mat4s = ShadowMap::Mat4s;
 
+          glm::vec4  MAP_BORDER        = {1.0f, 1.0f, 1.0f, 1.0f};
 constexpr glm::ivec2 SHADOW_DIMENSIONS = {2048, 2048};
 constexpr f32        SHADOW_OFFSET     = 10.0f;
 
@@ -26,9 +28,34 @@ const std::vector<f32> shadowLevels =
 };
 
 ShadowMap::ShadowMap()
-	: buffer(std::make_shared<FrameBuffer>(SHADOW_DIMENSIONS.x, SHADOW_DIMENSIONS.y, shadowLevels.size() + 1)),
+	: buffer(std::make_shared<FrameBuffer>()),
 	  m_matrixBuffer(std::make_shared<ShadowBuffer>())
 {
+	Renderer::FBOAttachment depth =
+	{
+		GL_NEAREST,
+		GL_NEAREST,
+		GL_CLAMP_TO_BORDER,
+		GL_DEPTH_COMPONENT24,
+		GL_DEPTH_COMPONENT,
+		GL_FLOAT,
+		GL_DEPTH_ATTACHMENT,
+		&MAP_BORDER[0]
+	};
+
+	buffer->width  = SHADOW_DIMENSIONS.x;
+	buffer->height = SHADOW_DIMENSIONS.y;
+	buffer->depth  = static_cast<GLsizei>(shadowLevels.size() + 1);
+
+	buffer->CreateFrameBuffer();
+	buffer->Bind();
+	buffer->SetDrawBuffer(GL_NONE);
+	buffer->SetReadBuffer(GL_NONE);
+	buffer->AddArrayTexture(buffer->depthTexture, depth);
+	buffer->CheckStatus();
+	buffer->EnableDepth();
+	buffer->Unbind();
+
 	m_matrixBuffer->LoadDistances(shadowLevels);
 }
 
@@ -65,19 +92,10 @@ glm::mat4 ShadowMap::CalculateLightSpaceMatrix
 	const glm::vec3& lightDir
 )
 {
-	auto proj = glm::perspective
-	(
-		glm::radians(FOV),
-		ASPECT_RATIO,
-		nearPlane,
-		farPlane
-	);
-
-	auto corners = CalculateFrustumCorners(proj, Maths::CreateViewMatrix(camera));
-
+	auto proj      = glm::perspective(glm::radians(FOV), ASPECT_RATIO, nearPlane, farPlane);
+	auto corners   = CalculateFrustumCorners(proj, Maths::CreateViewMatrix(camera));
 	auto lightView = CalculateViewMatrix(corners, lightDir);
 	auto lightProj = CalculateProjMatrix(corners, lightView);
-
 	return lightProj * lightView;
 }
 

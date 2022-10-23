@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 
 #include "Maths.h"
+#include "Window.h"
 
 using namespace Renderer;
 
@@ -15,7 +16,10 @@ using Waters::WaterTile;
 using Waters::WaterFrameBuffers;
 
 MasterRenderer::MasterRenderer()
-	: instancedRenderer(instancedShader, fastInstancedShader, shadowInstancedShader, m_shadowMap),
+	: m_instances(std::make_shared<InstanceBuffer>()),
+	  instancedRenderer(fastInstancedShader, shadowInstancedShader, m_shadowMap, m_instances),
+	  gRenderer(gShader, m_instances),
+	  lightRenderer(lightShader, m_shadowMap, m_gBuffer),
 	  skyboxRenderer(skyboxShader),
 	  guiRenderer(guiShader),
 	  waterRenderer(waterShader, m_waterFBOs),
@@ -26,6 +30,16 @@ MasterRenderer::MasterRenderer()
 	m_matrices->LoadProjection(glm::perspective(glm::radians(FOV), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
 	m_shared->LoadSkyColor(GL_SKY_COLOR);
 	m_shared->LoadFarPlane(FAR_PLANE);
+
+	#ifdef _DEBUG
+		fastInstancedShader.DumpToFile("dumps/FIS.s");
+		shadowInstancedShader.DumpToFile("dumps/SIS.s");
+		gShader.DumpToFile("dumps/GS.s");
+		lightShader.DumpToFile("dumps/LS.s");
+		skyboxShader.DumpToFile("dumps/SKB.s");
+		guiShader.DumpToFile("dumps/GUI.s");
+		waterShader.DumpToFile("dumps/WTR.s");
+	#endif
 }
 
 void MasterRenderer::BeginFrame
@@ -41,12 +55,12 @@ void MasterRenderer::BeginFrame
 	m_lights->LoadLights(lights);
 }
 
-void MasterRenderer::RenderScene(const Camera& camera, const glm::vec4& clipPlane, Mode mode)
+void MasterRenderer::RenderScene(const Camera& camera, Mode mode, const glm::vec4& clipPlane)
 {
 	Prepare(camera, clipPlane);
 	RenderEntities(mode);
 
-	if (mode != Mode::Shadow)
+	if (mode == Mode::Fast)
 	{
 		RenderSkybox();
 	}
@@ -56,6 +70,8 @@ void MasterRenderer::EndFrame()
 {
 	// Clear internal render data
 	m_entities.clear();
+	// Update ImGui windows
+	RenderImGui();
 }
 
 void MasterRenderer::Prepare(const Camera& camera, const glm::vec4& clipPlane)
@@ -120,14 +136,14 @@ void MasterRenderer::RenderWaterFBOs(const std::vector<WaterTile>& waters,Camera
 	camera.position.y -= distance;
 	camera.InvertPitch();
 	// Render
-	RenderScene(camera, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].position.y), Mode::Fast);
+	RenderScene(camera, Mode::Fast, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].position.y));
 	// Move it back to its original position
 	camera.position.y += distance;
 	camera.InvertPitch();
 
 	// Refraction pass
 	m_waterFBOs.BindRefraction();
-	RenderScene(camera, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].position.y), Mode::Fast);
+	RenderScene(camera, Mode::Fast, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].position.y));
 
 	// Disable clip plane 0
 	glDisable(GL_CLIP_DISTANCE0);
@@ -140,9 +156,101 @@ void MasterRenderer::RenderShadows(const Camera& camera, const Light& light)
 	m_shadowMap.BindShadowFBO();
 	m_shadowMap.Update(camera, light.position);
 	glCullFace(GL_FRONT);
-	RenderScene(camera, glm::vec4(0.0f), Mode::Shadow);
+	RenderScene(camera, Mode::Shadow, glm::vec4(0.0f));
 	glCullFace(GL_BACK);
 	m_shadowMap.BindDefaultFBO();
+}
+
+void MasterRenderer::RenderGBuffer(const Camera& camera)
+{
+	m_gBuffer.BindGBuffer();
+	Prepare(camera);
+	gRenderer.Render(m_entities);
+	m_gBuffer.BindDefaultFBO();
+}
+
+void MasterRenderer::RenderLighting(const Camera& camera)
+{
+	Prepare(camera);
+	lightShader.Start();
+	lightRenderer.Render();
+	lightShader.Stop();
+}
+
+void MasterRenderer::RenderImGui()
+{
+	static auto current = m_waterFBOs.reflectionFBO->colorTextures[0];
+
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("Renderer"))
+		{
+			if (ImGui::Button("WaterReflection"))
+			{
+				current = m_waterFBOs.reflectionFBO->colorTextures[0];
+			}
+
+			if (ImGui::Button("WaterRefraction"))
+			{
+				current = m_waterFBOs.refractionFBO->colorTextures[0];
+			}
+
+			if (ImGui::Button("GPosition"))
+			{
+				current = m_gBuffer.buffer->colorTextures[0];
+			}
+
+			if (ImGui::Button("GNormal"))
+			{
+				current = m_gBuffer.buffer->colorTextures[1];
+			}
+
+			if (ImGui::Button("GAlbedo"))
+			{
+				current = m_gBuffer.buffer->colorTextures[2];
+			}
+
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+
+	if (ImGui::Begin("CurrentFBO"))
+	{
+		if (ImGui::BeginChild("Current"))
+		{
+			ImGui::Image
+			(
+				reinterpret_cast<ImTextureID>(current->id),
+				ImGui::GetWindowSize(),
+				ImVec2(0, 1),
+				ImVec2(1, 0)
+			);
+			ImGui::EndChild();
+		}
+	}
+
+	ImGui::End();
+}
+
+void MasterRenderer::CopyDepth()
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_gBuffer.buffer->id);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER,0);
+
+	glBlitFramebuffer
+	(
+		0, 0,
+		Window::DIMENSIONS.x,
+		Window::DIMENSIONS.y,
+		0, 0,
+		Window::DIMENSIONS.x,
+		Window::DIMENSIONS.y,
+		GL_DEPTH_BUFFER_BIT,
+		GL_NEAREST
+	);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void MasterRenderer::ProcessEntity(Entity& entity)

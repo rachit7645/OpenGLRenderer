@@ -47,10 +47,11 @@ void WaterRenderer::Prepare()
 	glBindVertexArray(m_vao->id);
 	// Bind framebuffers
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, waterFBOs.reflectionFBO->colorTexture->id);
+	glBindTexture(GL_TEXTURE_2D, waterFBOs.reflectionFBO->colorTextures[0]->id);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, waterFBOs.refractionFBO->colorTexture->id);
+	glBindTexture(GL_TEXTURE_2D, waterFBOs.refractionFBO->colorTextures[0]->id);
 	// Load dudv move factor
+	// TODO: Try using sin/cos here
 	m_moveFactor += WATER_WAVE_SPEED * g_Delta;
 	m_moveFactor = std::fmod(m_moveFactor, 1.0f);
 	shader.LoadMoveFactor(m_moveFactor);

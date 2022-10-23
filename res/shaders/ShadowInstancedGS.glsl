@@ -1,5 +1,7 @@
 #version 430 core
 
+// TODO: Make invocation count dynamic
+
 const int MAX_LAYER_COUNT = 16;
 
 layout(triangles,      invocations  = 5)  in;

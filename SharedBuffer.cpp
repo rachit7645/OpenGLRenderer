@@ -8,7 +8,7 @@ using Detail::SharedBufferGLSL;
 using Entities::Camera;
 
 SharedBuffer::SharedBuffer()
-	: UniformBuffer(2, sizeof(SharedBufferGLSL))
+	: UniformBuffer(2, sizeof(SharedBufferGLSL), GL_STATIC_DRAW)
 {
 }
 

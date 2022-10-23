@@ -6,6 +6,8 @@
 
 #include "GLM.h"
 
+// TODO: Add opengl state checks
+
 // Quick wrappers around OpenGL calls
 namespace GL
 {
@@ -38,8 +40,8 @@ namespace GL
 		};
 	}
 
-	using FloatGLSL = Detail::DataSTD140<GLfloat>;
-	using IntGLSL   = Detail::DataSTD140<GLint>;
+	using Float = Detail::DataSTD140<GLfloat>;
+	using Int   = Detail::DataSTD140<GLint>;
 }
 
 #endif
