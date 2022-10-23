@@ -11,7 +11,7 @@ using Entities::Camera;
 using Entities::Light;
 
 MatrixBuffer::MatrixBuffer()
-	: UniformBuffer(0, sizeof(MatrixBufferGLSL))
+	: UniformBuffer(0, sizeof(MatrixBufferGLSL), GL_STATIC_DRAW)
 {
 }
 

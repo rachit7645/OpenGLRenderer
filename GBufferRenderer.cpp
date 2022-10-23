@@ -1,12 +1,14 @@
 #include "GBufferRenderer.h"
 
+#include <utility>
+
 using namespace Renderer;
 
 using Shader::GBufferShader;
 
 GBufferRenderer::GBufferRenderer(GBufferShader& shader, BufferPtr instances)
 	: shader(shader),
-	  instances(instances)
+	  instances(std::move(instances))
 {
 	shader.Start();
 	shader.ConnectTextureUnits();

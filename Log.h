@@ -27,30 +27,16 @@ namespace Logger
 	}
 }
 
-// Logging macros
+// Implementation
 
-#define LOG_INFO(format, ...) \
+#define IMPL_LOG(type, format, ...) \
 	do \
 	{ \
-		Logger::Log("INFO", Util::GetTime(), Files::GetName(__FILE__), __LINE__, FMT_STRING(format), __VA_ARGS__); \
+		Logger::Log(type, Util::GetTime(), Files::GetName(__FILE__), __LINE__, FMT_STRING(format), __VA_ARGS__); \
 	} \
 	while (0)
 
-#define LOG_DEBUG(format, ...) \
-	do \
-	{ \
-		Logger::Log("DEBUG", Util::GetTime(), Files::GetName(__FILE__), __LINE__, FMT_STRING(format), __VA_ARGS__); \
-	} \
-	while (0)
-
-#define LOG_WARNING(format, ...) \
-	do \
-	{ \
-		Logger::Log("WARNING", Util::GetTime(), Files::GetName(__FILE__), __LINE__, FMT_STRING(format), __VA_ARGS__); \
-	} \
-	while (0)
-
-#define LOG_ERROR(format, ...) \
+#define IMPL_LOG_EXIT(type, format, ...) \
 	do \
 	{ \
 		Logger::Log("ERROR", Util::GetTime(), Files::GetName(__FILE__), __LINE__, FMT_STRING(format), __VA_ARGS__); \
@@ -58,11 +44,15 @@ namespace Logger
 	} \
 	while (0)
 
-#define LOG_GL(format, ...) \
-	do \
-	{ \
-		Logger::Log("GL", Util::GetTime(), Files::GetName(__FILE__), __LINE__, FMT_STRING(format), __VA_ARGS__); \
-	} \
-	while (0)
+// Regular loggers
+
+#define LOG_INFO(format, ...)    IMPL_LOG("INFO",    format, __VA_ARGS__)
+#define LOG_DEBUG(format, ...)   IMPL_LOG("DEBUG",   format, __VA_ARGS__)
+#define LOG_WARNING(format, ...) IMPL_LOG("WARNING", format, __VA_ARGS__)
+#define LOG_GL(format, ...)      IMPL_LOG("GL",      format, __VA_ARGS__)
+
+// Error loggers
+
+#define LOG_ERROR(format, ...) IMPL_LOG_EXIT("ERROR", format, __VA_ARGS__)
 
 #endif

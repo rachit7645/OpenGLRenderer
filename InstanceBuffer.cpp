@@ -10,6 +10,7 @@ using Entities::Entity;
 
 using DataVector = InstanceBuffer::DataVector;
 
+// Note: Since we update this before every draw call, it's stored as GL_DYNAMIC_DRAW
 InstanceBuffer::InstanceBuffer()
 	: ShaderStorageBuffer(3, NUM_MAX_ENTITIES * sizeof(InstancedDataGLSL), GL_DYNAMIC_DRAW)
 {

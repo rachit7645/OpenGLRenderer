@@ -2,7 +2,6 @@
 
 #include "Model.h"
 #include "Entity.h"
-#include "Material.h"
 #include "Player.h"
 #include "MeshTextures.h"
 #include "Resources.h"

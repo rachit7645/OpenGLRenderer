@@ -2,6 +2,7 @@
 
 const float AMBIENT_STRENGTH = 1.0f;
 const int   MAX_LIGHTS       = 4;
+const int   NUM_LIGHTS       = 4;
 
 struct Light
 {
@@ -62,12 +63,12 @@ void main()
 	vec4 transNormal = instances[gl_InstanceID].modelMatrix * vec4(normal, 0.0f);
 	vec3 unitNormal  = normalize(transNormal.xyz);
 
-	for (int i = 0; i < MAX_LIGHTS; ++i)
+	for (int i = 0; i < min(MAX_LIGHTS, NUM_LIGHTS); ++i)
 	{
-		vec3 lightDir   = normalize(lights[i].position.xyz - worldPosition.xyz);
+		vec3  lightDir  = normalize(lights[i].position.xyz - worldPosition.xyz);
 		float attFactor = CalculateAttFactor(i, worldPosition);
-		vec4 ambient    = CalculateAmbient(i) * attFactor;
-		vec4 diffuse    = CalculateDiffuse(i, unitNormal, lightDir);
+		vec4  ambient   = CalculateAmbient(i) * attFactor;
+		vec4  diffuse   = CalculateDiffuse(i, unitNormal, lightDir);
 		vertexColor    += ambient + diffuse;
 	}
 }

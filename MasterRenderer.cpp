@@ -32,13 +32,13 @@ MasterRenderer::MasterRenderer()
 	m_shared->LoadFarPlane(FAR_PLANE);
 
 	#ifdef _DEBUG
-	fastInstancedShader.DumpToFile("dumps/FIS.s");
-	shadowInstancedShader.DumpToFile("dumps/SIS.s");
-	gShader.DumpToFile("dumps/GS.s");
-	lightShader.DumpToFile("dumps/LS.s");
-	skyboxShader.DumpToFile("dumps/SKB.s");
-	guiShader.DumpToFile("dumps/GUI.s");
-	waterShader.DumpToFile("dumps/WTR.s");
+		fastInstancedShader.DumpToFile("dumps/FIS.s");
+		shadowInstancedShader.DumpToFile("dumps/SIS.s");
+		gShader.DumpToFile("dumps/GS.s");
+		lightShader.DumpToFile("dumps/LS.s");
+		skyboxShader.DumpToFile("dumps/SKB.s");
+		guiShader.DumpToFile("dumps/GUI.s");
+		waterShader.DumpToFile("dumps/WTR.s");
 	#endif
 }
 

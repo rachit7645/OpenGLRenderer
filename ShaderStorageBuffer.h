@@ -15,9 +15,10 @@ namespace Renderer
 		// Destructor
 		~ShaderStorageBuffer();
 
-		GLuint     slot = 0;
-		GLuint     id   = 0;
-		GLsizeiptr size = 0;
+		GLuint     id    = 0;
+		GLuint     slot  = 0;
+		GLsizeiptr size  = 0;
+		GLenum     usage = 0;
 	};
 }
 

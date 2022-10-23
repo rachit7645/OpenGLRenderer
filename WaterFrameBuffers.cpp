@@ -1,6 +1,5 @@
 #include "WaterFrameBuffers.h"
 
-// Hack to fix circular includes
 #include "Window.h"
 #include "FBOAttachment.h"
 

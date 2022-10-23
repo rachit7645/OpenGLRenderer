@@ -11,13 +11,14 @@ namespace Renderer
 		// Default constructor
 		UniformBuffer() = default;
 		// Main constructor
-		UniformBuffer(GLuint slot, GLsizeiptr size);
+		UniformBuffer(GLuint slot, GLsizeiptr size, GLenum usage);
 		// Destructor
 		~UniformBuffer();
 
-		GLuint     slot = 0;
-		GLuint     id   = 0;
-		GLsizeiptr size = 0;
+		GLuint     slot  = 0;
+		GLsizeiptr size  = 0;
+		GLuint     id    = 0;
+		GLenum     usage = 0;
 	};
 }
 

@@ -5,8 +5,9 @@
 
 namespace Renderer
 {
-	struct FBOAttachment
+	class FBOAttachment
 	{
+	public:
 		GLint    minFilter      = 0;
 		GLint    maxFilter      = 0;
 		GLint    wrapMode       = 0;

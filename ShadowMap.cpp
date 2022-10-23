@@ -92,19 +92,10 @@ glm::mat4 ShadowMap::CalculateLightSpaceMatrix
 	const glm::vec3& lightDir
 )
 {
-	auto proj = glm::perspective
-	(
-		glm::radians(FOV),
-		ASPECT_RATIO,
-		nearPlane,
-		farPlane
-	);
-
-	auto corners = CalculateFrustumCorners(proj, Maths::CreateViewMatrix(camera));
-
+	auto proj      = glm::perspective(glm::radians(FOV), ASPECT_RATIO, nearPlane, farPlane);
+	auto corners   = CalculateFrustumCorners(proj, Maths::CreateViewMatrix(camera));
 	auto lightView = CalculateViewMatrix(corners, lightDir);
 	auto lightProj = CalculateProjMatrix(corners, lightView);
-
 	return lightProj * lightView;
 }
 
