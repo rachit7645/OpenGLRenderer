@@ -27,6 +27,12 @@ SSAOBuffers::SSAOBuffers()
 		GL_FLOAT,
 		GL_COLOR_ATTACHMENT0
 	};
+	// Shared depth attachment
+	Renderer::FBOAttachment depth = {};
+	{
+		depth.internalFormat = GL_DEPTH_COMPONENT24;
+		depth.slot           = GL_DEPTH_ATTACHMENT;
+	}
 
 	// Create ssao buffer
 	ssaoBuffer->width  = Window::DIMENSIONS.x;
@@ -46,6 +52,7 @@ SSAOBuffers::SSAOBuffers()
 	blurBuffer->CreateFrameBuffer();
 	blurBuffer->Bind();
 	blurBuffer->AddTexture(blurBuffer->colorTextures[0], color0);
+	blurBuffer->AddBuffer(blurBuffer->depthRenderBuffer, depth);
 	blurBuffer->CheckStatus();
 	blurBuffer->EnableDepth();
 	blurBuffer->Unbind();

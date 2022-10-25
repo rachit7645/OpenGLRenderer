@@ -8,7 +8,7 @@
 #include "imgui.h"
 #include "GUI.h"
 #include "WaterTile.h"
-#include "MasterRenderer.h"
+#include "RenderManager.h"
 #include "Camera.h"
 
 using namespace Window;
@@ -24,7 +24,7 @@ using Renderer::Material;
 using Renderer::MeshTextures;
 using Renderer::GUI;
 using Renderer::FrameBuffer;
-using Renderer::MasterRenderer;
+using Renderer::RenderManager;
 using Renderer::Mode;
 using Entities::Entity;
 using Entities::Skybox;
@@ -106,7 +106,7 @@ void SDLWindow::MainLoop()
 	}
 
 	auto camera   = Entities::Camera(&player);
-	auto renderer = Renderer::MasterRenderer();
+	auto renderer = Renderer::RenderManager();
 
 	startTime = frameStartTime = steady_clock::now();
 
