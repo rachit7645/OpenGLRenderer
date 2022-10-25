@@ -48,6 +48,7 @@ namespace Renderer
 		u8* LoadImage(const std::string_view path);
 	public:
 		friend class FrameBuffer;
+		friend class SSAOBuffers;
 	};
 }
 #endif

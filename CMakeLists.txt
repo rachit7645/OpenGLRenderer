@@ -81,6 +81,7 @@ add_executable(engine
 	GBufferRenderer.cpp
 	LightingRenderer.cpp
 	LightingShader.cpp
+		SSAOBuffers.cpp
 )
 
 # Precompiled Headers

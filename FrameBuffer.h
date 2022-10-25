@@ -66,6 +66,7 @@ namespace Renderer
 	public:
 		friend class ShadowMap;
 		friend class GBuffer;
+		friend class SSAOBuffers;
 		friend class Waters::WaterFrameBuffers;
 	};
 }
