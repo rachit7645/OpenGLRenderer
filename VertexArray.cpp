@@ -18,17 +18,38 @@ VertexArray::VertexArray
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
 
-	buffers["vertices"]      = std::make_shared<VertexBuffer>(0, 3, vertices);
-	buffers["textureCoords"] = std::make_shared<VertexBuffer>(1, 2, txCoords);
-	buffers["normals"]       = std::make_shared<VertexBuffer>(2, 3, normals);
-	buffers["indices"]       = std::make_shared<VertexBuffer>(indices);
+	buffers["vertices"] = std::make_shared<VertexBuffer>();
+	buffers["vertices"]->CreateBuffer();
+	buffers["vertices"]->Bind(GL_ARRAY_BUFFER);
+	buffers["vertices"]->BufferData(GL_ARRAY_BUFFER, vertices);
+	buffers["vertices"]->SetVertexAttribute(0, 3, GL_FLOAT, 0, nullptr);
+	buffers["vertices"]->Unbind(GL_ARRAY_BUFFER);
+
+	buffers["txCoords"] = std::make_shared<VertexBuffer>();
+	buffers["txCoords"]->CreateBuffer();
+	buffers["txCoords"]->Bind(GL_ARRAY_BUFFER);
+	buffers["txCoords"]->BufferData(GL_ARRAY_BUFFER, txCoords);
+	buffers["txCoords"]->SetVertexAttribute(1, 2, GL_FLOAT, 0, nullptr);
+	buffers["txCoords"]->Unbind(GL_ARRAY_BUFFER);
+
+	buffers["normals"] = std::make_shared<VertexBuffer>();
+	buffers["normals"]->CreateBuffer();
+	buffers["normals"]->Bind(GL_ARRAY_BUFFER);
+	buffers["normals"]->BufferData(GL_ARRAY_BUFFER, normals);
+	buffers["normals"]->SetVertexAttribute(2, 3, GL_FLOAT, 0, nullptr);
+	buffers["normals"]->Unbind(GL_ARRAY_BUFFER);
+
+	buffers["indices"] = std::make_shared<VertexBuffer>();
+	buffers["indices"]->CreateBuffer();
+	buffers["indices"]->Bind(GL_ELEMENT_ARRAY_BUFFER);
+	buffers["indices"]->BufferData(GL_ELEMENT_ARRAY_BUFFER, indices);
 
 	glBindVertexArray(0);
 }
 
 VertexArray::VertexArray
 (
-	GLuint coordSize,
+	GLint coordSize,
 	const std::vector<f32>& vertices
 )
 	: vertexCount(static_cast<GLsizei>(vertices.size() / coordSize))
@@ -36,7 +57,14 @@ VertexArray::VertexArray
 	glGenVertexArrays(1, &id);
 	glBindVertexArray(id);
 	glEnableVertexAttribArray(0);
-	buffers["vertices"] = std::make_shared<VertexBuffer>(0, coordSize, vertices);
+
+	buffers["vertices"] = std::make_shared<VertexBuffer>();
+	buffers["vertices"]->CreateBuffer();
+	buffers["vertices"]->Bind(GL_ARRAY_BUFFER);
+	buffers["vertices"]->BufferData(GL_ARRAY_BUFFER, vertices);
+	buffers["vertices"]->SetVertexAttribute(0, coordSize, GL_FLOAT, 0, nullptr);
+	buffers["vertices"]->Unbind(GL_ARRAY_BUFFER);
+
 	glBindVertexArray(0);
 }
 

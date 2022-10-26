@@ -2,45 +2,61 @@
 
 using namespace Renderer;
 
-// TODO: Add pipeline style functions for flecibility
-
-VertexBuffer::VertexBuffer(GLuint slot, GLint coordSize, const std::vector<f32>& data)
+void VertexBuffer::CreateBuffer()
 {
 	glGenBuffers(1, &id);
-	glBindBuffer(GL_ARRAY_BUFFER, id);
+}
 
+void VertexBuffer::BufferData(GLenum type, const std::vector<GLfloat>& data)
+{
 	glBufferData
 	(
-		GL_ARRAY_BUFFER,
+		type,
 		static_cast<GLsizeiptr>(data.size() * sizeof(GLfloat)),
 		data.data(),
 		GL_STATIC_DRAW
 	);
-
-	glVertexAttribPointer
-	(
-		slot,
-		coordSize,
-		GL_FLOAT,
-		GL_FALSE,
-		0,
-		nullptr
-	);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-VertexBuffer::VertexBuffer(const std::vector<u32>& data)
+void VertexBuffer::BufferData(GLenum type, const std::vector<GLuint>& data)
 {
-	glGenBuffers(1, &id);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
 	glBufferData
 	(
-		GL_ELEMENT_ARRAY_BUFFER,
+		type,
 		static_cast<GLsizeiptr>(data.size() * sizeof(GLuint)),
 		data.data(),
 		GL_STATIC_DRAW
 	);
+}
+
+void VertexBuffer::SetVertexAttribute
+(
+	GLuint index,
+	GLint size,
+	GLenum type,
+	GLsizei stride,
+	const void* pointer
+)
+{
+	glVertexAttribPointer
+	(
+		index,
+		size,
+		type,
+		GL_FALSE,
+		stride,
+		pointer
+	);
+}
+
+void VertexBuffer::Bind(GLenum type) const
+{
+	glBindBuffer(type, id);
+}
+
+void VertexBuffer::Unbind(GLenum type) const
+{
+	glBindBuffer(type, 0);
 }
 
 VertexBuffer::~VertexBuffer()

@@ -26,7 +26,7 @@ namespace Renderer
 			const std::vector<f32>& normals
 		);
 		// Init VAO for glDrawArrays
-		VertexArray(GLuint coordSize, const std::vector<f32>& vertices);
+		VertexArray(GLint coordSize, const std::vector<f32>& vertices);
 		// Destructor
 		~VertexArray();
 
