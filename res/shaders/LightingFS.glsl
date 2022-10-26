@@ -58,10 +58,10 @@ layout(std140, binding = 1) uniform Lights
 
 layout(std140, binding = 2) uniform Shared
 {
-	vec4  clipPlane;
-	vec4  skyColor;
-	vec4  cameraPos;
-	float farPlane;
+	vec4 clipPlane;
+	vec4 skyColor;
+	vec4 cameraPos;
+	vec4 resolution;
 };
 
 layout (std140, binding = 4) uniform ShadowBuffer
@@ -234,7 +234,7 @@ float CalculateBias(int layer, LightData lightData, GBuffer gBuffer)
 
 	if (layer == cascadeCount)
 	{
-		bias *= 1.0f / (farPlane * BIAS_MODIFIER);
+		bias *= 1.0f / (resolution.w * BIAS_MODIFIER);
 	}
 	else
 	{

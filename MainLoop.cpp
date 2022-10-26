@@ -8,7 +8,7 @@
 #include "imgui.h"
 #include "GUI.h"
 #include "WaterTile.h"
-#include "MasterRenderer.h"
+#include "RenderManager.h"
 #include "Camera.h"
 
 using namespace Window;
@@ -24,7 +24,7 @@ using Renderer::Material;
 using Renderer::MeshTextures;
 using Renderer::GUI;
 using Renderer::FrameBuffer;
-using Renderer::MasterRenderer;
+using Renderer::RenderManager;
 using Renderer::Mode;
 using Entities::Entity;
 using Entities::Skybox;
@@ -43,6 +43,7 @@ void SDLWindow::MainLoop()
 
 	auto playerModel = Resources::GetModel("gfx/Link/Link.obj",   MeshTextures(defDiffuse, defSpecular));
 	auto stageModel  = Resources::GetModel("gfx/Stage/stage.obj", MeshTextures(defDiffuse, defSpecular));
+	auto stallModel  = Resources::GetModel("gfx/Stall/stall.obj", MeshTextures(defDiffuse, defSpecular));
 
 	// All objects go here
 	std::vector<Entity> entities;
@@ -50,8 +51,16 @@ void SDLWindow::MainLoop()
 		entities.emplace_back
 		(
 			stageModel,
-			glm::vec3(0.0f, -0.3f, 0.0f),
+			glm::vec3(0.0f, -0.6f, 0.0f),
 			glm::vec3(0.0f),
+			1.0f
+		);
+
+		entities.emplace_back
+		(
+			stallModel,
+			glm::vec3(-3.0f, 0.0f, -15.0f),
+			glm::vec3(0.0f, 90.0f, 0.0f),
 			1.0f
 		);
 	}
@@ -78,12 +87,6 @@ void SDLWindow::MainLoop()
 
 	std::vector<GUI> guis;
 	{
-		/* guis.emplace_back
-		(
-			shadowFBO.buffer->depthTexture,
-			glm::vec2(-0.5f, 0.5f),
-			glm::vec2(0.5f, 0.5f)
-		); */
 	}
 
 	std::vector<WaterTile> waters;
@@ -97,7 +100,7 @@ void SDLWindow::MainLoop()
 	}
 
 	auto camera   = Entities::Camera(&player);
-	auto renderer = Renderer::MasterRenderer();
+	auto renderer = Renderer::RenderManager();
 
 	startTime = frameStartTime = steady_clock::now();
 
@@ -115,10 +118,10 @@ void SDLWindow::MainLoop()
 
 		// Begin render
 		renderer.BeginFrame(entities, lights, player);
-		// Draw water framebuffers
-		renderer.RenderWaterFBOs(waters, camera);
 		// Draw shadow framebuffer
 		renderer.RenderShadows(camera, lights[0]);
+		// Draw water framebuffers
+		renderer.RenderWaterFBOs(waters, camera);
 
 		// Deferred geometry pass
 		renderer.RenderGBuffer(camera);
@@ -142,6 +145,7 @@ void SDLWindow::MainLoop()
 
 		SDL_GL_SwapWindow(window);
 		CalculateFPS();
+
 		if (PollEvents()) break;
 	}
 }

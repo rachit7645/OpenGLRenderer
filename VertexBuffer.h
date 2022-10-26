@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 
 #include "Util.h"
+#include "Vertex.h"
 
 namespace Renderer
 {
@@ -13,14 +14,30 @@ namespace Renderer
 	public:
 		// Default constructor
 		VertexBuffer() = default;
-		// Standard vbo
-		VertexBuffer(GLuint slot, GLint coordSize, const std::vector<f32>& data);
-		// Element buffer object
-		explicit VertexBuffer(const std::vector<u32>& data);
 		// Destructor
 		~VertexBuffer();
 
-		GLuint id = 0;
+		void Bind(GLenum type)   const;
+		void Unbind(GLenum type) const;
+
+		GLuint id   = 0;
+	protected:
+		void CreateBuffer();
+
+		void BufferData(GLenum type, const std::vector<Vertex>& data);
+		void BufferData(GLenum type, const std::vector<GLfloat>& data);
+		void BufferData(GLenum type, const std::vector<GLuint>& data);
+
+		void SetVertexAttribute
+		(
+			GLuint index,
+			GLint size,
+			GLenum type,
+			GLsizei stride,
+			const void* pointer
+		);
+	public:
+		friend class VertexArray;
 	};
 }
 

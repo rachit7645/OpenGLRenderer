@@ -41,7 +41,7 @@ add_executable(engine
 	Maths.cpp
 	Camera.cpp
 	MainLoop.cpp
-	MasterRenderer.cpp
+	RenderManager.cpp
 	Material.cpp 
 	Mesh.cpp
 	Player.cpp
@@ -81,6 +81,7 @@ add_executable(engine
 	GBufferRenderer.cpp
 	LightingRenderer.cpp
 	LightingShader.cpp
+	Vertex.cpp
 )
 
 # Precompiled Headers

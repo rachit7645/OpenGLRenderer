@@ -20,7 +20,8 @@ namespace Shader
 			const std::string_view fragmentPath,
 			const std::string_view geometryPath
 		);
-		~ShaderProgram();
+		// Destructor
+		virtual ~ShaderProgram();
 
 		GLuint programID;
 

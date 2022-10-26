@@ -4,6 +4,8 @@
 #include "Window.h"
 #include "Util.h"
 
+// TODO: Organize source files
+
 int main(UNUSED int argc, UNUSED char** argv)
 {
 	// Create Window and start main loop

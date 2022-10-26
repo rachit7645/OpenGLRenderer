@@ -7,6 +7,7 @@
 #include "VertexArray.h"
 #include "MeshTextures.h"
 #include "Material.h"
+#include "Vertex.h"
 
 namespace Renderer
 {
@@ -16,10 +17,8 @@ namespace Renderer
 		using VAO = std::shared_ptr<VertexArray>;
 		Mesh
 		(
-			const std::vector<f32>& vertices,
+			const std::vector<Vertex>& vertices,
 			const std::vector<u32>& indices,
-			const std::vector<f32>& txCoords,
-			const std::vector<f32>& normals,
 			const MeshTextures& textures,
 			const Material& material
 		);

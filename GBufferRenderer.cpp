@@ -72,6 +72,7 @@ void GBufferRenderer::LoadSpecular(const Mesh& mesh)
 {
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, mesh.textures.specular->id);
+	shader.LoadMaterial(mesh.material);
 }
 
 void GBufferRenderer::UnbindMesh()

@@ -3,6 +3,7 @@
 #include "Resources.h"
 #include "Log.h"
 #include "Files.h"
+#include "Vertex.h"
 
 using namespace Renderer;
 
@@ -55,29 +56,23 @@ Mesh Model::ProcessMesh
 	const Material& material
 )
 {
-	std::vector<f32> vertices;
-	std::vector<f32> txCoords;
-	std::vector<f32> normals;
-	std::vector<u32> indices;
+	std::vector<Vertex> vertices;
+	std::vector<u32>    indices;
 
 	for (u32 i = 0; i < mesh->mNumVertices; i++)
 	{
 		const auto aiZeroVector = aiVector3D(0.0f, 0.0f, 0.0f);
 
-		const aiVector3D& pos      = mesh->mVertices[i];
+		const aiVector3D& position = mesh->mVertices[i];
 		const aiVector3D& normal   = mesh->mNormals[i];
 		const aiVector3D& texCoord = mesh->HasTextureCoords(0) ? mesh->mTextureCoords[0][i] : aiZeroVector;
 
-		vertices.emplace_back(pos.x);
-		vertices.emplace_back(pos.y);
-		vertices.emplace_back(pos.z);
-
-		txCoords.emplace_back(texCoord.x);
-		txCoords.emplace_back(texCoord.y);
-
-		normals.emplace_back(normal.x);
-		normals.emplace_back(normal.y);
-		normals.emplace_back(normal.z);
+		vertices.emplace_back
+		(
+			glm::vec3(position.x, position.y, position.z),
+			glm::vec2(texCoord.x, texCoord.y),
+			glm::vec3(normal.x, normal.y, normal.z)
+		);
 	}
 
 	for (u32 i = 0; i < mesh->mNumFaces; ++i)
@@ -90,7 +85,8 @@ Mesh Model::ProcessMesh
 
 	return Mesh
 	(
-		vertices, indices, txCoords, normals,
+		vertices,
+		indices,
 		ProcessTextures(mesh, scene, textures),
 		ProcessMaterial(mesh, scene, material)
 	);

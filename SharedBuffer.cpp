@@ -52,15 +52,16 @@ void SharedBuffer::LoadCameraPos(const Camera& camera)
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void SharedBuffer::LoadFarPlane(f32 farPlane)
+void SharedBuffer::LoadResolution(const glm::ivec2& dimensions, f32 nearPlane, f32 farPlane)
 {
+	auto resolution = glm::vec4(dimensions, nearPlane, farPlane);
 	glBindBuffer(GL_UNIFORM_BUFFER, id);
 	glBufferSubData
 	(
 		GL_UNIFORM_BUFFER,
-		static_cast<GLint>(offsetof(SharedBufferGLSL, farPlane)),
-		static_cast<GLsizeiptr>(sizeof(f32)),
-		reinterpret_cast<const void*>(&farPlane)
+		static_cast<GLint>(offsetof(SharedBufferGLSL, resolution)),
+		static_cast<GLsizeiptr>(sizeof(glm::vec4)),
+		reinterpret_cast<const void*>(&resolution)
 	);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }

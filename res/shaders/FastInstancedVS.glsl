@@ -31,10 +31,10 @@ layout(std140, binding = 1) uniform Lights
 
 layout(std140, binding = 2) uniform Shared
 {
-	vec4  clipPlane;
-	vec4  skyColor;
-	vec4  cameraPos;
-	float farPlane;
+	vec4 clipPlane;
+	vec4 skyColor;
+	vec4 cameraPos;
+	vec4 resolution;
 };
 
 layout(std430, binding = 3) readonly buffer InstanceData
