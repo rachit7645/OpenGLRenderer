@@ -8,31 +8,25 @@
 
 #include "VertexBuffer.h"
 #include "Util.h"
+#include "Vertex.h"
 
 namespace Renderer
 {
-	// TODO: Add Bind and Unbind functions
 	class VertexArray
 	{
 	public:
 		// Default constructor
 		VertexArray() = default;
 		// Init default VAO
-		VertexArray
-		(
-			const std::vector<f32>& vertices,
-			const std::vector<u32>& indices,
-			const std::vector<f32>& txCoords,
-			const std::vector<f32>& normals
-		);
+		VertexArray(const std::vector<Vertex>& vertices, const std::vector<u32>& indices);
 		// Init VAO for glDrawArrays
 		VertexArray(GLint coordSize, const std::vector<f32>& vertices);
 		// Destructor
 		~VertexArray();
-
+		// Data
 		GLuint  id          = 0;
 		GLsizei vertexCount = 0;
-
+		// Vertex buffers
 		std::unordered_map<std::string_view, std::shared_ptr<VertexBuffer>> buffers;
 	};
 }

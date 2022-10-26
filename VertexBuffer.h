@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 
 #include "Util.h"
+#include "Vertex.h"
 
 namespace Renderer
 {
@@ -23,6 +24,7 @@ namespace Renderer
 	protected:
 		void CreateBuffer();
 
+		void BufferData(GLenum type, const std::vector<Vertex>& data);
 		void BufferData(GLenum type, const std::vector<GLfloat>& data);
 		void BufferData(GLenum type, const std::vector<GLuint>& data);
 

@@ -7,6 +7,17 @@ void VertexBuffer::CreateBuffer()
 	glGenBuffers(1, &id);
 }
 
+void VertexBuffer::BufferData(GLenum type, const std::vector<Vertex>& data)
+{
+	glBufferData
+	(
+		type,
+		static_cast<GLsizeiptr>(data.size() * sizeof(Vertex)),
+		data.data(),
+		GL_STATIC_DRAW
+	);
+}
+
 void VertexBuffer::BufferData(GLenum type, const std::vector<GLfloat>& data)
 {
 	glBufferData

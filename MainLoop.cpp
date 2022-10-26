@@ -87,12 +87,6 @@ void SDLWindow::MainLoop()
 
 	std::vector<GUI> guis;
 	{
-		/* guis.emplace_back
-		(
-			shadowFBO.buffer->depthTexture,
-			glm::vec2(-0.5f, 0.5f),
-			glm::vec2(0.5f, 0.5f)
-		); */
 	}
 
 	std::vector<WaterTile> waters;
@@ -151,6 +145,7 @@ void SDLWindow::MainLoop()
 
 		SDL_GL_SwapWindow(window);
 		CalculateFPS();
+
 		if (PollEvents()) break;
 	}
 }
