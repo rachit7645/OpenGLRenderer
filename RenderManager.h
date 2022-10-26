@@ -33,6 +33,8 @@
 #include "LightingRenderer.h"
 #include "InstanceBuffer.h"
 #include "SSAOBuffers.h"
+#include "SSAORenderer.h"
+#include "SSAOShader.h"
 
 namespace Renderer
 {
@@ -58,23 +60,26 @@ namespace Renderer
 		// Instances Shader Storage Buffer
 		std::shared_ptr<InstanceBuffer> m_instances;
 		// Instanced renderer and shaders
-		Shader::FastInstancedShader   fastInstancedShader;
-		Shader::ShadowInstancedShader shadowInstancedShader;
-		Renderer::InstancedRenderer   instancedRenderer;
+		Shader::FastInstancedShader   m_fastInstancedShader;
+		Shader::ShadowInstancedShader m_shadowInstancedShader;
+		Renderer::InstancedRenderer   m_instancedRenderer;
 		// Deferred renderers and shaders
-		Shader::GBufferShader      gShader;
-		Renderer::GBufferRenderer  gRenderer;
-		Shader::LightingShader     lightShader;
-		Renderer::LightingRenderer lightRenderer;
+		Shader::GBufferShader      m_gShader;
+		Renderer::GBufferRenderer  m_gRenderer;
+		Shader::LightingShader     m_lightShader;
+		Renderer::LightingRenderer m_lightRenderer;
+		// SSAO renderer and shader
+		Shader::SSAOShader     m_ssaoShader;
+		Renderer::SSAORenderer m_ssaoRenderer;
 		// Skybox renderer and shader
-		Shader::SkyboxShader     skyboxShader;
-		Renderer::SkyboxRenderer skyboxRenderer;
+		Shader::SkyboxShader     m_skyboxShader;
+		Renderer::SkyboxRenderer m_skyboxRenderer;
 		// Gui renderer and shader
-		Shader::GUIShader     guiShader;
-		Renderer::GUIRenderer guiRenderer;
+		Shader::GUIShader     m_guiShader;
+		Renderer::GUIRenderer m_guiRenderer;
 		// Water renderer and shader
-		Shader::WaterShader     waterShader;
-		Renderer::WaterRenderer waterRenderer;
+		Shader::WaterShader     m_waterShader;
+		Renderer::WaterRenderer m_waterRenderer;
 		// The entity map
 		Batch m_entities;
 		// The Skybox
@@ -90,14 +95,16 @@ namespace Renderer
 		void BeginFrame(EntityVec& entities, const Lights& lights, Entities::Player& player);
 		// Finish frame
 		void EndFrame();
+		// Render shadows
+		void RenderShadows(const Entities::Camera& camera, const Entities::Light& light);
 		// Render the waters
 		void RenderWaters(const WaterTiles& waters);
 		// Render water fbos
 		void RenderWaterFBOs(const WaterTiles& waters, Entities::Camera& camera);
-		// Render shadows
-		void RenderShadows(const Entities::Camera& camera, const Entities::Light& light);
 		// Render global buffer
 		void RenderGBuffer(const Entities::Camera& camera);
+		// Render SSAO
+		void RenderSSAO(const Entities::Camera& camera);
 		// Render lighting pass
 		void RenderLighting(const Entities::Camera& camera);
 		// Render skybox

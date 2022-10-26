@@ -17,27 +17,29 @@ using Waters::WaterFrameBuffers;
 
 RenderManager::RenderManager()
 	: m_instances(std::make_shared<InstanceBuffer>()),
-	  instancedRenderer(fastInstancedShader, shadowInstancedShader, m_shadowMap, m_instances),
-	  gRenderer(gShader, m_instances),
-	  lightRenderer(lightShader, m_shadowMap, m_gBuffer),
-	  skyboxRenderer(skyboxShader),
-	  guiRenderer(guiShader),
-	  waterRenderer(waterShader, m_waterFBOs),
+	  m_instancedRenderer(m_fastInstancedShader, m_shadowInstancedShader, m_shadowMap, m_instances),
+	  m_gRenderer(m_gShader, m_instances),
+	  m_lightRenderer(m_lightShader, m_shadowMap, m_gBuffer),
+	  m_ssaoRenderer(m_ssaoShader, m_ssaoBuffers, m_gBuffer),
+	  m_skyboxRenderer(m_skyboxShader),
+	  m_guiRenderer(m_guiShader),
+	  m_waterRenderer(m_waterShader, m_waterFBOs),
 	  m_matrices(std::make_shared<MatrixBuffer>()),
 	  m_lights(std::make_shared<LightsBuffer>()),
 	  m_shared(std::make_shared<SharedBuffer>())
 {
 	m_matrices->LoadProjection(glm::perspective(glm::radians(FOV), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
 	m_shared->LoadSkyColor(GL_SKY_COLOR);
-	m_shared->LoadFarPlane(FAR_PLANE);
+	m_shared->LoadResolution(Window::DIMENSIONS, NEAR_PLANE, FAR_PLANE);
 
-	fastInstancedShader.DumpToFile("dumps/FIS.s");
-	shadowInstancedShader.DumpToFile("dumps/SIS.s");
-	gShader.DumpToFile("dumps/GS.s");
-	lightShader.DumpToFile("dumps/LS.s");
-	skyboxShader.DumpToFile("dumps/SKB.s");
-	guiShader.DumpToFile("dumps/GUI.s");
-	waterShader.DumpToFile("dumps/WTR.s");
+	// Dump shaders
+	m_fastInstancedShader.DumpToFile("dumps/FIS.s");
+	m_shadowInstancedShader.DumpToFile("dumps/SIS.s");
+	m_gShader.DumpToFile("dumps/GS.s");
+	m_lightShader.DumpToFile("dumps/LS.s");
+	m_skyboxShader.DumpToFile("dumps/SKB.s");
+	m_guiShader.DumpToFile("dumps/GUI.s");
+	m_waterShader.DumpToFile("dumps/WTR.s");
 }
 
 void RenderManager::BeginFrame(EntityVec& entities, const Lights& lights, Player& player)
@@ -56,11 +58,21 @@ void RenderManager::EndFrame()
 	RenderImGui();
 }
 
+void RenderManager::RenderShadows(const Camera& camera, const Light& light)
+{
+	m_shadowMap.BindShadowFBO();
+	m_shadowMap.Update(camera, light.position);
+	glCullFace(GL_FRONT);
+	RenderScene(camera, Mode::Shadow, glm::vec4(0.0f));
+	glCullFace(GL_BACK);
+	m_shadowMap.BindDefaultFBO();
+}
+
 void RenderManager::RenderWaters(const WaterTiles& waters)
 {
-	waterShader.Start();
-	waterRenderer.Render(waters);
-	waterShader.Stop();
+	m_waterShader.Start();
+	m_waterRenderer.Render(waters);
+	m_waterShader.Stop();
 }
 
 // TODO: Render multiple FBOs for water tiles
@@ -91,22 +103,20 @@ void RenderManager::RenderWaterFBOs(const WaterTiles& waters, Camera& camera)
 	m_waterFBOs.BindDefaultFBO();
 }
 
-void RenderManager::RenderShadows(const Camera& camera, const Light& light)
-{
-	m_shadowMap.BindShadowFBO();
-	m_shadowMap.Update(camera, light.position);
-	glCullFace(GL_FRONT);
-	RenderScene(camera, Mode::Shadow, glm::vec4(0.0f));
-	glCullFace(GL_BACK);
-	m_shadowMap.BindDefaultFBO();
-}
-
 void RenderManager::RenderGBuffer(const Camera& camera)
 {
 	m_gBuffer.BindGBuffer();
 	Prepare(camera);
-	gRenderer.Render(m_entities);
+	m_gRenderer.Render(m_entities);
 	m_gBuffer.BindDefaultFBO();
+}
+
+void RenderManager::RenderSSAO(const Camera& camera)
+{
+	m_ssaoBuffers.BindSSAOBuffer();
+	Prepare(camera);
+	m_ssaoRenderer.RenderSSAO();
+	m_ssaoBuffers.BindDefaultFBO();
 }
 
 void RenderManager::RenderLighting(const Camera& camera)
@@ -114,9 +124,9 @@ void RenderManager::RenderLighting(const Camera& camera)
 	// Disable depth test
 	glDisable(GL_DEPTH_TEST);
 	Prepare(camera);
-	lightShader.Start();
-	lightRenderer.Render();
-	lightShader.Stop();
+	m_lightShader.Start();
+	m_lightRenderer.Render();
+	m_lightShader.Stop();
 	// Re-enable depth test
 	glEnable(GL_DEPTH_TEST);
 }
@@ -127,9 +137,9 @@ void RenderManager::RenderSkybox()
 	glDepthFunc(GL_LEQUAL);
 	// Disable depth writing for performance
 	glDepthMask(GL_FALSE);
-	skyboxShader.Start();
-	skyboxRenderer.Render(m_skybox);
-	skyboxShader.Stop();
+	m_skyboxShader.Start();
+	m_skyboxRenderer.Render(m_skybox);
+	m_skyboxShader.Stop();
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);
 }
@@ -141,9 +151,9 @@ void RenderManager::RenderGUIs(const GUIs& guis)
 	// Enable blending
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	guiShader.Start();
-	guiRenderer.Render(guis);
-	guiShader.Stop();
+	m_guiShader.Start();
+	m_guiRenderer.Render(guis);
+	m_guiShader.Stop();
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 }
@@ -208,7 +218,7 @@ void RenderManager::Prepare(const Camera& camera, const glm::vec4& clipPlane)
 
 void RenderManager::RenderEntities(Mode mode)
 {
-	instancedRenderer.Render(m_entities, mode);
+	m_instancedRenderer.Render(m_entities, mode);
 }
 
 // This kinda sucks, but it works
@@ -243,6 +253,11 @@ void RenderManager::RenderImGui()
 			if (ImGui::Button("GAlbedo"))
 			{
 				current = m_gBuffer.buffer->colorTextures[2];
+			}
+
+			if (ImGui::Button("SSAO"))
+			{
+				current = m_ssaoBuffers.ssaoBuffer->colorTextures[0];
 			}
 
 			ImGui::EndMenu();

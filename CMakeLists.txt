@@ -82,6 +82,8 @@ add_executable(engine
 	LightingRenderer.cpp
 	LightingShader.cpp
 	SSAOBuffers.cpp
+	SSAORenderer.cpp
+	SSAOShader.cpp
 )
 
 # Precompiled Headers

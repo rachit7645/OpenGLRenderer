@@ -131,6 +131,8 @@ void SDLWindow::MainLoop()
 
 		// Deferred geometry pass
 		renderer.RenderGBuffer(camera);
+		// SSAO passes
+		renderer.RenderSSAO(camera);
 		// Deferred lighting pass
 		renderer.RenderLighting(camera);
 
