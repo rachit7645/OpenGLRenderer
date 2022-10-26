@@ -32,9 +32,6 @@
 #include "LightingShader.h"
 #include "LightingRenderer.h"
 #include "InstanceBuffer.h"
-#include "SSAOBuffers.h"
-#include "SSAORenderer.h"
-#include "SSAOShader.h"
 
 namespace Renderer
 {
@@ -56,7 +53,6 @@ namespace Renderer
 		Renderer::ShadowMap       m_shadowMap;
 		Waters::WaterFrameBuffers m_waterFBOs;
 		Renderer::GBuffer         m_gBuffer;
-		Renderer::SSAOBuffers     m_ssaoBuffers;
 		// Instances Shader Storage Buffer
 		std::shared_ptr<InstanceBuffer> m_instances;
 		// Instanced renderer and shaders
@@ -68,9 +64,6 @@ namespace Renderer
 		Renderer::GBufferRenderer  m_gRenderer;
 		Shader::LightingShader     m_lightShader;
 		Renderer::LightingRenderer m_lightRenderer;
-		// SSAO renderer and shader
-		Shader::SSAOShader     m_ssaoShader;
-		Renderer::SSAORenderer m_ssaoRenderer;
 		// Skybox renderer and shader
 		Shader::SkyboxShader     m_skyboxShader;
 		Renderer::SkyboxRenderer m_skyboxRenderer;
@@ -103,8 +96,6 @@ namespace Renderer
 		void RenderWaterFBOs(const WaterTiles& waters, Entities::Camera& camera);
 		// Render global buffer
 		void RenderGBuffer(const Entities::Camera& camera);
-		// Render SSAO
-		void RenderSSAO(const Entities::Camera& camera);
 		// Render lighting pass
 		void RenderLighting(const Entities::Camera& camera);
 		// Render skybox

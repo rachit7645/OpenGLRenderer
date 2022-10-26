@@ -20,7 +20,6 @@ RenderManager::RenderManager()
 	  m_instancedRenderer(m_fastInstancedShader, m_shadowInstancedShader, m_shadowMap, m_instances),
 	  m_gRenderer(m_gShader, m_instances),
 	  m_lightRenderer(m_lightShader, m_shadowMap, m_gBuffer),
-	  m_ssaoRenderer(m_ssaoShader, m_ssaoBuffers, m_gBuffer),
 	  m_skyboxRenderer(m_skyboxShader),
 	  m_guiRenderer(m_guiShader),
 	  m_waterRenderer(m_waterShader, m_waterFBOs),
@@ -109,14 +108,6 @@ void RenderManager::RenderGBuffer(const Camera& camera)
 	Prepare(camera);
 	m_gRenderer.Render(m_entities);
 	m_gBuffer.BindDefaultFBO();
-}
-
-void RenderManager::RenderSSAO(const Camera& camera)
-{
-	m_ssaoBuffers.BindSSAOBuffer();
-	Prepare(camera);
-	m_ssaoRenderer.RenderSSAO();
-	m_ssaoBuffers.BindDefaultFBO();
 }
 
 void RenderManager::RenderLighting(const Camera& camera)
@@ -253,11 +244,6 @@ void RenderManager::RenderImGui()
 			if (ImGui::Button("GAlbedo"))
 			{
 				current = m_gBuffer.buffer->colorTextures[2];
-			}
-
-			if (ImGui::Button("SSAO"))
-			{
-				current = m_ssaoBuffers.ssaoBuffer->colorTextures[0];
 			}
 
 			ImGui::EndMenu();
