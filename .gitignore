@@ -2,5 +2,6 @@
 /.idea/
 /.vscode/
 /res/gfx/Link
+/res/gfx/Mario
 /libs/stb
 /libs/imgui
