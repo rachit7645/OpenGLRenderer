@@ -15,16 +15,13 @@
 
 namespace Renderer
 {
-	constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_OptimizeMeshes;
-
 	class Model
 	{
 	public:
 		Model
 		(
 			const std::string_view path,
-			const MeshTextures& textures,
-			const Material& material = Material()
+			const MeshTextures& textures
 		);
 
 		std::vector<Mesh> meshes;
@@ -33,16 +30,14 @@ namespace Renderer
 		(
 			aiNode* node,
 			const aiScene* scene,
-			const MeshTextures& textures,
-			const Material& material
+			const MeshTextures& textures
 		);
 
 		Mesh ProcessMesh
 		(
 			aiMesh* mesh,
 			const aiScene* scene,
-			const MeshTextures& textures,
-			const Material& material
+			const MeshTextures& textures
 		);
 
 		MeshTextures ProcessTextures
@@ -50,13 +45,6 @@ namespace Renderer
 			aiMesh* mesh,
 			const aiScene* scene,
 			const MeshTextures& pTextures
-		);
-
-		Material ProcessMaterial
-		(
-			aiMesh* mesh,
-			const aiScene* scene,
-			const Material& pMaterial
 		);
 	};
 }

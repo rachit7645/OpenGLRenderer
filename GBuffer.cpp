@@ -45,6 +45,17 @@ GBuffer::GBuffer()
 		GL_COLOR_ATTACHMENT2
 	};
 
+	Renderer::FBOAttachment normalMap =
+	{
+		GL_NEAREST,
+		GL_NEAREST,
+		GL_REPEAT,
+		GL_RGBA32F,
+		GL_RGBA,
+		GL_FLOAT,
+		GL_COLOR_ATTACHMENT3
+	};
+
 	Renderer::FBOAttachment depth = {};
 	{
 		depth.internalFormat = GL_DEPTH_COMPONENT24;
@@ -55,7 +66,8 @@ GBuffer::GBuffer()
 	{
 		position.slot,
 		normal.slot,
-		albedo.slot
+		albedo.slot,
+		normalMap.slot
 	};
 
 	buffer->width  = Window::DIMENSIONS.x;
@@ -66,6 +78,7 @@ GBuffer::GBuffer()
 	buffer->AddTexture(buffer->colorTextures[0], position);
 	buffer->AddTexture(buffer->colorTextures[1], normal);
 	buffer->AddTexture(buffer->colorTextures[2], albedo);
+	buffer->AddTexture(buffer->colorTextures[3], normalMap);
 	buffer->AddBuffer(buffer->depthRenderBuffer, depth);
 	buffer->SetDrawBuffers(drawBuffers);
 	buffer->CheckStatus();

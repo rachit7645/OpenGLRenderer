@@ -7,11 +7,12 @@
 
 using namespace Renderer;
 
+constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_OptimizeMeshes;
+
 Model::Model
 (
 	const std::string_view path,
-	const MeshTextures& textures,
-	const Material& material
+	const MeshTextures& textures
 )
 {
 	Assimp::Importer importer;
@@ -24,27 +25,26 @@ Model::Model
 		LOG_ERROR("Model Load Failed: {}", importer.GetErrorString());
 	}
 
-	ProcessNode(scene->mRootNode, scene, textures, material);
+	ProcessNode(scene->mRootNode, scene, textures);
 }
 
 void Model::ProcessNode
 (
 	aiNode* node,
 	const aiScene* scene,
-	const MeshTextures& textures,
-	const Material& material
+	const MeshTextures& textures
 )
 {
 	// Iterate over all the node's meshes
 	for (u32 i = 0; i < node->mNumMeshes; ++i)
 	{
-		meshes.emplace_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], scene, textures, material));
+		meshes.emplace_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], scene, textures));
 	}
 
 	// Iterate over all the child meshes
 	for (u32 i = 0; i < node->mNumChildren; ++i)
 	{
-		ProcessNode(node->mChildren[i], scene, textures, material);
+		ProcessNode(node->mChildren[i], scene, textures);
 	}
 }
 
@@ -52,8 +52,7 @@ Mesh Model::ProcessMesh
 (
 	aiMesh* mesh,
 	const aiScene* scene,
-	const MeshTextures& textures,
-	const Material& material
+	const MeshTextures& textures
 )
 {
 	std::vector<Vertex> vertices;
@@ -87,8 +86,7 @@ Mesh Model::ProcessMesh
 	(
 		vertices,
 		indices,
-		ProcessTextures(mesh, scene, textures),
-		ProcessMaterial(mesh, scene, material)
+		ProcessTextures(mesh, scene, textures)
 	);
 }
 
@@ -103,37 +101,45 @@ MeshTextures Model::ProcessTextures
 	MeshTextures textures = pTextures;
 
 	aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
+
+	// Albedo
 	mat->GetTexture(aiTextureType_DIFFUSE, 0, &path);
 	if (path.length > 0)
 	{
-		textures.diffuse = Resources::GetTexture(path.C_Str());
+		textures.albedo = Resources::GetTexture(path.C_Str());
 	}
 
+	// Normal
 	path.Clear();
-	mat->GetTexture(aiTextureType_SPECULAR, 0, &path);
+	mat->GetTexture(aiTextureType_NORMAL_CAMERA, 0, &path);
 	if (path.length > 0)
 	{
-		textures.specular = Resources::GetTexture(path.C_Str());
+		textures.normal = Resources::GetTexture(path.C_Str());
+	}
+
+	// Metallic
+	path.Clear();
+	mat->GetTexture(aiTextureType_METALNESS, 0, &path);
+	if (path.length > 0)
+	{
+		textures.metallic = Resources::GetTexture(path.C_Str());
+	}
+
+	// Roughness
+	path.Clear();
+	mat->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &path);
+	if (path.length > 0)
+	{
+		textures.roughness = Resources::GetTexture(path.C_Str());
+	}
+
+	// Ambient Occlusion
+	path.Clear();
+	mat->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &path);
+	if (path.length > 0)
+	{
+		textures.ao = Resources::GetTexture(path.C_Str());
 	}
 
 	return textures;
-}
-
-Material Model::ProcessMaterial
-(
-	aiMesh* mesh,
-	const aiScene* scene,
-	const Material& pMaterial
-)
-{
-	Material    material = pMaterial;
-	aiMaterial* mat      = scene->mMaterials[mesh->mMaterialIndex];
-
-	mat->Get(AI_MATKEY_SHININESS,          &material.shineDamper,  nullptr);
-	mat->Get(AI_MATKEY_SHININESS_STRENGTH, &material.reflectivity, nullptr);
-
-	material.shineDamper  = std::max(material.shineDamper,  1.0f);
-	material.reflectivity = std::max(material.reflectivity, 0.0f);
-
-	return material;
 }

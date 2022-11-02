@@ -38,12 +38,18 @@ using Waters::WaterTile;
 void SDLWindow::MainLoop()
 {
 	// Put Models and Textures here
-	auto defDiffuse  = Resources::GetTexture("gfx/def.png");
-	auto defSpecular = Resources::GetTexture("gfx/def.png");
+	auto defaultTextures = MeshTextures
+	(
+		Resources::GetTexture("gfx/def.png"),
+		Resources::GetTexture("gfx/def.png"),
+		Resources::GetTexture("gfx/def.png"),
+		Resources::GetTexture("gfx/def.png"),
+		Resources::GetTexture("gfx/def.png")
+	);
 
-	auto playerModel = Resources::GetModel("gfx/Link/Link.obj",   MeshTextures(defDiffuse, defSpecular));
-	auto stageModel  = Resources::GetModel("gfx/Stage/stage.obj", MeshTextures(defDiffuse, defSpecular));
-	auto stallModel  = Resources::GetModel("gfx/Stall/stall.obj", MeshTextures(defDiffuse, defSpecular));
+	auto playerModel = Resources::GetModel("gfx/Link/Link.obj",   defaultTextures);
+	auto stageModel  = Resources::GetModel("gfx/Stage/stage.obj", defaultTextures);
+	auto stallModel  = Resources::GetModel("gfx/Stall/stall.obj", defaultTextures);
 
 	// All objects go here
 	std::vector<Entity> entities;

@@ -7,8 +7,6 @@
 
 #include "GLM.h"
 #include "Shader.h"
-#include "Material.h"
-
 
 namespace Shader
 {
@@ -18,7 +16,6 @@ namespace Shader
 		GBufferShader();
 
 		void ConnectTextureUnits();
-		void LoadMaterial(const Renderer::Material& material);
 
 		void GetUniformLocations() override;
 	private:

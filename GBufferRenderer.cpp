@@ -58,21 +58,26 @@ void GBufferRenderer::LoadData(const EntityVector& entities)
 void GBufferRenderer::PrepareMesh(const Mesh& mesh)
 {
 	glBindVertexArray(mesh.vao->id);
-	LoadDiffuse(mesh);
-	LoadSpecular(mesh);
+	LoadTextures(mesh);
 }
 
-void GBufferRenderer::LoadDiffuse(const Mesh& mesh)
+void GBufferRenderer::LoadTextures(const Mesh& mesh)
 {
+	// Activate albedo
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, mesh.textures.diffuse->id);
-}
-
-void GBufferRenderer::LoadSpecular(const Mesh& mesh)
-{
+	glBindTexture(GL_TEXTURE_2D, mesh.textures.albedo->id);
+	// Activate normal
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, mesh.textures.specular->id);
-	shader.LoadMaterial(mesh.material);
+	glBindTexture(GL_TEXTURE_2D, mesh.textures.normal->id);
+	// Activate metallic
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, mesh.textures.metallic->id);
+	// Activate roughness
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, mesh.textures.roughness->id);
+	// Activate ao
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, mesh.textures.ao->id);
 }
 
 void GBufferRenderer::UnbindMesh()

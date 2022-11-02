@@ -10,15 +10,26 @@ namespace Renderer
 	class MeshTextures
 	{
 	public:
+		// Usings
 		using TxPtr = std::shared_ptr<Texture>;
-
 		// Default Constructor
 		MeshTextures() = default;
 		// Main Constructor
-		MeshTextures(TxPtr diffuse, TxPtr specular);
+		MeshTextures
+		(
+			TxPtr albedo,
+			TxPtr normal,
+			TxPtr metallic,
+			TxPtr roughness,
+			TxPtr ao
+		);
 
-		TxPtr diffuse;
-		TxPtr specular;
+		// Textures
+		TxPtr albedo;
+		TxPtr normal;
+		TxPtr metallic;
+		TxPtr roughness;
+		TxPtr ao;
 	};
 }
 

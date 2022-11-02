@@ -34,15 +34,20 @@ void LightingRenderer::Render()
 {
 	// Bind vao
 	glBindVertexArray(m_vao->id);
-	// Activate global buffer textures
+	// Activate gPosition
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[0]->id);
+	// Activate gNormal
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[1]->id);
+	// Activate gAlbedo
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[2]->id);
-	// Activate shadow map
+	// Activate gNormalMap
 	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[3]->id);
+	// Activate shadow map
+	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, shadowMap.buffer->depthTexture->id);
 	// Render quad
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, m_vao->vertexCount);

@@ -1,9 +1,7 @@
 #version 430 core
 
 // Constants
-const float AMBIENT_STRENGTH = 0.2f;
-const float MIN_SPECULAR     = 0.0f;
-const int   MAX_LIGHTS       = 4;
+const int MAX_LIGHTS = 4;
 
 const int   MAX_LAYER_COUNT = 16;
 const float MIN_BIAS        = 0.005f;
@@ -37,10 +35,11 @@ struct GBuffer
 {
 	vec3  fragPos;
 	vec3  normal;
-	vec3  albedo;
-	float specular;
-	float shineDamper;
-	float reflectivity;
+	vec4  albedo;
+	vec3  normalMap;
+	float metallic;
+	float roughness;
+	float ao;
 };
 
 // UBOs and SSBOs
@@ -74,10 +73,12 @@ layout (std140, binding = 4) uniform ShadowBuffer
 // Vertex inputs
 in vec2 txCoords;
 
-// Uniforms
+// Samplers
 uniform sampler2D gPosition;
 uniform sampler2D gNormal;
-uniform sampler2D gAlbedoSpec;
+uniform sampler2D gAlbedo;
+uniform sampler2D gNormalMap;
+// Array samplers
 uniform sampler2DArray shadowMap;
 
 // Fragment outputs
@@ -87,18 +88,8 @@ out vec4 outColor;
 GBuffer GetGBufferData();
 
 // Branchless functions
-vec4 WhenNotEqual(vec4 x, vec4 y);
 vec4 WhenGreater(vec4 x, vec4 y);
 vec4 WhenLesser(vec4 x, vec4 y);
-
-// Lighting functions
-LightData CalculateLightData(int index, GBuffer gBuffer);
-
-// Light component functions
-float CalculateAttFactor(int index, GBuffer gBuffer);
-vec4  CalculateAmbient(int index);
-vec4  CalculateDiffuse(int index, LightData lightData, GBuffer gBuffer);
-vec4  CalculateSpecular(int index, LightData lightData, GBuffer gBuffer);
 
 // Shadow functions
 int   GetCurrentLayer(GBuffer gBuffer);
@@ -109,98 +100,31 @@ void main()
 {
 	// GBuffer data
 	GBuffer gBuffer = GetGBufferData();
-	// Light data
-	LightData lightData[MAX_LIGHTS];
 
-	// Total light factors
-	vec4 ambient = vec4(0.0f);
-	vec4 diffuse = vec4(0.0f);
-
-	for (int i = 0; i < MAX_LIGHTS; ++i)
-	{
-		// Calculate light data
-		lightData[i] = CalculateLightData(i, gBuffer);
-		// Add to total
-		ambient += lightData[i].ambient;
-		diffuse += lightData[i].diffuse;
-	}
-
-	// Output lighting
-	outColor = ambient + diffuse * (1.0f - CalculateShadow(lightData[0], gBuffer));
+	outColor = gBuffer.albedo;
 }
 
 GBuffer GetGBufferData()
 {
 	GBuffer gBuffer;
 	// Retrieve data from G-buffer
-	vec4 gPos  = texture(gPosition,   txCoords);
-	vec4 gNorm = texture(gNormal,     txCoords);
-	vec4 gAlb  = texture(gAlbedoSpec, txCoords);
-	// Position + Shine Damper
-	gBuffer.fragPos     = gPos.rgb;
-	gBuffer.shineDamper = gPos.a;
-	// Normal + Reflectivity
-	gBuffer.normal       = gNorm.rgb;
-	gBuffer.reflectivity = gNorm.a;
-	// Albedo + Specular
-	gBuffer.albedo   = gAlb.rgb;
-	gBuffer.specular = gAlb.a;
+	vec4 gPos     = texture(gPosition,  txCoords);
+	vec4 gNorm    = texture(gNormal,    txCoords);
+	vec4 gAlb     = texture(gAlbedo,    txCoords);
+	vec4 gNormMap = texture(gNormalMap, txCoords);
+	// Position + Metallic
+	gBuffer.fragPos  = gPos.rgb;
+	gBuffer.metallic = gPos.a;
+	// Normal + Roughness
+	gBuffer.normal    = gNorm.rgb;
+	gBuffer.roughness = gNorm.a;
+	// Albedo
+	gBuffer.albedo = gAlb;
+	// Normal Map + Ambient Occlusion
+	gBuffer.normalMap = gNormMap.rgb;
+	gBuffer.ao        = gNorm.a;
 	// Return
 	return gBuffer;
-}
-
-LightData CalculateLightData(int index, GBuffer gBuffer)
-{
-	LightData data;
-	// Light direction
-	data.lightDir = normalize(lights[index].position.xyz - gBuffer.fragPos);
-	// Light attenuation factor
-	data.attFactor = CalculateAttFactor(index, gBuffer);
-	// Light ambient factor
-	data.ambient = CalculateAmbient(index)
-				 * vec4(gBuffer.albedo, 1.0f)
-				 * data.attFactor;
-	// Light diffuse factor
-	data.diffuse = CalculateDiffuse(index, data, gBuffer)
-				 * vec4(gBuffer.albedo, 1.0f)
-				 * data.attFactor;
-	// Light specular factor
-	data.specular = CalculateSpecular(index, data, gBuffer)
-				  * data.attFactor
-				  * vec4(gBuffer.specular)
-				  * WhenNotEqual(data.diffuse, vec4(0.0f));
-	// Return
-	return data;
-}
-
-float CalculateAttFactor(int index, GBuffer gBuffer)
-{
-	vec4  ATT       = lights[index].attenuation;
-	float distance  = length(lights[index].position.xyz - gBuffer.fragPos);
-	float attFactor = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
-	return 1.0f / attFactor;
-}
-
-vec4 CalculateAmbient(int index)
-{
-	return vec4(AMBIENT_STRENGTH * lights[index].ambient.rgb, 1.0f);
-}
-
-vec4 CalculateDiffuse(int index, LightData lightData, GBuffer gBuffer)
-{
-	float nDot1      = dot(gBuffer.normal, lightData.lightDir);
-	float brightness = max(nDot1, 0.0f);
-	return vec4(brightness * lights[index].diffuse.rgb, 1.0f);
-}
-
-vec4 CalculateSpecular(int index, LightData lightData, GBuffer gBuffer)
-{
-	vec3 toCameraVector  = normalize(cameraPos.xyz - gBuffer.fragPos);
-	vec3 halfwayDir      = normalize(lightData.lightDir + toCameraVector);
-	float specularFactor = dot(halfwayDir, gBuffer.normal);
-	specularFactor       = max(specularFactor, MIN_SPECULAR);
-	float dampedFactor   = pow(specularFactor, gBuffer.shineDamper);
-	return vec4(dampedFactor * gBuffer.reflectivity * lights[index].specular.rgb, 1.0f);
 }
 
 // FIXME: Remove branching
@@ -269,16 +193,6 @@ float CalculateShadow(LightData lightData, GBuffer gBuffer)
 	shadow /= TOTAL_TEXELS;
 	shadow *= SHADOW_AMOUNT;
 	return shadow * WhenLesser(vec4(currentDepth), vec4(1.0f)).x;
-}
-
-// Branchless implementation of
-// if (x != y)
-//	 return 1;
-// else
-// 	 return 0;
-vec4 WhenNotEqual(vec4 x, vec4 y)
-{
-	return abs(sign(x - y));
 }
 
 // Branchless implementation of
