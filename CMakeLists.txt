@@ -42,7 +42,6 @@ add_executable(engine
 	Camera.cpp
 	MainLoop.cpp
 	RenderManager.cpp
-	Material.cpp 
 	Mesh.cpp
 	Player.cpp
 	Files.cpp

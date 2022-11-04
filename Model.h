@@ -8,7 +8,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "Material.h"
 #include "Util.h"
 #include "Mesh.h"
 #include "MeshTextures.h"

@@ -11,18 +11,17 @@ in vec3 worldPosition;
 
 uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
-uniform sampler2D metallicMap;
-uniform sampler2D roughnessMap;
+uniform sampler2D mtlRgh;
 uniform sampler2D aoMap;
 
 void main()
 {
 	// Position + Metallic
 	gPosition.rgb = worldPosition;
-	gPosition.a   = texture(metallicMap, txCoords).r;
+	gPosition.a   = texture(mtlRgh, txCoords).b;
 	// Normal + Roughness
 	gNormal.rgb = unitNormal;
-	gNormal.a   = texture(roughnessMap, txCoords).r;
+	gNormal.a   = texture(mtlRgh, txCoords).g;
 	// Albedo
 	gAlbedo = texture(albedoMap, txCoords);
 	// Normal Map + Ambient Occlusion

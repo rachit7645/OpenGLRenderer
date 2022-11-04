@@ -246,6 +246,11 @@ void RenderManager::RenderImGui()
 				current = m_gBuffer.buffer->colorTextures[2];
 			}
 
+			if (ImGui::Button("GNormalMap"))
+			{
+				current = m_gBuffer.buffer->colorTextures[3];
+			}
+
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();

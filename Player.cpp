@@ -1,15 +1,11 @@
 #include "Player.h"
 
-#include "MeshTextures.h"
-#include "Model.h"
-#include "Material.h"
 #include "Inputs.h"
 
 using namespace Entities;
 
 using Renderer::Model;
 using Renderer::MeshTextures;
-using Renderer::Material;
 
 constexpr auto PLAYER_RUN_SPEED  = 45.0f;
 constexpr auto PLAYER_TURN_SPEED = 160.0f;

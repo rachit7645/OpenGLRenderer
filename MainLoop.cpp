@@ -20,7 +20,6 @@ using std::chrono::seconds;
 
 using Renderer::Texture;
 using Renderer::Model;
-using Renderer::Material;
 using Renderer::MeshTextures;
 using Renderer::GUI;
 using Renderer::FrameBuffer;
@@ -43,13 +42,12 @@ void SDLWindow::MainLoop()
 		Resources::GetTexture("gfx/def.png"),
 		Resources::GetTexture("gfx/def.png"),
 		Resources::GetTexture("gfx/def.png"),
-		Resources::GetTexture("gfx/def.png"),
 		Resources::GetTexture("gfx/def.png")
 	);
 
 	auto playerModel = Resources::GetModel("gfx/Mario/Mario.gltf", defaultTextures);
-	auto stageModel  = Resources::GetModel("gfx/Stage/stage.gltf",    defaultTextures);
-	auto stallModel  = Resources::GetModel("gfx/Stall/stall.gltf",    defaultTextures);
+	auto stageModel  = Resources::GetModel("gfx/Stage/stage.gltf", defaultTextures);
+	auto stallModel  = Resources::GetModel("gfx/Stall/stall.gltf", defaultTextures);
 
 	// All objects go here
 	std::vector<Entity> entities;
@@ -65,7 +63,7 @@ void SDLWindow::MainLoop()
 		entities.emplace_back
 		(
 			stallModel,
-			glm::vec3(-3.0f, 0.0f, -15.0f),
+			glm::vec3(-3.0f, -4.0f, -15.0f),
 			glm::vec3(0.0f, 90.0f, 0.0f),
 			1.0f
 		);
@@ -74,7 +72,7 @@ void SDLWindow::MainLoop()
 	auto player = Entities::Player
 	(
 		playerModel,
-		glm::vec3(13.0f, 0.0f, 17.0f),
+		glm::vec3(13.0f, 1.0f, 17.0f),
 		glm::vec3(0.0f, 180.0f, 0.0f),
 		0.025f
 	);

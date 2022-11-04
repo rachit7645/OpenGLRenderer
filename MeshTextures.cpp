@@ -7,14 +7,12 @@ MeshTextures::MeshTextures
 (
 	TxPtr albedo,
 	TxPtr normal,
-	TxPtr metallic,
-	TxPtr roughness,
+	TxPtr mtlRgh,
 	TxPtr ao
 )
 	: albedo(std::move(albedo)),
 	  normal(std::move(normal)),
-	  metallic(std::move(metallic)),
-	  roughness(std::move(roughness)),
+	  mtlRgh(std::move(mtlRgh)),
 	  ao(std::move(ao))
 {
 }

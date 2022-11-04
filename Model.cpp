@@ -5,9 +5,22 @@
 #include "Files.h"
 #include "Vertex.h"
 
+// HACK: Assimp doesn't define macros for these
+
+#ifndef AI_MATKEY_NORMALS_TEXTURE
+#define AI_MATKEY_NORMALS_TEXTURE aiTextureType_NORMALS, 0
+#endif
+
+#ifndef AI_MATKEY_AMBIENT_OCCLUSION_TEXTURE
+#define AI_MATKEY_AMBIENT_OCCLUSION_TEXTURE aiTextureType_AMBIENT_OCCLUSION, 0
+#endif
+
 using namespace Renderer;
 
-constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph;
+constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate    |
+							 aiProcess_FlipUVs        |
+							 aiProcess_OptimizeMeshes |
+							 aiProcess_OptimizeGraph;
 
 Model::Model(const std::string_view path, const MeshTextures& textures)
 {
@@ -102,7 +115,7 @@ MeshTextures Model::ProcessTextures
 	aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
 
 	// Albedo
-	mat->GetTexture(aiTextureType_BASE_COLOR, 0, &path);
+	mat->GetTexture(AI_MATKEY_BASE_COLOR_TEXTURE, &path);
 	if (path.length > 0)
 	{
 		textures.albedo = Resources::GetTexture(directory + path.C_Str());
@@ -110,31 +123,23 @@ MeshTextures Model::ProcessTextures
 
 	// Normal
 	path.Clear();
-	mat->GetTexture(aiTextureType_NORMALS, 0, &path);
+	mat->GetTexture(AI_MATKEY_NORMALS_TEXTURE, &path);
 	if (path.length > 0)
 	{
 		textures.normal = Resources::GetTexture(directory + path.C_Str());
 	}
 
-	// Metallic
+	// Metallic + Roughness (GLTF is weird)
 	path.Clear();
-	mat->GetTexture(aiTextureType_METALNESS, 0, &path);
+	mat->GetTexture(AI_MATKEY_METALLIC_TEXTURE, &path);
 	if (path.length > 0)
 	{
-		textures.metallic = Resources::GetTexture(directory + path.C_Str());
-	}
-
-	// Roughness
-	path.Clear();
-	mat->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &path);
-	if (path.length > 0)
-	{
-		textures.roughness = Resources::GetTexture(directory + path.C_Str());
+		textures.mtlRgh = Resources::GetTexture(directory + path.C_Str());
 	}
 
 	// Ambient Occlusion
 	path.Clear();
-	mat->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &path);
+	mat->GetTexture(AI_MATKEY_AMBIENT_OCCLUSION_TEXTURE, &path);
 	if (path.length > 0)
 	{
 		textures.ao = Resources::GetTexture(directory + path.C_Str());

@@ -8,7 +8,6 @@
 using Renderer::Texture;
 using Renderer::Model;
 using Renderer::MeshTextures;
-using Renderer::Material;
 
 using namespace Resources;
 

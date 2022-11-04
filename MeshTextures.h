@@ -19,16 +19,13 @@ namespace Renderer
 		(
 			TxPtr albedo,
 			TxPtr normal,
-			TxPtr metallic,
-			TxPtr roughness,
+			TxPtr mtlRgh,
 			TxPtr ao
 		);
-
 		// Textures
 		TxPtr albedo;
 		TxPtr normal;
-		TxPtr metallic;
-		TxPtr roughness;
+		TxPtr mtlRgh;
 		TxPtr ao;
 	};
 }

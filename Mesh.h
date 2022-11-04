@@ -6,7 +6,6 @@
 
 #include "VertexArray.h"
 #include "MeshTextures.h"
-#include "Material.h"
 #include "Vertex.h"
 
 namespace Renderer

@@ -24,11 +24,7 @@ struct Light
 
 struct LightData
 {
-	float attFactor;
-	vec3  lightDir;
-	vec4  ambient;
-	vec4  diffuse;
-	vec4  specular;
+	vec3 lightDir;
 };
 
 struct GBuffer
@@ -91,6 +87,9 @@ GBuffer GetGBufferData();
 vec4 WhenGreater(vec4 x, vec4 y);
 vec4 WhenLesser(vec4 x, vec4 y);
 
+// Light functions
+LightData CalculateLightData(int index, GBuffer gBuffer);
+
 // Shadow functions
 int   GetCurrentLayer(GBuffer gBuffer);
 float CalculateBias(int layer, LightData lightData, GBuffer gBuffer);
@@ -100,8 +99,10 @@ void main()
 {
 	// GBuffer data
 	GBuffer gBuffer = GetGBufferData();
-
-	outColor = gBuffer.albedo;
+	// Light data
+	LightData lightData = CalculateLightData(0, gBuffer);
+	// Output color
+	outColor = gBuffer.albedo * (1.0f - CalculateShadow(lightData, gBuffer));
 }
 
 GBuffer GetGBufferData()
@@ -125,6 +126,15 @@ GBuffer GetGBufferData()
 	gBuffer.ao        = gNorm.a;
 	// Return
 	return gBuffer;
+}
+
+LightData CalculateLightData(int index, GBuffer gBuffer)
+{
+	LightData data;
+	// Calculate light direction
+	data.lightDir = normalize(lights[index].position.xyz - gBuffer.fragPos);
+	// Return
+	return data;
 }
 
 // FIXME: Remove branching
