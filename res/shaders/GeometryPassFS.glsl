@@ -23,7 +23,7 @@ void main()
 	gNormal.rgb = unitNormal;
 	gNormal.a   = texture(mtlRgh, txCoords).g;
 	// Albedo
-	gAlbedo = texture(albedoMap, txCoords);
+	gAlbedo = pow(texture(albedoMap, txCoords), vec4(2.2f));
 	// Normal Map + Ambient Occlusion
 	gNormalMap.rgb = texture(normalMap, txCoords).rgb;
 	gNormalMap.a   = texture(aoMap,     txCoords).r;
