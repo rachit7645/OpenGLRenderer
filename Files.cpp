@@ -23,3 +23,9 @@ std::string Files::GetRelative(const std::string_view path)
 {
 	return std::filesystem::relative(path, m_resDir).u8string();
 }
+
+// FIXME: Path separator is not cross platform
+std::string Files::GetDirectory(const std::string_view path)
+{
+	return std::filesystem::path(path).parent_path().u8string() + "/";
+}

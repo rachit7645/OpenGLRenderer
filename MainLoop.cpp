@@ -47,9 +47,9 @@ void SDLWindow::MainLoop()
 		Resources::GetTexture("gfx/def.png")
 	);
 
-	auto playerModel = Resources::GetModel("gfx/Link/Link.obj",   defaultTextures);
-	auto stageModel  = Resources::GetModel("gfx/Stage/stage.obj", defaultTextures);
-	auto stallModel  = Resources::GetModel("gfx/Stall/stall.obj", defaultTextures);
+	auto playerModel = Resources::GetModel("gfx/Mario/Mario.gltf", defaultTextures);
+	auto stageModel  = Resources::GetModel("gfx/Stage/stage.gltf",    defaultTextures);
+	auto stallModel  = Resources::GetModel("gfx/Stall/stall.gltf",    defaultTextures);
 
 	// All objects go here
 	std::vector<Entity> entities;
@@ -57,7 +57,7 @@ void SDLWindow::MainLoop()
 		entities.emplace_back
 		(
 			stageModel,
-			glm::vec3(0.0f, -0.6f, 0.0f),
+			glm::vec3(0.0f, 6.0f, 0.0f),
 			glm::vec3(0.0f),
 			1.0f
 		);
@@ -76,7 +76,7 @@ void SDLWindow::MainLoop()
 		playerModel,
 		glm::vec3(13.0f, 0.0f, 17.0f),
 		glm::vec3(0.0f, 180.0f, 0.0f),
-		1.0f
+		0.025f
 	);
 
 	std::vector<Light> lights;

@@ -10,6 +10,7 @@ namespace Files
 
 	std::string GetName(const std::string_view path);
 	std::string GetRelative(const std::string_view path);
+	std::string GetDirectory(const std::string_view path);
 }
 
 #endif

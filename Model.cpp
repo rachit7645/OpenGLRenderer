@@ -7,13 +7,9 @@
 
 using namespace Renderer;
 
-constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_OptimizeMeshes;
+constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph;
 
-Model::Model
-(
-	const std::string_view path,
-	const MeshTextures& textures
-)
+Model::Model(const std::string_view path, const MeshTextures& textures)
 {
 	Assimp::Importer importer;
 
@@ -25,26 +21,27 @@ Model::Model
 		LOG_ERROR("Model Load Failed: {}", importer.GetErrorString());
 	}
 
-	ProcessNode(scene->mRootNode, scene, textures);
+	ProcessNode(scene->mRootNode, scene, textures, Files::GetDirectory(path));
 }
 
 void Model::ProcessNode
 (
 	aiNode* node,
 	const aiScene* scene,
-	const MeshTextures& textures
+	const MeshTextures& textures,
+	const std::string& directory
 )
 {
 	// Iterate over all the node's meshes
 	for (u32 i = 0; i < node->mNumMeshes; ++i)
 	{
-		meshes.emplace_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], scene, textures));
+		meshes.emplace_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], scene, textures, directory));
 	}
 
 	// Iterate over all the child meshes
 	for (u32 i = 0; i < node->mNumChildren; ++i)
 	{
-		ProcessNode(node->mChildren[i], scene, textures);
+		ProcessNode(node->mChildren[i], scene, textures, directory);
 	}
 }
 
@@ -52,7 +49,8 @@ Mesh Model::ProcessMesh
 (
 	aiMesh* mesh,
 	const aiScene* scene,
-	const MeshTextures& textures
+	const MeshTextures& textures,
+	const std::string& directory
 )
 {
 	std::vector<Vertex> vertices;
@@ -86,7 +84,7 @@ Mesh Model::ProcessMesh
 	(
 		vertices,
 		indices,
-		ProcessTextures(mesh, scene, textures)
+		ProcessTextures(mesh, scene, textures, directory)
 	);
 }
 
@@ -94,7 +92,8 @@ MeshTextures Model::ProcessTextures
 (
 	aiMesh* mesh,
 	const aiScene* scene,
-	const MeshTextures& pTextures
+	const MeshTextures& pTextures,
+	const std::string& directory
 )
 {
 	aiString path;
@@ -103,18 +102,18 @@ MeshTextures Model::ProcessTextures
 	aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
 
 	// Albedo
-	mat->GetTexture(aiTextureType_DIFFUSE, 0, &path);
+	mat->GetTexture(aiTextureType_BASE_COLOR, 0, &path);
 	if (path.length > 0)
 	{
-		textures.albedo = Resources::GetTexture(path.C_Str());
+		textures.albedo = Resources::GetTexture(directory + path.C_Str());
 	}
 
 	// Normal
 	path.Clear();
-	mat->GetTexture(aiTextureType_NORMAL_CAMERA, 0, &path);
+	mat->GetTexture(aiTextureType_NORMALS, 0, &path);
 	if (path.length > 0)
 	{
-		textures.normal = Resources::GetTexture(path.C_Str());
+		textures.normal = Resources::GetTexture(directory + path.C_Str());
 	}
 
 	// Metallic
@@ -122,7 +121,7 @@ MeshTextures Model::ProcessTextures
 	mat->GetTexture(aiTextureType_METALNESS, 0, &path);
 	if (path.length > 0)
 	{
-		textures.metallic = Resources::GetTexture(path.C_Str());
+		textures.metallic = Resources::GetTexture(directory + path.C_Str());
 	}
 
 	// Roughness
@@ -130,7 +129,7 @@ MeshTextures Model::ProcessTextures
 	mat->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &path);
 	if (path.length > 0)
 	{
-		textures.roughness = Resources::GetTexture(path.C_Str());
+		textures.roughness = Resources::GetTexture(directory + path.C_Str());
 	}
 
 	// Ambient Occlusion
@@ -138,7 +137,7 @@ MeshTextures Model::ProcessTextures
 	mat->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &path);
 	if (path.length > 0)
 	{
-		textures.ao = Resources::GetTexture(path.C_Str());
+		textures.ao = Resources::GetTexture(directory + path.C_Str());
 	}
 
 	return textures;
