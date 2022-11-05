@@ -46,27 +46,10 @@ void SDLWindow::MainLoop()
 	);
 
 	auto playerModel = Resources::GetModel("gfx/Mario/Mario.gltf", defaultTextures);
-	auto stageModel  = Resources::GetModel("gfx/Stage/stage.gltf", defaultTextures);
-	auto stallModel  = Resources::GetModel("gfx/Stall/stall.gltf", defaultTextures);
 
 	// All objects go here
 	std::vector<Entity> entities;
 	{
-		entities.emplace_back
-		(
-			stageModel,
-			glm::vec3(0.0f, 6.0f, 0.0f),
-			glm::vec3(0.0f),
-			1.0f
-		);
-
-		entities.emplace_back
-		(
-			stallModel,
-			glm::vec3(-3.0f, -4.0f, -15.0f),
-			glm::vec3(0.0f, 90.0f, 0.0f),
-			1.0f
-		);
 	}
 
 	auto player = Entities::Player

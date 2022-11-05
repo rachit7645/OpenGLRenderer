@@ -15,6 +15,7 @@ const float TOTAL_TEXELS    = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.
 
 // Structs
 
+// TODO: Update lights
 struct Light
 {
 	vec4 position;
@@ -24,6 +25,7 @@ struct Light
 	vec4 attenuation;
 };
 
+// TODO: Organise everything up
 struct LightData
 {
 	vec3 lightDir;
@@ -108,6 +110,7 @@ void main()
 	GBuffer gBuffer = GetGBufferData();
 
 	// PBR
+	// TODO: Fix normal maps
 	vec3 N = GetNormalFromMap(gBuffer);
 	vec3 V = gBuffer.cameraDir;
 
@@ -121,7 +124,9 @@ void main()
 	vec3  L           = normalize(lights[0].position.xyz - gBuffer.fragPos);
 	vec3  H           = normalize(V + L);
 	float distance    = length(lights[0].position.xyz - gBuffer.fragPos);
-	float attenuation = 1.0f / (distance * distance);
+	vec3  ATT         = lights[0].attenuation.xyz;
+	float attenuation = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
+	attenuation       = 1.0f / attenuation;
 	vec3  radiance    = lights[0].diffuse.rgb * attenuation;
 
 	// Cook-Torrance BRDF
@@ -142,8 +147,8 @@ void main()
 	Lo += (kD * gBuffer.albedo.rgb / PI + specular) * radiance * NdotL;
 
 	// Ambient
-	vec3 ambient = vec3(0.03f) * gBuffer.albedo.rgb * gBuffer.ao;
-	vec3 color   = ambient + Lo;
+	vec3 ambient = vec3(0.06f) * gBuffer.albedo.rgb * gBuffer.ao;
+	vec3 color   = ambient + Lo * (1.0f - CalculateShadow(L, gBuffer));
 
 	// HDR tonemapping
 	color = color / (color + vec3(1.0f));
@@ -151,7 +156,7 @@ void main()
 	color = pow(color, vec3(1.0f / 2.2f));
 
 	// Output color
-	outColor = vec4(color, 1.0f) * (1.0f - CalculateShadow(L, gBuffer));
+	outColor = vec4(color, 1.0f);
 }
 
 GBuffer GetGBufferData()
