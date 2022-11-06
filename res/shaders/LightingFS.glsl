@@ -1,14 +1,12 @@
 #version 430 core
 
 // Constants
-const float PI = 3.14159265359;
-
-const int MAX_LIGHTS = 4;
-
+const float PI              = 22.0 / 7.0;
+const int   MAX_LIGHTS      = 4;
 const int   MAX_LAYER_COUNT = 16;
 const float MIN_BIAS        = 0.005f;
 const float MAX_BIAS        = 0.05f;
-const float SHADOW_AMOUNT   = 0.35f;
+const float SHADOW_AMOUNT   = 0.3f;
 const float BIAS_MODIFIER   = 0.5f;
 const float PCF_COUNT       = 1.5f;
 const float TOTAL_TEXELS    = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.0f);
@@ -135,7 +133,7 @@ void main()
 	vec3  F   = FresnelSchlick(max(dot(H, V), 0.0f), F0);
 
 	vec3  numerator   = NDF * G * F;
-	float denominator = 4.0f * max(dot(N, V), 0.0f) * max(dot(N, L), 0.0f) + 0.0001f;
+	float denominator = max(4.0f * max(dot(N, V), 0.0f) * max(dot(N, L), 0.0f), 0.0001f);
 	vec3  specular    = numerator / denominator;
 
 	vec3 kS = F;
@@ -147,8 +145,10 @@ void main()
 	Lo += (kD * gBuffer.albedo.rgb / PI + specular) * radiance * NdotL;
 
 	// Ambient
-	vec3 ambient = vec3(0.06f) * gBuffer.albedo.rgb * gBuffer.ao;
-	vec3 color   = ambient + Lo * (1.0f - CalculateShadow(L, gBuffer));
+	vec3  ambient = vec3(0.12f) * gBuffer.albedo.rgb * gBuffer.ao;
+	float shadow  = 1.0f - CalculateShadow(L, gBuffer);
+	vec3  color   = ambient + Lo * shadow;
+	color         = color + ambient * shadow;
 
 	// HDR tonemapping
 	color = color / (color + vec3(1.0f));

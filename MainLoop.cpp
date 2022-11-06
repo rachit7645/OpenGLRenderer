@@ -45,11 +45,19 @@ void SDLWindow::MainLoop()
 		Resources::GetTexture("gfx/def.png")
 	);
 
-	auto playerModel = Resources::GetModel("gfx/Mario/Mario.gltf", defaultTextures);
+	auto playerModel  = Resources::GetModel("gfx/Mario/Mario.gltf",     defaultTextures);
+	auto cottageModel = Resources::GetModel("gfx/Cottage/Cottage.gltf", defaultTextures);
 
 	// All objects go here
 	std::vector<Entity> entities;
 	{
+		entities.emplace_back
+		(
+			cottageModel,
+			glm::vec3(0.0f),
+			glm::vec3(0.0f),
+			50.0f
+		);
 	}
 
 	auto player = Entities::Player
