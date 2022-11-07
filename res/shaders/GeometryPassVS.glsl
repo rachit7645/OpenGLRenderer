@@ -11,14 +11,6 @@ layout(std140, binding = 0) uniform Matrices
 	mat4 viewMatrix;
 };
 
-layout(std140, binding = 2) uniform Shared
-{
-	vec4 clipPlane;
-	vec4 skyColor;
-	vec4 cameraPos;
-	vec4 resolution;
-};
-
 layout(std430, binding = 3) readonly buffer InstanceData
 {
 	Instance instances[];
@@ -34,11 +26,10 @@ out vec3 worldPosition;
 
 void main()
 {
-	vec4 fragPos       = instances[gl_InstanceID].modelMatrix * vec4(position, 1.0f);
-	worldPosition      = fragPos.xyz;
-	vec4 posRelToCam   = viewMatrix * fragPos;
-	gl_Position        = projectionMatrix * posRelToCam;
-	txCoords           = textureCoords;
-	vec4 transNormal   = instances[gl_InstanceID].modelMatrix * vec4(normal, 0.0f);
-	unitNormal         = normalize(transNormal.xyz);
+	vec4 fragPos     = instances[gl_InstanceID].modelMatrix * vec4(position, 1.0f);
+	worldPosition    = fragPos.xyz;
+	gl_Position      = projectionMatrix * viewMatrix * fragPos;
+	txCoords         = textureCoords;
+	vec4 transNormal = instances[gl_InstanceID].modelMatrix * vec4(normal, 0.0f);
+	unitNormal       = normalize(transNormal.xyz);
 }

@@ -40,7 +40,7 @@ void SDLWindow::MainLoop()
 	auto defaultTextures = MeshTextures
 	(
 		Resources::GetTexture("gfx/def.png"),
-		Resources::GetTexture("gfx/def.png"),
+		Resources::GetTexture("gfx/defNrm.png"),
 		Resources::GetTexture("gfx/def.png"),
 		Resources::GetTexture("gfx/def.png")
 	);
@@ -63,7 +63,7 @@ void SDLWindow::MainLoop()
 	auto player = Entities::Player
 	(
 		playerModel,
-		glm::vec3(13.0f, 1.0f, 17.0f),
+		glm::vec3(13.0f, 6.0f, 17.0f),
 		glm::vec3(0.0f, 180.0f, 0.0f),
 		0.025f
 	);
@@ -72,9 +72,8 @@ void SDLWindow::MainLoop()
 	{
 		lights.emplace_back
 		(
-			glm::vec3(-2.0f, 4.0f, -1.0f),
+			glm::vec3(0.1f, 1.0f, 0.1f),
 			glm::vec3(0.2f, 0.2f, 0.2f),
-			glm::vec3(1.0f, 1.0f, 1.0f),
 			glm::vec3(1.0f, 1.0f, 1.0f),
 			glm::vec3(1.0f, 0.0f, 0.0f)
 		);
@@ -192,7 +191,6 @@ void SDLWindow::ImGuiDisplay(std::vector<Light>& lights)
 				ImGui::InputFloat3("Position",    &lights[current].position[0],    "%.1f");
 				ImGui::InputFloat3("Ambient",     &lights[current].ambient[0],     "%.1f");
 				ImGui::InputFloat3("Diffuse",     &lights[current].diffuse[0],     "%.1f");
-				ImGui::InputFloat3("Specular",    &lights[current].specular[0],    "%.1f");
 				ImGui::InputFloat3("Attenuation", &lights[current].attenuation[0], "%.1f");
 				ImGui::EndMenu();
 			}

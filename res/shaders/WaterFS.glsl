@@ -13,7 +13,6 @@ struct Light
 	vec4 position;
 	vec4 ambient;
 	vec4 diffuse;
-	vec4 specular;
 	vec4 attenuation;
 };
 
@@ -115,5 +114,5 @@ vec3 CalculateSpecular(vec3 unitNormal)
 	float specularFactor = dot(halfwayDir, unitNormal);
 	specularFactor       = max(specularFactor, MIN_SPECULAR);
 	float dampedFactor   = pow(specularFactor, SHINE_DAMPER);
-	return dampedFactor * REFLECTIVITY * lights[0].specular.rgb;
+	return dampedFactor * REFLECTIVITY * vec3(1.0f);
 }

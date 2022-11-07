@@ -4,9 +4,7 @@
 #include <vector>
 #include <string_view>
 
-#include <assimp/Importer.hpp>
 #include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 #include "Util.h"
 #include "Mesh.h"

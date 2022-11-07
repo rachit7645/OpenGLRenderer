@@ -1,5 +1,8 @@
 #include "Model.h"
 
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+
 #include "Resources.h"
 #include "Log.h"
 #include "Files.h"
@@ -11,8 +14,8 @@
 #define AI_MATKEY_NORMALS_TEXTURE aiTextureType_NORMALS, 0
 #endif
 
-#ifndef AI_MATKEY_AMBIENT_OCCLUSION_TEXTURE
-#define AI_MATKEY_AMBIENT_OCCLUSION_TEXTURE aiTextureType_AMBIENT_OCCLUSION, 0
+#ifndef AI_MATKEY_AO_TEXTURE
+#define AI_MATKEY_AO_TEXTURE aiTextureType_AMBIENT_OCCLUSION, 0
 #endif
 
 using namespace Renderer;
@@ -131,7 +134,7 @@ MeshTextures Model::ProcessTextures
 
 	// Metallic + Roughness (GLTF is weird)
 	path.Clear();
-	mat->GetTexture(AI_MATKEY_METALLIC_TEXTURE, &path);
+	mat->GetTexture(AI_MATKEY_ROUGHNESS_TEXTURE, &path);
 	if (path.length > 0)
 	{
 		textures.mtlRgh = Resources::GetTexture(directory + path.C_Str());
@@ -139,7 +142,7 @@ MeshTextures Model::ProcessTextures
 
 	// Ambient Occlusion
 	path.Clear();
-	mat->GetTexture(AI_MATKEY_AMBIENT_OCCLUSION_TEXTURE, &path);
+	mat->GetTexture(AI_MATKEY_AO_TEXTURE, &path);
 	if (path.length > 0)
 	{
 		textures.ao = Resources::GetTexture(directory + path.C_Str());

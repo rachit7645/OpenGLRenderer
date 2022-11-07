@@ -7,7 +7,6 @@ struct Light
 	vec4 position;
 	vec4 ambient;
 	vec4 diffuse;
-	vec4 specular;
 	vec4 attenuation;
 };
 

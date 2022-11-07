@@ -16,7 +16,6 @@ namespace Entities
 			const glm::vec3& position,
 			const glm::vec3& ambient,
 			const glm::vec3& diffuse,
-			const glm::vec3& specular,
 			const glm::vec3& attenuation
 		);
 
@@ -24,7 +23,6 @@ namespace Entities
 		alignas(16) glm::vec4 position    = {0.0f, 0.0f, 0.0f, 1.0f};
 		alignas(16) glm::vec4 ambient     = {0.0f, 0.0f, 0.0f, 1.0f};
 		alignas(16) glm::vec4 diffuse     = {0.0f, 0.0f, 0.0f, 1.0f};
-		alignas(16) glm::vec4 specular    = {0.0f, 0.0f, 0.0f, 1.0f};
 		alignas(16) glm::vec4 attenuation = {1.0f, 0.0f, 0.0f, 1.0f};
 	};
 }

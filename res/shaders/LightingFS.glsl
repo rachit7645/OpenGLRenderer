@@ -6,20 +6,16 @@ const int   MAX_LIGHTS      = 4;
 const int   MAX_LAYER_COUNT = 16;
 const float MIN_BIAS        = 0.005f;
 const float MAX_BIAS        = 0.05f;
-const float SHADOW_AMOUNT   = 0.3f;
+const float SHADOW_AMOUNT   = 0.16f;
 const float BIAS_MODIFIER   = 0.5f;
 const float PCF_COUNT       = 1.5f;
 const float TOTAL_TEXELS    = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.0f);
 
-// Structs
-
-// TODO: Update lights
 struct Light
 {
 	vec4 position;
 	vec4 ambient;
 	vec4 diffuse;
-	vec4 specular;
 	vec4 attenuation;
 };
 
@@ -32,7 +28,6 @@ struct LightData
 struct GBuffer
 {
 	vec3  fragPos;
-	vec3  cameraDir;
 	vec3  normal;
 	vec4  albedo;
 	vec3  normalMap;
@@ -107,11 +102,12 @@ void main()
 	// GBuffer data
 	GBuffer gBuffer = GetGBufferData();
 
-	// PBR
-	// TODO: Fix normal maps
+	// Normal
 	vec3 N = GetNormalFromMap(gBuffer);
-	vec3 V = gBuffer.cameraDir;
+	// Camera vector
+	vec3 V = normalize(cameraPos.xyz - gBuffer.fragPos);
 
+	// Metallic coefficient
 	vec3 F0 = vec3(0.04f);
 	F0      = mix(F0, gBuffer.albedo.rgb, gBuffer.metallic);
 
@@ -132,27 +128,29 @@ void main()
 	float G   = GeometrySmith(N, V, L, gBuffer.roughness);
 	vec3  F   = FresnelSchlick(max(dot(H, V), 0.0f), F0);
 
+	// Combine specular
 	vec3  numerator   = NDF * G * F;
+	// To prevent division by zero, divide by at least 0.0001f (close enough)
 	float denominator = max(4.0f * max(dot(N, V), 0.0f) * max(dot(N, L), 0.0f), 0.0001f);
 	vec3  specular    = numerator / denominator;
 
+	// Diffuse energy conservation
 	vec3 kS = F;
 	vec3 kD = vec3(1.0f) - kS;
 	kD     *= 1.0f - gBuffer.metallic;
 
+	// Add everthing up to Lo
 	float NdotL = max(dot(N, L), 0.0f);
+	Lo         += (kD * gBuffer.albedo.rgb / PI + specular) * radiance * NdotL;
 
-	Lo += (kD * gBuffer.albedo.rgb / PI + specular) * radiance * NdotL;
-
-	// Ambient
-	vec3  ambient = vec3(0.12f) * gBuffer.albedo.rgb * gBuffer.ao;
-	float shadow  = 1.0f - CalculateShadow(L, gBuffer);
-	vec3  color   = ambient + Lo * shadow;
-	color         = color + ambient * shadow;
+	// Add ambient and shadows
+	vec3 ambient = vec3(0.12f) * gBuffer.albedo.rgb * gBuffer.ao;
+	vec3 color   = ambient + Lo;
+	color       *= 1.0f - CalculateShadow(L, gBuffer);
 
 	// HDR tonemapping
 	color = color / (color + vec3(1.0f));
-	// Gamma correct
+	// Gamma correction
 	color = pow(color, vec3(1.0f / 2.2f));
 
 	// Output color
@@ -178,26 +176,28 @@ GBuffer GetGBufferData()
 	// Normal Map + Ambient Occlusion
 	gBuffer.normalMap = gNormMap.rgb;
 	gBuffer.ao        = gNorm.a;
-	// Camera direction
-	gBuffer.cameraDir = normalize(cameraPos.xyz - gBuffer.fragPos);
 	// Return
 	return gBuffer;
 }
 
 vec3 GetNormalFromMap(GBuffer gBuffer)
 {
+	// Tangent normal from normal map
 	vec3 tangentNormal = gBuffer.normalMap * 2.0f - 1.0f;
 
+	// Take the deriviatives
 	vec3 Q1  = dFdx(gBuffer.fragPos);
 	vec3 Q2  = dFdy(gBuffer.fragPos);
 	vec2 st1 = dFdx(txCoords);
 	vec2 st2 = dFdy(txCoords);
 
+	// Calculate TBN matrix
 	vec3 N   = gBuffer.normal;
 	vec3 T   = normalize(Q1 * st2.t - Q2 * st1.t);
 	vec3 B   = -normalize(cross(N, T));
 	mat3 TBN = mat3(T, B, N);
 
+	// Return world space normal
 	return normalize(TBN * tangentNormal);
 }
 
@@ -236,6 +236,7 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 	return ggx1 * ggx2;
 }
 
+// TODO: Add roughness term
 vec3 FresnelSchlick(float cosTheta, vec3 F0)
 {
 	return F0 + (1.0f - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
