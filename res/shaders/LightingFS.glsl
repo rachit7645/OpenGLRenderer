@@ -1,7 +1,7 @@
 #version 430 core
 
 // Constants
-const float PI              = 22.0 / 7.0;
+const float PI              = 3.14159265359;
 const int   MAX_LIGHTS      = 4;
 const int   MAX_LAYER_COUNT = 16;
 const float MIN_BIAS        = 0.005f;
@@ -14,15 +14,8 @@ const float TOTAL_TEXELS    = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.
 struct Light
 {
 	vec4 position;
-	vec4 ambient;
-	vec4 diffuse;
+	vec4 color;
 	vec4 attenuation;
-};
-
-// TODO: Organise everything up
-struct LightData
-{
-	vec3 lightDir;
 };
 
 struct GBuffer
@@ -46,6 +39,7 @@ layout(std140, binding = 0) uniform Matrices
 
 layout(std140, binding = 1) uniform Lights
 {
+	int   numLights;
 	Light lights[MAX_LIGHTS];
 };
 
@@ -114,38 +108,42 @@ void main()
 	// Total light
 	vec3 Lo = vec3(0.0f);
 
-	// Irradiance
-	vec3  L           = normalize(lights[0].position.xyz - gBuffer.fragPos);
-	vec3  H           = normalize(V + L);
-	float distance    = length(lights[0].position.xyz - gBuffer.fragPos);
-	vec3  ATT         = lights[0].attenuation.xyz;
-	float attenuation = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
-	attenuation       = 1.0f / attenuation;
-	vec3  radiance    = lights[0].diffuse.rgb * attenuation;
+	for (int i = 0; i < numLights; ++i)
+	{
+		// Irradiance
+		vec3  L           = normalize(lights[i].position.xyz - gBuffer.fragPos);
+		vec3  H           = normalize(V + L);
+		float distance    = length(lights[i].position.xyz - gBuffer.fragPos);
+		vec3  ATT         = lights[i].attenuation.xyz;
+		float attenuation = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
+		attenuation       = 1.0f / attenuation;
+		vec3  radiance    = lights[i].color.rgb * attenuation;
 
-	// Cook-Torrance BRDF
-	float NDF = DistributionGGX(N, H, gBuffer.roughness);
-	float G   = GeometrySmith(N, V, L, gBuffer.roughness);
-	vec3  F   = FresnelSchlick(max(dot(H, V), 0.0f), F0);
+		// Cook-Torrance BRDF
+		float NDF = DistributionGGX(N, H, gBuffer.roughness);
+		float G   = GeometrySmith(N, V, L, gBuffer.roughness);
+		vec3  F   = FresnelSchlick(max(dot(H, V), 0.0f), F0);
 
-	// Combine specular
-	vec3  numerator   = NDF * G * F;
-	// To prevent division by zero, divide by at least 0.0001f (close enough)
-	float denominator = max(4.0f * max(dot(N, V), 0.0f) * max(dot(N, L), 0.0f), 0.0001f);
-	vec3  specular    = numerator / denominator;
+		// Combine specular
+		vec3  numerator   = NDF * G * F;
+		// To prevent division by zero, divide by at least 0.0001f (close enough)
+		float denominator = max(4.0f * max(dot(N, V), 0.0f) * max(dot(N, L), 0.0f), 0.0001f);
+		vec3  specular    = numerator / denominator;
 
-	// Diffuse energy conservation
-	vec3 kS = F;
-	vec3 kD = vec3(1.0f) - kS;
-	kD     *= 1.0f - gBuffer.metallic;
+		// Diffuse energy conservation
+		vec3 kS = F;
+		vec3 kD = vec3(1.0f) - kS;
+		kD     *= 1.0f - gBuffer.metallic;
 
-	// Add everthing up to Lo
-	float NdotL = max(dot(N, L), 0.0f);
-	Lo         += (kD * gBuffer.albedo.rgb / PI + specular) * radiance * NdotL;
+		// Add everthing up to Lo
+		float NdotL = max(dot(N, L), 0.0f);
+		Lo         += (kD * gBuffer.albedo.rgb / PI + specular) * radiance * NdotL;
+	}
 
 	// Add ambient and shadows
 	vec3 ambient = vec3(0.12f) * gBuffer.albedo.rgb * gBuffer.ao;
 	vec3 color   = ambient + Lo;
+	vec3 L       = normalize(lights[0].position.xyz - gBuffer.fragPos);
 	color       *= 1.0f - CalculateShadow(L, gBuffer);
 
 	// HDR tonemapping

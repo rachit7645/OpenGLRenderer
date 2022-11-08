@@ -11,13 +11,13 @@ const int   MAX_LIGHTS      = 4;
 struct Light
 {
 	vec4 position;
-	vec4 ambient;
-	vec4 diffuse;
+	vec4 color;
 	vec4 attenuation;
 };
 
 layout(std140, binding = 1) uniform Lights
 {
+	int   numLights;
 	Light lights[MAX_LIGHTS];
 };
 

@@ -5,10 +5,12 @@
 
 #include "UniformBuffer.h"
 #include "Light.h"
+#include "GL.h"
+#include "Util.h"
 
 namespace Renderer
 {
-	constexpr auto SHADER_MAX_LIGHTS = 4;
+	constexpr usize SHADER_MAX_LIGHTS = 4;
 
 	class LightsBuffer : public UniformBuffer
 	{
@@ -22,6 +24,7 @@ namespace Renderer
 	{
 		struct LightsBufferGLSL
 		{
+			alignas(16) GL::Int         numLights;
 			alignas(16) Entities::Light lights[SHADER_MAX_LIGHTS];
 		};
 	}

@@ -5,13 +5,11 @@ using namespace Entities;
 Light::Light
 (
 	const glm::vec3& position,
-	const glm::vec3& ambient,
-	const glm::vec3& diffuse,
+	const glm::vec3& color,
 	const glm::vec3& attenuation
 )
 	: position(position, 1.0f),
-	  ambient(ambient, 1.0f),
-	  diffuse(diffuse, 1.0f),
+	  color(color, 1.0f),
 	  attenuation(attenuation, 1.0f)
 {
 }

@@ -6,13 +6,13 @@ const int   MAX_LIGHTS       = 4;
 struct Light
 {
 	vec4 position;
-	vec4 ambient;
-	vec4 diffuse;
+	vec4 color;
 	vec4 attenuation;
 };
 
 layout(std140, binding = 1) uniform Lights
 {
+    int   numLights;
 	Light lights[MAX_LIGHTS];
 };
 
@@ -36,7 +36,7 @@ void main()
 	vec4 ambient = vec4(0.0f);
 	vec4 diffuse = vec4(0.0f);
 
-	for (int i = 0; i < MAX_LIGHTS; ++i)
+	for (int i = 0; i < numLights; ++i)
 	{
 		float attFactor = CalculateAttFactor(i);
 		ambient        += CalculateAmbient(i) * diffColor * attFactor;
@@ -56,12 +56,12 @@ float CalculateAttFactor(int index)
 
 vec4 CalculateAmbient(int index)
 {
-	return vec4(AMBIENT_STRENGTH * lights[index].ambient.rgb, 1.0f);
+	return vec4(AMBIENT_STRENGTH * vec3(0.2f), 1.0f);
 }
 
 vec4 CalculateDiffuse(int index)
 {
 	float nDot1      = dot(unitNormal, unitLightVector[index]);
 	float brightness = max(nDot1, 0.0f);
-	return vec4(brightness * lights[index].diffuse.rgb, 1.0f);
+	return vec4(brightness * lights[index].color.rgb, 1.0f);
 }

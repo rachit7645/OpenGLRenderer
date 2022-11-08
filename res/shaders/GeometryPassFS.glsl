@@ -16,15 +16,20 @@ uniform sampler2D aoMap;
 
 void main()
 {
+	// Retrieve data
+	vec4 gAlb    = texture(albedoMap, txCoords);
+	vec4 gNorm   = texture(normalMap, txCoords);
+	vec4 gMtlRgh = texture(mtlRgh,    txCoords);
+	vec4 gAO     = texture(aoMap,     txCoords);
 	// Position + Metallic
 	gPosition.rgb = worldPosition;
-	gPosition.a   = texture(mtlRgh, txCoords).b;
+	gPosition.a   = gMtlRgh.b;
 	// Normal + Roughness
 	gNormal.rgb = unitNormal;
-	gNormal.a   = texture(mtlRgh, txCoords).g;
+	gNormal.a   = gMtlRgh.g;
 	// Albedo
-	gAlbedo = pow(texture(albedoMap, txCoords), vec4(vec3(2.2f), 1.0f));
+	gAlbedo = pow(gAlb, vec4(vec3(2.2f), 1.0f));
 	// Normal Map + Ambient Occlusion
-	gNormalMap.rgb = texture(normalMap, txCoords).rgb;
-	gNormalMap.a   = texture(aoMap,     txCoords).r;
+	gNormalMap.rgb = gNorm.rgb;
+	gNormalMap.a   = gAO.r;
 }

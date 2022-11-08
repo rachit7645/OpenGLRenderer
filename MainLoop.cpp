@@ -73,7 +73,6 @@ void SDLWindow::MainLoop()
 		lights.emplace_back
 		(
 			glm::vec3(0.1f, 1.0f, 0.1f),
-			glm::vec3(0.2f, 0.2f, 0.2f),
 			glm::vec3(1.0f, 1.0f, 1.0f),
 			glm::vec3(1.0f, 0.0f, 0.0f)
 		);
@@ -189,8 +188,7 @@ void SDLWindow::ImGuiDisplay(std::vector<Light>& lights)
 
 				ImGui::Combo("Current", &current, items, IM_ARRAYSIZE(items));
 				ImGui::InputFloat3("Position",    &lights[current].position[0],    "%.1f");
-				ImGui::InputFloat3("Ambient",     &lights[current].ambient[0],     "%.1f");
-				ImGui::InputFloat3("Diffuse",     &lights[current].diffuse[0],     "%.1f");
+				ImGui::InputFloat3("Color",       &lights[current].color[0],       "%.1f");
 				ImGui::InputFloat3("Attenuation", &lights[current].attenuation[0], "%.1f");
 				ImGui::EndMenu();
 			}
