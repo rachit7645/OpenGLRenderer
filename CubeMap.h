@@ -5,19 +5,17 @@
 #include <string_view>
 #include <GL/glew.h>
 
+#include "Texture.h"
+
 namespace Renderer
 {
-	class CubeMap
+	class CubeMap : public Texture
 	{
 	public:
-        // Default constructor
-        CubeMap() = default;
-		// Generate Cubemap texture
+		// Empty constructor
+		CubeMap();
+		// Main constructor
 		explicit CubeMap(const std::array<const std::string_view, 6>& files);
-        // Destructor
-		~CubeMap();
-
-		GLuint id = 0;
 	};
 }
 

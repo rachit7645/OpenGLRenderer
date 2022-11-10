@@ -68,4 +68,12 @@ Skybox::Skybox()
 	: vao(std::make_shared<VertexArray>(3, SKYBOX_VERTICES)),
 	  cubeMap(std::make_shared<CubeMap>(SKYBOX_TEXTURE_FILES))
 {
+	// Sanity check
+	static_assert(SKYBOX_TEXTURE_FILES.size() == 6);
+}
+
+Skybox::Skybox(CubeMapPtr cubeMap)
+	: vao(std::make_shared<VertexArray>(3, SKYBOX_VERTICES)),
+ 	  cubeMap(std::move(cubeMap))
+{
 }

@@ -2,7 +2,7 @@
 
 layout (location = 0) out vec4 gPosition;
 layout (location = 1) out vec4 gNormal;
-layout (location = 2) out vec4 gAlbedo;
+layout (location = 2) out vec3 gAlbedo;
 layout (location = 3) out vec4 gNormalMap;
 
 in vec2 txCoords;
@@ -28,7 +28,7 @@ void main()
 	gNormal.rgb = unitNormal;
 	gNormal.a   = gMtlRgh.g;
 	// Albedo
-	gAlbedo = pow(gAlb, vec4(vec3(2.2f), 1.0f));
+	gAlbedo = pow(gAlb.xyz, vec3(2.2f));
 	// Normal Map + Ambient Occlusion
 	gNormalMap.rgb = gNorm.rgb;
 	gNormalMap.a   = gAO.r;

@@ -20,8 +20,8 @@ WaterFrameBuffers::WaterFrameBuffers()
 		GL_LINEAR,
 		GL_LINEAR,
 		GL_REPEAT,
-		GL_RGBA,
-		GL_RGBA,
+		GL_RGB,
+		GL_RGB,
 		GL_UNSIGNED_BYTE,
 		GL_COLOR_ATTACHMENT0
 	};

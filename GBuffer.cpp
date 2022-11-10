@@ -39,8 +39,8 @@ GBuffer::GBuffer()
 		GL_NEAREST,
 		GL_NEAREST,
 		GL_REPEAT,
-		GL_RGBA,
-		GL_RGBA,
+		GL_RGB,
+		GL_RGB,
 		GL_FLOAT,
 		GL_COLOR_ATTACHMENT2
 	};

@@ -10,7 +10,7 @@ namespace Renderer
 {
 	constexpr auto TEXTURE_LOD_BIAS = -0.5f;
 
-	// This class can be constructed in a pipeline-like form, thus providing absolute control
+	// Note: This class can be constructed in a pipeline-like form
 	class Texture
 	{
 	public:
@@ -40,12 +40,13 @@ namespace Renderer
 		void SetParameter(GLenum name, GLfloat param);
 		void SetParameter(GLenum name, const GLfloat* param);
 
-		void LoadImageData(u8* data, GLint internalFormat, GLint format, GLint dataType);
-		void LoadImageData3D(u8* data, GLint internalFormat, GLint format, GLint dataType);
+		void LoadImageData(u8* data, GLint internalFormat, GLint format, GLint dataType, GLenum target = 0);
+		void LoadImageData3D(u8* data, GLint internalFormat, GLint format, GLint dataType, GLenum target = 0);
 
 		void GenerateMipmaps();
-	private:
+
 		u8* LoadImage(const std::string_view path);
+		f32* LoadImageHDR(const std::string_view path);
 	public:
 		friend class FrameBuffer;
 		friend class SSAOBuffers;
