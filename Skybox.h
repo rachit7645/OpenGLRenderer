@@ -18,8 +18,6 @@ namespace Entities
 		using CubeMapPtr = std::shared_ptr<Renderer::CubeMap>;
 		// Main constructor
 		Skybox();
-		// Copy constructor
-		Skybox(CubeMapPtr cubeMap);
 
 		// Data
 		VAO        vao;

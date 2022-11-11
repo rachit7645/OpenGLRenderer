@@ -33,7 +33,7 @@ CubeMap::CubeMap(const std::array<const std::string_view, 6>& files)
 		LoadImageData
 		(
 			reinterpret_cast<u8*>(data),
-			GL_RGB,
+			GL_RGB16F,
 			GL_RGB,
 			GL_FLOAT,
 			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i
@@ -69,10 +69,9 @@ CubeMap::CubeMap()
 	LoadImageData3D
 	(
 		nullptr,
+		GL_RGB16F,
 		GL_RGB,
-		GL_RGB,
-		GL_FLOAT,
-		GL_TEXTURE_CUBE_MAP
+		GL_FLOAT
 	);
 
 	// Unbind

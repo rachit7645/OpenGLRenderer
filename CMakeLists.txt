@@ -81,6 +81,8 @@ add_executable(engine
 	LightingRenderer.cpp
 	LightingShader.cpp
 	Vertex.cpp
+	DiffuseIBL.cpp
+	ConverterShader.cpp
 )
 
 # Precompiled Headers

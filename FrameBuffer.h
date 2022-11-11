@@ -56,7 +56,8 @@ namespace Renderer
 		void CreateFrameBuffer();
 
 		void AddTexture(TxPtr& texture, const FBOAttachment& attachment);
-		void AddArrayTexture(TxPtr& texture, const FBOAttachment& attachment);
+		void AddTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment);
+		void AddTextureArray(TxPtr& texture, const FBOAttachment& attachment);
 		void AddBuffer(RdBufPtr& buffer, const FBOAttachment& attachment);
 
 		void SetDrawBuffers(const std::vector<GLenum>& buffers);
@@ -66,7 +67,7 @@ namespace Renderer
 	public:
 		friend class ShadowMap;
 		friend class GBuffer;
-		friend class SSAOBuffers;
+		friend class DiffuseIBL;
 		friend class Waters::WaterFrameBuffers;
 	};
 }

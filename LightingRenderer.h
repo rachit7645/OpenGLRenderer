@@ -7,6 +7,7 @@
 #include "VertexArray.h"
 #include "GBuffer.h"
 #include "ShadowMap.h"
+#include "DiffuseIBL.h"
 
 namespace Renderer
 {
@@ -26,11 +27,12 @@ namespace Renderer
 		Shader::LightingShader& shader;
 		Renderer::ShadowMap&    shadowMap;
 		Renderer::GBuffer&      gBuffer;
-
 		// Render light pass
 		void Render();
 	private:
-		VAO m_vao;
+		// Quad VAO
+		VAO        m_vao;
+		DiffuseIBL m_diffuseIBL;
 	};
 }
 

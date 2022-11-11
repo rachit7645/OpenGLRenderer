@@ -51,7 +51,7 @@ ShadowMap::ShadowMap()
 	buffer->Bind();
 	buffer->SetDrawBuffer(GL_NONE);
 	buffer->SetReadBuffer(GL_NONE);
-	buffer->AddArrayTexture(buffer->depthTexture, depth);
+	buffer->AddTextureArray(buffer->depthTexture, depth);
 	buffer->CheckStatus();
 	buffer->EnableDepth();
 	buffer->Unbind();

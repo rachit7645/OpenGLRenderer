@@ -17,7 +17,7 @@ const std::vector<f32> QUAD_VERTICES =
 LightingRenderer::LightingRenderer
 (
 	LightingShader& shader,
-	Renderer::ShadowMap& shadowMap,
+	ShadowMap& shadowMap,
 	GBuffer& gBuffer
 )
 	: shader(shader),

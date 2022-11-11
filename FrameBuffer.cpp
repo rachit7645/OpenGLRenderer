@@ -46,7 +46,37 @@ void FrameBuffer::AddTexture(TxPtr& texture, const FBOAttachment& attachment)
 	);
 }
 
-void FrameBuffer::AddArrayTexture(TxPtr& texture, const FBOAttachment& attachment)
+void FrameBuffer::AddTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment)
+{
+	texture = std::make_shared<Texture>();
+	texture->width  = width;
+	texture->height = height;
+	texture->type   = GL_TEXTURE_CUBE_MAP;
+
+	texture->CreateTexture();
+	texture->Bind();
+	texture->SetParameter(GL_TEXTURE_MIN_FILTER, attachment.minFilter);
+	texture->SetParameter(GL_TEXTURE_MAG_FILTER, attachment.maxFilter);
+	texture->SetParameter(GL_TEXTURE_WRAP_S,     attachment.wrapMode);
+	texture->SetParameter(GL_TEXTURE_WRAP_T,     attachment.wrapMode);
+	texture->SetParameter(GL_TEXTURE_WRAP_R,     attachment.wrapMode);
+
+	for (usize i = 0; i < 6; ++i)
+	{
+		texture->LoadImageData
+		(
+			nullptr,
+			attachment.internalFormat,
+			attachment.format,
+			attachment.dataType,
+			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i
+		);
+	}
+
+	texture->Unbind();
+}
+
+void FrameBuffer::AddTextureArray(TxPtr& texture, const FBOAttachment& attachment)
 {
 	texture = std::make_shared<Texture>();
 	texture->width  = width;
