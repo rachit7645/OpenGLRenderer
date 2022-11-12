@@ -82,6 +82,7 @@ add_executable(engine
 	Vertex.cpp
 	DiffuseIBL.cpp
 	ConverterShader.cpp
+	ConvolutionShader.cpp
 )
 
 # Precompiled Headers

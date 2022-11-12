@@ -1,5 +1,5 @@
-#ifndef CONVERTER_SHADER_H
-#define CONVERTER_SHADER_H
+#ifndef CONVOLUTION_SHADER_H
+#define CONVOLUTION_SHADER_H
 
 #include <unordered_map>
 #include <string_view>
@@ -10,10 +10,10 @@
 
 namespace Shader
 {
-	class ConverterShader : public ShaderProgram
+	class ConvolutionShader : public ShaderProgram
 	{
 	public:
-		ConverterShader();
+		ConvolutionShader();
 
 		void ConnectTextureUnits();
 		void LoadProjection(const glm::mat4& projection);

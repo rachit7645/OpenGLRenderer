@@ -23,7 +23,7 @@ RenderManager::RenderManager()
 	  m_skyboxRenderer(m_skyboxShader),
 	  m_guiRenderer(m_guiShader),
 	  m_waterRenderer(m_waterShader, m_waterFBOs),
-	  m_skybox(m_diffuseIBL.cubeMap->colorTextures[0]),
+	  m_skybox(m_diffuseIBL.GetCubeMap()),
 	  m_matrices(std::make_shared<MatrixBuffer>()),
 	  m_lights(std::make_shared<LightsBuffer>()),
 	  m_shared(std::make_shared<SharedBuffer>())
