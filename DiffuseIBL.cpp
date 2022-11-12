@@ -2,7 +2,6 @@
 
 #include <array>
 
-#include "GLM.h"
 #include "ConverterShader.h"
 
 using namespace Renderer;
@@ -21,6 +20,57 @@ DiffuseIBL::DiffuseIBL()
 }
 
 void DiffuseIBL::ConvertToCubeMap()
+{
+	const glm::mat4 projection = glm::perspective
+	(
+		glm::radians(90.0f),
+		1.0f,
+		0.1f,
+		10.0f
+	);
+
+	const std::array<glm::mat4, 6> views =
+	{
+		glm::lookAt(glm::vec3(0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+		glm::lookAt(glm::vec3(0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+		glm::lookAt(glm::vec3(0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
+		glm::lookAt(glm::vec3(0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
+		glm::lookAt(glm::vec3(0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+		glm::lookAt(glm::vec3(0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+	};
+
+	CreateCubeMapFBO(cubeMap, CUBEMAP_DIMENSIONS);
+
+	// Data
+	TxPtr hdrMap = LoadHDRMap();
+	VAO   cube   = LoadCube();
+	// Shaders and renderers
+	auto shader = Shader::ConverterShader();
+
+	// Prepare
+	PrepareRender(cubeMap, cube);
+	// Start shader
+	shader.Start();
+	shader.ConnectTextureUnits();
+	// Load projection
+	shader.LoadProjection(projection);
+	// Bind HDR map
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, hdrMap->id);
+
+	// For each face
+	for (usize i = 0; i < 6; ++i)
+	{
+		shader.LoadView(views[i]);
+		RenderCubeFace(cubeMap, cube, i);
+	}
+
+	// Unbind
+	UnbindRender(cubeMap);
+	shader.Stop();
+}
+
+void DiffuseIBL::CreateCubeMapFBO(FbPtr& FBO, const glm::ivec2& dimensions)
 {
 	Renderer::FBOAttachment color0 =
 	{
@@ -44,84 +94,53 @@ void DiffuseIBL::ConvertToCubeMap()
 		color0.slot
 	};
 
-	cubeMap->width  = CUBEMAP_DIMENSIONS.x;
-	cubeMap->height = CUBEMAP_DIMENSIONS.y;
+	FBO->width  = dimensions.x;
+	FBO->height = dimensions.y;
 
-	cubeMap->CreateFrameBuffer();
-	cubeMap->Bind();
-	cubeMap->AddTextureCubeMap(cubeMap->colorTextures[0], color0);
-	cubeMap->AddBuffer(cubeMap->depthRenderBuffer, depth);
-	cubeMap->SetDrawBuffers(drawBuffers);
-	cubeMap->CheckStatus();
-	cubeMap->EnableDepth();
-	cubeMap->Unbind();
+	FBO->CreateFrameBuffer();
+	FBO->Bind();
+	FBO->AddTextureCubeMap(FBO->colorTextures[0], color0);
+	FBO->AddBuffer(FBO->depthRenderBuffer, depth);
+	FBO->SetDrawBuffers(drawBuffers);
+	FBO->CheckStatus();
+	FBO->EnableDepth();
+	FBO->Unbind();
+}
 
-	glm::mat4 projection = glm::perspective
-	(
-		glm::radians(90.0f),
-		1.0f,
-		0.1f,
-		10.0f
-	);
-
-	std::array<glm::mat4, 6> views =
-	{
-		glm::lookAt(glm::vec3(0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-		glm::lookAt(glm::vec3(0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-		glm::lookAt(glm::vec3(0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
-		glm::lookAt(glm::vec3(0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
-		glm::lookAt(glm::vec3(0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-		glm::lookAt(glm::vec3(0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
-	};
-
-	// Data
-	TxPtr hdrMap = LoadHDRMap();
-	VAO   cube   = LoadCube();
-	// Shaders and renderers
-	auto shader = Shader::ConverterShader();
-
+void DiffuseIBL::PrepareRender(FbPtr& FBO, VAO& cube)
+{
 	// Bind
-	cubeMap->Bind();
+	FBO->Bind();
 	// Set rasterizer state
 	glDepthFunc(GL_LEQUAL);
 	glDisable(GL_CULL_FACE);
-	// Start shader
-	shader.Start();
-	shader.ConnectTextureUnits();
 	// Bind vao
 	glBindVertexArray(cube->id);
-	// Load projection
-	shader.LoadProjection(projection);
-	// Bind HDR map
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, hdrMap->id);
+}
 
-	// For all views of the cube map
-	for (usize i = 0; i < 6; ++i)
-	{
-		// Load view matrix
-		shader.LoadView(views[i]);
-		// Assign texture
-		glFramebufferTexture2D
-		(
-			GL_FRAMEBUFFER,
-			color0.slot,
-			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-			cubeMap->colorTextures[0]->id,
-			0
-		);
-		// Clear FBO
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		// Render cube
-		glDrawArrays(GL_TRIANGLES, 0, cube->vertexCount);
-	}
+void DiffuseIBL::RenderCubeFace(FbPtr& FBO, VAO& cube, usize face)
+{
+	// Assign texture
+	glFramebufferTexture2D
+	(
+		GL_FRAMEBUFFER,
+		GL_COLOR_ATTACHMENT0,
+		GL_TEXTURE_CUBE_MAP_POSITIVE_X + face,
+		FBO->colorTextures[0]->id,
+		0
+	);
+	// Clear FBO
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Render cube
+	glDrawArrays(GL_TRIANGLES, 0, cube->vertexCount);
+}
 
-	// Unbind
+void DiffuseIBL::UnbindRender(FbPtr& FBO)
+{
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
 	glBindVertexArray(0);
-	shader.Stop();
-	cubeMap->Unbind();
+	FBO->Unbind();
 }
 
 TxPtr DiffuseIBL::LoadHDRMap()

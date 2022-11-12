@@ -6,6 +6,7 @@
 #include "FrameBuffer.h"
 #include "Texture.h"
 #include "VertexArray.h"
+#include "GLM.h"
 
 namespace Renderer
 {
@@ -22,7 +23,13 @@ namespace Renderer
 		FbPtr cubeMap;
 		FbPtr irradiance;
 	private:
-		void  ConvertToCubeMap();
+		void ConvertToCubeMap();
+
+		void CreateCubeMapFBO(FbPtr& FBO, const glm::ivec2& dimensions);
+		void PrepareRender(FbPtr& FBO, VAO& cube);
+		void RenderCubeFace(FbPtr& FBO, VAO& cube, usize face);
+		void UnbindRender(FbPtr& FBO);
+
 		TxPtr LoadHDRMap();
 		VAO   LoadCube();
 	};
