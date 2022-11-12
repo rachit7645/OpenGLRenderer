@@ -1,6 +1,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
+#include <array>
 #include <string_view>
 #include <GL/glew.h>
 
@@ -18,8 +19,10 @@ namespace Renderer
 		Texture() = default;
 		// Loads a texture into memory, then an OpenGL object
 		explicit Texture(const std::string_view path);
+		// Loads a cube map texture
+		explicit Texture(const std::array<const std::string_view, 6>& files);
 		// Destructor 
-		~Texture();
+		virtual ~Texture();
 
 		void Bind()   const;
 		void Unbind() const;

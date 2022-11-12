@@ -7,7 +7,9 @@
 using namespace Entities;
 
 using Renderer::VertexArray;
-using Renderer::CubeMap;
+using Renderer::Texture;
+
+constexpr f32 SKYBOX_SIZE = 500.0f;
 
 const std::vector<f32> SKYBOX_VERTICES =
 {
@@ -66,8 +68,14 @@ constexpr std::array<const std::string_view, 6> SKYBOX_TEXTURE_FILES =
 
 Skybox::Skybox()
 	: vao(std::make_shared<VertexArray>(3, SKYBOX_VERTICES)),
-	  cubeMap(std::make_shared<CubeMap>(SKYBOX_TEXTURE_FILES))
+	  cubeMap(std::make_shared<Texture>(SKYBOX_TEXTURE_FILES))
 {
 	// Sanity check
 	static_assert(SKYBOX_TEXTURE_FILES.size() == 6);
+}
+
+Skybox::Skybox(TxPtr texture)
+	: vao(std::make_shared<VertexArray>(3, SKYBOX_VERTICES)),
+	  cubeMap(std::move(texture))
+{
 }

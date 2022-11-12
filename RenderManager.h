@@ -53,6 +53,7 @@ namespace Renderer
 		Renderer::ShadowMap       m_shadowMap;
 		Waters::WaterFrameBuffers m_waterFBOs;
 		Renderer::GBuffer         m_gBuffer;
+		Renderer::DiffuseIBL      m_diffuseIBL;
 		// Instances Shader Storage Buffer
 		std::shared_ptr<InstanceBuffer> m_instances;
 		// Instanced renderer and shaders

@@ -47,7 +47,6 @@ add_executable(engine
 	Files.cpp
 	SkyboxShader.cpp
 	SkyboxRenderer.cpp
-	CubeMap.cpp
 	Skybox.cpp
 	Inputs.cpp
 	MatrixBuffer.cpp

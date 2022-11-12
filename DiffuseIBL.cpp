@@ -27,8 +27,8 @@ void DiffuseIBL::ConvertToCubeMap()
 		GL_LINEAR,
 		GL_LINEAR,
 		GL_CLAMP_TO_EDGE,
-	GL_RGB16F,
-		GL_RGB,
+		GL_RGBA16F,
+		GL_RGBA,
 		GL_FLOAT,
 		GL_COLOR_ATTACHMENT0
 	};
@@ -82,10 +82,14 @@ void DiffuseIBL::ConvertToCubeMap()
 
 	// Bind
 	cubeMap->Bind();
-	// Use GL_LEQUAL to avoid Z fighting
+	// Set rasterizer state
 	glDepthFunc(GL_LEQUAL);
-	// Disable depth writing for performance
-	glDepthMask(GL_FALSE);
+	glDisable(GL_CULL_FACE);
+	// Start shader
+	shader.Start();
+	shader.ConnectTextureUnits();
+	// Bind vao
+	glBindVertexArray(cube->id);
 	// Load projection
 	shader.LoadProjection(projection);
 	// Bind HDR map
@@ -101,19 +105,22 @@ void DiffuseIBL::ConvertToCubeMap()
 		glFramebufferTexture2D
 		(
 			GL_FRAMEBUFFER,
-			GL_COLOR_ATTACHMENT0,
+			color0.slot,
 			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-			cubeMap->id,
+			cubeMap->colorTextures[0]->id,
 			0
 		);
+		// Clear FBO
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Render cube
 		glDrawArrays(GL_TRIANGLES, 0, cube->vertexCount);
 	}
 
-	// Reset
-	glDepthMask(GL_TRUE);
-	glDepthFunc(GL_LESS);
 	// Unbind
+	glDepthFunc(GL_LESS);
+	glEnable(GL_CULL_FACE);
+	glBindVertexArray(0);
+	shader.Stop();
 	cubeMap->Unbind();
 }
 
@@ -121,20 +128,22 @@ TxPtr DiffuseIBL::LoadHDRMap()
 {
 	TxPtr hdrMap = std::make_shared<Texture>();
 
-	auto data = hdrMap->LoadImageHDR("gfx/envMap.hdr");
+	stbi_set_flip_vertically_on_load(true);
+	// TODO: Get a better map
+	auto data = hdrMap->LoadImageHDR("gfx/newport_loft.hdr");
+	stbi_set_flip_vertically_on_load(false);
 
 	hdrMap->CreateTexture();
 	hdrMap->Bind();
 
-	hdrMap->SetParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	hdrMap->SetParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	hdrMap->SetParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	hdrMap->SetParameter(GL_TEXTURE_WRAP_S,     GL_REPEAT);
 	hdrMap->SetParameter(GL_TEXTURE_WRAP_T,     GL_REPEAT);
 	hdrMap->SetParameter(GL_TEXTURE_LOD_BIAS,   TEXTURE_LOD_BIAS);
 
 	hdrMap->SetPixelParameter(GL_UNPACK_ALIGNMENT, 1);
-	hdrMap->LoadImageData(reinterpret_cast<u8*>(data), GL_RGB, GL_RGB, GL_FLOAT);
-	hdrMap->GenerateMipmaps();
+	hdrMap->LoadImageData(reinterpret_cast<u8*>(data), GL_RGB16F, GL_RGB, GL_FLOAT);
 
 	hdrMap->Unbind();
 	stbi_image_free(data);

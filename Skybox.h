@@ -4,24 +4,23 @@
 #include <memory>
 
 #include "VertexArray.h"
-#include "CubeMap.h"
+#include "Texture.h"
 
 namespace Entities
 {
-	constexpr f32 SKYBOX_SIZE = 500.0f;
-
 	class Skybox
 	{
 	public:
 		// Usings
-		using VAO        = std::shared_ptr<Renderer::VertexArray>;
-		using CubeMapPtr = std::shared_ptr<Renderer::CubeMap>;
+		using VAO   = std::shared_ptr<Renderer::VertexArray>;
+		using TxPtr = std::shared_ptr<Renderer::Texture>;
 		// Main constructor
 		Skybox();
-
+		// Copy constructor
+		explicit Skybox(TxPtr texture);
 		// Data
-		VAO        vao;
-		CubeMapPtr cubeMap;
+		VAO   vao;
+		TxPtr cubeMap;
 	};
 }
 

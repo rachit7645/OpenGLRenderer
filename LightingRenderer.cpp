@@ -18,11 +18,13 @@ LightingRenderer::LightingRenderer
 (
 	LightingShader& shader,
 	ShadowMap& shadowMap,
-	GBuffer& gBuffer
+	GBuffer& gBuffer,
+	DiffuseIBL& diffuseIBL
 )
 	: shader(shader),
 	  shadowMap(shadowMap),
 	  gBuffer(gBuffer),
+	  diffuseIBL(diffuseIBL),
 	  m_vao(std::make_shared<VertexArray>(2, QUAD_VERTICES))
 {
 	shader.Start();

@@ -21,18 +21,19 @@ namespace Renderer
 		(
 			Shader::LightingShader& shader,
 			Renderer::ShadowMap& shadowMap,
-			Renderer::GBuffer& gBuffer
+			Renderer::GBuffer& gBuffer,
+			Renderer::DiffuseIBL& diffuseIBL
 		);
 		// Data
 		Shader::LightingShader& shader;
 		Renderer::ShadowMap&    shadowMap;
 		Renderer::GBuffer&      gBuffer;
+		Renderer::DiffuseIBL&   diffuseIBL;
 		// Render light pass
 		void Render();
 	private:
 		// Quad VAO
-		VAO        m_vao;
-		DiffuseIBL m_diffuseIBL;
+		VAO m_vao;
 	};
 }
 

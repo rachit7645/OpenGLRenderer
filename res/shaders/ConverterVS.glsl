@@ -9,11 +9,7 @@ out vec3 worldPos;
 
 void main()
 {
-	worldPos = position;
-	// Remove translation from view
-	mat4 rotView = mat4(mat3(view));
-	// Convert to clip space
-	vec4 clipPos = projection * rotView * vec4(position, 1.0f);
-	// Early depth test
-	gl_Position = clipPos.xyww;
+	worldPos    = position;
+	gl_Position = projection * view * vec4(position, 1.0f);
+	gl_Position = gl_Position.xyww;
 }
