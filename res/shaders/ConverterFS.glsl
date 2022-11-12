@@ -6,20 +6,16 @@ in vec3 worldPos;
 
 uniform sampler2D hdrMap;
 
-out vec4 outColor;
+out vec3 outColor;
 
-vec2 SampleSphericalMap(vec3 v);
+vec2 GetSphericalMapUV(vec3 v);
 
 void main()
 {
-	// Sample hdr map
-	vec2 uv       = SampleSphericalMap(normalize(worldPos));
-	vec3 hdrColor = texture(hdrMap, uv).rgb;
-	// Output
-	outColor = vec4(hdrColor, 1.0f);
+	outColor = texture(hdrMap, GetSphericalMapUV(normalize(worldPos))).rgb;
 }
 
-vec2 SampleSphericalMap(vec3 v)
+vec2 GetSphericalMapUV(vec3 v)
 {
 	vec2 uv = vec2(atan(v.z, v.x), asin(v.y));
 	uv     *= INVERSE_ATAN;

@@ -19,12 +19,9 @@ namespace Renderer
 		using FbPtr = std::shared_ptr<FrameBuffer>;
 		// Main constructor
 		DiffuseIBL();
-		// Functions
-		TxPtr GetCubeMap();
-		TxPtr GetIrradiance();
 		// Data
-		FbPtr cubeMap;
-		FbPtr irradiance;
+		TxPtr cubeMap;
+		TxPtr irradiance;
 	private:
 		// Converts equiangular map to cube map
 		void ConvertToCubeMap
@@ -41,10 +38,10 @@ namespace Renderer
 			const VAO& cube
 		);
 		// Shared render functions
-		void CreateCubeMapFBO(FbPtr& FBO, const glm::ivec2& dimensions);
-		void PrepareRender(FbPtr& FBO, const VAO& cube);
-		void RenderCubeFace(FbPtr& FBO, const VAO& cube, usize face);
-		void UnbindRender(FbPtr& FBO);
+		FbPtr CreateCubeMapFBO(const glm::ivec2& dimensions);
+		void  PrepareRender(FbPtr& FBO, const VAO& cube);
+		void  RenderCubeFace(FbPtr& FBO, const VAO& cube, usize face);
+		void  UnbindRender(FbPtr& FBO);
 		// Helper functions
 		TxPtr LoadHDRMap();
 		VAO   LoadCube();

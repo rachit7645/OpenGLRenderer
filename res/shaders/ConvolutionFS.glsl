@@ -6,16 +6,19 @@ in vec3 worldPos;
 
 uniform samplerCube envMap;
 
-out vec4 outColor;
+out vec3 outColor;
 
 void main()
 {
+	// Get normal
 	vec3 normal = normalize(worldPos);
 
+	// Calculate direction vectors
 	vec3 up    = vec3(0.0f, 1.0f, 0.0f);
 	vec3 right = normalize(cross(up, normal));
 	up         = normalize(cross(normal, right));
 
+	// Set integration variables
 	vec3  irradiance  = vec3(0.0f);
 	float sampleDelta = 0.025f;
 	float nrSamples   = 0.0f;
@@ -24,14 +27,21 @@ void main()
 	{
 		for(float theta = 0.0f; theta < 0.5f * PI; theta += sampleDelta)
 		{
-			vec3 tangentSample = vec3(sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta));
+			// Pre-calculate ratios
+			float sinPhi   = sin(phi);
+			float cosPhi   = cos(phi);
+			float sinTheta = sin(theta);
+			float cosTheta = cos(theta);
+			// Calculate irradiance
+			vec3 tangentSample = vec3(sinTheta * cosPhi, sinTheta * sinPhi, cosTheta);
 			vec3 sampleVec     = tangentSample.x * right + tangentSample.y * up + tangentSample.z * normal;
-			irradiance        += texture(envMap, sampleVec).rgb * cos(theta) * sin(theta);
+			irradiance        += texture(envMap, sampleVec).rgb * cosTheta * sinTheta;
 			nrSamples         += 1;
 		}
 	}
 
+	// Finalise irradiance
 	irradiance = PI * irradiance * (1.0f / float(nrSamples));
-
-	outColor = vec4(irradiance, 1.0f);
+	// Output color
+	outColor = irradiance;
 }

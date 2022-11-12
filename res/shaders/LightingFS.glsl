@@ -22,7 +22,7 @@ struct GBuffer
 {
 	vec3  fragPos;
 	vec3  normal;
-	vec4  albedo;
+	vec3  albedo;
 	vec3  normalMap;
 	float metallic;
 	float roughness;
@@ -68,6 +68,8 @@ uniform sampler2D gAlbedo;
 uniform sampler2D gNormalMap;
 // Array samplers
 uniform sampler2DArray shadowMap;
+// CubeMap samplers
+uniform samplerCube irradianceMap;
 
 // Fragment outputs
 out vec4 outColor;
@@ -84,7 +86,7 @@ vec3  GetNormalFromMap(GBuffer gBuffer);
 float DistributionGGX(vec3 N, vec3 H, float roughness);
 float GeometrySchlickGGX(float NdotV, float roughness);
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
-vec3  FresnelSchlick(float cosTheta, vec3 F0);
+vec3  FresnelSchlick(float cosTheta, vec3 F0, float roughness);
 
 // Shadow functions
 int   GetCurrentLayer(GBuffer gBuffer);
@@ -122,7 +124,7 @@ void main()
 		// Cook-Torrance BRDF
 		float NDF = DistributionGGX(N, H, gBuffer.roughness);
 		float G   = GeometrySmith(N, V, L, gBuffer.roughness);
-		vec3  F   = FresnelSchlick(max(dot(H, V), 0.0f), F0);
+		vec3  F   = FresnelSchlick(max(dot(H, V), 0.0f), F0, gBuffer.roughness);
 
 		// Combine specular
 		vec3  numerator   = NDF * G * F;
@@ -137,11 +139,18 @@ void main()
 
 		// Add everthing up to Lo
 		float NdotL = max(dot(N, L), 0.0f);
-		Lo         += (kD * gBuffer.albedo.rgb / PI + specular) * radiance * NdotL;
+		Lo         += (kD * gBuffer.albedo / PI + specular) * radiance * NdotL;
 	}
 
-	// Add ambient and shadows
-	vec3 ambient = vec3(0.12f) * gBuffer.albedo.rgb * gBuffer.ao;
+	// Calculate ambient
+	vec3 kS         = FresnelSchlick(max(dot(N, V), 0.0f), F0, gBuffer.roughness);
+	vec3 kD         = 1.0f - kS;
+	kD             *= 1.0f - gBuffer.metallic;
+	vec3 irradiance = texture(irradianceMap, N).rgb;
+	vec3 diffuse    = irradiance * gBuffer.albedo;
+	vec3 ambient    = kD * diffuse * gBuffer.ao;
+
+	// Add up color
 	vec3 color   = ambient + Lo;
 	vec3 L       = normalize(lights[0].position.xyz - gBuffer.fragPos);
 	color       *= 1.0f - CalculateShadow(L, gBuffer);
@@ -170,7 +179,7 @@ GBuffer GetGBufferData()
 	gBuffer.normal    = gNorm.rgb;
 	gBuffer.roughness = gNorm.a;
 	// Albedo
-	gBuffer.albedo = gAlb;
+	gBuffer.albedo = gAlb.rgb;
 	// Normal Map + Ambient Occlusion
 	gBuffer.normalMap = gNormMap.rgb;
 	gBuffer.ao        = gNorm.a;
@@ -234,10 +243,9 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 	return ggx1 * ggx2;
 }
 
-// TODO: Add roughness term
-vec3 FresnelSchlick(float cosTheta, vec3 F0)
+vec3 FresnelSchlick(float cosTheta, vec3 F0, float roughness)
 {
-	return F0 + (1.0f - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
+	return F0 + (max(vec3(1.0f - roughness), F0) - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
 }
 
 // FIXME: Remove branching

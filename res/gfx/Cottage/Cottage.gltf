@@ -37,26 +37,30 @@
         {
             "doubleSided" : true,
             "name" : "Shadow_catcher",
+            "normalTexture" : {
+                "index" : 0
+            },
             "pbrMetallicRoughness" : {
                 "baseColorTexture" : {
-                    "index" : 0
+                    "index" : 1
                 },
-                "metallicFactor" : 0,
-                "roughnessFactor" : 0.8642383813858032
+                "metallicRoughnessTexture" : {
+                    "index" : 2
+                }
             }
         },
         {
             "doubleSided" : true,
             "name" : "Cottage_FREE",
             "normalTexture" : {
-                "index" : 1
+                "index" : 3
             },
             "pbrMetallicRoughness" : {
                 "baseColorTexture" : {
-                    "index" : 2
+                    "index" : 4
                 },
                 "metallicRoughnessTexture" : {
-                    "index" : 3
+                    "index" : 5
                 }
             }
         }
@@ -107,13 +111,31 @@
         {
             "sampler" : 0,
             "source" : 3
+        },
+        {
+            "sampler" : 0,
+            "source" : 4
+        },
+        {
+            "sampler" : 0,
+            "source" : 5
         }
     ],
     "images" : [
         {
             "mimeType" : "image/png",
-            "name" : "grass",
-            "uri" : "grass.png"
+            "name" : "normal",
+            "uri" : "normal.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "albedo",
+            "uri" : "albedo.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "metallic-roughness",
+            "uri" : "metallic-roughness.png"
         },
         {
             "mimeType" : "image/png",
