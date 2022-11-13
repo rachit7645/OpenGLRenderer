@@ -10,21 +10,22 @@ using Waters::WaterFrameBuffers;
 
 constexpr auto WATER_WAVE_SPEED = 0.04f;
 
-const std::vector<f32> TILE_VERTICES =
-{
-	-1.0f, -1.0f,
-	-1.0f, 1.0f,
-	1.0f, -1.0f,
-	1.0f, -1.0f,
-	-1.0f, 1.0f,
-	1.0f, 1.0f
-};
-
 WaterRenderer::WaterRenderer(Shader::WaterShader& shader, Waters::WaterFrameBuffers& waterFBOs)
 	: shader(shader),
-	  waterFBOs(waterFBOs),
-	  m_vao(std::make_shared<VertexArray>(2, TILE_VERTICES))
+	  waterFBOs(waterFBOs)
 {
+	const std::vector<f32> TILE_VERTICES =
+	{
+		-1.0f, -1.0f,
+		-1.0f,  1.0f,
+		 1.0f, -1.0f,
+		 1.0f, -1.0f,
+		-1.0f,  1.0f,
+		 1.0f,  1.0f
+	};
+
+	m_vao = std::make_shared<VertexArray>(2, TILE_VERTICES);
+
 	shader.Start();
 	shader.ConnectTextureUnits();
 	shader.Stop();

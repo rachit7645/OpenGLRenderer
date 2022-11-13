@@ -6,14 +6,6 @@ using namespace Renderer;
 
 using Shader::LightingShader;
 
-const std::vector<f32> QUAD_VERTICES =
-{
-	-1.0f, 1.0f,
-	-1.0f, -1.0f,
-	1.0f, 1.0f,
-	1.0f, -1.0f
-};
-
 LightingRenderer::LightingRenderer
 (
 	LightingShader& shader,
@@ -24,9 +16,18 @@ LightingRenderer::LightingRenderer
 	: shader(shader),
 	  shadowMap(shadowMap),
 	  gBuffer(gBuffer),
-	  diffuseIBL(diffuseIBL),
-	  m_vao(std::make_shared<VertexArray>(2, QUAD_VERTICES))
+	  diffuseIBL(diffuseIBL)
 {
+	const std::vector<f32> QUAD_VERTICES =
+	{
+		-1.0f,  1.0f,
+		-1.0f, -1.0f,
+		 1.0f,  1.0f,
+		 1.0f, -1.0f
+	};
+
+	m_vao = std::make_shared<VertexArray>(2, QUAD_VERTICES);
+
 	shader.Start();
 	shader.ConnectTextureUnits();
 	shader.Stop();

@@ -1,9 +1,11 @@
 #include "RenderManager.h"
 
 #include <GL/glew.h>
+#include <fmt/format.h>
 
 #include "Maths.h"
 #include "Window.h"
+#include "GL.h"
 
 using namespace Renderer;
 
@@ -222,6 +224,36 @@ void RenderManager::RenderImGui()
 	{
 		if (ImGui::BeginMenu("Renderer"))
 		{
+			ImGui::Text
+			(
+				fmt::format
+				(
+					"GPU Info:\n{}\n{}\n{}\n{}",
+					GL::GetString(GL_VENDOR),
+					GL::GetString(GL_RENDERER),
+					GL::GetString(GL_VERSION),
+					GL::GetString(GL_SHADING_LANGUAGE_VERSION)
+				).c_str()
+			);
+
+			if (glewGetExtension("GL_NVX_gpu_memory_info"))
+			{
+				ImGui::Text
+				(
+					fmt::format
+					(
+						"Available | Total:\n{:.2f} MB | {:.2f} MB",
+						GL::GetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX) / 1024.0,
+						GL::GetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX)   / 1024.0
+					).c_str()
+				);
+			}
+
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("FBO Viewer"))
+		{
 			if (ImGui::Button("WaterReflection"))
 			{
 				current = m_waterFBOs.reflectionFBO->colorTextures[0];
@@ -254,6 +286,7 @@ void RenderManager::RenderImGui()
 
 			ImGui::EndMenu();
 		}
+
 		ImGui::EndMainMenuBar();
 	}
 

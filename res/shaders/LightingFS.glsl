@@ -144,7 +144,7 @@ void main()
 
 	// Calculate ambient
 	vec3 kS         = FresnelSchlick(max(dot(N, V), 0.0f), F0, gBuffer.roughness);
-	vec3 kD         = 1.0f - kS;
+	vec3 kD         = vec3(1.0f) - kS;
 	kD             *= 1.0f - gBuffer.metallic;
 	vec3 irradiance = texture(irradianceMap, N).rgb;
 	vec3 diffuse    = irradiance * gBuffer.albedo;

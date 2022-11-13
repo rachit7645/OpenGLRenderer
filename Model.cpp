@@ -14,16 +14,9 @@
 #define AI_MATKEY_NORMALS_TEXTURE aiTextureType_NORMALS, 0
 #endif
 
-#ifndef AI_MATKEY_AO_TEXTURE
-#define AI_MATKEY_AO_TEXTURE aiTextureType_AMBIENT_OCCLUSION, 0
-#endif
-
 using namespace Renderer;
 
-constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate    |
-							 aiProcess_FlipUVs        |
-							 aiProcess_OptimizeMeshes |
-							 aiProcess_OptimizeGraph;
+constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph;
 
 Model::Model(const std::string_view path, const MeshTextures& textures)
 {
@@ -132,20 +125,12 @@ MeshTextures Model::ProcessTextures
 		textures.normal = Resources::GetTexture(directory + path.C_Str());
 	}
 
-	// Metallic + Roughness (GLTF is weird)
+	// AO + Metallic + Roughness (GLTF is weird)
 	path.Clear();
 	mat->GetTexture(AI_MATKEY_ROUGHNESS_TEXTURE, &path);
 	if (path.length > 0)
 	{
-		textures.mtlRgh = Resources::GetTexture(directory + path.C_Str());
-	}
-
-	// Ambient Occlusion
-	path.Clear();
-	mat->GetTexture(AI_MATKEY_AO_TEXTURE, &path);
-	if (path.length > 0)
-	{
-		textures.ao = Resources::GetTexture(directory + path.C_Str());
+		textures.aoMtlRgh = Resources::GetTexture(directory + path.C_Str());
 	}
 
 	return textures;

@@ -141,7 +141,14 @@ void ShaderProgram::Stop() const
 
 GLint ShaderProgram::GetUniformLocation(const char* name) const
 {
-	return glGetUniformLocation(programID, name);
+	auto location = glGetUniformLocation(programID, name);
+
+	if (location == -1)
+	{
+		LOG_ERROR("{} is not a valid uniform!\n", name);
+	}
+
+	return location;
 }
 
 void ShaderProgram::LoadUniform(GLint location, GLint value) const

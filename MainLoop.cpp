@@ -41,7 +41,6 @@ void SDLWindow::MainLoop()
 	(
 		Resources::GetTexture("gfx/def.png"),
 		Resources::GetTexture("gfx/defNrm.png"),
-		Resources::GetTexture("gfx/def.png"),
 		Resources::GetTexture("gfx/def.png")
 	);
 
@@ -65,7 +64,7 @@ void SDLWindow::MainLoop()
 		playerModel,
 		glm::vec3(13.0f, 6.0f, 17.0f),
 		glm::vec3(0.0f, 180.0f, 0.0f),
-		0.025f
+		1.0f
 	);
 
 	std::vector<Light> lights;

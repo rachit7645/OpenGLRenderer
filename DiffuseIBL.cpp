@@ -12,8 +12,9 @@ using VAO   = DiffuseIBL::VAO;
 using TxPtr = DiffuseIBL::TxPtr;
 using FbPtr = DiffuseIBL::FbPtr;
 
-constexpr glm::ivec2 CUBEMAP_DIMENSIONS    = {512, 512};
-constexpr glm::ivec2 IRRADIANCE_DIMENSIONS = {32, 32};
+constexpr const char* HDR_MAP_PATH          = "gfx/Tropical_Beach_3k.hdr";
+constexpr glm::ivec2  CUBEMAP_DIMENSIONS    = {1024, 1024};
+constexpr glm::ivec2  IRRADIANCE_DIMENSIONS = {32,     32};
 
 DiffuseIBL::DiffuseIBL()
 {
@@ -202,7 +203,7 @@ TxPtr DiffuseIBL::LoadHDRMap()
 	TxPtr hdrMap = std::make_shared<Texture>();
 
 	stbi_set_flip_vertically_on_load(true);
-	auto data = hdrMap->LoadImageHDR("gfx/newport_loft.hdr");
+	auto data = hdrMap->LoadImageHDR(HDR_MAP_PATH);
 	stbi_set_flip_vertically_on_load(false);
 
 	hdrMap->CreateTexture();

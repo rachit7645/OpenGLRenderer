@@ -8,18 +8,18 @@
 
 using namespace Renderer;
 
-const std::vector<f32> QUAD_VERTICES =
-{
-	-1.0f, 1.0f,
-	-1.0f, -1.0f,
-	1.0f, 1.0f,
-	1.0f, -1.0f
-};
-
 GUIRenderer::GUIRenderer(Shader::GUIShader& shader)
-	: shader(shader),
-	  m_vao(std::make_shared<VertexArray>(2, QUAD_VERTICES))
+	: shader(shader)
 {
+	const std::vector<f32> QUAD_VERTICES =
+	{
+		-1.0f,  1.0f,
+		-1.0f, -1.0f,
+		 1.0f,  1.0f,
+		 1.0f, -1.0f
+	};
+
+	m_vao = std::make_shared<VertexArray>(2, QUAD_VERTICES);
 }
 
 void GUIRenderer::Render(const std::vector<GUI>& guis)

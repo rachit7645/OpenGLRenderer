@@ -19,7 +19,7 @@ namespace Entities
 		Player*   player   = nullptr;
 		glm::vec3 position = {0.0f, 0.0f, 0.0f};
 		glm::vec3 rotation = {5.0f, 0.0f, 0.0f};
-		f32       distance = 35.0f;
+		f32       distance = 25.0f;
 
 		// Camera update function
 		void Move();

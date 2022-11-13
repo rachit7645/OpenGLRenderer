@@ -11,25 +11,23 @@ in vec3 worldPosition;
 
 uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
-uniform sampler2D mtlRgh;
-uniform sampler2D aoMap;
+uniform sampler2D aoMtlRgh;
 
 void main()
 {
 	// Retrieve data
-	vec4 gAlb    = texture(albedoMap, txCoords);
-	vec4 gNorm   = texture(normalMap, txCoords);
-	vec4 gMtlRgh = texture(mtlRgh,    txCoords);
-	vec4 gAO     = texture(aoMap,     txCoords);
+	vec4 gAlb      = texture(albedoMap, txCoords);
+	vec4 gNorm     = texture(normalMap, txCoords);
+	vec4 gAoMtlRgh = texture(aoMtlRgh,  txCoords);
 	// Position + Metallic
 	gPosition.rgb = worldPosition;
-	gPosition.a   = gMtlRgh.b;
+	gPosition.a   = gAoMtlRgh.b;
 	// Normal + Roughness
 	gNormal.rgb = unitNormal;
-	gNormal.a   = gMtlRgh.g;
+	gNormal.a   = gAoMtlRgh.g;
 	// Albedo
 	gAlbedo = pow(gAlb.xyz, vec3(2.2f));
 	// Normal Map + Ambient Occlusion
 	gNormalMap.rgb = gNorm.rgb;
-	gNormalMap.a   = gAO.r;
+	gNormalMap.a   = gAoMtlRgh.r;
 }
