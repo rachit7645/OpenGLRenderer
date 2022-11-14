@@ -1,22 +1,26 @@
-#include "DiffuseIBL.h"
+#include "IBLMaps.h"
 
 #include <array>
+#include <vector>
 
 #include "ConverterShader.h"
 #include "ConvolutionShader.h"
 #include "RenderConstants.h"
+#include "PreFilterShader.h"
 
 using namespace Renderer;
 
-using VAO   = DiffuseIBL::VAO;
-using TxPtr = DiffuseIBL::TxPtr;
-using FbPtr = DiffuseIBL::FbPtr;
+using VAO   = IBLMaps::VAO;
+using TxPtr = IBLMaps::TxPtr;
+using FbPtr = IBLMaps::FbPtr;
 
-constexpr const char* HDR_MAP_PATH          = "gfx/Tropical_Beach_3k.hdr";
-constexpr glm::ivec2  CUBEMAP_DIMENSIONS    = {1024, 1024};
-constexpr glm::ivec2  IRRADIANCE_DIMENSIONS = {32,     32};
+constexpr usize       PRE_FILTER_MIPMAP_LEVELS = 5;
+constexpr glm::ivec2  CUBEMAP_DIMENSIONS       = {1024, 1024};
+constexpr glm::ivec2  IRRADIANCE_DIMENSIONS    = {32,     32};
+constexpr glm::ivec2  PRE_FILTER_DIMENSIONS    = {128,   128};
+constexpr const char* HDR_MAP_PATH             = "gfx/Tropical_Beach_3k.hdr";
 
-DiffuseIBL::DiffuseIBL()
+IBLMaps::IBLMaps()
 {
 	const glm::mat4 projection = glm::perspective
 	(
@@ -40,16 +44,17 @@ DiffuseIBL::DiffuseIBL()
 
 	ConvertToCubeMap(projection, views, cube);
 	GenerateIrradiance(projection, views, cube);
+	PreFilterSpecular(projection, views, cube);
 }
 
-void DiffuseIBL::ConvertToCubeMap
+void IBLMaps::ConvertToCubeMap
 (
 	const glm::mat4& projection,
 	const std::array<glm::mat4, 6>& views,
 	const VAO& cube
 )
 {
-	auto cubeMapFBO = CreateCubeMapFBO(CUBEMAP_DIMENSIONS);
+	auto cubeMapFBO = CreateCubeMapFBO(CUBEMAP_DIMENSIONS, true);
 
 	// Data
 	TxPtr hdrMap = LoadHDRMap();
@@ -80,9 +85,14 @@ void DiffuseIBL::ConvertToCubeMap
 	shader.Stop();
 
 	cubeMap = cubeMapFBO->colorTextures[0];
+
+	// Generate mipmaps
+	cubeMap->Bind();
+	cubeMap->GenerateMipmaps();
+	cubeMap->Unbind();
 }
 
-void DiffuseIBL::GenerateIrradiance
+void IBLMaps::GenerateIrradiance
 (
 	const glm::mat4& projection,
 	const std::array<glm::mat4, 6>& views,
@@ -120,13 +130,73 @@ void DiffuseIBL::GenerateIrradiance
 	irradiance = irradianceFBO->colorTextures[0];
 }
 
-FbPtr DiffuseIBL::CreateCubeMapFBO(const glm::ivec2& dimensions)
+void IBLMaps::PreFilterSpecular
+(
+	const glm::mat4& projection,
+	const std::array<glm::mat4, 6>& views,
+	const VAO& cube
+)
+{
+	auto preFilterFBO = CreateCubeMapFBO(PRE_FILTER_DIMENSIONS, true);
+
+	// Generate mipmaps
+	preFilterFBO->colorTextures[0]->Bind();
+	preFilterFBO->colorTextures[0]->GenerateMipmaps();
+	preFilterFBO->colorTextures[0]->Unbind();
+
+	// Shaders and renderers
+	auto shader = Shader::PreFilterShader();
+	shader.DumpToFile("dumps/PFS.s");
+
+	// Prepare
+	PrepareRender(preFilterFBO, cube);
+	// Start shader
+	shader.Start();
+	shader.ConnectTextureUnits();
+	// Load projection
+	shader.LoadProjection(projection);
+	// Bind HDR map
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap->id);
+
+	// For each mipmap level
+	for (usize mip = 0; mip < PRE_FILTER_MIPMAP_LEVELS; ++mip)
+	{
+		// Calculate width and height
+		auto mipWidth  = static_cast<GLint>(PRE_FILTER_DIMENSIONS.x * std::pow(0.5f, mip));
+		auto mipHeight = static_cast<GLint>(PRE_FILTER_DIMENSIONS.y * std::pow(0.5f, mip));
+
+		// Update framebuffer
+		glBindRenderbuffer(GL_RENDERBUFFER, preFilterFBO->depthRenderBuffer->id);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
+		glViewport(0, 0, mipWidth, mipHeight);
+
+		// Load roughness
+		f32 roughness = static_cast<f32>(mip) / static_cast<f32>(PRE_FILTER_MIPMAP_LEVELS - 1);
+		shader.LoadRoughness(roughness);
+
+		// For each face
+		for (usize i = 0; i < 6; ++i)
+		{
+			shader.LoadView(views[i]);
+			RenderCubeFace(preFilterFBO, cube, i, static_cast<GLint>(mip));
+		}
+	}
+
+	// Unbind
+	UnbindRender(preFilterFBO);
+	shader.Stop();
+
+	preFilter = preFilterFBO->colorTextures[0];
+}
+
+FbPtr IBLMaps::CreateCubeMapFBO(const glm::ivec2& dimensions, bool isMipMapped)
 {
 	auto FBO = std::make_shared<FrameBuffer>();
 
 	Renderer::FBOAttachment color0 =
 	{
-		GL_LINEAR,
+		isMipMapped ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR,
 		GL_LINEAR,
 		GL_CLAMP_TO_EDGE,
 		GL_RGB16F,
@@ -161,7 +231,7 @@ FbPtr DiffuseIBL::CreateCubeMapFBO(const glm::ivec2& dimensions)
 	return FBO;
 }
 
-void DiffuseIBL::PrepareRender(FbPtr& FBO, const VAO& cube)
+void IBLMaps::PrepareRender(FbPtr& FBO, const VAO& cube)
 {
 	// Bind
 	FBO->Bind();
@@ -172,7 +242,7 @@ void DiffuseIBL::PrepareRender(FbPtr& FBO, const VAO& cube)
 	glBindVertexArray(cube->id);
 }
 
-void DiffuseIBL::RenderCubeFace(FbPtr& FBO, const VAO& cube, usize face)
+void IBLMaps::RenderCubeFace(FbPtr& FBO, const VAO& cube, usize face, GLint level)
 {
 	// Assign texture
 	glFramebufferTexture2D
@@ -181,7 +251,7 @@ void DiffuseIBL::RenderCubeFace(FbPtr& FBO, const VAO& cube, usize face)
 		GL_COLOR_ATTACHMENT0,
 		GL_TEXTURE_CUBE_MAP_POSITIVE_X + face,
 		FBO->colorTextures[0]->id,
-		0
+		level
 	);
 	// Clear FBO
 	glClearColor(GL_CLEAR_COLOR.r, GL_CLEAR_COLOR.g, GL_CLEAR_COLOR.b, GL_CLEAR_COLOR.a);
@@ -190,7 +260,7 @@ void DiffuseIBL::RenderCubeFace(FbPtr& FBO, const VAO& cube, usize face)
 	glDrawArrays(GL_TRIANGLES, 0, cube->vertexCount);
 }
 
-void DiffuseIBL::UnbindRender(FbPtr& FBO)
+void IBLMaps::UnbindRender(FbPtr& FBO)
 {
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
@@ -198,7 +268,7 @@ void DiffuseIBL::UnbindRender(FbPtr& FBO)
 	FBO->Unbind();
 }
 
-TxPtr DiffuseIBL::LoadHDRMap()
+TxPtr IBLMaps::LoadHDRMap()
 {
 	TxPtr hdrMap = std::make_shared<Texture>();
 
@@ -224,7 +294,7 @@ TxPtr DiffuseIBL::LoadHDRMap()
 	return hdrMap;
 }
 
-VAO DiffuseIBL::LoadCube()
+VAO IBLMaps::LoadCube()
 {
 	const std::vector<f32> vertices =
 	{

@@ -10,7 +10,7 @@
 
 namespace Renderer
 {
-	class DiffuseIBL
+	class IBLMaps
 	{
 	public:
 		// Usings
@@ -18,10 +18,11 @@ namespace Renderer
 		using TxPtr = std::shared_ptr<Texture>;
 		using FbPtr = std::shared_ptr<FrameBuffer>;
 		// Main constructor
-		DiffuseIBL();
+		IBLMaps();
 		// Data
 		TxPtr cubeMap;
 		TxPtr irradiance;
+		TxPtr preFilter;
 	private:
 		// Converts equiangular map to cube map
 		void ConvertToCubeMap
@@ -37,10 +38,17 @@ namespace Renderer
 			const std::array<glm::mat4, 6>& views,
 			const VAO& cube
 		);
+		// Pre-filters the specular of the hdr map
+		void PreFilterSpecular
+		(
+			const glm::mat4& projection,
+			const std::array<glm::mat4, 6>& views,
+			const VAO& cube
+		);
 		// Shared render functions
-		FbPtr CreateCubeMapFBO(const glm::ivec2& dimensions);
+		FbPtr CreateCubeMapFBO(const glm::ivec2& dimensions, bool isMipMapped = false);
 		void  PrepareRender(FbPtr& FBO, const VAO& cube);
-		void  RenderCubeFace(FbPtr& FBO, const VAO& cube, usize face);
+		void  RenderCubeFace(FbPtr& FBO, const VAO& cube, usize face, GLint level = 0);
 		void  UnbindRender(FbPtr& FBO);
 		// Helper functions
 		TxPtr LoadHDRMap();

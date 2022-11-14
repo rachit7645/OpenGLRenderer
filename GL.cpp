@@ -81,6 +81,8 @@ void GL::Init(const glm::ivec2& dimensions)
 	// Enable back-face culling
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+	// Enable seamless cube maps
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	// Enable Debug Output
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);

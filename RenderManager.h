@@ -46,14 +46,14 @@ namespace Renderer
 		using EntityPtrs = std::vector<Entities::Entity*>;
 		using MdPtr      = std::shared_ptr<Model>;
 		using Batch      = std::unordered_map<MdPtr, EntityPtrs>;
-
+		// Main constructor
 		RenderManager();
 	private:
 		// Framebuffers
 		Renderer::ShadowMap       m_shadowMap;
 		Waters::WaterFrameBuffers m_waterFBOs;
 		Renderer::GBuffer         m_gBuffer;
-		Renderer::DiffuseIBL      m_diffuseIBL;
+		Renderer::IBLMaps         m_iblMaps;
 		// Instances Shader Storage Buffer
 		std::shared_ptr<InstanceBuffer> m_instances;
 		// Instanced renderer and shaders

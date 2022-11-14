@@ -11,12 +11,12 @@ LightingRenderer::LightingRenderer
 	LightingShader& shader,
 	ShadowMap& shadowMap,
 	GBuffer& gBuffer,
-	DiffuseIBL& diffuseIBL
+	IBLMaps& iblMaps
 )
 	: shader(shader),
 	  shadowMap(shadowMap),
 	  gBuffer(gBuffer),
-	  diffuseIBL(diffuseIBL)
+	  iblMaps(iblMaps)
 {
 	const std::vector<f32> QUAD_VERTICES =
 	{
@@ -54,7 +54,7 @@ void LightingRenderer::Render()
 	glBindTexture(GL_TEXTURE_2D_ARRAY, shadowMap.buffer->depthTexture->id);
 	// Active irradiance map
 	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, diffuseIBL.irradiance->id);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, iblMaps.irradiance->id);
 	// Render quad
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, m_vao->vertexCount);
 	// Unbind vao

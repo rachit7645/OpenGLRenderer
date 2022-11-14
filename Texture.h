@@ -52,7 +52,7 @@ namespace Renderer
 		f32* LoadImageHDR(const std::string_view path);
 	public:
 		friend class FrameBuffer;
-		friend class DiffuseIBL;
+		friend class IBLMaps;
 	};
 }
 #endif

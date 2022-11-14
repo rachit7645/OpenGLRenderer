@@ -80,9 +80,10 @@ add_executable(engine
 	LightingRenderer.cpp
 	LightingShader.cpp
 	Vertex.cpp
-	DiffuseIBL.cpp
+	IBLMaps.cpp
 	ConverterShader.cpp
 	ConvolutionShader.cpp
+	PreFilterShader.cpp
 )
 
 # Precompiled Headers
