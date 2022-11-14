@@ -145,7 +145,7 @@ GLint ShaderProgram::GetUniformLocation(const char* name) const
 
 	if (location == -1)
 	{
-		LOG_ERROR("{} is not a valid uniform!\n", name);
+		LOG_WARNING("Shader Program {} : Uniform \"{}\" is invalid!\n", programID, name);
 	}
 
 	return location;

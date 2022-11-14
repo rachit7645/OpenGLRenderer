@@ -1,15 +1,16 @@
 #version 430 core
 
 // Constants
-const float PI              = 3.14159265359;
-const int   MAX_LIGHTS      = 4;
-const int   MAX_LAYER_COUNT = 16;
-const float MIN_BIAS        = 0.005f;
-const float MAX_BIAS        = 0.05f;
-const float SHADOW_AMOUNT   = 0.16f;
-const float BIAS_MODIFIER   = 0.5f;
-const float PCF_COUNT       = 1.5f;
-const float TOTAL_TEXELS    = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.0f);
+const float PI                 = 3.14159265359;
+const int   MAX_LIGHTS         = 4;
+const float MAX_REFLECTION_LOD = 4.0f;
+const int   MAX_LAYER_COUNT    = 16;
+const float MIN_BIAS           = 0.005f;
+const float MAX_BIAS           = 0.05f;
+const float SHADOW_AMOUNT      = 0.16f;
+const float BIAS_MODIFIER      = 0.5f;
+const float PCF_COUNT          = 1.5f;
+const float TOTAL_TEXELS       = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.0f);
 
 struct Light
 {
@@ -66,10 +67,12 @@ uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
 uniform sampler2D gNormalMap;
+uniform sampler2D brdfLUT;
 // Array samplers
 uniform sampler2DArray shadowMap;
 // CubeMap samplers
 uniform samplerCube irradianceMap;
+uniform samplerCube prefilterMap;
 
 // Fragment outputs
 out vec4 outColor;
@@ -102,6 +105,8 @@ void main()
 	vec3 N = GetNormalFromMap(gBuffer);
 	// Camera vector
 	vec3 V = normalize(cameraPos.xyz - gBuffer.fragPos);
+	// Reflection vector
+	vec3 R = reflect(-V, N);
 
 	// Metallic coefficient
 	vec3 F0 = vec3(0.04f);
@@ -142,13 +147,23 @@ void main()
 		Lo         += (kD * gBuffer.albedo / PI + specular) * radiance * NdotL;
 	}
 
-	// Calculate ambient
-	vec3 kS         = FresnelSchlick(max(dot(N, V), 0.0f), F0, gBuffer.roughness);
+	// Ambient energy conservation
+	vec3 F          = FresnelSchlick(max(dot(N, V), 0.0f), F0, gBuffer.roughness);
+	vec3 kS         = F;
 	vec3 kD         = vec3(1.0f) - kS;
 	kD             *= 1.0f - gBuffer.metallic;
+
+	// Irradiance
 	vec3 irradiance = texture(irradianceMap, N).rgb;
 	vec3 diffuse    = irradiance * gBuffer.albedo;
-	vec3 ambient    = kD * diffuse * gBuffer.ao;
+
+	// Specular
+	vec3 prefilteredColor = textureLod(prefilterMap, R, gBuffer.roughness * MAX_REFLECTION_LOD).rgb;
+	vec2 brdf             = texture(brdfLUT, vec2(max(dot(N, V), 0.0f), gBuffer.roughness)).rg;
+	vec3 specular         = prefilteredColor * (F * brdf.x + brdf.y);
+
+	// Finalise ambient
+	vec3 ambient = (kD * diffuse + specular) * gBuffer.ao;
 
 	// Add up color
 	vec3 color   = ambient + Lo;

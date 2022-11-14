@@ -23,6 +23,7 @@ namespace Renderer
 		TxPtr cubeMap;
 		TxPtr irradiance;
 		TxPtr preFilter;
+		TxPtr brdfLut;
 	private:
 		// Converts equiangular map to cube map
 		void ConvertToCubeMap
@@ -45,14 +46,18 @@ namespace Renderer
 			const std::array<glm::mat4, 6>& views,
 			const VAO& cube
 		);
+		// Calculates BRDF LUT
+		void CalculateBRDF();
 		// Shared render functions
 		FbPtr CreateCubeMapFBO(const glm::ivec2& dimensions, bool isMipMapped = false);
+		FbPtr Create2DFBO(const glm::ivec2& dimensions);
 		void  PrepareRender(FbPtr& FBO, const VAO& cube);
 		void  RenderCubeFace(FbPtr& FBO, const VAO& cube, usize face, GLint level = 0);
 		void  UnbindRender(FbPtr& FBO);
 		// Helper functions
 		TxPtr LoadHDRMap();
 		VAO   LoadCube();
+		VAO   LoadQuad();
 	};
 }
 

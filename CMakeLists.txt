@@ -84,6 +84,7 @@ add_executable(engine
 	ConverterShader.cpp
 	ConvolutionShader.cpp
 	PreFilterShader.cpp
+	BRDFShader.cpp
 )
 
 # Precompiled Headers

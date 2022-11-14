@@ -19,6 +19,8 @@ void LightingShader::GetUniformLocations()
 	m_uniforms["gNormalMap"]    = GetUniformLocation("gNormalMap");
 	m_uniforms["shadowMap"]     = GetUniformLocation("shadowMap");
 	m_uniforms["irradianceMap"] = GetUniformLocation("irradianceMap");
+	m_uniforms["prefilterMap"]  = GetUniformLocation("prefilterMap");
+	m_uniforms["brdfLUT"]       = GetUniformLocation("brdfLUT");
 }
 
 void LightingShader::ConnectTextureUnits()
@@ -29,4 +31,6 @@ void LightingShader::ConnectTextureUnits()
 	LoadUniform(m_uniforms["gNormalMap"],    3);
 	LoadUniform(m_uniforms["shadowMap"],     4);
 	LoadUniform(m_uniforms["irradianceMap"], 5);
+	LoadUniform(m_uniforms["prefilterMap"],  6);
+	LoadUniform(m_uniforms["brdfLUT"],       7);
 }

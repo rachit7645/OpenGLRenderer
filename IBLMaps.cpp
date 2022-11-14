@@ -7,6 +7,9 @@
 #include "ConvolutionShader.h"
 #include "RenderConstants.h"
 #include "PreFilterShader.h"
+#include "BRDFShader.h"
+
+// TODO: Refactors
 
 using namespace Renderer;
 
@@ -18,6 +21,7 @@ constexpr usize       PRE_FILTER_MIPMAP_LEVELS = 5;
 constexpr glm::ivec2  CUBEMAP_DIMENSIONS       = {1024, 1024};
 constexpr glm::ivec2  IRRADIANCE_DIMENSIONS    = {32,     32};
 constexpr glm::ivec2  PRE_FILTER_DIMENSIONS    = {128,   128};
+constexpr glm::ivec2  BRDF_LUT_DIMENSIONS      = {512, 512};
 constexpr const char* HDR_MAP_PATH             = "gfx/Tropical_Beach_3k.hdr";
 
 IBLMaps::IBLMaps()
@@ -45,6 +49,7 @@ IBLMaps::IBLMaps()
 	ConvertToCubeMap(projection, views, cube);
 	GenerateIrradiance(projection, views, cube);
 	PreFilterSpecular(projection, views, cube);
+	CalculateBRDF();
 }
 
 void IBLMaps::ConvertToCubeMap
@@ -190,6 +195,32 @@ void IBLMaps::PreFilterSpecular
 	preFilter = preFilterFBO->colorTextures[0];
 }
 
+void IBLMaps::CalculateBRDF()
+{
+	auto brdfFBO = Create2DFBO(BRDF_LUT_DIMENSIONS);
+	auto quad    = LoadQuad();
+
+	// Shaders and renderers
+	auto shader = Shader::BRDFShader();
+	shader.DumpToFile("dumps/BRDF.s");
+
+	// Prepare
+	PrepareRender(brdfFBO, quad);
+	// Start shader
+	shader.Start();
+
+	// Draw
+	glClearColor(GL_CLEAR_COLOR.r, GL_CLEAR_COLOR.g, GL_CLEAR_COLOR.b, GL_CLEAR_COLOR.a);
+	glClear(GL_CLEAR_FLAGS);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, quad->vertexCount);
+
+	// Unbind
+	UnbindRender(brdfFBO);
+	shader.Stop();
+
+	brdfLut = brdfFBO->colorTextures[0];
+}
+
 FbPtr IBLMaps::CreateCubeMapFBO(const glm::ivec2& dimensions, bool isMipMapped)
 {
 	auto FBO = std::make_shared<FrameBuffer>();
@@ -222,6 +253,47 @@ FbPtr IBLMaps::CreateCubeMapFBO(const glm::ivec2& dimensions, bool isMipMapped)
 	FBO->CreateFrameBuffer();
 	FBO->Bind();
 	FBO->AddTextureCubeMap(FBO->colorTextures[0], color0);
+	FBO->AddBuffer(FBO->depthRenderBuffer, depth);
+	FBO->SetDrawBuffers(drawBuffers);
+	FBO->CheckStatus();
+	FBO->EnableDepth();
+	FBO->Unbind();
+
+	return FBO;
+}
+
+FbPtr IBLMaps::Create2DFBO(const glm::ivec2& dimensions)
+{
+	auto FBO = std::make_shared<FrameBuffer>();
+
+	Renderer::FBOAttachment color0 =
+	{
+		GL_LINEAR,
+		GL_LINEAR,
+		GL_CLAMP_TO_EDGE,
+		GL_RG16F,
+		GL_RG,
+		GL_FLOAT,
+		GL_COLOR_ATTACHMENT0
+	};
+
+	Renderer::FBOAttachment depth = {};
+	{
+		depth.internalFormat = GL_DEPTH_COMPONENT24;
+		depth.slot           = GL_DEPTH_ATTACHMENT;
+	}
+
+	std::vector<GLenum> drawBuffers =
+	{
+		color0.slot
+	};
+
+	FBO->width  = dimensions.x;
+	FBO->height = dimensions.y;
+
+	FBO->CreateFrameBuffer();
+	FBO->Bind();
+	FBO->AddTexture(FBO->colorTextures[0], color0);
 	FBO->AddBuffer(FBO->depthRenderBuffer, depth);
 	FBO->SetDrawBuffers(drawBuffers);
 	FBO->CheckStatus();
@@ -343,4 +415,17 @@ VAO IBLMaps::LoadCube()
 	};
 
 	return std::make_shared<VertexArray>(3, vertices);
+}
+
+VAO IBLMaps::LoadQuad()
+{
+	const std::vector<f32> QUAD_VERTICES =
+	{
+		-1.0f,  1.0f,
+		-1.0f, -1.0f,
+		 1.0f,  1.0f,
+		 1.0f, -1.0f
+	};
+
+	return std::make_shared<VertexArray>(2, QUAD_VERTICES);
 }

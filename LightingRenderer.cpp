@@ -55,6 +55,12 @@ void LightingRenderer::Render()
 	// Active irradiance map
 	glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, iblMaps.irradiance->id);
+	// Active pre-filter map
+	glActiveTexture(GL_TEXTURE6);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, iblMaps.preFilter->id);
+	// Active BRDF LUT map
+	glActiveTexture(GL_TEXTURE7);
+	glBindTexture(GL_TEXTURE_2D, iblMaps.brdfLut->id);
 	// Render quad
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, m_vao->vertexCount);
 	// Unbind vao
