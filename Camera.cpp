@@ -104,8 +104,8 @@ void Camera::CalculatePitch()
 
 void Camera::CalculateAAP()
 {
-	auto& mousePos     = Inputs::GetMousePos();
-	m_angle -= static_cast<f32>(mousePos.x * 0.3);
+	auto& mousePos = Inputs::GetMousePos();
+	m_angle       -= static_cast<f32>(mousePos.x * 0.3);
 }
 
 void Camera::InvertPitch()

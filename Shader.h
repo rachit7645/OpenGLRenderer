@@ -37,6 +37,7 @@ namespace Shader
 		void LoadUniform(GLint location, GLuint value)            const;
 		void LoadUniform(GLint location, GLfloat value)           const;
 		void LoadUniform(GLint location, bool value)              const;
+		void LoadUniform(GLint location, const glm::vec2& vector) const;
 		void LoadUniform(GLint location, const glm::vec3& vector) const;
 		void LoadUniform(GLint location, const glm::vec4& vector) const;
 		void LoadUniform(GLint location, const glm::mat4& matrix) const;

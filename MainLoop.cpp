@@ -64,7 +64,7 @@ void SDLWindow::MainLoop()
 			benchModel,
 			glm::vec3(44.0f, 0.0f, 40.0f),
 			glm::vec3(0.0f, -90.0f, 0.0f),
-			7.0f
+			5.0f
 		);
 	}
 
@@ -209,8 +209,20 @@ void SDLWindow::ImGuiDisplay(std::vector<Light>& lights)
 	ImGuiUpdate();
 }
 
-void SDLWindow::ImGuiUpdate() const
+void SDLWindow::ImGuiUpdate()
 {
-	glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
-	SDL_GL_SetSwapInterval(vsync);
+	GLenum selectedPolyMode = wireframe ? GL_LINE : GL_FILL;
+	s32    selectedSwapMode = vsync     ? -1      : 0;
+
+	if (selectedPolyMode != currentPolyMode)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, selectedPolyMode);
+		currentPolyMode = selectedPolyMode;
+	}
+
+	if (selectedSwapMode != currentSwapMode)
+	{
+		SDL_GL_SetSwapInterval(selectedSwapMode);
+		currentSwapMode = selectedSwapMode;
+	}
 }

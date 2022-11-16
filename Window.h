@@ -12,7 +12,7 @@
 namespace Window
 {
 	// Choosing a 16:9 Resolution
-	constexpr glm::ivec2 DIMENSIONS = {1024, 576};
+	constexpr glm::ivec2 WINDOW_DIMENSIONS = {1024, 576};
 
 	class SDLWindow
 	{
@@ -27,7 +27,7 @@ namespace Window
 		// Display ImGui Widgets
 		void ImGuiDisplay(std::vector<Entities::Light>& lights);
 		// Update options menu
-		void ImGuiUpdate() const;
+		void ImGuiUpdate();
 		// Function to process SDL Events
 		bool PollEvents();
 		// Calculates the FPS and the frame delta
@@ -48,6 +48,10 @@ namespace Window
 		bool wireframe       = false;
 		bool vsync           = true;
 		bool isInputCaptured = true;
+
+		// State
+		GLenum currentPolyMode = GL_FILL;
+		s32    currentSwapMode = -1;
 
 		// SDL Resources
 		SDL_Window*   window     = nullptr;

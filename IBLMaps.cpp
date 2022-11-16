@@ -9,8 +9,6 @@
 #include "PreFilterShader.h"
 #include "BRDFShader.h"
 
-// TODO: Refactors
-
 using namespace Renderer;
 
 using VAO   = IBLMaps::VAO;
@@ -21,7 +19,7 @@ constexpr usize       PRE_FILTER_MIPMAP_LEVELS = 5;
 constexpr glm::ivec2  CUBEMAP_DIMENSIONS       = {1024, 1024};
 constexpr glm::ivec2  IRRADIANCE_DIMENSIONS    = {32,     32};
 constexpr glm::ivec2  PRE_FILTER_DIMENSIONS    = {128,   128};
-constexpr glm::ivec2  BRDF_LUT_DIMENSIONS      = {512, 512};
+constexpr glm::ivec2  BRDF_LUT_DIMENSIONS      = {512,   512};
 constexpr const char* HDR_MAP_PATH             = "gfx/Tropical_Beach_3k.hdr";
 
 IBLMaps::IBLMaps()
@@ -160,6 +158,8 @@ void IBLMaps::PreFilterSpecular
 	shader.ConnectTextureUnits();
 	// Load projection
 	shader.LoadProjection(projection);
+	// Load resolution
+	shader.LoadResolution(CUBEMAP_DIMENSIONS);
 	// Bind HDR map
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap->id);

@@ -70,8 +70,8 @@ GBuffer::GBuffer()
 		normalMap.slot
 	};
 
-	buffer->width  = Window::DIMENSIONS.x;
-	buffer->height = Window::DIMENSIONS.y;
+	buffer->width  = Window::WINDOW_DIMENSIONS.x;
+	buffer->height = Window::WINDOW_DIMENSIONS.y;
 
 	buffer->CreateFrameBuffer();
 	buffer->Bind();

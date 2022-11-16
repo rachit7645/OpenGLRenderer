@@ -1,6 +1,7 @@
 #version 430 core
 
-const float PI = 3.14159265359;
+const float PI           = 3.14159265359;
+const float SAMPLE_DELTA = 0.025f;
 
 in vec3 worldPos;
 
@@ -20,16 +21,18 @@ void main()
 
 	// Set integration variables
 	vec3  irradiance  = vec3(0.0f);
-	float sampleDelta = 0.025f;
 	float nrSamples   = 0.0f;
 
-	for(float phi = 0.0; phi < 2.0f * PI; phi += sampleDelta)
+	// Loop over all phi
+	for(float phi = 0.0; phi < 2.0f * PI; phi += SAMPLE_DELTA)
 	{
-		for(float theta = 0.0f; theta < 0.5f * PI; theta += sampleDelta)
+		// Pre-calculate ratios
+		float sinPhi = sin(phi);
+		float cosPhi = cos(phi);
+		// Loop over all theta
+		for(float theta = 0.0f; theta < 0.5f * PI; theta += SAMPLE_DELTA)
 		{
 			// Pre-calculate ratios
-			float sinPhi   = sin(phi);
-			float cosPhi   = cos(phi);
 			float sinTheta = sin(theta);
 			float cosTheta = cos(theta);
 			// Calculate irradiance

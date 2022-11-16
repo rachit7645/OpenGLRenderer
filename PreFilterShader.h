@@ -20,6 +20,7 @@ namespace Shader
 		void LoadProjection(const glm::mat4& projection);
 		void LoadView(const glm::mat4& view);
 		void LoadRoughness(f32 roughness);
+		void LoadResolution(const glm::vec2& resolution);
 
 		void GetUniformLocations() override;
 	private:

@@ -5,6 +5,7 @@
 
 namespace Renderer
 {
+	// A PDD class describing an Frame Buffer Object attachment
 	class FBOAttachment
 	{
 	public:

@@ -21,6 +21,8 @@ namespace Entities
 		// Data
 		VAO   vao;
 		TxPtr cubeMap;
+	private:
+		VAO LoadVAO();
 	};
 }
 

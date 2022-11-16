@@ -16,7 +16,7 @@ namespace Renderer
 	{
 	public:
 		LightsBuffer();
-		
+		// Load lights to UBO
 		void LoadLights(const std::vector<Entities::Light>& lights);
 	};
 

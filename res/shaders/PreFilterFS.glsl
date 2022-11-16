@@ -3,7 +3,8 @@
 const float PI           = 3.14159265359;
 const uint  SAMPLE_COUNT = 1024u;
 
-in vec3 worldPos;
+in      vec3  worldPos;
+in flat float saTexel;
 
 uniform samplerCube envMap;
 uniform float       roughness;
@@ -13,7 +14,7 @@ out vec4 outColor;
 float DistributionGGX(vec3 N, vec3 H, float roughness);
 float RadicalInverse_VdC(uint bits);
 vec2  Hammersley(uint i, uint N);
-vec3  ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness);
+vec3  ImportanceSampleGGX(vec2 Xi, vec3 N, vec3 tangent, vec3 bitangent, float roughness);
 
 void main()
 {
@@ -23,6 +24,11 @@ void main()
 	vec3 R = N;
 	vec3 V = R;
 
+	// Tangent to World Space Sample Vector
+	vec3 up        = abs(N.z) < 0.999f ? vec3(0.0f, 0.0f, 1.0f) : vec3(1.0f, 0.0f, 0.0f);
+	vec3 tangent   = normalize(cross(up, N));
+	vec3 bitangent = cross(N, tangent);
+
 	vec3  prefilteredColor = vec3(0.0f);
 	float totalWeight      = 0.0f;
 
@@ -30,7 +36,7 @@ void main()
 	{
 		// Importance Sampling
 		vec2 Xi = Hammersley(i, SAMPLE_COUNT);
-		vec3 H  = ImportanceSampleGGX(Xi, N, roughness);
+		vec3 H  = ImportanceSampleGGX(Xi, N, tangent, bitangent, roughness);
 		vec3 L  = normalize(2.0f * dot(V, H) * H - V);
 
 		float NdotL = max(dot(N, L), 0.0f);
@@ -43,10 +49,7 @@ void main()
 			float HdotV = max(dot(H, V), 0.0f);
 			float pdf   = D * NdotH / (4.0f * HdotV) + 0.0001f;
 
-			float resolution = 512.0f;
-			float saTexel    = 4.0f * PI / (6.0f * resolution * resolution);
-			float saSample   = 1.0f / (float(SAMPLE_COUNT) * pdf + 0.0001f);
-
+			float saSample = 1.0f / (float(SAMPLE_COUNT) * pdf + 0.0001f);
 			float mipLevel = roughness == 0.0f ? 0.0f : 0.5f * log2(saSample / saTexel);
 
 			prefilteredColor += textureLod(envMap, L, mipLevel).rgb * NdotL;
@@ -87,7 +90,7 @@ vec2 Hammersley(uint i, uint N)
 	return vec2(float(i) / float(N), RadicalInverse_VdC(i));
 }
 
-vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness)
+vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, vec3 tangent, vec3 bitangent, float roughness)
 {
 	float a = roughness * roughness;
 
@@ -103,11 +106,7 @@ vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness)
 		cosTheta
 	);
 
-	// Tangent to World Space Sample Vector
-	vec3 up        = abs(N.z) < 0.999f ? vec3(0.0f, 0.0f, 1.0f) : vec3(1.0f, 0.0f, 0.0f);
-	vec3 tangent   = normalize(cross(up, N));
-	vec3 bitangent = cross(N, tangent);
-
 	vec3 sampleVec = tangent * H.x + bitangent * H.y + N * H.z;
+
 	return normalize(sampleVec);
 }

@@ -37,7 +37,6 @@ namespace Renderer
 		Renderer::ShadowMap& shadowMap;
 		BufferPtr            instances;
 
-		// TODO: Separate modes
 		void Render(const Batch& batch, Mode mode);
 	private:
 		void BeginRender(Mode mode);

@@ -1,20 +1,65 @@
-#version 330 core
+#version 430 core
 
+const vec3  N            = vec3(0.0f, 0.0f, 1.0f);
 const float PI           = 3.14159265359;
 const uint  SAMPLE_COUNT = 1024u;
 
-in vec2 txCoords;
+in      vec2 txCoords;
+in flat vec3 tangent;
+in flat vec3 bitangent;
 
 out vec2 outColor;
 
-vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness);
+vec2  IntegrateBRDF(float NdotV, float roughness);
+float RadicalInverse_VdC(uint bits);
+vec2  Hammersley(uint i, uint N);
+vec3  ImportanceSampleGGX(vec2 Xi, vec3 N, vec3 tangent, vec3 bitangent, float roughness);
 float GeometrySchlickGGX(float NdotV, float roughness);
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
-vec2 IntegrateBRDF(float NdotV, float roughness);
 
 void main()
 {
-	outColor = IntegrateBRDF(txCoords.x, txCoords.y);;
+	outColor = IntegrateBRDF(txCoords.x, txCoords.y);
+}
+
+vec2 IntegrateBRDF(float NdotV, float roughness)
+{
+	vec3 V = vec3
+	(
+		sqrt(1.0f - NdotV * NdotV),
+		0.0f,
+		NdotV
+	);
+
+	float A = 0.0f;
+	float B = 0.0f;
+
+	for(uint i = 0u; i < SAMPLE_COUNT; ++i)
+	{
+		// Importance Sampling
+		vec2 Xi = Hammersley(i, SAMPLE_COUNT);
+		vec3 H  = ImportanceSampleGGX(Xi, N, tangent, bitangent, roughness);
+		vec3 L  = normalize(2.0f * dot(V, H) * H - V);
+
+		float NdotL = max(L.z, 0.0f);
+		float NdotH = max(H.z, 0.0f);
+		float VdotH = max(dot(V, H), 0.0f);
+
+		if(NdotL > 0.0f)
+		{
+			float G     = GeometrySmith(N, V, L, roughness);
+			float G_Vis = (G * VdotH) / (NdotH * NdotV);
+			float Fc    = pow(1.0f - VdotH, 5.0f);
+
+			A += (1.0f - Fc) * G_Vis;
+			B += Fc * G_Vis;
+		}
+	}
+
+	A /= float(SAMPLE_COUNT);
+	B /= float(SAMPLE_COUNT);
+
+	return vec2(A, B);
 }
 
 float RadicalInverse_VdC(uint bits)
@@ -32,7 +77,7 @@ vec2 Hammersley(uint i, uint N)
 	return vec2(float(i) / float(N), RadicalInverse_VdC(i));
 }
 
-vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness)
+vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, vec3 tangent, vec3 bitangent, float roughness)
 {
 	float a = roughness * roughness;
 
@@ -47,11 +92,6 @@ vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness)
 		sin(phi) * sinTheta,
 		cosTheta
 	);
-
-	// Tangent to World Space Sample Vector
-	vec3 up        = abs(N.z) < 0.999f ? vec3(0.0f, 0.0f, 1.0f) : vec3(1.0f, 0.0f, 0.0f);
-	vec3 tangent   = normalize(cross(up, N));
-	vec3 bitangent = cross(N, tangent);
 
 	vec3 sampleVec = tangent * H.x + bitangent * H.y + N * H.z;
 	return normalize(sampleVec);
@@ -77,45 +117,4 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 	float ggx1  = GeometrySchlickGGX(NdotL, roughness);
 
 	return ggx1 * ggx2;
-}
-
-vec2 IntegrateBRDF(float NdotV, float roughness)
-{
-	vec3 V = vec3
-	(
-		sqrt(1.0f - NdotV * NdotV),
-		0.0f,
-		NdotV
-	);
-
-	float A = 0.0f;
-	float B = 0.0f;
-	vec3  N = vec3(0.0f, 0.0f, 1.0f);
-
-	for(uint i = 0u; i < SAMPLE_COUNT; ++i)
-	{
-		// Importance Sampling
-		vec2 Xi = Hammersley(i, SAMPLE_COUNT);
-		vec3 H  = ImportanceSampleGGX(Xi, N, roughness);
-		vec3 L  = normalize(2.0f * dot(V, H) * H - V);
-
-		float NdotL = max(L.z, 0.0f);
-		float NdotH = max(H.z, 0.0f);
-		float VdotH = max(dot(V, H), 0.0f);
-
-		if(NdotL > 0.0f)
-		{
-			float G     = GeometrySmith(N, V, L, roughness);
-			float G_Vis = (G * VdotH) / (NdotH * NdotV);
-			float Fc    = pow(1.0f - VdotH, 5.0f);
-
-			A += (1.0f - Fc) * G_Vis;
-			B += Fc * G_Vis;
-		}
-	}
-
-	A /= float(SAMPLE_COUNT);
-	B /= float(SAMPLE_COUNT);
-
-	return vec2(A, B);
 }

@@ -32,7 +32,7 @@ RenderManager::RenderManager()
 {
 	m_matrices->LoadProjection(glm::perspective(glm::radians(FOV), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
 	m_shared->LoadSkyColor(GL_SKY_COLOR);
-	m_shared->LoadResolution(Window::DIMENSIONS, NEAR_PLANE, FAR_PLANE);
+	m_shared->LoadResolution(Window::WINDOW_DIMENSIONS, NEAR_PLANE, FAR_PLANE);
 
 	// Dump shaders
 	m_fastInstancedShader.DumpToFile("dumps/FIS.s");
@@ -160,11 +160,11 @@ void RenderManager::CopyDepth()
 	glBlitFramebuffer
 	(
 		0, 0,
-		Window::DIMENSIONS.x,
-		Window::DIMENSIONS.y,
+		Window::WINDOW_DIMENSIONS.x,
+		Window::WINDOW_DIMENSIONS.y,
 		0, 0,
-		Window::DIMENSIONS.x,
-		Window::DIMENSIONS.y,
+		Window::WINDOW_DIMENSIONS.x,
+		Window::WINDOW_DIMENSIONS.y,
 		GL_DEPTH_BUFFER_BIT,
 		GL_NEAREST
 	);

@@ -109,6 +109,7 @@ void ShaderProgram::CheckShader(const std::string_view message, u32 shaderID, GL
 {
 	GLint status;
 	glGetShaderiv(shaderID, type, &status);
+
 	if (status == GL_FALSE)
 	{
 		std::vector<char> v(SHADER_ERROR_BUFFER_SIZE);
@@ -121,6 +122,7 @@ void ShaderProgram::CheckProgram(const std::string_view message, GLenum type) co
 {
 	GLint status;
 	glGetProgramiv(programID, type, &status);
+
 	if (status == GL_FALSE)
 	{
 		std::vector<char> v(SHADER_ERROR_BUFFER_SIZE);
@@ -169,6 +171,11 @@ void ShaderProgram::LoadUniform(GLint location, GLfloat value) const
 void ShaderProgram::LoadUniform(GLint location, bool value) const
 {
 	glUniform1i(location, value ? 1 : 0);
+}
+
+void ShaderProgram::LoadUniform(GLint location, const glm::vec2& vector) const
+{
+	glUniform2fv(location, 1, &vector[0]);
 }
 
 void ShaderProgram::LoadUniform(GLint location, const glm::vec3& vector) const

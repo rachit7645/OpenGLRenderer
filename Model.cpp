@@ -8,8 +8,7 @@
 #include "Files.h"
 #include "Vertex.h"
 
-// HACK: Assimp doesn't define macros for these
-
+// HACK: Assimp doesn't define a macro for this
 #ifndef AI_MATKEY_NORMALS_TEXTURE
 #define AI_MATKEY_NORMALS_TEXTURE aiTextureType_NORMALS, 0
 #endif

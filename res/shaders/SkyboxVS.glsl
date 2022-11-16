@@ -16,7 +16,10 @@ void main()
 {
 	// Disable translation
 	mat4 rotView = mat4(mat3(viewMatrix));
+	// Convert to clip space
+	gl_Position = projectionMatrix * rotView * modelMatrix * vec4(position, 1.0f);
 	// Early depth test
-	gl_Position = (projectionMatrix * rotView * modelMatrix * vec4(position, 1.0f)).xyww;
-	txCoords    = position;
+	gl_Position = gl_Position.xyww;
+	// TxCoords
+	txCoords = position;
 }

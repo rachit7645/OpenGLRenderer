@@ -9,7 +9,7 @@ namespace Shader
 	{
 	public:
 		FastInstancedShader();
-
+		// Only here due to requirements set on virtual function inheritance
 		void GetUniformLocations() override;
 	};
 }

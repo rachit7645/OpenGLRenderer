@@ -5,7 +5,7 @@
 
 using namespace Renderer;
 
-using Window::DIMENSIONS;
+using Window::WINDOW_DIMENSIONS;
 
 void FrameBuffer::CreateFrameBuffer()
 {
@@ -187,7 +187,7 @@ void FrameBuffer::Bind() const
 void FrameBuffer::Unbind() const
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, DIMENSIONS.x, DIMENSIONS.y);
+	glViewport(0, 0, WINDOW_DIMENSIONS.x, WINDOW_DIMENSIONS.y);
 }
 
 FrameBuffer::~FrameBuffer()

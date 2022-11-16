@@ -1,5 +1,7 @@
 #version 430 core
 
+// TODO: Separate point and directional lights
+
 // Constants
 const float PI                 = 3.14159265359;
 const int   MAX_LIGHTS         = 4;

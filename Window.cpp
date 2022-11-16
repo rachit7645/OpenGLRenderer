@@ -53,8 +53,8 @@ SDLWindow::SDLWindow()
 		"Rachit's Engine",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
-		DIMENSIONS.x,
-		DIMENSIONS.y,
+		WINDOW_DIMENSIONS.x,
+		WINDOW_DIMENSIONS.y,
 		SDL_WINDOW_FLAGS
 	);
 
@@ -106,7 +106,7 @@ SDLWindow::SDLWindow()
 	Files::SetResourceDirectory("../res/");
 
 	Inputs::Init();
-	GL::Init(DIMENSIONS);
+	GL::Init(WINDOW_DIMENSIONS);
 }
 
 bool SDLWindow::PollEvents()

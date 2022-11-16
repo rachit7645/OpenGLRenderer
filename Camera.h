@@ -5,7 +5,7 @@
 #include "Util.h"
 #include "Player.h"
 
-// HACK: Global Flags
+// FIXME: Global Flags
 inline bool g_ToMoveCamera = true;
 inline bool g_ToZoomCamera = true;
 
