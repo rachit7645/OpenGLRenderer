@@ -1,6 +1,7 @@
 #version 430 core
 
 // TODO: Separate point and directional lights
+// TODO: Reconstruct position from depth buffer
 
 // Constants
 const float PI                 = 3.14159265359;
@@ -120,9 +121,10 @@ void main()
 	for (int i = 0; i < numLights; ++i)
 	{
 		// Irradiance
-		vec3  L           = normalize(lights[i].position.xyz - gBuffer.fragPos);
+		vec3  toLightVec  = lights[i].position.xyz - gBuffer.fragPos;
+		vec3  L           = normalize(toLightVec);
 		vec3  H           = normalize(V + L);
-		float distance    = length(lights[i].position.xyz - gBuffer.fragPos);
+		float distance    = length(toLightVec);
 		vec3  ATT         = lights[i].attenuation.xyz;
 		float attenuation = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
 		attenuation       = 1.0f / attenuation;
@@ -134,7 +136,7 @@ void main()
 		vec3  F   = FresnelSchlick(max(dot(H, V), 0.0f), F0, gBuffer.roughness);
 
 		// Combine specular
-		vec3  numerator   = NDF * G * F;
+		vec3 numerator = NDF * G * F;
 		// To prevent division by zero, divide by at least 0.0001f (close enough)
 		float denominator = max(4.0f * max(dot(N, V), 0.0f) * max(dot(N, L), 0.0f), 0.0001f);
 		vec3  specular    = numerator / denominator;
@@ -150,10 +152,10 @@ void main()
 	}
 
 	// Ambient energy conservation
-	vec3 F          = FresnelSchlick(max(dot(N, V), 0.0f), F0, gBuffer.roughness);
-	vec3 kS         = F;
-	vec3 kD         = vec3(1.0f) - kS;
-	kD             *= 1.0f - gBuffer.metallic;
+	vec3 F  = FresnelSchlick(max(dot(N, V), 0.0f), F0, gBuffer.roughness);
+	vec3 kS = F;
+	vec3 kD = vec3(1.0f) - kS;
+	kD     *= 1.0f - gBuffer.metallic;
 
 	// Irradiance
 	vec3 irradiance = texture(irradianceMap, N).rgb;
@@ -164,7 +166,7 @@ void main()
 	vec2 brdf             = texture(brdfLUT, vec2(max(dot(N, V), 0.0f), gBuffer.roughness)).rg;
 	vec3 specular         = prefilteredColor * (F * brdf.x + brdf.y);
 
-	// Finalise ambient
+	// Add up ambient
 	vec3 ambient = (kD * diffuse + specular) * gBuffer.ao;
 
 	// Add up color

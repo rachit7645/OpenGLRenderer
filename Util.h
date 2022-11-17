@@ -15,6 +15,12 @@
 #define UNUSED __attribute__((unused))
 #endif
 
+#if _WIN32
+#define EXPORT __declspec(dllexport)
+#else
+#define EXPORT
+#endif
+
 #define STRINGIFY_HELPER(x) #x
 #define STRINGIFY(x) STRINGIFY_HELPER(x)
 
