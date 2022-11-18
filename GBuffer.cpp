@@ -12,74 +12,73 @@ using namespace Renderer;
 GBuffer::GBuffer()
 	: buffer(std::make_shared<FrameBuffer>())
 {
-	Renderer::FBOAttachment position =
-	{
-		GL_NEAREST,
-		GL_NEAREST,
-		GL_REPEAT,
-		GL_RGBA32F,
-		GL_RGBA,
-		GL_FLOAT,
-		GL_COLOR_ATTACHMENT0
-	};
-
+	// Normal attachment
 	Renderer::FBOAttachment normal =
 	{
 		GL_NEAREST,
 		GL_NEAREST,
-		GL_REPEAT,
+		GL_CLAMP_TO_EDGE,
 		GL_RGBA32F,
 		GL_RGBA,
 		GL_FLOAT,
 		GL_COLOR_ATTACHMENT1
 	};
 
+	// Albedo attachment
 	Renderer::FBOAttachment albedo =
 	{
 		GL_NEAREST,
 		GL_NEAREST,
-		GL_REPEAT,
-		GL_RGB16F,
-		GL_RGB,
+		GL_CLAMP_TO_EDGE,
+		GL_RGBA32F,
+		GL_RGBA,
 		GL_FLOAT,
 		GL_COLOR_ATTACHMENT2
 	};
 
+	// Normal map attachment
 	Renderer::FBOAttachment normalMap =
 	{
 		GL_NEAREST,
 		GL_NEAREST,
-		GL_REPEAT,
+		GL_CLAMP_TO_EDGE,
 		GL_RGBA32F,
 		GL_RGBA,
 		GL_FLOAT,
 		GL_COLOR_ATTACHMENT3
 	};
 
-	Renderer::FBOAttachment depth = {};
+	// Depth attachment
+	Renderer::FBOAttachment depth =
 	{
-		depth.internalFormat = GL_DEPTH_COMPONENT24;
-		depth.slot           = GL_DEPTH_ATTACHMENT;
-	}
+		GL_NEAREST,
+		GL_NEAREST,
+		GL_CLAMP_TO_EDGE,
+		GL_DEPTH_COMPONENT24,
+		GL_DEPTH_COMPONENT,
+		GL_FLOAT,
+		GL_DEPTH_ATTACHMENT
+	};
 
+	// Selected draw buffers
 	std::vector<GLenum> drawBuffers =
 	{
-		position.slot,
 		normal.slot,
 		albedo.slot,
 		normalMap.slot
 	};
 
+	// Set buffer width and height
 	buffer->width  = Window::WINDOW_DIMENSIONS.x;
 	buffer->height = Window::WINDOW_DIMENSIONS.y;
 
+	// Create frame buffer
 	buffer->CreateFrameBuffer();
 	buffer->Bind();
-	buffer->AddTexture(buffer->colorTextures[0], position);
-	buffer->AddTexture(buffer->colorTextures[1], normal);
-	buffer->AddTexture(buffer->colorTextures[2], albedo);
-	buffer->AddTexture(buffer->colorTextures[3], normalMap);
-	buffer->AddBuffer(buffer->depthRenderBuffer, depth);
+	buffer->AddTexture(buffer->colorTextures[0], normal);
+	buffer->AddTexture(buffer->colorTextures[1], albedo);
+	buffer->AddTexture(buffer->colorTextures[2], normalMap);
+	buffer->AddTexture(buffer->depthTexture,     depth);
 	buffer->SetDrawBuffers(drawBuffers);
 	buffer->CheckStatus();
 	buffer->EnableDepth();
@@ -88,10 +87,12 @@ GBuffer::GBuffer()
 
 void GBuffer::BindGBuffer() const
 {
+	// Bind
 	buffer->Bind();
 }
 
 void GBuffer::BindDefaultFBO() const
 {
+	// Unbind
 	buffer->Unbind();
 }

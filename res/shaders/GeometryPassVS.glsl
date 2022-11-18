@@ -22,12 +22,10 @@ layout(location = 2) in vec3 normal;
 
 out vec2 txCoords;
 out vec3 unitNormal;
-out vec3 worldPosition;
 
 void main()
 {
 	vec4 fragPos     = instances[gl_InstanceID].modelMatrix * vec4(position, 1.0f);
-	worldPosition    = fragPos.xyz;
 	gl_Position      = projectionMatrix * viewMatrix * fragPos;
 	txCoords         = textureCoords;
 	vec4 transNormal = instances[gl_InstanceID].modelMatrix * vec4(normal, 0.0f);

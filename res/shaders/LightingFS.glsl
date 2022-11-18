@@ -1,7 +1,6 @@
 #version 430 core
 
 // TODO: Separate point and directional lights
-// TODO: Reconstruct position from depth buffer
 
 // Constants
 const float PI                 = 3.14159265359;
@@ -63,13 +62,15 @@ layout (std140, binding = 4) uniform ShadowBuffer
 };
 
 // Vertex inputs
-in vec2 txCoords;
+in      vec2 txCoords;
+in flat mat4 invProj;
+in flat mat4 invView;
 
 // Samplers
-uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
 uniform sampler2D gNormalMap;
+uniform sampler2D gDepth;
 uniform sampler2D brdfLUT;
 // Array samplers
 uniform sampler2DArray shadowMap;
@@ -82,6 +83,7 @@ out vec4 outColor;
 
 // GBuffer functions
 GBuffer GetGBufferData();
+vec3    ReconstructPosition();
 
 // Branchless functions
 vec4 WhenGreater(vec4 x, vec4 y);
@@ -121,10 +123,9 @@ void main()
 	for (int i = 0; i < numLights; ++i)
 	{
 		// Irradiance
-		vec3  toLightVec  = lights[i].position.xyz - gBuffer.fragPos;
-		vec3  L           = normalize(toLightVec);
+		vec3  L           = normalize(lights[i].position.xyz - gBuffer.fragPos);
 		vec3  H           = normalize(V + L);
-		float distance    = length(toLightVec);
+		float distance    = length(lights[i].position.xyz - gBuffer.fragPos);
 		vec3  ATT         = lights[i].attenuation.xyz;
 		float attenuation = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
 		attenuation       = 1.0f / attenuation;
@@ -187,23 +188,36 @@ GBuffer GetGBufferData()
 {
 	GBuffer gBuffer;
 	// Retrieve data from G-buffer
-	vec4 gPos     = texture(gPosition,  txCoords);
 	vec4 gNorm    = texture(gNormal,    txCoords);
 	vec4 gAlb     = texture(gAlbedo,    txCoords);
 	vec4 gNormMap = texture(gNormalMap, txCoords);
-	// Position + Metallic
-	gBuffer.fragPos  = gPos.rgb;
-	gBuffer.metallic = gPos.a;
+	// Reconstruct Position
+	gBuffer.fragPos = ReconstructPosition();
 	// Normal + Roughness
 	gBuffer.normal    = gNorm.rgb;
 	gBuffer.roughness = gNorm.a;
-	// Albedo
-	gBuffer.albedo = gAlb.rgb;
+	// Albedo + Metallic
+	gBuffer.albedo   = gAlb.rgb;
+	gBuffer.metallic = gAlb.a;
 	// Normal Map + Ambient Occlusion
 	gBuffer.normalMap = gNormMap.rgb;
 	gBuffer.ao        = gNorm.a;
 	// Return
 	return gBuffer;
+}
+
+vec3 ReconstructPosition()
+{
+	// Get depth
+	float depth = texture(gDepth, txCoords).r;
+	// Invert projection
+	vec4 projectedPos = invProj * (vec4(txCoords, depth, 1.0f) * 2.0f - 1.0f);
+	// Invert view
+	vec3 viewPos = projectedPos.xyz / projectedPos.w;
+	// Get world position
+	vec3 worldPos = vec3(invView * vec4(viewPos, 1.0f));
+	// Return
+	return worldPos;
 }
 
 vec3 GetNormalFromMap(GBuffer gBuffer)

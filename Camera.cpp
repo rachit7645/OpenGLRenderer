@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-#include "Imgui.h"
+#include "imgui.h"
 #include "Inputs.h"
 
 using namespace Entities;
@@ -16,12 +16,14 @@ Camera::Camera(Player* player)
 
 void Camera::Move()
 {
+	// If there is mouse scroll input
 	if (g_ToZoomCamera)
 	{
 		CalculateZoom();
 		g_ToZoomCamera = false;
 	}
 
+	// If there is mouse movement
 	if (g_ToMoveCamera)
 	{
 		CalculatePitch();
@@ -56,13 +58,16 @@ void Camera::ImGuiDisplay()
 
 void Camera::CalculatePosition()
 {
+	// Calculate base and altitude
 	f32 hDistance = distance * std::cos(glm::radians(rotation.x));
 	f32 vDistance = distance * std::sin(glm::radians(rotation.x));
 
+	// Calculate offsets
 	f32 theta   = player->rotation.y + m_angle;
 	f32 offsetX = hDistance * std::sin(glm::radians(theta));
 	f32 offsetZ = hDistance * std::cos(glm::radians(theta));
 
+	// Apply modifiers
 	position.x = player->position.x - offsetX;
 	position.z = player->position.z - offsetZ;
 	position.y = player->position.y + vDistance;

@@ -37,18 +37,18 @@ void LightingRenderer::Render()
 {
 	// Bind vao
 	glBindVertexArray(m_vao->id);
-	// Activate gPosition
+	// Activate gNormal
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[0]->id);
-	// Activate gNormal
+	// Activate gAlbedo
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[1]->id);
-	// Activate gAlbedo
+	// Activate gNormalMap
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[2]->id);
-	// Activate gNormalMap
+	// Activate gDepth
 	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[3]->id);
+	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->depthTexture->id);
 	// Activate shadow map
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, shadowMap.buffer->depthTexture->id);
