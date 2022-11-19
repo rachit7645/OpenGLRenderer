@@ -3,9 +3,6 @@
 #include "Util.h"
 #include "Maths.h"
 
-// TODO: Use instancing to draw these
-// TODO: Do I need this?
-
 using namespace Renderer;
 
 GUIRenderer::GUIRenderer(Shader::GUIShader& shader)

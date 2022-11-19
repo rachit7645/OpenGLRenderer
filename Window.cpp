@@ -13,6 +13,8 @@
 
 using namespace Window;
 
+using Entities::Camera;
+
 constexpr u32 SDL_WINDOW_FLAGS  = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
 SDLWindow::SDLWindow()
@@ -141,13 +143,13 @@ bool SDLWindow::PollEvents()
 			break;
 
 		case SDL_MOUSEWHEEL:
-			Inputs::GetMouseScroll() = glm::ivec2(event.wheel.x, event.wheel.y);
-			g_ToZoomCamera = true;
+			Inputs::GetMouseScroll()  = glm::ivec2(event.wheel.x, event.wheel.y);
+			Camera::GetToZoomCamera() = true;
 			break;
 
 		case SDL_MOUSEMOTION:
-			Inputs::GetMousePos() = glm::ivec2(event.motion.xrel, event.motion.yrel);
-			g_ToMoveCamera = true;
+			Inputs::GetMousePos()     = glm::ivec2(event.motion.xrel, event.motion.yrel);
+			Camera::GetToMoveCamera() = true;
 			break;
 
 		default:

@@ -31,7 +31,6 @@ RenderManager::RenderManager()
 	  m_shared(std::make_shared<SharedBuffer>())
 {
 	m_matrices->LoadProjection(glm::perspective(glm::radians(FOV), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
-	m_shared->LoadSkyColor(GL_SKY_COLOR);
 	m_shared->LoadResolution(Window::WINDOW_DIMENSIONS, NEAR_PLANE, FAR_PLANE);
 
 	// Dump shaders
@@ -155,7 +154,7 @@ void RenderManager::RenderGUIs(const GUIs& guis)
 void RenderManager::CopyDepth()
 {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_gBuffer.buffer->id);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER,0);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
 	glBlitFramebuffer
 	(
@@ -222,6 +221,7 @@ void RenderManager::RenderImGui()
 
 	if (ImGui::BeginMainMenuBar())
 	{
+		// TODO: Move FPS to the same menu as gpu info
 		if (ImGui::BeginMenu("Renderer"))
 		{
 			ImGui::Text
@@ -264,24 +264,24 @@ void RenderManager::RenderImGui()
 				current = m_waterFBOs.refractionFBO->colorTextures[0];
 			}
 
-			if (ImGui::Button("GPosition"))
+			if (ImGui::Button("GNormal"))
 			{
 				current = m_gBuffer.buffer->colorTextures[0];
 			}
 
-			if (ImGui::Button("GNormal"))
+			if (ImGui::Button("GAlbedo"))
 			{
 				current = m_gBuffer.buffer->colorTextures[1];
 			}
 
-			if (ImGui::Button("GAlbedo"))
+			if (ImGui::Button("GNormalMap"))
 			{
 				current = m_gBuffer.buffer->colorTextures[2];
 			}
 
-			if (ImGui::Button("GNormalMap"))
+			if (ImGui::Button("GDepth"))
 			{
-				current = m_gBuffer.buffer->colorTextures[3];
+				current = m_gBuffer.buffer->depthTexture;
 			}
 
 			ImGui::EndMenu();

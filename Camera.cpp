@@ -5,9 +5,16 @@
 
 using namespace Entities;
 
-constexpr auto CAMERA_ZOOM_SPEED = 1.0f;
-constexpr auto CAMERA_PITCH_MIN  = 0.0f;
-constexpr auto CAMERA_PITCH_MAX  = 90.0f;
+// Camera constants
+constexpr auto CAMERA_ZOOM_SPEED  = 1.0f;
+constexpr auto CAMERA_PITCH_SPEED = 0.1f;
+constexpr auto CAMERA_AAP_SPEED   = 0.3f;
+constexpr auto CAMERA_PITCH_MIN   = 0.0f;
+constexpr auto CAMERA_PITCH_MAX   = 90.0f;
+
+// Global flags
+bool m_toMoveCamera = true;
+bool m_toZoomCamera = true;
 
 Camera::Camera(Player* player)
     : player(player)
@@ -17,18 +24,18 @@ Camera::Camera(Player* player)
 void Camera::Move()
 {
 	// If there is mouse scroll input
-	if (g_ToZoomCamera)
+	if (m_toZoomCamera)
 	{
 		CalculateZoom();
-		g_ToZoomCamera = false;
+		m_toZoomCamera = false;
 	}
 
 	// If there is mouse movement
-	if (g_ToMoveCamera)
+	if (m_toMoveCamera)
 	{
 		CalculatePitch();
 		CalculateAAP();
-		g_ToMoveCamera = false;
+		m_toMoveCamera = false;
 	}
 
 	CalculatePosition();
@@ -99,21 +106,31 @@ void Camera::CalculateZoom()
 void Camera::CalculatePitch()
 {
 	auto& mousePos = Inputs::GetMousePos();
-	rotation.x    -= static_cast<f32>(mousePos.y * 0.1);
+	rotation.x    -= static_cast<f32>(mousePos.y) * CAMERA_PITCH_SPEED;
 
 	if (m_capPitch)
 	{
-		rotation.x = glm::clamp<f32>(rotation.x, CAMERA_PITCH_MIN, CAMERA_PITCH_MAX);
+		rotation.x = glm::clamp(rotation.x, CAMERA_PITCH_MIN, CAMERA_PITCH_MAX);
 	}
 }
 
 void Camera::CalculateAAP()
 {
 	auto& mousePos = Inputs::GetMousePos();
-	m_angle       -= static_cast<f32>(mousePos.x * 0.3);
+	m_angle       -= static_cast<f32>(mousePos.x) * CAMERA_AAP_SPEED;
 }
 
 void Camera::InvertPitch()
 {
 	rotation.x = -rotation.x;
+}
+
+bool& Camera::GetToMoveCamera()
+{
+	return m_toMoveCamera;
+}
+
+bool& Camera::GetToZoomCamera()
+{
+	return m_toZoomCamera;
 }
