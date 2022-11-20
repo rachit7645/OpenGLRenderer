@@ -17,6 +17,9 @@ namespace Window
 	class SDLWindow
 	{
 	public:
+		// Usings
+		using Clock     = std::chrono::steady_clock;
+		using TimePoint = std::chrono::time_point<Clock>;
 		// Creates a SDL window, gets an opengl context, and sets up GL values
 		SDLWindow();
 		// Free SDL memory resources
@@ -33,13 +36,12 @@ namespace Window
 		// Calculates the FPS and the frame delta
 		void CalculateFPS();
 
-		using Clock     = std::chrono::steady_clock;
-		using TimePoint = std::chrono::time_point<Clock>;
-
+		// Time variables
 		TimePoint startTime;
 		TimePoint frameStartTime;
 		TimePoint endTime;
 
+		// FPS counters
 		f32 frameTime = 0.0f;
 		f32 FPS       = 0.0f;
 		f32 finalFPS  = 0.0f;
@@ -50,6 +52,7 @@ namespace Window
 		bool isInputCaptured = true;
 
 		// State
+		s32    currentLight    = 0;
 		GLenum currentPolyMode = GL_FILL;
 		s32    currentSwapMode = -1;
 

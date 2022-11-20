@@ -46,6 +46,7 @@ namespace Renderer
 		using EntityPtrs = std::vector<Entities::Entity*>;
 		using MdPtr      = std::shared_ptr<Model>;
 		using Batch      = std::unordered_map<MdPtr, EntityPtrs>;
+		using TxPtr      = std::shared_ptr<Texture>;
 		// Main constructor
 		RenderManager();
 	private:
@@ -84,6 +85,16 @@ namespace Renderer
 		std::shared_ptr<LightsBuffer> m_lights;
 		// Shared Uniform Buffer
 		std::shared_ptr<SharedBuffer> m_shared;
+		// GPU Info
+		std::string m_glVendor;
+		std::string m_glRenderer;
+		std::string m_glVersion;
+		std::string m_glslVersion;
+		// GPU Memory Info
+		bool isGPUMemoryInfo = false;
+		f32  totalMemory     = 0.0f;
+		// Current framebuffer
+		TxPtr m_currentFBO;
 	public:
 		// Prepare frame
 		void BeginFrame(EntityVec& entities, const Lights& lights, Entities::Player& player);

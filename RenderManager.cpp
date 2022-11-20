@@ -7,6 +7,16 @@
 #include "Window.h"
 #include "GL.h"
 
+// Utility defines
+
+#ifndef GL_AVAILABLE_MEMORY
+#define GL_AVAILABLE_MEMORY GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX
+#endif
+
+#ifndef GL_TOTAL_MEMORY
+#define GL_TOTAL_MEMORY GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX
+#endif
+
 using namespace Renderer;
 
 using Entities::Entity;
@@ -28,7 +38,14 @@ RenderManager::RenderManager()
 	  m_skybox(m_iblMaps.cubeMap),
 	  m_matrices(std::make_shared<MatrixBuffer>()),
 	  m_lights(std::make_shared<LightsBuffer>()),
-	  m_shared(std::make_shared<SharedBuffer>())
+	  m_shared(std::make_shared<SharedBuffer>()),
+	  m_glVendor(GL::GetString(GL_VENDOR)),
+	  m_glRenderer(GL::GetString(GL_RENDERER)),
+	  m_glVersion(GL::GetString(GL_VERSION)),
+	  m_glslVersion(GL::GetString(GL_SHADING_LANGUAGE_VERSION)),
+	  isGPUMemoryInfo(glewGetExtension("GL_NVX_gpu_memory_info")),
+	  totalMemory(static_cast<f32>(GL::GetIntegerv(GL_TOTAL_MEMORY)) / 1024.0f),
+	  m_currentFBO(m_waterFBOs.reflectionFBO->colorTextures[0])
 {
 	m_matrices->LoadProjection(glm::perspective(glm::radians(FOV), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
 	m_shared->LoadResolution(Window::WINDOW_DIMENSIONS, NEAR_PLANE, FAR_PLANE);
@@ -217,38 +234,32 @@ void RenderManager::RenderEntities(Mode mode)
 // This kinda sucks, but it works
 void RenderManager::RenderImGui()
 {
-	static auto current = m_waterFBOs.reflectionFBO->colorTextures[0];
-
 	if (ImGui::BeginMainMenuBar())
 	{
 		// TODO: Move FPS to the same menu as gpu info
 		if (ImGui::BeginMenu("Renderer"))
 		{
+			// Display basic info
 			ImGui::Text
 			(
-				fmt::format
-				(
-					"GPU Info:\n{}\n{}\n{}\n{}",
-					GL::GetString(GL_VENDOR),
-					GL::GetString(GL_RENDERER),
-					GL::GetString(GL_VERSION),
-					GL::GetString(GL_SHADING_LANGUAGE_VERSION)
-				).c_str()
+				"GPU Info:\n%s\n%s\n%s\n%s",
+				m_glVendor.c_str(),
+				m_glRenderer.c_str(),
+				m_glVersion.c_str(),
+				m_glslVersion.c_str()
 			);
 
-			if (glewGetExtension("GL_NVX_gpu_memory_info"))
+			// If available
+			if (isGPUMemoryInfo)
 			{
-				ImGui::Text
-				(
-					fmt::format
-					(
-						"Available | Total:\n{:.2f} MB | {:.2f} MB",
-						GL::GetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX) / 1024.0,
-						GL::GetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX)   / 1024.0
-					).c_str()
-				);
+				// Calculate available memory (MB)
+				GLint available       = GL::GetIntegerv(GL_AVAILABLE_MEMORY);
+				f32   availableMemory = static_cast<f32>(available) / 1024.0f;
+				// Display
+				ImGui::Text("Available | Total:\n%.2f MB | %.2f MB", availableMemory, totalMemory);
 			}
 
+			// End menu
 			ImGui::EndMenu();
 		}
 
@@ -256,32 +267,32 @@ void RenderManager::RenderImGui()
 		{
 			if (ImGui::Button("WaterReflection"))
 			{
-				current = m_waterFBOs.reflectionFBO->colorTextures[0];
+				m_currentFBO = m_waterFBOs.reflectionFBO->colorTextures[0];
 			}
 
 			if (ImGui::Button("WaterRefraction"))
 			{
-				current = m_waterFBOs.refractionFBO->colorTextures[0];
+				m_currentFBO = m_waterFBOs.refractionFBO->colorTextures[0];
 			}
 
 			if (ImGui::Button("GNormal"))
 			{
-				current = m_gBuffer.buffer->colorTextures[0];
+				m_currentFBO = m_gBuffer.buffer->colorTextures[0];
 			}
 
 			if (ImGui::Button("GAlbedo"))
 			{
-				current = m_gBuffer.buffer->colorTextures[1];
+				m_currentFBO = m_gBuffer.buffer->colorTextures[1];
 			}
 
 			if (ImGui::Button("GNormalMap"))
 			{
-				current = m_gBuffer.buffer->colorTextures[2];
+				m_currentFBO = m_gBuffer.buffer->colorTextures[2];
 			}
 
 			if (ImGui::Button("GDepth"))
 			{
-				current = m_gBuffer.buffer->depthTexture;
+				m_currentFBO = m_gBuffer.buffer->depthTexture;
 			}
 
 			ImGui::EndMenu();
@@ -296,7 +307,7 @@ void RenderManager::RenderImGui()
 		{
 			ImGui::Image
 			(
-				reinterpret_cast<ImTextureID>(current->id),
+				reinterpret_cast<ImTextureID>(m_currentFBO->id),
 				ImGui::GetWindowSize(),
 				ImVec2(0, 1),
 				ImVec2(1, 0)

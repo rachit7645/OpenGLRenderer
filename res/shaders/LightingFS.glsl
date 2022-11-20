@@ -307,7 +307,8 @@ int GetCurrentLayer(GBuffer gBuffer)
 // FIXME: Remove branching
 float CalculateBias(int layer, vec3 lightDir, GBuffer gBuffer)
 {
-	float bias = max(MAX_BIAS * (1.0f - dot(gBuffer.normal, lightDir)), MIN_BIAS);
+	// I use normal map's normal here since it looks better
+	float bias = max(MAX_BIAS * (1.0f - dot(gBuffer.normalMap, lightDir)), MIN_BIAS);
 
 	if (layer == cascadeCount)
 	{

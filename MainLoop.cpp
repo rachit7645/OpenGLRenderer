@@ -185,19 +185,14 @@ void SDLWindow::ImGuiDisplay(std::vector<Light>& lights)
 		{
 			if (ImGui::BeginMenu("Lights"))
 			{
-				static int current = 0;
-				static const char* const items[] =
-				{
-					"[0]",
-					"[1]",
-					"[2]",
-					"[3]"
-				};
-
-				ImGui::Combo("Current", &current, items, IM_ARRAYSIZE(items));
-				ImGui::InputFloat3("Position",    &lights[current].position[0],    "%.1f");
-				ImGui::InputFloat3("Color",       &lights[current].color[0],       "%.1f");
-				ImGui::InputFloat3("Attenuation", &lights[current].attenuation[0], "%.1f");
+				constexpr std::array<const char*, 4> items = {"[0]", "[1]", "[2]", "[3]"};
+				// Create combo
+				ImGui::Combo("Current", &currentLight, items.data(), items.size());
+				// Input attributes
+				ImGui::InputFloat3("Position",    &lights[currentLight].position[0],    "%.1f");
+				ImGui::InputFloat3("Color",       &lights[currentLight].color[0],       "%.1f");
+				ImGui::InputFloat3("Attenuation", &lights[currentLight].attenuation[0], "%.1f");
+				// Close
 				ImGui::EndMenu();
 			}
 
@@ -206,6 +201,7 @@ void SDLWindow::ImGuiDisplay(std::vector<Light>& lights)
 
 		ImGui::EndMainMenuBar();
 	}
+
 	ImGuiUpdate();
 }
 
