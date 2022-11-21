@@ -6,6 +6,7 @@
 const float PI                 = 3.14159265359;
 const int   MAX_LIGHTS         = 4;
 const float MAX_REFLECTION_LOD = 4.0f;
+const float INV_GAMMA_FACTOR   = 1.0f / 2.2f;
 const int   MAX_LAYER_COUNT    = 16;
 const float MIN_BIAS           = 0.005f;
 const float MAX_BIAS           = 0.05f;
@@ -87,6 +88,7 @@ vec3    ReconstructPosition();
 // Branchless functions
 vec4 WhenGreater(vec4 x, vec4 y);
 vec4 WhenLesser(vec4 x, vec4 y);
+vec4 WhenEqual(vec4 x, vec4 y);
 
 // Light functions
 vec3  GetNormalFromMap(GBuffer gBuffer);
@@ -174,10 +176,10 @@ void main()
 	vec3 L       = normalize(lights[0].position.xyz - gBuffer.fragPos);
 	color       *= 1.0f - CalculateShadow(L, gBuffer);
 
-	// HDR tonemapping
+	// Reinhard operator
 	color = color / (color + vec3(1.0f));
 	// Gamma correction
-	color = pow(color, vec3(1.0f / 2.2f));
+	color = pow(color, vec3(INV_GAMMA_FACTOR));
 
 	// Output color
 	outColor = vec4(color, 1.0f);
@@ -280,13 +282,14 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0, float roughness)
 	return F0 + (max(vec3(1.0f - roughness), F0) - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
 }
 
-// FIXME: Remove branching
 int GetCurrentLayer(GBuffer gBuffer)
 {
 	vec4  viewPosition = viewMatrix * vec4(gBuffer.fragPos, 1.0f);
 	float depthValue   = abs(viewPosition.z);
 
-	int layer = -1;
+	// Set it to this as default to avoid a branch
+	int layer = cascadeCount;
+
 	for (int i = 0; i < cascadeCount; ++i)
 	{
 		if (depthValue < cascadeDistances[i])
@@ -296,28 +299,26 @@ int GetCurrentLayer(GBuffer gBuffer)
 		}
 	}
 
-	if (layer == -1)
-	{
-		layer = cascadeCount;
-	}
-
 	return layer;
 }
 
-// FIXME: Remove branching
 float CalculateBias(int layer, vec3 lightDir, GBuffer gBuffer)
 {
-	// I use normal map's normal here since it looks better
+	// Using normal map's normal
 	float bias = max(MAX_BIAS * (1.0f - dot(gBuffer.normalMap, lightDir)), MIN_BIAS);
+	// Select bias type
+	float selection = WhenEqual(vec4(layer), vec4(cascadeCount)).x;
+	selection       = clamp(selection, 0.0f, 1.0f);
 
-	if (layer == cascadeCount)
-	{
-		bias *= 1.0f / (resolution.w * BIAS_MODIFIER);
-	}
-	else
-	{
-		bias *= 1.0f / (cascadeDistances[layer] * BIAS_MODIFIER);
-	}
+	// Calculate both cases
+	float bias1 = bias * 1.0f / (resolution.w * BIAS_MODIFIER);
+	float bias2 = bias * 1.0f / (cascadeDistances[layer] * BIAS_MODIFIER);
+
+	// CASE 1: selection == 0.0f
+	// bias1 will cancel out, leaving bias2
+	// CASE 2: selection == 1.0f
+	// bias2 will cancel out, leaving bias 1
+	bias = bias1 * selection + bias2 * (1.0f - selection);
 
 	return bias;
 }
@@ -367,4 +368,14 @@ vec4 WhenGreater(vec4 x, vec4 y)
 vec4 WhenLesser(vec4 x, vec4 y)
 {
 	return max(sign(y - x), 0.0f);
+}
+
+// Branchless implementation of
+// if (x == y)
+//	 return 1;
+// else
+// 	 return 0;
+vec4 WhenEqual(vec4 x, vec4 y)
+{
+	return 1.0f - abs(sign(x - y));
 }

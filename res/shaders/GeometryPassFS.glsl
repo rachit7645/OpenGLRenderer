@@ -1,5 +1,7 @@
 #version 430 core
 
+const float GAMMA_FACTOR = 2.2f;
+
 layout (location = 0) out vec4 gNormal;
 layout (location = 1) out vec4 gAlbedo;
 layout (location = 2) out vec4 gNormalMap;
@@ -21,7 +23,7 @@ void main()
 	gNormal.rgb = unitNormal;
 	gNormal.a   = gAoMtlRgh.g;
 	// Albedo + Metallic
-	gAlbedo.rgb = pow(gAlb.xyz, vec3(2.2f));
+	gAlbedo.rgb = pow(gAlb.xyz, vec3(GAMMA_FACTOR));
 	gAlbedo.a   = gAoMtlRgh.b;
 	// Normal Map + Ambient Occlusion
 	gNormalMap.rgb = gNorm.rgb;

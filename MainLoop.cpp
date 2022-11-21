@@ -13,10 +13,8 @@
 
 using namespace Window;
 
-using std::chrono::steady_clock;
-using std::chrono::duration_cast;
-using std::chrono::milliseconds;
-using std::chrono::seconds;
+// Namespace alias
+namespace chrono = std::chrono;
 
 using Renderer::Texture;
 using Renderer::Model;
@@ -103,7 +101,7 @@ void SDLWindow::MainLoop()
 	auto camera   = Entities::Camera(&player);
 	auto renderer = Renderer::RenderManager();
 
-	startTime = frameStartTime = steady_clock::now();
+	startTime = frameStartTime = chrono::steady_clock::now();
 
 	while (true)
 	{
@@ -153,12 +151,12 @@ void SDLWindow::MainLoop()
 
 void SDLWindow::CalculateFPS()
 {
-	endTime       = steady_clock::now();
-	auto duration = duration_cast<milliseconds>(endTime - frameStartTime);
+	endTime       = chrono::steady_clock::now();
+	auto duration = chrono::duration_cast<chrono::milliseconds>(endTime - frameStartTime);
 	g_Delta       = static_cast<f32>(static_cast<f64>(duration.count()) / 1000.0);
 
 	frameStartTime = endTime;
-	if (endTime - startTime >= seconds(1))
+	if (endTime - startTime >= chrono::seconds(1))
 	{
 		startTime = endTime;
 		finalFPS  = FPS;
