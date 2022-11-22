@@ -1,23 +1,22 @@
-#ifndef LIGHT_H
-#define LIGHT_H
+#ifndef POINT_LIGHT_H
+#define POINT_LIGHT_H
 
 #include "GLM.h"
 
 namespace Entities
 {
-	class Light
+	class PointLight
 	{
 	public:
 		// Default constructor
-		Light() = default;
+		PointLight() = default;
 		// Main constructor
-		Light
+		PointLight
 		(
 			const glm::vec3& position,
 			const glm::vec3& color,
 			const glm::vec3& attenuation
 		);
-
 		// Light data (must match struct in shaders)
 		alignas(16) glm::vec4 position    = {0.0f, 0.0f, 0.0f, 1.0f};
 		alignas(16) glm::vec4 color       = {0.0f, 0.0f, 0.0f, 1.0f};

@@ -3,7 +3,13 @@
 const float TEXTURE_TILING = 4.0f;
 const int   MAX_LIGHTS     = 4;
 
-struct Light
+struct DirLight
+{
+	vec4 position;
+	vec4 color;
+};
+
+struct PointLight
 {
 	vec4 position;
 	vec4 color;
@@ -18,8 +24,12 @@ layout(std140, binding = 0) uniform Matrices
 
 layout(std140, binding = 1) uniform Lights
 {
-	int   numLights;
-	Light lights[MAX_LIGHTS];
+	// Directional lights
+	int      numDirLights;
+	DirLight dirLights[MAX_LIGHTS];
+	// Point lights
+	int        numPointLights;
+	PointLight pointLights[MAX_LIGHTS];
 };
 
 layout(std140, binding = 2) uniform Shared
@@ -60,5 +70,5 @@ void CalculateTxCoords()
 void CalculateLighting(vec4 worldPos)
 {
 	unitCameraVector = normalize(cameraPos.xyz - worldPos.xyz);
-	unitLightVector  = normalize(lights[0].position.xyz - worldPos.xyz);
+	unitLightVector  = normalize(pointLights[0].position.xyz - worldPos.xyz);
 }

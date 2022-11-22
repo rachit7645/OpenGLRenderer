@@ -20,7 +20,7 @@
 using namespace Renderer;
 
 using Entities::Entity;
-using Entities::Light;
+using Entities::PointLight;
 using Entities::Camera;
 using Entities::Skybox;
 using Entities::Player;
@@ -60,12 +60,12 @@ RenderManager::RenderManager()
 	m_waterShader.DumpToFile("dumps/WTR.s");
 }
 
-void RenderManager::BeginFrame(EntityVec& entities, const Lights& lights, Player& player)
+void RenderManager::BeginFrame(EntityVec& entities, const PointLights& pointLights, Player& player)
 {
 	ProcessEntities(entities);
 	ProcessEntity(player);
-
-	m_lights->LoadLights(lights);
+	// Load point lights
+	m_lights->LoadPointLights(pointLights);
 }
 
 void RenderManager::EndFrame()
@@ -76,12 +76,17 @@ void RenderManager::EndFrame()
 	RenderImGui();
 }
 
-void RenderManager::RenderShadows(const Camera& camera, const Light& light)
+void RenderManager::RenderShadows(const Camera& camera, const glm::vec3& lightPos)
 {
+	// Bind shadow map
 	m_shadowMap.BindShadowFBO();
-	m_shadowMap.Update(camera, light.position);
+	// Update cascades
+	m_shadowMap.Update(camera, lightPos);
+	// Peter-panning fix
 	glCullFace(GL_FRONT);
+	// Render
 	RenderScene(camera, Mode::Shadow, glm::vec4(0.0f));
+	// Reset
 	glCullFace(GL_BACK);
 	m_shadowMap.BindDefaultFBO();
 }

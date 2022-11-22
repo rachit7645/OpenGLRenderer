@@ -1,8 +1,8 @@
-#include "Light.h"
+#include "PointLight.h"
 
 using namespace Entities;
 
-Light::Light
+PointLight::PointLight
 (
 	const glm::vec3& position,
 	const glm::vec3& color,

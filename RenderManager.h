@@ -39,14 +39,14 @@ namespace Renderer
 	{
 	public:
 		// Usings
-		using EntityVec  = std::vector<Entities::Entity>;
-		using Lights     = std::vector<Entities::Light>;
-		using WaterTiles = std::vector<Waters::WaterTile>;
-		using GUIs       = std::vector<Renderer::GUI>;
-		using EntityPtrs = std::vector<Entities::Entity*>;
-		using MdPtr      = std::shared_ptr<Model>;
-		using Batch      = std::unordered_map<MdPtr, EntityPtrs>;
-		using TxPtr      = std::shared_ptr<Texture>;
+		using EntityVec   = std::vector<Entities::Entity>;
+		using PointLights = std::vector<Entities::PointLight>;
+		using WaterTiles  = std::vector<Waters::WaterTile>;
+		using GUIs        = std::vector<Renderer::GUI>;
+		using EntityPtrs  = std::vector<Entities::Entity*>;
+		using MdPtr       = std::shared_ptr<Model>;
+		using Batch       = std::unordered_map<MdPtr, EntityPtrs>;
+		using TxPtr       = std::shared_ptr<Texture>;
 		// Main constructor
 		RenderManager();
 	private:
@@ -97,11 +97,11 @@ namespace Renderer
 		TxPtr m_currentFBO;
 	public:
 		// Prepare frame
-		void BeginFrame(EntityVec& entities, const Lights& lights, Entities::Player& player);
+		void BeginFrame(EntityVec& entities, const PointLights& pointLights, Entities::Player& player);
 		// Finish frame
 		void EndFrame();
 		// Render shadows
-		void RenderShadows(const Entities::Camera& camera, const Entities::Light& light);
+		void RenderShadows(const Entities::Camera& camera, const glm::vec3& lightPos);
 		// Render the waters
 		void RenderWaters(const WaterTiles& waters);
 		// Render water fbos

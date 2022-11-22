@@ -2,7 +2,13 @@
 
 const int MAX_LIGHTS = 4;
 
-struct Light
+struct DirLight
+{
+	vec4 position;
+	vec4 color;
+};
+
+struct PointLight
 {
 	vec4 position;
 	vec4 color;
@@ -22,8 +28,12 @@ layout(std140, binding = 0) uniform Matrices
 
 layout(std140, binding = 1) uniform Lights
 {
-	int   numLights;
-	Light lights[MAX_LIGHTS];
+	// Directional lights
+	int      numDirLights;
+	DirLight dirLights[MAX_LIGHTS];
+	// Point lights
+	int        numPointLights;
+	PointLight pointLights[MAX_LIGHTS];
 };
 
 layout(std140, binding = 2) uniform Shared
@@ -44,7 +54,8 @@ layout(location = 2) in vec3 normal;
 
 out vec2 txCoords;
 out vec3 unitNormal;
-out vec3 unitLightVector[MAX_LIGHTS];
+out vec3 unitDirLightVector[MAX_LIGHTS];
+out vec3 unitPointLightVector[MAX_LIGHTS];
 out vec4 worldPosition;
 
 void main()
@@ -57,8 +68,13 @@ void main()
 	vec4 transNormal = instances[gl_InstanceID].modelMatrix * vec4(normal, 0.0f);
 	unitNormal       = normalize(transNormal.xyz);
 
-	for (int i = 0; i < numLights; ++i)
+	for (int i = 0; i < numDirLights; ++i)
 	{
-		unitLightVector[i] = normalize(lights[i].position.xyz - worldPosition.xyz);
+		unitDirLightVector[i] = normalize(dirLights[i].position.xyz - worldPosition.xyz);
+	}
+
+	for (int i = 0; i < numPointLights; ++i)
+	{
+		unitPointLightVector[i] = normalize(pointLights[i].position.xyz - worldPosition.xyz);
 	}
 }

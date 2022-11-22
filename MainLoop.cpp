@@ -1,5 +1,7 @@
 #include "Window.h"
 
+#include <vector>
+
 #include "Model.h"
 #include "Entity.h"
 #include "Player.h"
@@ -10,6 +12,7 @@
 #include "WaterTile.h"
 #include "RenderManager.h"
 #include "Camera.h"
+#include "PointLight.h"
 
 using namespace Window;
 
@@ -25,7 +28,7 @@ using Renderer::RenderManager;
 using Renderer::Mode;
 using Entities::Entity;
 using Entities::Skybox;
-using Entities::Light;
+using Entities::PointLight;
 using Entities::Camera;
 using Waters::WaterTile;
 
@@ -74,9 +77,9 @@ void SDLWindow::MainLoop()
 		1.0f
 	);
 
-	std::vector<Light> lights;
+	std::vector<PointLight> pointLights;
 	{
-		lights.emplace_back
+		pointLights.emplace_back
 		(
 			glm::vec3(0.1f, 1.0f, 0.1f),
 			glm::vec3(1.0f, 1.0f, 1.0f),
@@ -111,14 +114,14 @@ void SDLWindow::MainLoop()
 		ImGui::NewFrame();
 
 		// Update
-		ImGuiDisplay(lights);
+		ImGuiDisplay();
 		player.Move();
 		camera.Move();
 
 		// Begin render
-		renderer.BeginFrame(entities, lights, player);
+		renderer.BeginFrame(entities, pointLights, player);
 		// Draw shadow framebuffer
-		renderer.RenderShadows(camera, lights[0]);
+		renderer.RenderShadows(camera, pointLights[0].position);
 		// Draw water framebuffers
 		renderer.RenderWaterFBOs(waters, camera);
 
@@ -166,7 +169,7 @@ void SDLWindow::CalculateFPS()
 	++FPS;
 }
 
-void SDLWindow::ImGuiDisplay(std::vector<Light>& lights)
+void SDLWindow::ImGuiDisplay()
 {
 	if (ImGui::BeginMainMenuBar())
 	{
@@ -179,23 +182,7 @@ void SDLWindow::ImGuiDisplay(std::vector<Light>& lights)
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::BeginMenu("Editor"))
-		{
-			if (ImGui::BeginMenu("Lights"))
-			{
-				constexpr std::array<const char*, 4> items = {"[0]", "[1]", "[2]", "[3]"};
-				// Create combo
-				ImGui::Combo("Current", &currentLight, items.data(), items.size());
-				// Input attributes
-				ImGui::InputFloat3("Position",    &lights[currentLight].position[0],    "%.1f");
-				ImGui::InputFloat3("Color",       &lights[currentLight].color[0],       "%.1f");
-				ImGui::InputFloat3("Attenuation", &lights[currentLight].attenuation[0], "%.1f");
-				// Close
-				ImGui::EndMenu();
-			}
-
-			ImGui::EndMenu();
-		}
+		// TODO: Add back lights editor
 
 		ImGui::EndMainMenuBar();
 	}

@@ -3,7 +3,13 @@
 const float AMBIENT_STRENGTH = 0.6f;
 const int   MAX_LIGHTS       = 4;
 
-struct Light
+struct DirLight
+{
+	vec4 position;
+	vec4 color;
+};
+
+struct PointLight
 {
 	vec4 position;
 	vec4 color;
@@ -12,22 +18,28 @@ struct Light
 
 layout(std140, binding = 1) uniform Lights
 {
-    int   numLights;
-	Light lights[MAX_LIGHTS];
+	// Directional lights
+	int      numDirLights;
+	DirLight dirLights[MAX_LIGHTS];
+	// Point lights
+	int        numPointLights;
+	PointLight pointLights[MAX_LIGHTS];
 };
 
 in vec2 txCoords;
 in vec3 unitNormal;
-in vec3 unitLightVector[MAX_LIGHTS];
+in vec3 unitDirLightVector[MAX_LIGHTS];
+in vec3 unitPointLightVector[MAX_LIGHTS];
 in vec4 worldPosition;
 
 uniform sampler2D diffuseTexture;
 
 out vec4 outColor;
 
-float CalculateAttFactor(int index);
-vec4  CalculateAmbient(int index);
-vec4  CalculateDiffuse(int index);
+vec4  CalculateAmbientAll();
+float CalculateAttFactorPoint(int index);
+vec4  CalculateDiffuseDir(int index);
+vec4  CalculateDiffusePoint(int index);
 
 void main()
 {
@@ -36,32 +48,45 @@ void main()
 	vec4 ambient = vec4(0.0f);
 	vec4 diffuse = vec4(0.0f);
 
-	for (int i = 0; i < numLights; ++i)
+	for (int i = 0; i < numDirLights; ++i)
 	{
-		float attFactor = CalculateAttFactor(i);
-		ambient        += CalculateAmbient(i) * diffColor * attFactor;
-		diffuse        += CalculateDiffuse(i) * diffColor * attFactor;
+		ambient += CalculateAmbientAll()  * diffColor;
+		diffuse += CalculateDiffuseDir(i) * diffColor;
+	}
+
+	for (int i = 0; i < numPointLights; ++i)
+	{
+		float attFactor = CalculateAttFactorPoint(i);
+		ambient        += CalculateAmbientAll()    * diffColor * attFactor;
+		diffuse        += CalculateDiffusePoint(i) * diffColor * attFactor;
 	}
 
 	outColor = ambient + diffuse;
 }
 
-float CalculateAttFactor(int index)
-{
-	vec4  ATT       = lights[index].attenuation;
-	float distance  = length(lights[index].position.xyz - worldPosition.xyz);
-	float attFactor = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
-	return 1.0f / attFactor;
-}
-
-vec4 CalculateAmbient(int index)
+vec4 CalculateAmbientAll()
 {
 	return vec4(AMBIENT_STRENGTH * vec3(0.2f), 1.0f);
 }
 
-vec4 CalculateDiffuse(int index)
+float CalculateAttFactorPoint(int index)
 {
-	float nDot1      = dot(unitNormal, unitLightVector[index]);
+	vec4  ATT       = pointLights[index].attenuation;
+	float distance  = length(pointLights[index].position.xyz - worldPosition.xyz);
+	float attFactor = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
+	return 1.0f / attFactor;
+}
+
+vec4 CalculateDiffuseDir(int index)
+{
+	float nDot1      = dot(unitNormal, unitDirLightVector[index]);
 	float brightness = max(nDot1, 0.0f);
-	return vec4(brightness * lights[index].color.rgb, 1.0f);
+	return vec4(brightness * dirLights[index].color.rgb, 1.0f);
+}
+
+vec4 CalculateDiffusePoint(int index)
+{
+	float nDot1      = dot(unitNormal, unitPointLightVector[index]);
+	float brightness = max(nDot1, 0.0f);
+	return vec4(brightness * pointLights[index].color.rgb, 1.0f);
 }

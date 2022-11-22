@@ -54,7 +54,7 @@ add_executable(engine
 	MatrixBuffer.cpp
 	UniformBuffer.cpp
 	LightsBuffer.cpp
-	Light.cpp
+	PointLight.cpp
 	Resources.cpp
 	Time.cpp
 	GL.cpp
@@ -87,6 +87,7 @@ add_executable(engine
 	ConvolutionShader.cpp
 	PreFilterShader.cpp
 	BRDFShader.cpp
+	DirectionalLight.cpp
 )
 
 # Precompiled Headers

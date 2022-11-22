@@ -15,7 +15,13 @@ const float BIAS_MODIFIER      = 0.5f;
 const float PCF_COUNT          = 1.5f;
 const float TOTAL_TEXELS       = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.0f);
 
-struct Light
+struct DirLight
+{
+	vec4 position;
+	vec4 color;
+};
+
+struct PointLight
 {
 	vec4 position;
 	vec4 color;
@@ -33,6 +39,21 @@ struct GBuffer
 	float ao;
 };
 
+struct SharedData
+{
+	vec3 N;
+	vec3 V;
+	vec3 R;
+	vec3 F0;
+};
+
+struct LightInfo
+{
+	vec3  position;
+	vec3  color;
+	float attenuation;
+};
+
 // UBOs and SSBOs
 
 layout(std140, binding = 0) uniform Matrices
@@ -43,8 +64,12 @@ layout(std140, binding = 0) uniform Matrices
 
 layout(std140, binding = 1) uniform Lights
 {
-	int   numLights;
-	Light lights[MAX_LIGHTS];
+	// Directional lights
+	int      numDirLights;
+	DirLight dirLights[MAX_LIGHTS];
+	// Point lights
+	int        numPointLights;
+	PointLight pointLights[MAX_LIGHTS];
 };
 
 layout(std140, binding = 2) uniform Shared
@@ -81,9 +106,10 @@ uniform samplerCube prefilterMap;
 // Fragment outputs
 out vec4 outColor;
 
-// GBuffer functions
-GBuffer GetGBufferData();
-vec3    ReconstructPosition();
+// Data functions
+GBuffer    GetGBufferData();
+SharedData GetSharedData(GBuffer gBuffer);
+LightInfo  GetPointLightInfo(int index, GBuffer gBuffer);
 
 // Branchless functions
 vec4 WhenGreater(vec4 x, vec4 y);
@@ -91,7 +117,12 @@ vec4 WhenLesser(vec4 x, vec4 y);
 vec4 WhenEqual(vec4 x, vec4 y);
 
 // Light functions
-vec3  GetNormalFromMap(GBuffer gBuffer);
+vec3 CalculateLight(SharedData sharedData, GBuffer gBuffer, LightInfo lightInfo);
+vec3 CalculateAmbient(SharedData sharedData, GBuffer gBuffer);
+vec3 GetNormalFromMap(GBuffer gBuffer);
+vec3 ReconstructPosition();
+
+// PBR Functions
 float DistributionGGX(vec3 N, vec3 H, float roughness);
 float GeometrySchlickGGX(float NdotV, float roughness);
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
@@ -106,77 +137,30 @@ void main()
 {
 	// GBuffer data
 	GBuffer gBuffer = GetGBufferData();
-
-	// Normal
-	vec3 N = GetNormalFromMap(gBuffer);
-	// Camera vector
-	vec3 V = normalize(cameraPos.xyz - gBuffer.fragPos);
-	// Reflection vector
-	vec3 R = reflect(-V, N);
-
-	// Metallic coefficient
-	vec3 F0 = vec3(0.04f);
-	F0      = mix(F0, gBuffer.albedo.rgb, gBuffer.metallic);
+	// Shared Data
+	SharedData sharedData = GetSharedData(gBuffer);
 
 	// Total light
 	vec3 Lo = vec3(0.0f);
 
-	for (int i = 0; i < numLights; ++i)
+	// Calculate point lights
+	for (int i = 0; i < numPointLights; ++i)
 	{
-		// Irradiance
-		vec3  L           = normalize(lights[i].position.xyz - gBuffer.fragPos);
-		vec3  H           = normalize(V + L);
-		float distance    = length(lights[i].position.xyz - gBuffer.fragPos);
-		vec3  ATT         = lights[i].attenuation.xyz;
-		float attenuation = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
-		attenuation       = 1.0f / attenuation;
-		vec3  radiance    = lights[i].color.rgb * attenuation;
-
-		// Cook-Torrance BRDF
-		float NDF = DistributionGGX(N, H, gBuffer.roughness);
-		float G   = GeometrySmith(N, V, L, gBuffer.roughness);
-		vec3  F   = FresnelSchlick(max(dot(H, V), 0.0f), F0, gBuffer.roughness);
-
-		// Combine specular
-		vec3 numerator = NDF * G * F;
-		// To prevent division by zero, divide by at least 0.0001f (close enough)
-		float denominator = max(4.0f * max(dot(N, V), 0.0f) * max(dot(N, L), 0.0f), 0.0001f);
-		vec3  specular    = numerator / denominator;
-
-		// Diffuse energy conservation
-		vec3 kS = F;
-		vec3 kD = vec3(1.0f) - kS;
-		kD     *= 1.0f - gBuffer.metallic;
-
-		// Add everthing up to Lo
-		float NdotL = max(dot(N, L), 0.0f);
-		Lo         += (kD * gBuffer.albedo / PI + specular) * radiance * NdotL;
+		// Calculate light data
+		LightInfo info = GetPointLightInfo(i, gBuffer);
+		// Calculate lighting
+		Lo += CalculateLight(sharedData, gBuffer, info);
 	}
 
-	// Ambient energy conservation
-	vec3 F  = FresnelSchlick(max(dot(N, V), 0.0f), F0, gBuffer.roughness);
-	vec3 kS = F;
-	vec3 kD = vec3(1.0f) - kS;
-	kD     *= 1.0f - gBuffer.metallic;
-
-	// Irradiance
-	vec3 irradiance = texture(irradianceMap, N).rgb;
-	vec3 diffuse    = irradiance * gBuffer.albedo;
-
-	// Specular
-	vec3 prefilteredColor = textureLod(prefilterMap, R, gBuffer.roughness * MAX_REFLECTION_LOD).rgb;
-	vec2 brdf             = texture(brdfLUT, vec2(max(dot(N, V), 0.0f), gBuffer.roughness)).rg;
-	vec3 specular         = prefilteredColor * (F * brdf.x + brdf.y);
-
-	// Add up ambient
-	vec3 ambient = (kD * diffuse + specular) * gBuffer.ao;
-
+	// Calculate ambient
+	vec3 ambient = CalculateAmbient(sharedData, gBuffer);
 	// Add up color
 	vec3 color   = ambient + Lo;
-	vec3 L       = normalize(lights[0].position.xyz - gBuffer.fragPos);
+	// Calculate shadow
+	vec3 L       = normalize(pointLights[0].position.xyz - gBuffer.fragPos);
 	color       *= 1.0f - CalculateShadow(L, gBuffer);
 
-	// Reinhard operator
+	// Perform Reinhard operator
 	color = color / (color + vec3(1.0f));
 	// Gamma correction
 	color = pow(color, vec3(INV_GAMMA_FACTOR));
@@ -205,6 +189,37 @@ GBuffer GetGBufferData()
 	gBuffer.ao        = gNorm.a;
 	// Return
 	return gBuffer;
+}
+
+SharedData GetSharedData(GBuffer gBuffer)
+{
+	SharedData sharedData;
+	// Normal
+	sharedData.N = GetNormalFromMap(gBuffer);
+	// Camera vector
+	sharedData.V = normalize(cameraPos.xyz - gBuffer.fragPos);
+	// Reflection vector
+	sharedData.R = reflect(-sharedData.V, sharedData.N);
+	// Metallic coefficient
+	sharedData.F0 = mix(vec3(0.04f), gBuffer.albedo, gBuffer.metallic);
+	// Return shared data
+	return sharedData;
+}
+
+LightInfo GetPointLightInfo(int index, GBuffer gBuffer)
+{
+	LightInfo info;
+	// Position
+	info.position = pointLights[index].position.xyz;
+	// Color
+	info.color = pointLights[index].color.rgb;
+	// Attenuation
+	float distance   = length(info.position - gBuffer.fragPos);
+	vec3 ATT         = pointLights[index].attenuation.xyz;
+	info.attenuation = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
+	info.attenuation = 1.0f / info.attenuation;
+	// Return
+	return info;
 }
 
 vec3 ReconstructPosition()
@@ -240,6 +255,59 @@ vec3 GetNormalFromMap(GBuffer gBuffer)
 
 	// Return world space normal
 	return normalize(TBN * tangentNormal);
+}
+
+vec3 CalculateLight(SharedData sharedData, GBuffer gBuffer, LightInfo lightInfo)
+{
+	// Irradiance
+	vec3  L        = normalize(lightInfo.position - gBuffer.fragPos);
+	vec3  H        = normalize(sharedData.V + L);
+	float distance = length(lightInfo.position - gBuffer.fragPos);
+	vec3  radiance = lightInfo.color * lightInfo.attenuation;
+
+	// Cook-Torrance BRDF
+	float NDF = DistributionGGX(sharedData.N, H, gBuffer.roughness);
+	float G   = GeometrySmith(sharedData.N, sharedData.V, L, gBuffer.roughness);
+	vec3  F   = FresnelSchlick(max(dot(H, sharedData.V), 0.0f), sharedData.F0, gBuffer.roughness);
+
+	// Combine specular
+	vec3 numerator = NDF * G * F;
+	// To prevent division by zero, divide by at least 0.0001f (close enough)
+	float denominator = max(4.0f * max(dot(sharedData.N, sharedData.V), 0.0f) * max(dot(sharedData.N, L), 0.0f), 0.0001f);
+	vec3  specular    = numerator / denominator;
+
+	// Diffuse energy conservation
+	vec3 kS = F;
+	vec3 kD = vec3(1.0f) - kS;
+	kD     *= 1.0f - gBuffer.metallic;
+
+	// Add everthing up to Lo
+	float NdotL = max(dot(sharedData.N, L), 0.0f);
+	return (kD * gBuffer.albedo / PI + specular) * radiance * NdotL;
+}
+
+vec3 CalculateAmbient(SharedData sharedData, GBuffer gBuffer)
+{
+	// Ambient energy conservation
+	vec3 F  = FresnelSchlick(max(dot(sharedData.N, sharedData.V), 0.0f), sharedData.F0, gBuffer.roughness);
+	vec3 kS = F;
+	vec3 kD = vec3(1.0f) - kS;
+	kD     *= 1.0f - gBuffer.metallic;
+
+	// Irradiance
+	vec3 irradiance = texture(irradianceMap, sharedData.N).rgb;
+	vec3 diffuse    = irradiance * gBuffer.albedo;
+
+	// Specular
+	vec3 prefilteredColor = textureLod(prefilterMap, sharedData.R, gBuffer.roughness * MAX_REFLECTION_LOD).rgb;
+	vec2 brdf             = texture(brdfLUT, vec2(max(dot(sharedData.N, sharedData.V), 0.0f), gBuffer.roughness)).rg;
+	vec3 specular         = prefilteredColor * (F * brdf.x + brdf.y);
+
+	// Add up ambient
+	vec3 ambient = (kD * diffuse + specular) * gBuffer.ao;
+
+	// Return
+	return ambient;
 }
 
 float DistributionGGX(vec3 N, vec3 H, float roughness)

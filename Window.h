@@ -1,13 +1,11 @@
 #ifndef SDL_WINDOW_H
 #define SDL_WINDOW_H
 
-#include <vector>
 #include <chrono>
 #include <SDL2/SDL.h>
 
 #include "GLM.h"
 #include "Util.h"
-#include "Light.h"
 
 namespace Window
 {
@@ -28,7 +26,7 @@ namespace Window
 		void MainLoop();
 	private:
 		// Display ImGui Widgets
-		void ImGuiDisplay(std::vector<Entities::Light>& lights);
+		void ImGuiDisplay();
 		// Update options menu
 		void ImGuiUpdate();
 		// Function to process SDL Events

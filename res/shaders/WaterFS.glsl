@@ -8,19 +8,6 @@ const float MIN_SPECULAR    = 0.0f;
 const float NORMAL_FACTOR_Y = 0.1f;
 const int   MAX_LIGHTS      = 4;
 
-struct Light
-{
-	vec4 position;
-	vec4 color;
-	vec4 attenuation;
-};
-
-layout(std140, binding = 1) uniform Lights
-{
-	int   numLights;
-	Light lights[MAX_LIGHTS];
-};
-
 layout(std140, binding = 2) uniform Shared
 {
 	vec4 clipPlane;
