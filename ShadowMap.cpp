@@ -67,7 +67,7 @@ ShadowMap::ShadowMap()
 void ShadowMap::Update(const Camera& camera, const glm::vec3& lightPos)
 {
 	// Load updated cascade matrices
-	m_matrixBuffer->LoadMatrices(CalculateLightSpaceMatrices(camera, glm::normalize(lightPos)));
+	m_matrixBuffer->LoadMatrices(CalculateLightSpaceMatrices(camera, glm::normalize(-lightPos)));
 }
 
 Mat4s ShadowMap::CalculateLightSpaceMatrices
@@ -131,7 +131,7 @@ glm::mat4 ShadowMap::CalculateViewMatrix(const Vec4s& corners, const glm::vec3& 
 	// Calculate center
 	glm::vec3 center = CalculateCenter(corners);
 	// Calculate view matrix (UP = 0, 1, 0)
-	glm::mat4 matrix = glm::lookAt(center + lightDir, center, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 matrix = glm::lookAt(center - lightDir, center, glm::vec3(0.0f, 1.0f, 0.0f));
 	// Return
 	return matrix;
 }

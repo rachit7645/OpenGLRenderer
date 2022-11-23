@@ -13,6 +13,20 @@ using Detail::LightsBufferGLSL;
 LightsBuffer::LightsBuffer()
 	: UniformBuffer(1, sizeof(LightsBufferGLSL), GL_STATIC_DRAW)
 {
+	// Bind buffer
+	glBindBuffer(GL_UNIFORM_BUFFER, id);
+	// Initialise empty data
+	LightsBufferGLSL lightsBuffer = {};
+	// Buffer empty data
+	glBufferSubData
+	(
+		GL_UNIFORM_BUFFER,
+		static_cast<GLintptr>(0),
+		static_cast<GLsizeiptr>(sizeof(LightsBufferGLSL)),
+		reinterpret_cast<const void*>(&lightsBuffer)
+	);
+	// Unbind buffer
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void LightsBuffer::LoadDirectionalLights(const std::vector<DirectionalLight>& lights)

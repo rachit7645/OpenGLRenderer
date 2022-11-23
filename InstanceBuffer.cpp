@@ -6,14 +6,29 @@
 using namespace Renderer;
 
 using Detail::InstancedDataGLSL;
+using Detail::InstancedBufferGLSL;
 using Entities::Entity;
 
 using DataVector = InstanceBuffer::DataVector;
 
-// Note: Since we update this before every draw call, it's stored as GL_DYNAMIC_DRAW
+// Since we update this before every draw call, it's stored as GL_DYNAMIC_DRAW
 InstanceBuffer::InstanceBuffer()
-	: ShaderStorageBuffer(3, NUM_MAX_ENTITIES * sizeof(InstancedDataGLSL), GL_DYNAMIC_DRAW)
+	: ShaderStorageBuffer(3, sizeof(InstancedBufferGLSL), GL_DYNAMIC_DRAW)
 {
+	// Bind buffer
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, id);
+	// Initialise empty data
+	InstancedBufferGLSL instancedBuffer = {};
+	// Buffer empty data
+	glBufferSubData
+	(
+		GL_SHADER_STORAGE_BUFFER,
+		static_cast<GLintptr>(0),
+		static_cast<GLsizeiptr>(sizeof(InstancedBufferGLSL)),
+		reinterpret_cast<const void*>(&instancedBuffer)
+	);
+	// Unbind buffer
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
 void InstanceBuffer::LoadInstanceData(const EntityVector& entities)

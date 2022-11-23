@@ -13,12 +13,15 @@
 #include "RenderManager.h"
 #include "Camera.h"
 #include "PointLight.h"
+#include "DirectionalLight.h"
 
+// Using namespaces
 using namespace Window;
 
-// Namespace alias
+// Namespace aliases
 namespace chrono = std::chrono;
 
+// Usings
 using Renderer::Texture;
 using Renderer::Model;
 using Renderer::MeshTextures;
@@ -28,6 +31,7 @@ using Renderer::RenderManager;
 using Renderer::Mode;
 using Entities::Entity;
 using Entities::Skybox;
+using Entities::DirectionalLight;
 using Entities::PointLight;
 using Entities::Camera;
 using Waters::WaterTile;
@@ -77,13 +81,24 @@ void SDLWindow::MainLoop()
 		1.0f
 	);
 
-	std::vector<PointLight> pointLights;
+	std::vector<DirectionalLight> dirLights;
 	{
-		pointLights.emplace_back
+		// Sun
+		dirLights.emplace_back
 		(
 			glm::vec3(0.1f, 1.0f, 0.1f),
-			glm::vec3(1.0f, 1.0f, 1.0f),
-			glm::vec3(1.0f, 0.0f, 0.0f)
+			glm::vec3(0.5f, 0.5f, 0.5f)
+		);
+	}
+
+	std::vector<PointLight> pointLights;
+	{
+		// Other lights
+		pointLights.emplace_back
+		(
+			glm::vec3(40.0f, 4.0f, -40.0f),
+			glm::vec3(0.0f, 5.0f, 4.0f),
+			glm::vec3(1.0f, 0.022f, 0.0019f)
 		);
 	}
 
@@ -119,9 +134,9 @@ void SDLWindow::MainLoop()
 		camera.Move();
 
 		// Begin render
-		renderer.BeginFrame(entities, pointLights, player);
+		renderer.BeginFrame(entities, dirLights, pointLights, player);
 		// Draw shadow framebuffer
-		renderer.RenderShadows(camera, pointLights[0].position);
+		renderer.RenderShadows(camera, dirLights[0].position);
 		// Draw water framebuffers
 		renderer.RenderWaterFBOs(waters, camera);
 

@@ -70,7 +70,7 @@ void main()
 
 	for (int i = 0; i < numDirLights; ++i)
 	{
-		unitDirLightVector[i] = normalize(dirLights[i].position.xyz - worldPosition.xyz);
+		unitDirLightVector[i] = normalize(-dirLights[i].position.xyz);
 	}
 
 	for (int i = 0; i < numPointLights; ++i)

@@ -70,5 +70,5 @@ void CalculateTxCoords()
 void CalculateLighting(vec4 worldPos)
 {
 	unitCameraVector = normalize(cameraPos.xyz - worldPos.xyz);
-	unitLightVector  = normalize(pointLights[0].position.xyz - worldPos.xyz);
+	unitLightVector  = normalize(-dirLights[0].position.xyz);
 }

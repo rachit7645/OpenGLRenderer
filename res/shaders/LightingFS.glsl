@@ -1,6 +1,6 @@
 #version 430 core
 
-// TODO: Separate point and directional lights
+// TODO: Add spot lights
 
 // Constants
 const float PI                 = 3.14159265359;
@@ -51,6 +51,7 @@ struct LightInfo
 {
 	vec3  position;
 	vec3  color;
+	vec3  distance;
 	float attenuation;
 };
 
@@ -109,6 +110,7 @@ out vec4 outColor;
 // Data functions
 GBuffer    GetGBufferData();
 SharedData GetSharedData(GBuffer gBuffer);
+LightInfo  GetDirLightInfo(int index);
 LightInfo  GetPointLightInfo(int index, GBuffer gBuffer);
 
 // Branchless functions
@@ -143,6 +145,15 @@ void main()
 	// Total light
 	vec3 Lo = vec3(0.0f);
 
+	// Calculate directional lights
+	for (int i = 0; i < numDirLights; ++i)
+	{
+		// Calculate light data
+		LightInfo info = GetDirLightInfo(i);
+		// Calculate lighting
+		Lo += CalculateLight(sharedData, gBuffer, info);
+	}
+
 	// Calculate point lights
 	for (int i = 0; i < numPointLights; ++i)
 	{
@@ -155,10 +166,10 @@ void main()
 	// Calculate ambient
 	vec3 ambient = CalculateAmbient(sharedData, gBuffer);
 	// Add up color
-	vec3 color   = ambient + Lo;
+	vec3 color = ambient + Lo;
 	// Calculate shadow
-	vec3 L       = normalize(pointLights[0].position.xyz - gBuffer.fragPos);
-	color       *= 1.0f - CalculateShadow(L, gBuffer);
+	vec3 L  = normalize(-dirLights[0].position.xyz);
+	color  *= 1.0f - CalculateShadow(L, gBuffer);
 
 	// Perform Reinhard operator
 	color = color / (color + vec3(1.0f));
@@ -206,6 +217,21 @@ SharedData GetSharedData(GBuffer gBuffer)
 	return sharedData;
 }
 
+LightInfo GetDirLightInfo(int index)
+{
+	LightInfo info;
+	// Position
+	info.position = dirLights[index].position.xyz;
+	// Color
+	info.color = dirLights[index].color.rgb;
+	// Distance
+	info.distance = -info.position;
+	// Attenuation
+	info.attenuation = 1.0f;
+	// Return
+	return info;
+}
+
 LightInfo GetPointLightInfo(int index, GBuffer gBuffer)
 {
 	LightInfo info;
@@ -213,27 +239,15 @@ LightInfo GetPointLightInfo(int index, GBuffer gBuffer)
 	info.position = pointLights[index].position.xyz;
 	// Color
 	info.color = pointLights[index].color.rgb;
+	// Distance
+	info.distance = info.position - gBuffer.fragPos;
 	// Attenuation
-	float distance   = length(info.position - gBuffer.fragPos);
+	float distance   = length(info.distance);
 	vec3 ATT         = pointLights[index].attenuation.xyz;
 	info.attenuation = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
 	info.attenuation = 1.0f / info.attenuation;
 	// Return
 	return info;
-}
-
-vec3 ReconstructPosition()
-{
-	// Get depth
-	float depth = texture(gDepth, txCoords).r;
-	// Invert projection
-	vec4 projectedPos = invProj * (vec4(txCoords, depth, 1.0f) * 2.0f - 1.0f);
-	// Invert view
-	vec3 viewPos = projectedPos.xyz / projectedPos.w;
-	// Get world position
-	vec3 worldPos = vec3(invView * vec4(viewPos, 1.0f));
-	// Return
-	return worldPos;
 }
 
 vec3 GetNormalFromMap(GBuffer gBuffer)
@@ -257,13 +271,26 @@ vec3 GetNormalFromMap(GBuffer gBuffer)
 	return normalize(TBN * tangentNormal);
 }
 
+vec3 ReconstructPosition()
+{
+	// Get depth
+	float depth = texture(gDepth, txCoords).r;
+	// Invert projection
+	vec4 projectedPos = invProj * (vec4(txCoords, depth, 1.0f) * 2.0f - 1.0f);
+	// Invert view
+	vec3 viewPos = projectedPos.xyz / projectedPos.w;
+	// Get world position
+	vec3 worldPos = vec3(invView * vec4(viewPos, 1.0f));
+	// Return
+	return worldPos;
+}
+
 vec3 CalculateLight(SharedData sharedData, GBuffer gBuffer, LightInfo lightInfo)
 {
 	// Irradiance
-	vec3  L        = normalize(lightInfo.position - gBuffer.fragPos);
-	vec3  H        = normalize(sharedData.V + L);
-	float distance = length(lightInfo.position - gBuffer.fragPos);
-	vec3  radiance = lightInfo.color * lightInfo.attenuation;
+	vec3 L        = normalize(lightInfo.distance);
+	vec3 H        = normalize(sharedData.V + L);
+	vec3 radiance = lightInfo.color * lightInfo.attenuation;
 
 	// Cook-Torrance BRDF
 	float NDF = DistributionGGX(sharedData.N, H, gBuffer.roughness);
@@ -383,7 +410,7 @@ float CalculateBias(int layer, vec3 lightDir, GBuffer gBuffer)
 	float bias2 = bias * 1.0f / (cascadeDistances[layer] * BIAS_MODIFIER);
 
 	// CASE 1: selection == 0.0f
-	// bias1 will cancel out, leaving bias2
+	// bias1 will cancel out, leaving bias 2
 	// CASE 2: selection == 1.0f
 	// bias2 will cancel out, leaving bias 1
 	bias = bias1 * selection + bias2 * (1.0f - selection);

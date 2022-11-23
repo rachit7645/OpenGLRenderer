@@ -1,5 +1,12 @@
 #version 430 core
 
+// GBuffer Layout
+// Buffer     | Type      | R           | G           | B           | A
+// Normal     | RGBA_16F  | normal.x    | normal.y    | normal.z    | roughness
+// Albedo     | RGBA_16F  | albedo.r    | albedo.g    | albedo.b    | metallic
+// Normal Map | RGBA_16F  | normalMap.r | normalMap.g | normalMap.b | ambient occlusion
+// Depth      | DEPTH_24F | depth       | NONE        | NONE        | NONE
+
 const float GAMMA_FACTOR = 2.2f;
 
 layout (location = 0) out vec4 gNormal;

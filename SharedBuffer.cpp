@@ -10,6 +10,20 @@ using Entities::Camera;
 SharedBuffer::SharedBuffer()
 	: UniformBuffer(2, sizeof(SharedBufferGLSL), GL_STATIC_DRAW)
 {
+	// Bind buffer
+	glBindBuffer(GL_UNIFORM_BUFFER, id);
+	// Initialise empty data
+	SharedBufferGLSL sharedBuffer = {};
+	// Buffer empty data
+	glBufferSubData
+	(
+		GL_UNIFORM_BUFFER,
+		static_cast<GLintptr>(0),
+		static_cast<GLsizeiptr>(sizeof(SharedBufferGLSL)),
+		reinterpret_cast<const void*>(&sharedBuffer)
+	);
+	// Unbind buffer
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void SharedBuffer::LoadClipPlane(const glm::vec4& clipPlane)

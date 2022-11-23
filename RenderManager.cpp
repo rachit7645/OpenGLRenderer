@@ -60,10 +60,19 @@ RenderManager::RenderManager()
 	m_waterShader.DumpToFile("dumps/WTR.s");
 }
 
-void RenderManager::BeginFrame(EntityVec& entities, const PointLights& pointLights, Player& player)
+void RenderManager::BeginFrame
+(
+	EntityVec& entities,
+	const DirLights& dirLights,
+	const PointLights& pointLights,
+	Player& player
+)
 {
+	// Process entities
 	ProcessEntities(entities);
 	ProcessEntity(player);
+	// Load directional lights
+	m_lights->LoadDirectionalLights(dirLights);
 	// Load point lights
 	m_lights->LoadPointLights(pointLights);
 }
@@ -175,9 +184,10 @@ void RenderManager::RenderGUIs(const GUIs& guis)
 
 void RenderManager::CopyDepth()
 {
+	// Bind buffers
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_gBuffer.buffer->id);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
+	// Copy depth
 	glBlitFramebuffer
 	(
 		0, 0,
@@ -189,7 +199,7 @@ void RenderManager::CopyDepth()
 		GL_DEPTH_BUFFER_BIT,
 		GL_NEAREST
 	);
-
+	// Unbind
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 

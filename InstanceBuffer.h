@@ -18,6 +18,11 @@ namespace Renderer
 		{
 			alignas(16) glm::mat4 modelMatrix;
 		};
+
+		struct InstancedBufferGLSL
+		{
+			alignas(16) InstancedDataGLSL instances[NUM_MAX_ENTITIES];
+		};
 	}
 
 	class InstanceBuffer : ShaderStorageBuffer

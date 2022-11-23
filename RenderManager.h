@@ -32,6 +32,7 @@
 #include "LightingShader.h"
 #include "LightingRenderer.h"
 #include "InstanceBuffer.h"
+#include "DirectionalLight.h"
 
 namespace Renderer
 {
@@ -40,6 +41,7 @@ namespace Renderer
 	public:
 		// Usings
 		using EntityVec   = std::vector<Entities::Entity>;
+		using DirLights   = std::vector<Entities::DirectionalLight>;
 		using PointLights = std::vector<Entities::PointLight>;
 		using WaterTiles  = std::vector<Waters::WaterTile>;
 		using GUIs        = std::vector<Renderer::GUI>;
@@ -97,7 +99,13 @@ namespace Renderer
 		TxPtr m_currentFBO;
 	public:
 		// Prepare frame
-		void BeginFrame(EntityVec& entities, const PointLights& pointLights, Entities::Player& player);
+		void BeginFrame
+		(
+			EntityVec& entities,
+			const DirLights& dirLights,
+			const PointLights& pointLights,
+			Entities::Player& player
+		);
 		// Finish frame
 		void EndFrame();
 		// Render shadows

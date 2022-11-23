@@ -3,11 +3,21 @@
 #include <vector>
 #include <GL/glew.h>
 
-#include "GLM.h"
 #include "FBOAttachment.h"
 #include "Window.h"
 
 using namespace Renderer;
+
+// TODO: Pack normals and normal map values
+// TODO: Convert normal map to world space in geometry pass (faster)
+// TODO: Reduce gbuffer size
+
+// GBuffer Layout
+// Buffer     | Type      | R           | G           | B           | A
+// Normal     | RGBA_16F  | normal.x    | normal.y    | normal.z    | roughness
+// Albedo     | RGBA_16F  | albedo.r    | albedo.g    | albedo.b    | metallic
+// Normal Map | RGBA_16F  | normalMap.r | normalMap.g | normalMap.b | ambient occlusion
+// Depth      | DEPTH_24F | depth       | NONE        | NONE        | NONE
 
 GBuffer::GBuffer()
 	: buffer(std::make_shared<FrameBuffer>())
@@ -18,7 +28,7 @@ GBuffer::GBuffer()
 		GL_NEAREST,
 		GL_NEAREST,
 		GL_CLAMP_TO_EDGE,
-		GL_RGBA32F,
+		GL_RGBA16F,
 		GL_RGBA,
 		GL_FLOAT,
 		GL_COLOR_ATTACHMENT1
@@ -30,7 +40,7 @@ GBuffer::GBuffer()
 		GL_NEAREST,
 		GL_NEAREST,
 		GL_CLAMP_TO_EDGE,
-		GL_RGBA32F,
+		GL_RGBA16F,
 		GL_RGBA,
 		GL_FLOAT,
 		GL_COLOR_ATTACHMENT2
@@ -42,7 +52,7 @@ GBuffer::GBuffer()
 		GL_NEAREST,
 		GL_NEAREST,
 		GL_CLAMP_TO_EDGE,
-		GL_RGBA32F,
+		GL_RGBA16F,
 		GL_RGBA,
 		GL_FLOAT,
 		GL_COLOR_ATTACHMENT3

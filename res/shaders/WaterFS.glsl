@@ -6,7 +6,6 @@ const float SHINE_DAMPER    = 16.0f;
 const float REFLECTIVITY    = 0.2f;
 const float MIN_SPECULAR    = 0.0f;
 const float NORMAL_FACTOR_Y = 0.1f;
-const int   MAX_LIGHTS      = 4;
 
 layout(std140, binding = 2) uniform Shared
 {
