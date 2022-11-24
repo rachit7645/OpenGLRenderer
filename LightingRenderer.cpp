@@ -43,7 +43,7 @@ void LightingRenderer::Render()
 	// Activate gAlbedo
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[1]->id);
-	// Activate gNormalMap
+	// Activate gMaterial
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[2]->id);
 	// Activate gDepth

@@ -8,16 +8,12 @@
 
 using namespace Renderer;
 
-// TODO: Pack normals and normal map values
-// TODO: Convert normal map to world space in geometry pass (faster)
-// TODO: Reduce gbuffer size
-
 // GBuffer Layout
-// Buffer     | Type      | R           | G           | B           | A
-// Normal     | RGBA_16F  | normal.x    | normal.y    | normal.z    | roughness
-// Albedo     | RGBA_16F  | albedo.r    | albedo.g    | albedo.b    | metallic
-// Normal Map | RGBA_16F  | normalMap.r | normalMap.g | normalMap.b | ambient occlusion
-// Depth      | DEPTH_24F | depth       | NONE        | NONE        | NONE
+// Buffer     | Type      | R        | G         | B        | A
+// Normal     | RG_16F    | normal.x | normal.y  | NONE     | NONE
+// Albedo     | RGB_8U    | albedo.r | albedo.g  | albedo.b | NONE
+// Material   | RGB_8U    | ao       | roughness | metallic | NONE
+// Depth      | DEPTH_24F | depth    | NONE      | NONE     | NONE
 
 GBuffer::GBuffer()
 	: buffer(std::make_shared<FrameBuffer>())
@@ -28,10 +24,10 @@ GBuffer::GBuffer()
 		GL_NEAREST,
 		GL_NEAREST,
 		GL_CLAMP_TO_EDGE,
-		GL_RGBA16F,
-		GL_RGBA,
+		GL_RG16F,
+		GL_RG,
 		GL_FLOAT,
-		GL_COLOR_ATTACHMENT1
+		GL_COLOR_ATTACHMENT0
 	};
 
 	// Albedo attachment
@@ -40,22 +36,22 @@ GBuffer::GBuffer()
 		GL_NEAREST,
 		GL_NEAREST,
 		GL_CLAMP_TO_EDGE,
-		GL_RGBA16F,
-		GL_RGBA,
-		GL_FLOAT,
-		GL_COLOR_ATTACHMENT2
+		GL_RGB8,
+		GL_RGB,
+		GL_UNSIGNED_BYTE,
+		GL_COLOR_ATTACHMENT1
 	};
 
-	// Normal map attachment
-	Renderer::FBOAttachment normalMap =
+	// Material attachment
+	Renderer::FBOAttachment material =
 	{
 		GL_NEAREST,
 		GL_NEAREST,
 		GL_CLAMP_TO_EDGE,
-		GL_RGBA16F,
-		GL_RGBA,
-		GL_FLOAT,
-		GL_COLOR_ATTACHMENT3
+		GL_RGB8,
+		GL_RGB,
+		GL_UNSIGNED_BYTE,
+		GL_COLOR_ATTACHMENT2
 	};
 
 	// Depth attachment
@@ -75,7 +71,7 @@ GBuffer::GBuffer()
 	{
 		normal.slot,
 		albedo.slot,
-		normalMap.slot
+		material.slot
 	};
 
 	// Set buffer width and height
@@ -87,7 +83,7 @@ GBuffer::GBuffer()
 	buffer->Bind();
 	buffer->AddTexture(buffer->colorTextures[0], normal);
 	buffer->AddTexture(buffer->colorTextures[1], albedo);
-	buffer->AddTexture(buffer->colorTextures[2], normalMap);
+	buffer->AddTexture(buffer->colorTextures[2], material);
 	buffer->AddTexture(buffer->depthTexture,     depth);
 	buffer->SetDrawBuffers(drawBuffers);
 	buffer->CheckStatus();

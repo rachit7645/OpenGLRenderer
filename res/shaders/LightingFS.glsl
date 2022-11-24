@@ -1,6 +1,7 @@
 #version 430 core
 
 // TODO: Add spot lights
+// TODO: Make attenuation more physically correct
 
 // Constants
 const float PI                 = 3.14159265359;
@@ -33,7 +34,6 @@ struct GBuffer
 	vec3  fragPos;
 	vec3  normal;
 	vec3  albedo;
-	vec3  normalMap;
 	float metallic;
 	float roughness;
 	float ao;
@@ -95,7 +95,7 @@ in flat mat4 invView;
 // Samplers
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
-uniform sampler2D gNormalMap;
+uniform sampler2D gMaterial;
 uniform sampler2D gDepth;
 uniform sampler2D brdfLUT;
 // Array samplers
@@ -121,8 +121,8 @@ vec4 WhenEqual(vec4 x, vec4 y);
 // Light functions
 vec3 CalculateLight(SharedData sharedData, GBuffer gBuffer, LightInfo lightInfo);
 vec3 CalculateAmbient(SharedData sharedData, GBuffer gBuffer);
-vec3 GetNormalFromMap(GBuffer gBuffer);
 vec3 ReconstructPosition();
+vec3 UnpackNormal(vec2 normal);
 
 // PBR Functions
 float DistributionGGX(vec3 N, vec3 H, float roughness);
@@ -184,20 +184,19 @@ GBuffer GetGBufferData()
 {
 	GBuffer gBuffer;
 	// Retrieve data from G-buffer
-	vec4 gNorm    = texture(gNormal,    txCoords);
-	vec4 gAlb     = texture(gAlbedo,    txCoords);
-	vec4 gNormMap = texture(gNormalMap, txCoords);
+	vec4 gNorm = texture(gNormal,   txCoords);
+	vec4 gAlb  = texture(gAlbedo,   txCoords);
+	vec4 gMat  = texture(gMaterial, txCoords);
 	// Reconstruct Position
 	gBuffer.fragPos = ReconstructPosition();
-	// Normal + Roughness
-	gBuffer.normal    = gNorm.rgb;
-	gBuffer.roughness = gNorm.a;
-	// Albedo + Metallic
-	gBuffer.albedo   = gAlb.rgb;
-	gBuffer.metallic = gAlb.a;
-	// Normal Map + Ambient Occlusion
-	gBuffer.normalMap = gNormMap.rgb;
-	gBuffer.ao        = gNorm.a;
+	// Normal
+	gBuffer.normal = UnpackNormal(gNorm.rg);
+	// Albedo
+	gBuffer.albedo = gAlb.rgb;
+	// AO + Roughness + Metallic
+	gBuffer.ao        = gMat.r;
+	gBuffer.roughness = gMat.g;
+	gBuffer.metallic  = gMat.b;
 	// Return
 	return gBuffer;
 }
@@ -206,7 +205,7 @@ SharedData GetSharedData(GBuffer gBuffer)
 {
 	SharedData sharedData;
 	// Normal
-	sharedData.N = GetNormalFromMap(gBuffer);
+	sharedData.N = gBuffer.normal;
 	// Camera vector
 	sharedData.V = normalize(cameraPos.xyz - gBuffer.fragPos);
 	// Reflection vector
@@ -250,27 +249,6 @@ LightInfo GetPointLightInfo(int index, GBuffer gBuffer)
 	return info;
 }
 
-vec3 GetNormalFromMap(GBuffer gBuffer)
-{
-	// Tangent normal from normal map
-	vec3 tangentNormal = gBuffer.normalMap * 2.0f - 1.0f;
-
-	// Take the deriviatives
-	vec3 Q1  = dFdx(gBuffer.fragPos);
-	vec3 Q2  = dFdy(gBuffer.fragPos);
-	vec2 st1 = dFdx(txCoords);
-	vec2 st2 = dFdy(txCoords);
-
-	// Calculate TBN matrix
-	vec3 N   = gBuffer.normal;
-	vec3 T   = normalize(Q1 * st2.t - Q2 * st1.t);
-	vec3 B   = -normalize(cross(N, T));
-	mat3 TBN = mat3(T, B, N);
-
-	// Return world space normal
-	return normalize(TBN * tangentNormal);
-}
-
 vec3 ReconstructPosition()
 {
 	// Get depth
@@ -283,6 +261,20 @@ vec3 ReconstructPosition()
 	vec3 worldPos = vec3(invView * vec4(viewPos, 1.0f));
 	// Return
 	return worldPos;
+}
+
+vec3 UnpackNormal(vec2 normal)
+{
+	// Convert back to [-1, 1]
+	vec2  fEnc = normal * 4.0f - 2.0f;
+	float f    = dot(fEnc, fEnc);
+	float g    = sqrt(1.0f - f / 4.0f);
+	// Store result
+	vec3 unpacked;
+	unpacked.xy = fEnc * g;
+	unpacked.z  = 1.0f - f / 2.0f;
+	// Return
+	return unpacked;
 }
 
 vec3 CalculateLight(SharedData sharedData, GBuffer gBuffer, LightInfo lightInfo)
@@ -400,7 +392,7 @@ int GetCurrentLayer(GBuffer gBuffer)
 float CalculateBias(int layer, vec3 lightDir, GBuffer gBuffer)
 {
 	// Using normal map's normal
-	float bias = max(MAX_BIAS * (1.0f - dot(gBuffer.normalMap, lightDir)), MIN_BIAS);
+	float bias = max(MAX_BIAS * (1.0f - dot(gBuffer.normal, lightDir)), MIN_BIAS);
 	// Select bias type
 	float selection = WhenEqual(vec4(layer), vec4(cascadeCount)).x;
 	selection       = clamp(selection, 0.0f, 1.0f);

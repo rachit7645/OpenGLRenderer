@@ -300,7 +300,7 @@ void RenderManager::RenderImGui()
 				m_currentFBO = m_gBuffer.buffer->colorTextures[1];
 			}
 
-			if (ImGui::Button("GNormalMap"))
+			if (ImGui::Button("GMaterial"))
 			{
 				m_currentFBO = m_gBuffer.buffer->colorTextures[2];
 			}
