@@ -1,7 +1,7 @@
 #version 430 core
 
 // TODO: Add spot lights
-// TODO: Make attenuation more physically correct
+// TDDO: Create a better system for attenuation
 
 // Constants
 const float PI                 = 3.14159265359;
@@ -20,12 +20,14 @@ struct DirLight
 {
 	vec4 position;
 	vec4 color;
+	vec4 intensity;
 };
 
 struct PointLight
 {
 	vec4 position;
 	vec4 color;
+	vec4 intensity;
 	vec4 attenuation;
 };
 
@@ -52,6 +54,7 @@ struct LightInfo
 	vec3  position;
 	vec3  color;
 	vec3  distance;
+	vec3  intensity;
 	float attenuation;
 };
 
@@ -216,39 +219,6 @@ SharedData GetSharedData(GBuffer gBuffer)
 	return sharedData;
 }
 
-LightInfo GetDirLightInfo(int index)
-{
-	LightInfo info;
-	// Position
-	info.position = dirLights[index].position.xyz;
-	// Color
-	info.color = dirLights[index].color.rgb;
-	// Distance
-	info.distance = -info.position;
-	// Attenuation
-	info.attenuation = 1.0f;
-	// Return
-	return info;
-}
-
-LightInfo GetPointLightInfo(int index, GBuffer gBuffer)
-{
-	LightInfo info;
-	// Position
-	info.position = pointLights[index].position.xyz;
-	// Color
-	info.color = pointLights[index].color.rgb;
-	// Distance
-	info.distance = info.position - gBuffer.fragPos;
-	// Attenuation
-	float distance   = length(info.distance);
-	vec3 ATT         = pointLights[index].attenuation.xyz;
-	info.attenuation = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
-	info.attenuation = 1.0f / info.attenuation;
-	// Return
-	return info;
-}
-
 vec3 ReconstructPosition()
 {
 	// Get depth
@@ -277,12 +247,48 @@ vec3 UnpackNormal(vec2 normal)
 	return unpacked;
 }
 
+LightInfo GetDirLightInfo(int index)
+{
+	LightInfo info;
+	// Position
+	info.position = dirLights[index].position.xyz;
+	// Color
+	info.color = dirLights[index].color.rgb;
+	// Distance
+	info.distance = -info.position;
+	// Intensity
+	info.intensity = dirLights[index].intensity.xyz;
+	// Attenuation
+	float distance   = max(length(info.distance), 0.0001f);
+	info.attenuation = 1.0f / (distance * distance);
+	// Return
+	return info;
+}
+
+LightInfo GetPointLightInfo(int index, GBuffer gBuffer)
+{
+	LightInfo info;
+	// Position
+	info.position = pointLights[index].position.xyz;
+	// Color
+	info.color = pointLights[index].color.rgb;
+	// Distance
+	info.distance = info.position - gBuffer.fragPos;
+	// Intensity
+	info.intensity = pointLights[index].intensity.xyz;
+	// Attenuation
+	float distance   = max(length(info.distance), 0.0001f);
+	info.attenuation = 1.0f / (distance * distance);
+	// Return
+	return info;
+}
+
 vec3 CalculateLight(SharedData sharedData, GBuffer gBuffer, LightInfo lightInfo)
 {
 	// Irradiance
 	vec3 L        = normalize(lightInfo.distance);
 	vec3 H        = normalize(sharedData.V + L);
-	vec3 radiance = lightInfo.color * lightInfo.attenuation;
+	vec3 radiance = lightInfo.color * lightInfo.intensity * lightInfo.attenuation;
 
 	// Cook-Torrance BRDF
 	float NDF = DistributionGGX(sharedData.N, H, gBuffer.roughness);

@@ -87,7 +87,8 @@ void SDLWindow::MainLoop()
 		dirLights.emplace_back
 		(
 			glm::vec3(0.1f, 1.0f, 0.1f),
-			glm::vec3(0.2f, 0.2f, 0.2f)
+			glm::vec3(0.3f, 0.3f, 0.3f),
+			glm::vec3(1.0f, 1.0f, 1.0f)
 		);
 	}
 
@@ -98,6 +99,7 @@ void SDLWindow::MainLoop()
 		(
 			glm::vec3(40.0f, 4.0f, -40.0f),
 			glm::vec3(0.0f, 5.0f, 4.0f),
+			glm::vec3(1.0f, 20.0f, 20.0f),
 			glm::vec3(1.0f, 0.022f, 0.0019f)
 		);
 	}

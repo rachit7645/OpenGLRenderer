@@ -3,10 +3,10 @@
 const float PI           = 3.14159265359;
 const uint  SAMPLE_COUNT = 1024u;
 
-in      vec3  worldPos;
-in flat float saTexel;
+in vec3 worldPos;
 
 uniform samplerCube envMap;
+uniform vec2        resolution;
 uniform float       roughness;
 
 out vec4 outColor;
@@ -50,6 +50,7 @@ void main()
 			float pdf   = D * NdotH / (4.0f * HdotV) + 0.0001f;
 
 			float saSample = 1.0f / (float(SAMPLE_COUNT) * pdf + 0.0001f);
+			float saTexel  = 4.0f * PI / (6.0f * resolution.x * resolution.y);
 			float mipLevel = roughness == 0.0f ? 0.0f : 0.5f * log2(saSample / saTexel);
 
 			prefilteredColor += textureLod(envMap, L, mipLevel).rgb * NdotL;

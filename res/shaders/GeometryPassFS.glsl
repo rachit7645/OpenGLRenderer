@@ -12,7 +12,7 @@ in vec3 unitNormal;
 
 uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
-uniform sampler2D aoMtlRgh;
+uniform sampler2D aoRghMtl;
 
 vec3 GetNormalFromMap(vec3 normal);
 vec2 PackNormal(vec3 normal);
@@ -22,13 +22,13 @@ void main()
 	// Retrieve data
 	vec4 gAlb      = texture(albedoMap, txCoords);
 	vec4 gNorm     = texture(normalMap, txCoords);
-	vec4 gAoMtlRgh = texture(aoMtlRgh,  txCoords);
+	vec4 gAoRghMtl = texture(aoRghMtl,  txCoords);
 	// Normal
 	gNormal.rg = PackNormal(GetNormalFromMap(gNorm.rgb));
 	// Albedo
 	gAlbedo = pow(gAlb.rgb, vec3(GAMMA_FACTOR));
 	// AO + Roughness + Metallic
-	gMaterial = gAoMtlRgh.rgb;
+	gMaterial = gAoRghMtl.rgb;
 }
 
 vec3 GetNormalFromMap(vec3 normal)

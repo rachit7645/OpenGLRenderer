@@ -124,12 +124,12 @@ MeshTextures Model::ProcessTextures
 		textures.normal = Resources::GetTexture(directory + path.C_Str());
 	}
 
-	// AO + Metallic + Roughness (GLTF is weird)
+	// AO + Roughness + Metallic (GLTF is weird)
 	path.Clear();
 	mat->GetTexture(AI_MATKEY_ROUGHNESS_TEXTURE, &path);
 	if (path.length > 0)
 	{
-		textures.aoMtlRgh = Resources::GetTexture(directory + path.C_Str());
+		textures.aoRghMtl = Resources::GetTexture(directory + path.C_Str());
 	}
 
 	return textures;

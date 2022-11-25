@@ -4,9 +4,7 @@ const vec3  N            = vec3(0.0f, 0.0f, 1.0f);
 const float PI           = 3.14159265359;
 const uint  SAMPLE_COUNT = 1024u;
 
-in      vec2 txCoords;
-in flat vec3 tangent;
-in flat vec3 bitangent;
+in vec2 txCoords;
 
 out vec2 outColor;
 
@@ -24,6 +22,12 @@ void main()
 
 vec2 IntegrateBRDF(float NdotV, float roughness)
 {
+	// Tangent to World Space Conversion
+	vec3 up        = abs(N.z) < 0.999f ? vec3(0.0f, 0.0f, 1.0f) : vec3(1.0f, 0.0f, 0.0f);
+	vec3 tangent   = normalize(cross(up, N));
+	vec3 bitangent = cross(N, tangent);
+
+	// Get view direction
 	vec3 V = vec3
 	(
 		sqrt(1.0f - NdotV * NdotV),
