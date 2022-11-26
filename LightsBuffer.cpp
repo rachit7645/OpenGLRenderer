@@ -6,8 +6,9 @@
 
 using namespace Renderer;
 
-using Entities::PointLight;
 using Entities::DirectionalLight;
+using Entities::PointLight;
+using Entities::SpotLight;
 using Detail::LightsBufferGLSL;
 
 LightsBuffer::LightsBuffer()
@@ -32,8 +33,8 @@ LightsBuffer::LightsBuffer()
 void LightsBuffer::LoadDirectionalLights(const std::vector<DirectionalLight>& lights)
 {
 	// Data
-	usize   size           = std::min(lights.size(), SHADER_MAX_LIGHTS);
-	GL::Int numDirLights   = {static_cast<GLint>(size)};
+	usize   size         = std::min(lights.size(), SHADER_MAX_LIGHTS);
+	GL::Int numDirLights = {static_cast<GLint>(size)};
 
 	// Bind buffer
 	glBindBuffer(GL_UNIFORM_BUFFER, id);
@@ -48,16 +49,13 @@ void LightsBuffer::LoadDirectionalLights(const std::vector<DirectionalLight>& li
 	);
 
 	// Load lights
-	for (usize i = 0; i < size; ++i)
-	{
-		glBufferSubData
-		(
-			GL_UNIFORM_BUFFER,
-			static_cast<GLintptr>(offsetof(LightsBufferGLSL, dirLights) + sizeof(DirectionalLight) * i),
-			static_cast<GLsizeiptr>(sizeof(DirectionalLight)),
-			reinterpret_cast<const void*>(&lights[i])
-		);
-	}
+	glBufferSubData
+	(
+		GL_UNIFORM_BUFFER,
+		static_cast<GLintptr>(offsetof(LightsBufferGLSL, dirLights)),
+		static_cast<GLsizeiptr>(sizeof(DirectionalLight) * size),
+		reinterpret_cast<const void*>(&lights[0])
+	);
 
 	// Unbind buffer
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -82,16 +80,44 @@ void LightsBuffer::LoadPointLights(const std::vector<PointLight>& lights)
 	);
 
 	// Load lights
-	for (usize i = 0; i < size; ++i)
-	{
-		glBufferSubData
-		(
-			GL_UNIFORM_BUFFER,
-			static_cast<GLintptr>(offsetof(LightsBufferGLSL, pointLights) + sizeof(PointLight) * i),
-			static_cast<GLsizeiptr>(sizeof(PointLight)),
-			reinterpret_cast<const void*>(&lights[i])
-		);
-	}
+	glBufferSubData
+	(
+		GL_UNIFORM_BUFFER,
+		static_cast<GLintptr>(offsetof(LightsBufferGLSL, pointLights)),
+		static_cast<GLsizeiptr>(sizeof(PointLight) * size),
+		reinterpret_cast<const void*>(&lights[0])
+	);
+
+	// Unbind buffer
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void LightsBuffer::LoadSpotLights(const std::vector<SpotLight>& lights)
+{
+	// Data
+	usize   size          = std::min(lights.size(), SHADER_MAX_LIGHTS);
+	GL::Int numSpotLights = {static_cast<GLint>(size)};
+
+	// Bind buffer
+	glBindBuffer(GL_UNIFORM_BUFFER, id);
+
+	// Load number of lights
+	glBufferSubData
+	(
+		GL_UNIFORM_BUFFER,
+		static_cast<GLintptr>(offsetof(LightsBufferGLSL, numSpotLights)),
+		static_cast<GLsizeiptr>(sizeof(GL::Int)),
+		reinterpret_cast<const void*>(&numSpotLights)
+	);
+
+	// Load lights
+	glBufferSubData
+	(
+		GL_UNIFORM_BUFFER,
+		static_cast<GLintptr>(offsetof(LightsBufferGLSL, spotLights)),
+		static_cast<GLsizeiptr>(sizeof(SpotLight) * size),
+		reinterpret_cast<const void*>(&lights[0])
+	);
 
 	// Unbind buffer
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);

@@ -6,13 +6,6 @@
 #include "Log.h"
 #include "Util.h"
 
-// Enable dedicated GPUs
-extern "C"
-{
-	UNUSED EXPORT int NvOptimusEnablement                  = 1;
-	UNUSED EXPORT int AmdPowerXpressRequestHighPerformance = 1;
-}
-
 void GL::CheckErrors
 (
 	GLenum source,

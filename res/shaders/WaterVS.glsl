@@ -18,6 +18,16 @@ struct PointLight
 	vec4 attenuation;
 };
 
+struct SpotLight
+{
+	vec4 position;
+	vec4 color;
+	vec4 intensity;
+	vec4 attenuation;
+	vec4 direction;
+	vec4 cutOff;
+};
+
 layout(std140, binding = 0) uniform Matrices
 {
 	mat4 projectionMatrix;
@@ -32,6 +42,9 @@ layout(std140, binding = 1) uniform Lights
 	// Point lights
 	int        numPointLights;
 	PointLight pointLights[MAX_LIGHTS];
+	// Spot Lights
+	int numSpotLights;
+	SpotLight spotLights[MAX_LIGHTS];
 };
 
 layout(std140, binding = 2) uniform Shared

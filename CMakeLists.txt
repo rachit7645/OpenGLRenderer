@@ -88,6 +88,7 @@ add_executable(engine
 	PreFilterShader.cpp
 	BRDFShader.cpp
 	DirectionalLight.cpp
+	SpotLight.cpp
 )
 
 # Precompiled Headers

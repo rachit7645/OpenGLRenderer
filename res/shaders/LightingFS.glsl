@@ -1,8 +1,5 @@
 #version 430 core
 
-// TODO: Add spot lights
-// TDDO: Create a better system for attenuation
-
 // Constants
 const float PI                 = 3.14159265359;
 const int   MAX_LIGHTS         = 4;
@@ -31,6 +28,16 @@ struct PointLight
 	vec4 attenuation;
 };
 
+struct SpotLight
+{
+	vec4 position;
+	vec4 color;
+	vec4 intensity;
+	vec4 attenuation;
+	vec4 direction;
+	vec4 cutOff;
+};
+
 struct GBuffer
 {
 	vec3  fragPos;
@@ -56,6 +63,7 @@ struct LightInfo
 	vec3  distance;
 	vec3  intensity;
 	float attenuation;
+	float spotIntensity;
 };
 
 // UBOs and SSBOs
@@ -74,6 +82,9 @@ layout(std140, binding = 1) uniform Lights
 	// Point lights
 	int        numPointLights;
 	PointLight pointLights[MAX_LIGHTS];
+	// Spot Lights
+	int numSpotLights;
+	SpotLight spotLights[MAX_LIGHTS];
 };
 
 layout(std140, binding = 2) uniform Shared
@@ -115,6 +126,7 @@ GBuffer    GetGBufferData();
 SharedData GetSharedData(GBuffer gBuffer);
 LightInfo  GetDirLightInfo(int index);
 LightInfo  GetPointLightInfo(int index, GBuffer gBuffer);
+LightInfo  GetSpotLightInfo(int index, GBuffer gBuffer);
 
 // Branchless functions
 vec4 WhenGreater(vec4 x, vec4 y);
@@ -162,6 +174,15 @@ void main()
 	{
 		// Calculate light data
 		LightInfo info = GetPointLightInfo(i, gBuffer);
+		// Calculate lighting
+		Lo += CalculateLight(sharedData, gBuffer, info);
+	}
+
+	// Calculate spot lights
+	for (int i = 0; i < numSpotLights; ++i)
+	{
+		// Calculate light data
+		LightInfo info = GetSpotLightInfo(i, gBuffer);
 		// Calculate lighting
 		Lo += CalculateLight(sharedData, gBuffer, info);
 	}
@@ -261,6 +282,8 @@ LightInfo GetDirLightInfo(int index)
 	// Attenuation
 	float distance   = max(length(info.distance), 0.0001f);
 	info.attenuation = 1.0f / (distance * distance);
+	// Spot Intensity
+	info.spotIntensity = 1.0f;
 	// Return
 	return info;
 }
@@ -277,8 +300,36 @@ LightInfo GetPointLightInfo(int index, GBuffer gBuffer)
 	// Intensity
 	info.intensity = pointLights[index].intensity.xyz;
 	// Attenuation
-	float distance   = max(length(info.distance), 0.0001f);
-	info.attenuation = 1.0f / (distance * distance);
+	vec3  ATT        = pointLights[index].attenuation.xyz;
+	float distance   = length(info.distance);
+	info.attenuation = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
+	info.attenuation = 1.0f / info.attenuation;
+	// Spot Intensity
+	info.spotIntensity = 1.0f;
+	// Return
+	return info;
+}
+
+LightInfo GetSpotLightInfo(int index, GBuffer gBuffer)
+{
+	LightInfo info;
+	// Position
+	info.position = spotLights[index].position.xyz;
+	// Color
+	info.color = spotLights[index].color.rgb;
+	// Distance
+	info.distance = info.position - gBuffer.fragPos;
+	// Intensity
+	info.intensity = spotLights[index].intensity.xyz;
+	// Attenuation
+	vec3  ATT        = spotLights[index].attenuation.xyz;
+	float distance   = length(info.distance);
+	info.attenuation = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
+	info.attenuation = 1.0f / info.attenuation;
+	// Spot Intensity
+	float theta        = dot(normalize(info.distance), normalize(-spotLights[index].direction.xyz));
+	float epsilon      = spotLights[index].cutOff.x - spotLights[index].cutOff.y;
+	info.spotIntensity = smoothstep(0.0f, 1.0f, (theta - spotLights[index].cutOff.y) / epsilon);
 	// Return
 	return info;
 }
@@ -288,7 +339,7 @@ vec3 CalculateLight(SharedData sharedData, GBuffer gBuffer, LightInfo lightInfo)
 	// Irradiance
 	vec3 L        = normalize(lightInfo.distance);
 	vec3 H        = normalize(sharedData.V + L);
-	vec3 radiance = lightInfo.color * lightInfo.intensity * lightInfo.attenuation;
+	vec3 radiance = lightInfo.color * lightInfo.intensity * lightInfo.attenuation * lightInfo.spotIntensity;
 
 	// Cook-Torrance BRDF
 	float NDF = DistributionGGX(sharedData.N, H, gBuffer.roughness);

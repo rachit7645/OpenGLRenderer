@@ -12,8 +12,9 @@
 #include "WaterTile.h"
 #include "RenderManager.h"
 #include "Camera.h"
-#include "PointLight.h"
 #include "DirectionalLight.h"
+#include "PointLight.h"
+#include "SpotLight.h"
 
 // Using namespaces
 using namespace Window;
@@ -33,11 +34,12 @@ using Entities::Entity;
 using Entities::Skybox;
 using Entities::DirectionalLight;
 using Entities::PointLight;
+using Entities::SpotLight;
 using Entities::Camera;
 using Waters::WaterTile;
 
 // TODO: Move MainLoop to separate class, move data to said class
-// TODO: Live editing of entities, etc. with ImGui
+// TODO: Live editing of lights, entities, etc. with ImGui
 
 void SDLWindow::MainLoop()
 {
@@ -94,13 +96,25 @@ void SDLWindow::MainLoop()
 
 	std::vector<PointLight> pointLights;
 	{
-		// Other lights
 		pointLights.emplace_back
 		(
 			glm::vec3(40.0f, 4.0f, -40.0f),
-			glm::vec3(0.0f, 5.0f, 4.0f),
-			glm::vec3(1.0f, 20.0f, 20.0f),
+			glm::vec3(0.0f, 1.0f, 1.0f),
+			glm::vec3(1.0f, 7.0f, 5.0f),
 			glm::vec3(1.0f, 0.022f, 0.0019f)
+		);
+	}
+
+	std::vector<SpotLight> spotLights;
+	{
+		spotLights.emplace_back
+		(
+			glm::vec3(-40.0f, 4.0f, 40.0f),
+			glm::vec3(1.0f, 0.0f, 0.0f),
+			glm::vec3(10.0f, 1.0f, 1.0f),
+			glm::vec3(1.0f, 0.007f, 0.0002f),
+			glm::vec3(0.0f, 0.0f, -0.8f),
+			glm::vec2(10.0f, 25.0f)
 		);
 	}
 
@@ -136,7 +150,7 @@ void SDLWindow::MainLoop()
 		camera.Move();
 
 		// Begin render
-		renderer.BeginFrame(entities, dirLights, pointLights, player);
+		renderer.BeginFrame(entities, dirLights, pointLights, spotLights, player);
 		// Draw shadow framebuffer
 		renderer.RenderShadows(camera, dirLights[0].position);
 		// Draw water framebuffers
@@ -198,8 +212,6 @@ void SDLWindow::ImGuiDisplay()
 			ImGui::Checkbox("Wireframe", &wireframe);
 			ImGui::EndMenu();
 		}
-
-		// TODO: Add back lights editor
 
 		ImGui::EndMainMenuBar();
 	}

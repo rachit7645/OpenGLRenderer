@@ -65,6 +65,7 @@ void RenderManager::BeginFrame
 	EntityVec& entities,
 	const DirLights& dirLights,
 	const PointLights& pointLights,
+	const SpotLights& spotLights,
 	Player& player
 )
 {
@@ -75,6 +76,8 @@ void RenderManager::BeginFrame
 	m_lights->LoadDirectionalLights(dirLights);
 	// Load point lights
 	m_lights->LoadPointLights(pointLights);
+	// Load spot lights
+	m_lights->LoadSpotLights(spotLights);
 }
 
 void RenderManager::EndFrame()
@@ -212,7 +215,7 @@ void RenderManager::ProcessEntity(Entity& entity)
 	}
 	else
 	{
-		m_entities[entity.model] = { &entity };
+		m_entities[entity.model] = {&entity};
 	}
 }
 

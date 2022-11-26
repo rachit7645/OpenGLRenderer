@@ -43,7 +43,7 @@ SDLWindow::SDLWindow()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
-	// RGBA8888 + Depth24 Framebuffer
+	// RGBA8 + Depth24 Framebuffer
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE,   8);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,  8);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);

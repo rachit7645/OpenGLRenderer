@@ -17,6 +17,16 @@ struct PointLight
 	vec4 attenuation;
 };
 
+struct SpotLight
+{
+	vec4 position;
+	vec4 color;
+	vec4 intensity;
+	vec4 attenuation;
+	vec4 direction;
+	vec4 cutOff;
+};
+
 struct Instance
 {
 	mat4 modelMatrix;
@@ -36,6 +46,9 @@ layout(std140, binding = 1) uniform Lights
 	// Point lights
 	int        numPointLights;
 	PointLight pointLights[MAX_LIGHTS];
+	// Spot Lights
+	int numSpotLights;
+	SpotLight spotLights[MAX_LIGHTS];
 };
 
 layout(std140, binding = 2) uniform Shared
@@ -56,9 +69,12 @@ layout(location = 2) in vec3 normal;
 
 out vec2 txCoords;
 out vec3 unitNormal;
+out vec4 worldPosition;
+
 out vec3 unitDirLightVector[MAX_LIGHTS];
 out vec3 unitPointLightVector[MAX_LIGHTS];
-out vec4 worldPosition;
+out vec3 unitSpotLightVector[MAX_LIGHTS];
+out vec3 unitSpotLightDirVector[MAX_LIGHTS];
 
 void main()
 {
@@ -78,5 +94,11 @@ void main()
 	for (int i = 0; i < numPointLights; ++i)
 	{
 		unitPointLightVector[i] = normalize(pointLights[i].position.xyz - worldPosition.xyz);
+	}
+
+	for (int i = 0; i < numSpotLights; ++i)
+	{
+		unitSpotLightVector[i]    = normalize(spotLights[i].position.xyz - worldPosition.xyz);
+		unitSpotLightDirVector[i] = normalize(-spotLights[i].direction.xyz);
 	}
 }

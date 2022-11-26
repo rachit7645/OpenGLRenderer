@@ -33,6 +33,8 @@
 #include "LightingRenderer.h"
 #include "InstanceBuffer.h"
 #include "DirectionalLight.h"
+#include "PointLight.h"
+#include "SpotLight.h"
 
 namespace Renderer
 {
@@ -43,6 +45,7 @@ namespace Renderer
 		using EntityVec   = std::vector<Entities::Entity>;
 		using DirLights   = std::vector<Entities::DirectionalLight>;
 		using PointLights = std::vector<Entities::PointLight>;
+		using SpotLights  = std::vector<Entities::SpotLight>;
 		using WaterTiles  = std::vector<Waters::WaterTile>;
 		using GUIs        = std::vector<Renderer::GUI>;
 		using EntityPtrs  = std::vector<Entities::Entity*>;
@@ -104,6 +107,7 @@ namespace Renderer
 			EntityVec& entities,
 			const DirLights& dirLights,
 			const PointLights& pointLights,
+			const SpotLights& spotLights,
 			Entities::Player& player
 		);
 		// Finish frame
