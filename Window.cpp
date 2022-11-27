@@ -50,7 +50,7 @@ SDLWindow::SDLWindow()
 	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-	window = SDL_CreateWindow
+	m_window = SDL_CreateWindow
 	(
 		"Rachit's Engine",
 		SDL_WINDOWPOS_UNDEFINED,
@@ -60,30 +60,30 @@ SDLWindow::SDLWindow()
 		SDL_WINDOW_FLAGS
 	);
 
-	if (window == nullptr)
+	if (m_window == nullptr)
 	{
 		LOG_ERROR("SDL_CreateWindow Failed\n{}\n", SDL_GetError());
 	}
-	LOG_INFO("Created SDL_Window with address: {}\n", reinterpret_cast<void*>(window));
+	LOG_INFO("Created SDL_Window with address: {}\n", reinterpret_cast<void*>(m_window));
 	
 	// For sanity, raise window
-	SDL_RaiseWindow(window);
+	SDL_RaiseWindow(m_window);
 	SDL_ShowCursor(SDL_FALSE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 
 	// Basically useless GLContext
 	// You don't get more than GL 1.1 for compatibility reasons (Windows YOU SUCK)
-	glContext = SDL_GL_CreateContext(window);
-	if (glContext == nullptr)
+	m_glContext = SDL_GL_CreateContext(m_window);
+	if (m_glContext == nullptr)
 	{
 		LOG_ERROR("SDL_GL_CreateContext Failed\n{}\n", SDL_GetError());
 	}
 
-	if (SDL_GL_MakeCurrent(window, glContext) != 0)
+	if (SDL_GL_MakeCurrent(m_window, m_glContext) != 0)
 	{
 		LOG_ERROR("SDL_GL_MakeCurrent Failed\n{}\n", SDL_GetError());
 	}
-	LOG_INFO("Created SDL_GLContext with address: {}\n", reinterpret_cast<void*>(&glContext));
+	LOG_INFO("Created SDL_GLContext with address: {}\n", reinterpret_cast<void*>(&m_glContext));
 
 	// Initialize the REAL OpenGL context
 	auto glewVersion = reinterpret_cast<const char*>(glewGetString(GLEW_VERSION));
@@ -102,7 +102,7 @@ SDLWindow::SDLWindow()
 	UNUSED ImGuiIO& io = ImGui::GetIO();
 	ImGui::StyleColorsDark();
 
-	ImGui_ImplSDL2_InitForOpenGL(window, glContext);
+	ImGui_ImplSDL2_InitForOpenGL(m_window, m_glContext);
 	ImGui_ImplOpenGL3_Init("#version 430 core");
 
 	Files::SetResourceDirectory("../res/");
@@ -113,28 +113,28 @@ SDLWindow::SDLWindow()
 
 bool SDLWindow::PollEvents()
 {
-	while (SDL_PollEvent(&event))
+	while (SDL_PollEvent(&m_event))
 	{
-		ImGui_ImplSDL2_ProcessEvent(&event);
+		ImGui_ImplSDL2_ProcessEvent(&m_event);
 
-		switch (event.type)
+		switch (m_event.type)
 		{
 		case SDL_QUIT:
 			return true;
 
 		case SDL_KEYDOWN:
-			switch (event.key.keysym.scancode)
+			switch (m_event.key.keysym.scancode)
 			{
 			case SDL_SCANCODE_F1:
-				if (isInputCaptured)
+				if (m_isInputCaptured)
 				{
 					SDL_SetRelativeMouseMode(SDL_FALSE);
-					isInputCaptured = !isInputCaptured;
+					m_isInputCaptured = !m_isInputCaptured;
 				}
 				else
 				{
 					SDL_SetRelativeMouseMode(SDL_TRUE);
-					isInputCaptured = !isInputCaptured;
+					m_isInputCaptured = !m_isInputCaptured;
 				}
 				break;
 			default:
@@ -143,12 +143,12 @@ bool SDLWindow::PollEvents()
 			break;
 
 		case SDL_MOUSEWHEEL:
-			Inputs::GetMouseScroll()  = glm::ivec2(event.wheel.x, event.wheel.y);
+			Inputs::GetMouseScroll()  = glm::ivec2(m_event.wheel.x, m_event.wheel.y);
 			Camera::GetToZoomCamera() = true;
 			break;
 
 		case SDL_MOUSEMOTION:
-			Inputs::GetMousePos()     = glm::ivec2(event.motion.xrel, event.motion.yrel);
+			Inputs::GetMousePos()     = glm::ivec2(m_event.motion.xrel, m_event.motion.yrel);
 			Camera::GetToMoveCamera() = true;
 			break;
 
@@ -169,7 +169,7 @@ SDLWindow::~SDLWindow()
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
 
-	SDL_GL_DeleteContext(glContext);
-	SDL_DestroyWindow(window);
+	SDL_GL_DeleteContext(m_glContext);
+	SDL_DestroyWindow(m_window);
 	SDL_Quit();
 }

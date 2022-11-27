@@ -1,7 +1,5 @@
 #include "Window.h"
 
-#include <vector>
-
 #include "Model.h"
 #include "Entity.h"
 #include "Player.h"
@@ -12,9 +10,6 @@
 #include "WaterTile.h"
 #include "RenderManager.h"
 #include "Camera.h"
-#include "DirectionalLight.h"
-#include "PointLight.h"
-#include "SpotLight.h"
 
 // Using namespaces
 using namespace Window;
@@ -39,11 +34,11 @@ using Entities::Camera;
 using Waters::WaterTile;
 
 // TODO: Move MainLoop to separate class, move data to said class
-// TODO: Live editing of lights, entities, etc. with ImGui
+// TODO: Live editing of entities, etc. with ImGui
 
 void SDLWindow::MainLoop()
 {
-	// Put Models and Textures here
+	// Default textures to use in case of missing textures
 	auto defaultTextures = MeshTextures
 	(
 		Resources::GetTexture("gfx/def.png"),
@@ -51,11 +46,13 @@ void SDLWindow::MainLoop()
 		Resources::GetTexture("gfx/def.png")
 	);
 
+	// Models
 	auto playerModel  = Resources::GetModel("gfx/Mario/Mario.gltf",     defaultTextures);
 	auto cottageModel = Resources::GetModel("gfx/Cottage/Cottage.gltf", defaultTextures);
 	auto benchModel   = Resources::GetModel("gfx/Bench/Bench.gltf",     defaultTextures);
+	auto boxModel     = Resources::GetModel("gfx/Box/scene.gltf", defaultTextures);
 
-	// All objects go here
+	// Entities
 	std::vector<Entity> entities;
 	{
 		entities.emplace_back
@@ -69,12 +66,21 @@ void SDLWindow::MainLoop()
 		entities.emplace_back
 		(
 			benchModel,
-			glm::vec3(44.0f, 0.0f, 40.0f),
+			glm::vec3(44.0f, 0.0f, -40.0f),
 			glm::vec3(0.0f, -90.0f, 0.0f),
 			5.0f
 		);
+
+		entities.emplace_back
+		(
+			boxModel,
+			glm::vec3(-44.0f, 3.6f, 45.0f),
+			glm::vec3(-90.0f, 0.0f, 0.0f),
+			2.0f
+		);
 	}
 
+	// Player
 	auto player = Entities::Player
 	(
 		playerModel,
@@ -83,6 +89,7 @@ void SDLWindow::MainLoop()
 		1.0f
 	);
 
+	// Directional lights
 	std::vector<DirectionalLight> dirLights;
 	{
 		// Sun
@@ -94,6 +101,7 @@ void SDLWindow::MainLoop()
 		);
 	}
 
+	// Point lights
 	std::vector<PointLight> pointLights;
 	{
 		pointLights.emplace_back
@@ -105,6 +113,7 @@ void SDLWindow::MainLoop()
 		);
 	}
 
+	// Spot lights
 	std::vector<SpotLight> spotLights;
 	{
 		spotLights.emplace_back
@@ -118,10 +127,12 @@ void SDLWindow::MainLoop()
 		);
 	}
 
+	// GUI (Currently unused)
 	std::vector<GUI> guis;
 	{
 	}
 
+	// Waters
 	std::vector<WaterTile> waters;
 	{
 		waters.emplace_back
@@ -132,20 +143,23 @@ void SDLWindow::MainLoop()
 		);
 	}
 
-	auto camera   = Entities::Camera(&player);
+	// Camera
+	auto camera = Entities::Camera(&player);
+	// Renderer
 	auto renderer = Renderer::RenderManager();
 
-	startTime = frameStartTime = chrono::steady_clock::now();
+	// Set start time
+	m_startTime = m_frameStartTime = chrono::steady_clock::now();
 
 	while (true)
 	{
-		// Prepare ImGUI
+		// Prepare ImGui
 		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplSDL2_NewFrame(window);
+		ImGui_ImplSDL2_NewFrame(m_window);
 		ImGui::NewFrame();
 
 		// Update
-		ImGuiDisplay();
+		ImGuiDisplay(dirLights, pointLights, spotLights);
 		player.Move();
 		camera.Move();
 
@@ -172,47 +186,152 @@ void SDLWindow::MainLoop()
 		// End render
 		renderer.EndFrame();
 
-		// ImGUI render pass
+		// ImGui render pass
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		SDL_GL_SwapWindow(window);
+		// Swap window
+		SDL_GL_SwapWindow(m_window);
+		// Calculate FPS
 		CalculateFPS();
 
+		// Poll events
 		if (PollEvents()) break;
 	}
 }
 
 void SDLWindow::CalculateFPS()
 {
-	endTime       = chrono::steady_clock::now();
-	auto duration = chrono::duration_cast<chrono::milliseconds>(endTime - frameStartTime);
-	g_Delta       = static_cast<f32>(static_cast<f64>(duration.count()) / 1000.0);
+	// Calculate end time
+	m_endTime = chrono::steady_clock::now();
+	// Calculate frame duration
+	auto duration = chrono::duration_cast<chrono::milliseconds>(m_endTime - m_frameStartTime);
+	// Calculate frame delta
+	g_Delta = static_cast<f32>(static_cast<f64>(duration.count()) / 1000.0);
+	// Set this/next frame's start time
+	m_frameStartTime = m_endTime;
 
-	frameStartTime = endTime;
-	if (endTime - startTime >= chrono::seconds(1))
+	// If a second has passed
+	if (m_endTime - m_startTime >= chrono::seconds(1))
 	{
-		startTime = endTime;
-		finalFPS  = FPS;
-		frameTime = static_cast<f32>(1000.0 / FPS);
-		FPS       = 0.0f;
+		// Set this cycle's start time
+		m_startTime = m_endTime;
+		// Update displayed FPS
+		m_finalFPS  = m_FPS;
+		// Calculate frame time
+		m_frameTime = static_cast<f32>(1000.0 / m_FPS);
+		// Reset FPS
+		m_FPS = 0.0f;
 	}
-	++FPS;
+
+	// Increment FPS
+	++m_FPS;
 }
 
-void SDLWindow::ImGuiDisplay()
+void SDLWindow::ImGuiDisplay
+(
+	std::vector<DirectionalLight>& dirLights,
+	std::vector<PointLight>& pointLights,
+	std::vector<SpotLight>& spotLights
+)
 {
+	// If menu bar is visible
 	if (ImGui::BeginMainMenuBar())
 	{
+		// If options menu is selected
 		if (ImGui::BeginMenu("Options"))
 		{
-			ImGui::Text("FPS: %.2f", finalFPS);
-			ImGui::Text("Frame time: %.2f ms", frameTime);
-			ImGui::Checkbox("Vsync", &vsync);
-			ImGui::Checkbox("Wireframe", &wireframe);
+			// Display m_FPS info
+			ImGui::Text("FPS: %.2f", m_finalFPS);
+			ImGui::Text("Frame time: %.2f ms", m_frameTime);
+			// Display options
+			ImGui::Checkbox("Vsync", &m_vsync);
+			ImGui::Checkbox("Wireframe", &m_wireframe);
+			// End menu
 			ImGui::EndMenu();
 		}
 
+		// If editor menu is selected
+		if (ImGui::BeginMenu("Editor"))
+		{
+			// If lights menu is selected
+			if (ImGui::BeginMenu("Lights"))
+			{
+				// Shared indices
+				constexpr std::array<const char*, 4> indices = {"[0]", "[1]", "[2]", "[3]"};
+
+				// If directional lights menu is selected
+				if (ImGui::BeginMenu("Directional"))
+				{
+					// Light selector
+					ImGui::Combo("Slot", &m_selectedDirLight, indices.data(), indices.size());
+					// Select light
+					auto& light = dirLights[m_selectedDirLight];
+					// Position
+					ImGui::InputFloat3("Position", &light.position[0], "%.1f");
+					// Color
+					ImGui::ColorEdit3("Color", &light.color[0]);
+					// Intensity
+					ImGui::DragFloat3("Intensity", &light.intensity[0], 0.5f, 0.0f, 100.0f, "%.1f");
+					// End menu
+					ImGui::EndMenu();
+				}
+
+				// If point lights menu is selected
+				if (ImGui::BeginMenu("Point"))
+				{
+					// Light selector
+					ImGui::Combo("Slot", &m_selectedPointLight, indices.data(), indices.size());
+					// Select light
+					auto& light = pointLights[m_selectedPointLight];
+					// Position
+					ImGui::InputFloat3("Position", &light.position[0], "%.1f");
+					// Color
+					ImGui::ColorEdit3("Color", &light.color[0]);
+					// Intensity
+					ImGui::DragFloat3("Intensity", &light.intensity[0], 0.5f, 0.0f, 100.0f, "%.1f");
+					// Attenuation
+					ImGui::InputFloat3("Attenuation", &light.attenuation[0], "%.4f");
+					// End menu
+					ImGui::EndMenu();
+				}
+
+				// If spot lights menu is selected
+				if (ImGui::BeginMenu("Spot"))
+				{
+					// Light selector
+					ImGui::Combo("Slot", &m_selectedSpotLight, indices.data(), indices.size());
+					// Select light
+					auto& light = spotLights[m_selectedSpotLight];
+					// Position
+					ImGui::InputFloat3("Position", &light.position[0], "%.1f");
+					// Color
+					ImGui::ColorEdit3("Color", &light.color[0]);
+					// Intensity
+					ImGui::DragFloat3("Intensity", &light.intensity[0], 0.5f, 0.0f, 100.0f, "%.1f");
+					// Attenuation
+					ImGui::InputFloat3("Attenuation", &light.attenuation[0], "%.4f");
+					// Direction
+					ImGui::InputFloat3("Direction", &light.direction[0], "%.1f");
+					// Get cut off in degrees
+					auto degCutOff = light.GetCutOff();
+					// Cut off
+					ImGui::DragFloat2("CutOff", &degCutOff[0], 0.5f, 0.0f, 180.0f, "%.1f");
+					// Set new cut off
+					light.SetCutOff(degCutOff);
+					// End menu
+					ImGui::EndMenu();
+				}
+
+				// End menu
+				ImGui::EndMenu();
+			}
+
+			// End menu
+			ImGui::EndMenu();
+		}
+
+		// End menu bar
 		ImGui::EndMainMenuBar();
 	}
 
@@ -221,18 +340,21 @@ void SDLWindow::ImGuiDisplay()
 
 void SDLWindow::ImGuiUpdate()
 {
-	GLenum selectedPolyMode = wireframe ? GL_LINE : GL_FILL;
-	s32    selectedSwapMode = vsync     ? -1      : 0;
+	// Calculate selections
+	GLenum selectedPolyMode = m_wireframe ? GL_LINE : GL_FILL;
+	s32    selectedSwapMode = m_vsync ? -1 : 0;
 
-	if (selectedPolyMode != currentPolyMode)
+	// Wireframe check
+	if (selectedPolyMode != m_currentPolyMode)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, selectedPolyMode);
-		currentPolyMode = selectedPolyMode;
+		m_currentPolyMode = selectedPolyMode;
 	}
 
-	if (selectedSwapMode != currentSwapMode)
+	// V-SYNC check
+	if (selectedSwapMode != m_currentSwapMode)
 	{
 		SDL_GL_SetSwapInterval(selectedSwapMode);
-		currentSwapMode = selectedSwapMode;
+		m_currentSwapMode = selectedSwapMode;
 	}
 }

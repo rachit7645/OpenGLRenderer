@@ -43,7 +43,7 @@ RenderManager::RenderManager()
 	  m_glRenderer(GL::GetString(GL_RENDERER)),
 	  m_glVersion(GL::GetString(GL_VERSION)),
 	  m_glslVersion(GL::GetString(GL_SHADING_LANGUAGE_VERSION)),
-	  isGPUMemoryInfo(glewGetExtension("GL_NVX_gpu_memory_info")),
+	  m_isGPUMemoryInfo(glewGetExtension("GL_NVX_gpu_memory_info")),
 	  totalMemory(static_cast<f32>(GL::GetIntegerv(GL_TOTAL_MEMORY)) / 1024.0f),
 	  m_currentFBO(m_waterFBOs.reflectionFBO->colorTextures[0])
 {
@@ -254,7 +254,6 @@ void RenderManager::RenderImGui()
 {
 	if (ImGui::BeginMainMenuBar())
 	{
-		// TODO: Move FPS to the same menu as gpu info
 		if (ImGui::BeginMenu("Renderer"))
 		{
 			// Display basic info
@@ -268,7 +267,7 @@ void RenderManager::RenderImGui()
 			);
 
 			// If available
-			if (isGPUMemoryInfo)
+			if (m_isGPUMemoryInfo)
 			{
 				// Calculate available memory (MB)
 				GLint available       = GL::GetIntegerv(GL_AVAILABLE_MEMORY);

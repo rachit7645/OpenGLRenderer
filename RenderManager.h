@@ -96,7 +96,7 @@ namespace Renderer
 		std::string m_glVersion;
 		std::string m_glslVersion;
 		// GPU Memory Info
-		bool isGPUMemoryInfo = false;
+		bool m_isGPUMemoryInfo = false;
 		f32  totalMemory     = 0.0f;
 		// Current framebuffer
 		TxPtr m_currentFBO;

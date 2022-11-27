@@ -1,11 +1,15 @@
 #ifndef SDL_WINDOW_H
 #define SDL_WINDOW_H
 
+#include <vector>
 #include <chrono>
 #include <SDL2/SDL.h>
 
 #include "GLM.h"
 #include "Util.h"
+#include "DirectionalLight.h"
+#include "PointLight.h"
+#include "SpotLight.h"
 
 namespace Window
 {
@@ -18,7 +22,7 @@ namespace Window
 		// Usings
 		using Clock     = std::chrono::steady_clock;
 		using TimePoint = std::chrono::time_point<Clock>;
-		// Creates a SDL window, gets an opengl context, and sets up GL values
+		// Creates a SDL m_window, gets an opengl context, and sets up GL values
 		SDLWindow();
 		// Free SDL memory resources
 		~SDLWindow();
@@ -26,38 +30,45 @@ namespace Window
 		void MainLoop();
 	private:
 		// Display ImGui Widgets
-		void ImGuiDisplay();
-		// Update options menu
+		void ImGuiDisplay
+		(
+			std::vector<Entities::DirectionalLight>& dirLights,
+			std::vector<Entities::PointLight>& pointLights,
+			std::vector<Entities::SpotLight>& spotLights
+		);
+		// Update menu
 		void ImGuiUpdate();
 		// Function to process SDL Events
 		bool PollEvents();
-		// Calculates the FPS and the frame delta
+		// Calculates the m_FPS and the frame delta
 		void CalculateFPS();
 
 		// Time variables
-		TimePoint startTime;
-		TimePoint frameStartTime;
-		TimePoint endTime;
+		TimePoint m_startTime      = {};
+		TimePoint m_frameStartTime = {};
+		TimePoint m_endTime        = {};
 
-		// FPS counters
-		f32 frameTime = 0.0f;
-		f32 FPS       = 0.0f;
-		f32 finalFPS  = 0.0f;
+		// m_FPS counters
+		f32 m_frameTime = 0.0f;
+		f32 m_FPS       = 0.0f;
+		f32 m_finalFPS  = 0.0f;
 
-		// Debug variables
-		bool wireframe       = false;
-		bool vsync           = true;
-		bool isInputCaptured = true;
+		// ImGui state
+		bool m_wireframe          = false;
+		bool m_vsync              = true;
+		bool m_isInputCaptured    = true;
+		s32  m_selectedDirLight   = 0;
+		s32  m_selectedPointLight = 0;
+		s32  m_selectedSpotLight  = 0;
 
-		// State
-		s32    currentLight    = 0;
-		GLenum currentPolyMode = GL_FILL;
-		s32    currentSwapMode = -1;
+		// Other state
+		GLenum m_currentPolyMode = GL_FILL;
+		s32    m_currentSwapMode = -1;
 
-		// SDL Resources
-		SDL_Window*   window     = nullptr;
-		SDL_GLContext glContext  = nullptr;
-		SDL_Event     event      = {};
+		// SDL resources
+		SDL_Window*   m_window    = nullptr;
+		SDL_GLContext m_glContext = nullptr;
+		SDL_Event     m_event     = {};
 	};
 
 }

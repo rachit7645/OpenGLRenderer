@@ -18,6 +18,9 @@ namespace Entities
 			const glm::vec3& direction,
 			const glm::vec2& cutOff
 		);
+		// Cut off functions
+		glm::vec2 GetCutOff();
+		void      SetCutOff(const glm::vec2& newCutOff);
 		// Data
 		alignas(16) glm::vec4 position    = {0.0f, 0.0f, 0.0f, 1.0f};
 		alignas(16) glm::vec4 color       = {0.0f, 0.0f, 0.0f, 1.0f};

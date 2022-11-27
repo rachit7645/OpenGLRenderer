@@ -83,7 +83,7 @@ layout(std140, binding = 1) uniform Lights
 	int        numPointLights;
 	PointLight pointLights[MAX_LIGHTS];
 	// Spot Lights
-	int numSpotLights;
+	int       numSpotLights;
 	SpotLight spotLights[MAX_LIGHTS];
 };
 
