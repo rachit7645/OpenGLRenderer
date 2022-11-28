@@ -2,10 +2,11 @@
 
 #include "Log.h"
 #include "Window.h"
+#include "Settings.h"
 
 using namespace Renderer;
 
-using Window::WINDOW_DIMENSIONS;
+using Engine::Settings;
 
 void FrameBuffer::CreateFrameBuffer()
 {
@@ -14,7 +15,7 @@ void FrameBuffer::CreateFrameBuffer()
 
 void FrameBuffer::AddTexture(TxPtr& texture, const FBOAttachment& attachment)
 {
-	texture = std::make_shared<Texture>();
+	texture         = std::make_shared<Texture>();
 	texture->width  = width;
 	texture->height = height;
 	texture->type   = GL_TEXTURE_2D;
@@ -186,8 +187,11 @@ void FrameBuffer::Bind() const
 
 void FrameBuffer::Unbind() const
 {
+	// Get settings
+	const auto& settings = Settings::GetInstance();
+	// Unbind
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, WINDOW_DIMENSIONS.x, WINDOW_DIMENSIONS.y);
+	glViewport(0, 0, settings.windowDimensions.x, settings.windowDimensions.y);
 }
 
 FrameBuffer::~FrameBuffer()

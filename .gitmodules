@@ -4,3 +4,6 @@
 [submodule "libs/imgui"]
 	path = libs/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "libs/simdjson"]
+	path = libs/simdjson
+	url = https://github.com/simdjson/simdjson.git

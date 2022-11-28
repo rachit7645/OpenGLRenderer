@@ -89,6 +89,7 @@ add_executable(engine
 	BRDFShader.cpp
 	DirectionalLight.cpp
 	SpotLight.cpp
+	Settings.cpp
 )
 
 # Precompiled Headers
@@ -117,7 +118,10 @@ target_precompile_headers(engine PRIVATE
 	<glm/mat4x4.hpp>
 	<glm/trigonometric.hpp>
 	<glm/ext/vector_int2.hpp>
+	<glm/ext/vector_int4.hpp>
 	<glm/gtc/matrix_transform.hpp>
+	# SIMD JSON Headers
+	libs/simdjson/singleheader/simdjson.h
 	# C++ STL Headers
 	<unordered_map>
 	<vector>
@@ -154,4 +158,4 @@ target_compile_options(engine PRIVATE -g)
 # Enable SSE2
 target_compile_options(engine PRIVATE -msse2)
 # Link libraries
-target_link_libraries(engine OpenGL::GL GLEW::GLEW SDL2::SDL2 fmt::fmt assimp imgui)
+target_link_libraries(engine SDL2::SDL2 OpenGL::GL GLEW::GLEW fmt::fmt assimp imgui simdjson)

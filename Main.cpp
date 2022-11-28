@@ -4,11 +4,12 @@
 #include "Window.h"
 #include "Util.h"
 
-// TODO: Add options parser (JSON?)
-
 int main(UNUSED int argc, UNUSED char** argv)
 {
-	// Create Window and start main loop
-	Window::SDLWindow().MainLoop();
+	// Create window
+	auto window = Engine::Window();
+	// Start main loop
+	window.MainLoop();
+	// Return
 	return 0;
 }

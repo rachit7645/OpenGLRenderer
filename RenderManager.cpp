@@ -6,16 +6,7 @@
 #include "Maths.h"
 #include "Window.h"
 #include "GL.h"
-
-// Utility defines
-
-#ifndef GL_AVAILABLE_MEMORY
-#define GL_AVAILABLE_MEMORY GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX
-#endif
-
-#ifndef GL_TOTAL_MEMORY
-#define GL_TOTAL_MEMORY GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX
-#endif
+#include "Settings.h"
 
 using namespace Renderer;
 
@@ -26,6 +17,7 @@ using Entities::Skybox;
 using Entities::Player;
 using Waters::WaterTile;
 using Waters::WaterFrameBuffers;
+using Engine::Settings;
 
 RenderManager::RenderManager()
 	: m_instances(std::make_shared<InstanceBuffer>()),
@@ -44,11 +36,14 @@ RenderManager::RenderManager()
 	  m_glVersion(GL::GetString(GL_VERSION)),
 	  m_glslVersion(GL::GetString(GL_SHADING_LANGUAGE_VERSION)),
 	  m_isGPUMemoryInfo(glewGetExtension("GL_NVX_gpu_memory_info")),
-	  totalMemory(static_cast<f32>(GL::GetIntegerv(GL_TOTAL_MEMORY)) / 1024.0f),
+	  totalMemory(static_cast<f32>(GL::GetIntegerv(GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX)) / 1024.0f),
 	  m_currentFBO(m_waterFBOs.reflectionFBO->colorTextures[0])
 {
+	// Get settings
+	const auto& settings = Settings::GetInstance();
+
 	m_matrices->LoadProjection(glm::perspective(glm::radians(FOV), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
-	m_shared->LoadResolution(Window::WINDOW_DIMENSIONS, NEAR_PLANE, FAR_PLANE);
+	m_shared->LoadResolution(settings.windowDimensions, NEAR_PLANE, FAR_PLANE);
 
 	// Dump shaders
 	m_fastInstancedShader.DumpToFile("dumps/FIS.s");
@@ -187,6 +182,8 @@ void RenderManager::RenderGUIs(const GUIs& guis)
 
 void RenderManager::CopyDepth()
 {
+	// Get settings
+	const auto& settings = Settings::GetInstance();
 	// Bind buffers
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_gBuffer.buffer->id);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -194,11 +191,11 @@ void RenderManager::CopyDepth()
 	glBlitFramebuffer
 	(
 		0, 0,
-		Window::WINDOW_DIMENSIONS.x,
-		Window::WINDOW_DIMENSIONS.y,
+		settings.windowDimensions.x,
+		settings.windowDimensions.y,
 		0, 0,
-		Window::WINDOW_DIMENSIONS.x,
-		Window::WINDOW_DIMENSIONS.y,
+		settings.windowDimensions.x,
+		settings.windowDimensions.y,
 		GL_DEPTH_BUFFER_BIT,
 		GL_NEAREST
 	);
@@ -270,7 +267,7 @@ void RenderManager::RenderImGui()
 			if (m_isGPUMemoryInfo)
 			{
 				// Calculate available memory (MB)
-				GLint available       = GL::GetIntegerv(GL_AVAILABLE_MEMORY);
+				GLint available       = GL::GetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX);
 				f32   availableMemory = static_cast<f32>(available) / 1024.0f;
 				// Display
 				ImGui::Text("Available | Total:\n%.2f MB | %.2f MB", availableMemory, totalMemory);

@@ -280,8 +280,7 @@ LightInfo GetDirLightInfo(int index)
 	// Intensity
 	info.intensity = dirLights[index].intensity.xyz;
 	// Attenuation
-	float distance   = max(length(info.distance), 0.0001f);
-	info.attenuation = 1.0f / (distance * distance);
+	info.attenuation = 1.0f;
 	// Spot Intensity
 	info.spotIntensity = 1.0f;
 	// Return

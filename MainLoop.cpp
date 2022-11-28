@@ -12,7 +12,7 @@
 #include "Camera.h"
 
 // Using namespaces
-using namespace Window;
+using namespace Engine;
 
 // Namespace aliases
 namespace chrono = std::chrono;
@@ -36,7 +36,7 @@ using Waters::WaterTile;
 // TODO: Move MainLoop to separate class, move data to said class
 // TODO: Live editing of entities, etc. with ImGui
 
-void SDLWindow::MainLoop()
+void Window::MainLoop()
 {
 	// Default textures to use in case of missing textures
 	auto defaultTextures = MeshTextures
@@ -74,7 +74,7 @@ void SDLWindow::MainLoop()
 		entities.emplace_back
 		(
 			boxModel,
-			glm::vec3(-44.0f, 3.6f, 45.0f),
+			glm::vec3(-44.0f, 3.6f, -45.0f),
 			glm::vec3(-90.0f, 0.0f, 0.0f),
 			2.0f
 		);
@@ -175,7 +175,7 @@ void SDLWindow::MainLoop()
 		// Deferred lighting pass
 		renderer.RenderLighting(camera);
 
-		// Copy depth from gBuffer
+		// Copy glDepth from gBuffer
 		renderer.CopyDepth();
 		// Render waters
 		renderer.RenderWaters(waters);
@@ -200,7 +200,7 @@ void SDLWindow::MainLoop()
 	}
 }
 
-void SDLWindow::CalculateFPS()
+void Window::CalculateFPS()
 {
 	// Calculate end time
 	m_endTime = chrono::steady_clock::now();
@@ -228,7 +228,7 @@ void SDLWindow::CalculateFPS()
 	++m_FPS;
 }
 
-void SDLWindow::ImGuiDisplay
+void Window::ImGuiDisplay
 (
 	std::vector<DirectionalLight>& dirLights,
 	std::vector<PointLight>& pointLights,
@@ -338,7 +338,7 @@ void SDLWindow::ImGuiDisplay
 	ImGuiUpdate();
 }
 
-void SDLWindow::ImGuiUpdate()
+void Window::ImGuiUpdate()
 {
 	// Calculate selections
 	GLenum selectedPolyMode = m_wireframe ? GL_LINE : GL_FILL;

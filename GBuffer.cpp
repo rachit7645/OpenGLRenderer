@@ -5,19 +5,25 @@
 
 #include "FBOAttachment.h"
 #include "Window.h"
+#include "Settings.h"
 
 using namespace Renderer;
+
+using Engine::Settings;
 
 // GBuffer Layout
 // Buffer     | Type      | R        | G         | B        | A
 // Normal     | RG_16F    | normal.x | normal.y  | NONE     | NONE
 // Albedo     | RGB_8U    | albedo.r | albedo.g  | albedo.b | NONE
 // Material   | RGB_8U    | ao       | roughness | metallic | NONE
-// Depth      | DEPTH_24F | depth    | NONE      | NONE     | NONE
+// Depth      | DEPTH_24F | glDepth    | NONE      | NONE     | NONE
 
 GBuffer::GBuffer()
 	: buffer(std::make_shared<FrameBuffer>())
 {
+	// Get settings
+	const auto& settings = Settings::GetInstance();
+
 	// Normal attachment
 	Renderer::FBOAttachment normal =
 	{
@@ -75,8 +81,8 @@ GBuffer::GBuffer()
 	};
 
 	// Set buffer width and height
-	buffer->width  = Window::WINDOW_DIMENSIONS.x;
-	buffer->height = Window::WINDOW_DIMENSIONS.y;
+	buffer->width  = settings.windowDimensions.x;
+	buffer->height = settings.windowDimensions.y;
 
 	// Create frame buffer
 	buffer->CreateFrameBuffer();

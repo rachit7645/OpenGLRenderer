@@ -2,19 +2,23 @@
 
 #include "Window.h"
 #include "FBOAttachment.h"
+#include "Settings.h"
 
 using namespace Waters;
 
 using Renderer::FrameBuffer;
-
-// Render at 0.25x the resolution
-constexpr glm::ivec2 WATER_REFLECTION_SIZE = {Window::WINDOW_DIMENSIONS / 4};
-constexpr glm::ivec2 WATER_REFRACTION_SIZE = {Window::WINDOW_DIMENSIONS / 4};
+using Engine::Settings;
 
 WaterFrameBuffers::WaterFrameBuffers()
 	: reflectionFBO(std::make_shared<FrameBuffer>()),
 	  refractionFBO(std::make_shared<FrameBuffer>())
 {
+	// Get settings
+	const auto& settings = Settings::GetInstance();
+	// Calculate sizes
+	auto reflectionSize = settings.windowDimensions / 4;
+	auto refractionSize = settings.windowDimensions / 4;
+
 	Renderer::FBOAttachment color0 =
 	{
 		GL_LINEAR,
@@ -33,8 +37,8 @@ WaterFrameBuffers::WaterFrameBuffers()
 		depth.slot           = GL_DEPTH_ATTACHMENT;
 	}
 
-	reflectionFBO->width  = WATER_REFLECTION_SIZE.x;
-	reflectionFBO->height = WATER_REFLECTION_SIZE.y;
+	reflectionFBO->width  = reflectionSize.x;
+	reflectionFBO->height = reflectionSize.y;
 
 	reflectionFBO->CreateFrameBuffer();
 	reflectionFBO->Bind();
@@ -44,8 +48,8 @@ WaterFrameBuffers::WaterFrameBuffers()
 	reflectionFBO->EnableDepth();
 	reflectionFBO->Unbind();
 
-	refractionFBO->width  = WATER_REFRACTION_SIZE.x;
-	refractionFBO->height = WATER_REFRACTION_SIZE.y;
+	refractionFBO->width  = refractionSize.x;
+	refractionFBO->height = refractionSize.y;
 
 	refractionFBO->CreateFrameBuffer();
 	refractionFBO->Bind();

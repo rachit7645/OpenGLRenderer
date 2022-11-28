@@ -2,15 +2,11 @@
 
 #include "imgui.h"
 #include "Inputs.h"
+#include "Settings.h"
 
 using namespace Entities;
 
-// Camera constants
-constexpr auto CAMERA_ZOOM_SPEED  = 1.0f;
-constexpr auto CAMERA_PITCH_SPEED = 0.1f;
-constexpr auto CAMERA_AAP_SPEED   = 0.3f;
-constexpr auto CAMERA_PITCH_MIN   = 0.0f;
-constexpr auto CAMERA_PITCH_MAX   = 90.0f;
+using Engine::Settings;
 
 // Global flags
 bool m_toMoveCamera = true;
@@ -83,41 +79,52 @@ void Camera::CalculatePosition()
 
 void Camera::CalculateZoom()
 {
+	// Get mouse scroll
 	auto& mouseScroll = Inputs::GetMouseScroll();
+	// Get settings
+	const auto& settings = Settings::GetInstance();
 
-	// If scroll direction is positive, reduce distance from player
 	if (mouseScroll.y > 0)
 	{
 		for (ssize i = 0; i < mouseScroll.y; ++i)
 		{
-			distance -= CAMERA_ZOOM_SPEED;
+			distance -= settings.cameraZoomSpeed;
 		}
 	}
-	// If scroll direction is negative, increase distance from player
 	else
 	{
 		for (ssize i = 0; i < -mouseScroll.y; ++i)
 		{
-			distance += CAMERA_ZOOM_SPEED;
+			distance += settings.cameraZoomSpeed;
 		}
 	}
 }
 
 void Camera::CalculatePitch()
 {
+	// Get mouse position
 	auto& mousePos = Inputs::GetMousePos();
-	rotation.x    -= static_cast<f32>(mousePos.y) * CAMERA_PITCH_SPEED;
+	// Get settings
+	const auto& settings = Settings::GetInstance();
 
+	// Calculate pitch
+	rotation.x -= static_cast<f32>(mousePos.y) * settings.cameraPitchSpeed;
+
+	// Cap pitch
 	if (m_capPitch)
 	{
-		rotation.x = glm::clamp(rotation.x, CAMERA_PITCH_MIN, CAMERA_PITCH_MAX);
+		rotation.x = glm::clamp(rotation.x, settings.cameraMinPitch, settings.cameraMaxPitch);
 	}
 }
 
 void Camera::CalculateAAP()
 {
+	// Get mouse pos
 	auto& mousePos = Inputs::GetMousePos();
-	m_angle       -= static_cast<f32>(mousePos.x) * CAMERA_AAP_SPEED;
+	// Get settings
+	const auto& settings = Settings::GetInstance();
+	// Calculate angle
+	m_angle -= static_cast<f32>(mousePos.x) * settings.cameraAAPSpeed;
 }
 
 void Camera::InvertPitch()

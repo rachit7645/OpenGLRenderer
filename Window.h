@@ -11,21 +11,18 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 
-namespace Window
+namespace Engine
 {
-	// Choosing a 16:9 Resolution
-	constexpr glm::ivec2 WINDOW_DIMENSIONS = {1024, 576};
-
-	class SDLWindow
+	class Window
 	{
 	public:
 		// Usings
 		using Clock     = std::chrono::steady_clock;
 		using TimePoint = std::chrono::time_point<Clock>;
-		// Creates a SDL m_window, gets an opengl context, and sets up GL values
-		SDLWindow();
+		// Creates a SDL window, gets an opengl context, and sets up GL values
+		Window();
 		// Free SDL memory resources
-		~SDLWindow();
+		~Window();
 		// Main loop for the engine
 		void MainLoop();
 	private:
@@ -65,7 +62,7 @@ namespace Window
 		GLenum m_currentPolyMode = GL_FILL;
 		s32    m_currentSwapMode = -1;
 
-		// SDL resources
+		// SDL resourcesPath
 		SDL_Window*   m_window    = nullptr;
 		SDL_GLContext m_glContext = nullptr;
 		SDL_Event     m_event     = {};
