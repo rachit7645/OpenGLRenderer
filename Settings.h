@@ -12,24 +12,46 @@ namespace Engine
 	public:
 		// Singleton getter
 		static const Settings& GetInstance();
-		// Window windowDimensions
-		glm::ivec2 windowDimensions = {0, 0};
-		// Color bits
-		glm::ivec4 glColor = {0, 0, 0, 0};
-		// Depth bits
-		s32 glDepth = 0;
-		// Resource directory
-		std::string resourcesPath;
-		// Camera zoom speed
-		f32 cameraZoomSpeed = 0.0f;
-		// Camera pitch speed
-		f32 cameraPitchSpeed = 0.0f;
-		// Camera aap speed
-		f32 cameraAAPSpeed = 0.0f;
-		// Camera min pitch
-		f32 cameraMinPitch = 0.0f;
-		// Camera max pitch
-		f32 cameraMaxPitch = 0.0f;
+		// Window
+		struct Window
+		{
+			// Size
+			glm::ivec2 dimensions;
+		} window = {};
+		// Shadows
+		struct Shadows
+		{
+			// Shadow map size
+			glm::ivec2 dimensions;
+			// Extra offset
+			f32 offset;
+		} shadows = {};
+		// IBL
+		struct IBL
+		{
+			// Environment map path
+			std::string envMapPath;
+		} ibl = {};
+		// Player
+		struct Player
+		{
+			f32 runSpeed;
+			f32 turnSpeed;
+		} player = {};
+		// Camera
+		struct Camera
+		{
+			// Zoom speed
+			f32 zoomSpeed;
+			// Pitch speed
+			f32 pitchSpeed;
+			// AAP speed
+			f32 aapSpeed;
+			// Min pitch
+			f32 minPitch;
+			// Max pitch
+			f32 maxPitch;
+		} camera = {};
 	private:
 		// Main constructor
 		Settings();

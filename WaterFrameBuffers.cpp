@@ -16,8 +16,8 @@ WaterFrameBuffers::WaterFrameBuffers()
 	// Get settings
 	const auto& settings = Settings::GetInstance();
 	// Calculate sizes
-	auto reflectionSize = settings.windowDimensions / 4;
-	auto refractionSize = settings.windowDimensions / 4;
+	auto reflectionSize = settings.window.dimensions / 4;
+	auto refractionSize = settings.window.dimensions / 4;
 
 	Renderer::FBOAttachment color0 =
 	{
@@ -33,7 +33,7 @@ WaterFrameBuffers::WaterFrameBuffers()
 	// We don't need to fill this up completely
 	Renderer::FBOAttachment depth = {};
 	{
-		depth.internalFormat = GL_DEPTH_COMPONENT24;
+		depth.intFormat = GL_DEPTH_COMPONENT24;
 		depth.slot           = GL_DEPTH_ATTACHMENT;
 	}
 

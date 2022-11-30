@@ -12,11 +12,11 @@ using namespace Renderer;
 using Engine::Settings;
 
 // GBuffer Layout
-// Buffer     | Type      | R        | G         | B        | A
-// Normal     | RG_16F    | normal.x | normal.y  | NONE     | NONE
-// Albedo     | RGB_8U    | albedo.r | albedo.g  | albedo.b | NONE
-// Material   | RGB_8U    | ao       | roughness | metallic | NONE
-// Depth      | DEPTH_24F | glDepth    | NONE      | NONE     | NONE
+// Buffer   | Type      | R        | G         | B        | A
+// Normal   | RG_16F    | normal.x | normal.y  | NONE     | NONE
+// Albedo   | RGB_8U    | albedo.r | albedo.g  | albedo.b | NONE
+// Material | RGB_8U    | ao       | roughness | metallic | NONE
+// Depth    | DEPTH_24F | glDepth  | NONE      | NONE     | NONE
 
 GBuffer::GBuffer()
 	: buffer(std::make_shared<FrameBuffer>())
@@ -81,8 +81,8 @@ GBuffer::GBuffer()
 	};
 
 	// Set buffer width and height
-	buffer->width  = settings.windowDimensions.x;
-	buffer->height = settings.windowDimensions.y;
+	buffer->width  = settings.window.dimensions.x;
+	buffer->height = settings.window.dimensions.y;
 
 	// Create frame buffer
 	buffer->CreateFrameBuffer();

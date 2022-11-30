@@ -7,18 +7,23 @@
 #include "RenderConstants.h"
 #include "Maths.h"
 #include "FBOAttachment.h"
+#include "Settings.h"
 
+// Using namespaces
 using namespace Renderer;
 
+// Usings
 using Entities::Camera;
+using Engine::Settings;
 
+// Aliases
 using Vec4s = ShadowMap::Vec4s;
 using Mat4s = ShadowMap::Mat4s;
 
-constexpr glm::vec4  MAP_BORDER        = {1.0f, 1.0f, 1.0f, 1.0f};
-constexpr glm::ivec2 SHADOW_DIMENSIONS = {2048, 2048};
-constexpr f32        SHADOW_OFFSET     = 10.0f;
+// Constants
+constexpr glm::vec4 MAP_BORDER = {1.0f, 1.0f, 1.0f, 1.0f};
 
+// Shadow levels vector
 const std::vector<f32> shadowLevels =
 {
 	FAR_PLANE / 50.0f,
@@ -31,6 +36,9 @@ ShadowMap::ShadowMap()
 	: buffer(std::make_shared<FrameBuffer>()),
 	  m_matrixBuffer(std::make_shared<ShadowBuffer>())
 {
+	// Get settings
+	const auto& settings = Settings::GetInstance();
+
 	// Depth attachment
 	Renderer::FBOAttachment depth =
 	{
@@ -45,8 +53,8 @@ ShadowMap::ShadowMap()
 	};
 
 	// Set buffer dimensions
-	buffer->width  = SHADOW_DIMENSIONS.x;
-	buffer->height = SHADOW_DIMENSIONS.y;
+	buffer->width  = settings.shadows.dimensions.x;
+	buffer->height = settings.shadows.dimensions.y;
 	buffer->depth  = static_cast<GLsizei>(shadowLevels.size() + 1);
 
 	// Create frame buffer object
@@ -138,6 +146,9 @@ glm::mat4 ShadowMap::CalculateViewMatrix(const Vec4s& corners, const glm::vec3& 
 
 glm::mat4 ShadowMap::CalculateProjMatrix(const Vec4s& corners, const glm::mat4& lightView)
 {
+	// Get settings
+	const auto& settings = Settings::GetInstance();
+
 	// Set min and max to the max f32 value supported
 	auto min = glm::vec3(std::numeric_limits<f32>::max());
 	auto max = glm::vec3(std::numeric_limits<f32>::min());
@@ -178,8 +189,8 @@ glm::mat4 ShadowMap::CalculateProjMatrix(const Vec4s& corners, const glm::mat4& 
 	};
 
 	// Check min and max offset
-	CheckMinOffset(min, SHADOW_OFFSET);
-	CheckMaxOffset(max, SHADOW_OFFSET);
+	CheckMinOffset(min, settings.shadows.offset);
+	CheckMaxOffset(max, settings.shadows.offset);
 
 	// Return an orthographic projection matrix of the frustum
 	return glm::ortho

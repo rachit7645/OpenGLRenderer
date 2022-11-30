@@ -88,14 +88,14 @@ void Camera::CalculateZoom()
 	{
 		for (ssize i = 0; i < mouseScroll.y; ++i)
 		{
-			distance -= settings.cameraZoomSpeed;
+			distance -= settings.camera.zoomSpeed;
 		}
 	}
 	else
 	{
 		for (ssize i = 0; i < -mouseScroll.y; ++i)
 		{
-			distance += settings.cameraZoomSpeed;
+			distance += settings.camera.zoomSpeed;
 		}
 	}
 }
@@ -108,12 +108,12 @@ void Camera::CalculatePitch()
 	const auto& settings = Settings::GetInstance();
 
 	// Calculate pitch
-	rotation.x -= static_cast<f32>(mousePos.y) * settings.cameraPitchSpeed;
+	rotation.x -= static_cast<f32>(mousePos.y) * settings.camera.pitchSpeed;
 
 	// Cap pitch
 	if (m_capPitch)
 	{
-		rotation.x = glm::clamp(rotation.x, settings.cameraMinPitch, settings.cameraMaxPitch);
+		rotation.x = glm::clamp(rotation.x, settings.camera.minPitch, settings.camera.maxPitch);
 	}
 }
 
@@ -124,7 +124,7 @@ void Camera::CalculateAAP()
 	// Get settings
 	const auto& settings = Settings::GetInstance();
 	// Calculate angle
-	m_angle -= static_cast<f32>(mousePos.x) * settings.cameraAAPSpeed;
+	m_angle -= static_cast<f32>(mousePos.x) * settings.camera.aapSpeed;
 }
 
 void Camera::InvertPitch()

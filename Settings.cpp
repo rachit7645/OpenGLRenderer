@@ -29,60 +29,57 @@ Settings::Settings()
 		ondemand::document document = parser.iterate(json);
 
 		// Parse window object
-		auto window  = document["window"].get_object();
-
+		auto windowJSON  = document["window"].get_object();
 		// Parse window size
-		auto windowX = window["width"].get_int64().value();
-		auto windowY = window["height"].get_int64().value();
-		// Set windowDimensions
-		windowDimensions = glm::ivec2(static_cast<s32>(windowX), static_cast<s32>(windowY));
+		auto windowX = windowJSON["width"].get_int64().value();
+		auto windowY = windowJSON["height"].get_int64().value();
+		// Set window dimensions
+		window.dimensions = glm::ivec2(static_cast<s32>(windowX), static_cast<s32>(windowY));
 
-		// Parse gl object
-		auto gl = document["gl"].get_object();
+		// Parse shadows object
+		auto shadowsJSON = document["shadows"].get_object();
+		// Parse shadow map dimensions
+		auto shadowX = shadowsJSON["width"].get_int64().value();
+		auto shadowY = shadowsJSON["height"].get_int64().value();
+		// Set shadow map size
+		shadows.dimensions = glm::ivec2(static_cast<s32>(shadowX), static_cast<s32>(shadowY));
+		// Parse shadow map offset
+		auto shadowOffset = shadowsJSON["offset"].get_double().value();
+		// Set shadow map offset
+		shadows.offset = static_cast<f32>(shadowOffset);
 
-		// Parse glColor
-		auto glR = gl["red"].get_int64().value();
-		auto glG = gl["green"].get_int64().value();
-		auto glB = gl["blue"].get_int64().value();
-		auto glA = gl["alpha"].get_int64().value();
-		// Set glColor
-		glColor = glm::ivec4
-		(
-			static_cast<s32>(glR),
-			static_cast<s32>(glG),
-			static_cast<s32>(glB),
-			static_cast<s32>(glA)
-		);
+		// Parse IBL object
+		auto iblJSON = document["ibl"].get_object();
+		// Parse environment map path
+		auto envMapPath = iblJSON["env_map_path"].get_string().value();
+		// Set environment map path
+		ibl.envMapPath = envMapPath;
 
-		// Parse window glDepth
-		auto glD = gl["depth"].get_int64().value();
-		// Set glDepth
-		glDepth = static_cast<s32>(glD);
-
-		// Parse resources object
-		auto resources = document["resources"].get_object();
-
-		// Parse resources directory
-		resourcesPath = resources["path"].get_string().value();
+		// Parse player object
+		auto playerJSON = document["player"].get_object();
+		// Parse player speeds
+		auto playerRunSpeed = playerJSON["run_speed"].get_double().value();
+		auto playerTurnSpeed = playerJSON["turn_speed"].get_double().value();
+		// Set player speeds
+		player.runSpeed  = static_cast<f32>(playerRunSpeed);
+		player.turnSpeed = static_cast<f32>(playerTurnSpeed);
 
 		// Parse camera object
-		auto camera = document["camera"].get_object();
-
+		auto cameraJSON = document["camera"].get_object();
 		// Parse camera speeds
-		auto cameraZoom  = camera["zoom_speed"].get_double().value();
-		auto cameraPitch = camera["pitch_speed"].get_double().value();
-		auto cameraAAP   = camera["aap_speed"].get_double().value();
+		auto cameraZoom  = cameraJSON["zoom_speed"].get_double().value();
+		auto cameraPitch = cameraJSON["pitch_speed"].get_double().value();
+		auto cameraAAP   = cameraJSON["aap_speed"].get_double().value();
 		// Set camera speeds
-		cameraZoomSpeed  = static_cast<f32>(cameraZoom);
-		cameraPitchSpeed = static_cast<f32>(cameraPitch);
-		cameraAAPSpeed   = static_cast<f32>(cameraAAP);
-
+		camera.zoomSpeed  = static_cast<f32>(cameraZoom);
+		camera.pitchSpeed = static_cast<f32>(cameraPitch);
+		camera.aapSpeed   = static_cast<f32>(cameraAAP);
 		// Parse camera pitch bounds
-		auto cameraMin = camera["pitch_min"].get_double().value();
-		auto cameraMax = camera["pitch_max"].get_double().value();
+		auto cameraMin = cameraJSON["pitch_min"].get_double().value();
+		auto cameraMax = cameraJSON["pitch_max"].get_double().value();
 		// Set camera pitch bounds
-		cameraMinPitch = static_cast<f32>(cameraMin);
-		cameraMaxPitch = static_cast<f32>(cameraMax);
+		camera.minPitch = static_cast<f32>(cameraMin);
+		camera.maxPitch = static_cast<f32>(cameraMax);
 	}
 	catch (const std::exception& exception)
 	{

@@ -1,10 +1,6 @@
 #ifndef GUI_SHADER_H
 #define GUI_SHADER_H
 
-#include <unordered_map>
-#include <string_view>
-#include <GL/glew.h>
-
 #include "Shader.h"
 
 namespace Shader
@@ -12,14 +8,14 @@ namespace Shader
 	class GUIShader : public ShaderProgram
 	{
 	public:
+		// Constructor
 		GUIShader();
 
-		// Matrix loading functions
+		// Load model matrix
 		void LoadModelMatrix(const glm::mat4& matrix);
 
+		// Get all uniform locations
 		void GetUniformLocations() override;
-	private:
-		std::unordered_map<std::string_view, GLint> m_uniforms;
 	};
 }
 

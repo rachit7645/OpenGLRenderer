@@ -30,7 +30,7 @@ void FrameBuffer::AddTexture(TxPtr& texture, const FBOAttachment& attachment)
 	texture->LoadImageData
 	(
 		nullptr,
-		attachment.internalFormat,
+		attachment.intFormat,
 		attachment.format,
 		attachment.dataType
 	);
@@ -67,7 +67,7 @@ void FrameBuffer::AddTextureCubeMap(TxPtr& texture, const FBOAttachment& attachm
 		texture->LoadImageData
 		(
 			nullptr,
-			attachment.internalFormat,
+			attachment.intFormat,
 			attachment.format,
 			attachment.dataType,
 			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i
@@ -100,7 +100,7 @@ void FrameBuffer::AddTextureArray(TxPtr& texture, const FBOAttachment& attachmen
 	texture->LoadImageData3D
 	(
 		nullptr,
-		attachment.internalFormat,
+		attachment.intFormat,
 		attachment.format,
 		attachment.dataType
 	);
@@ -122,7 +122,7 @@ void FrameBuffer::AddBuffer(RdBufPtr& buffer, const FBOAttachment& attachment)
 	(
 		width,
 		height,
-		attachment.internalFormat
+		attachment.intFormat
 	);
 
 	glFramebufferRenderbuffer
@@ -191,7 +191,7 @@ void FrameBuffer::Unbind() const
 	const auto& settings = Settings::GetInstance();
 	// Unbind
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, settings.windowDimensions.x, settings.windowDimensions.y);
+	glViewport(0, 0, settings.window.dimensions.x, settings.window.dimensions.y);
 }
 
 FrameBuffer::~FrameBuffer()

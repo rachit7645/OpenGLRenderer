@@ -8,22 +8,29 @@
 #include "RenderConstants.h"
 #include "PreFilterShader.h"
 #include "BRDFShader.h"
+#include "Settings.h"
 
+// Using namespaces
 using namespace Renderer;
 
+// Usings
+using Engine::Settings;
+
+// Aliases
 using VAO   = IBLMaps::VAO;
 using TxPtr = IBLMaps::TxPtr;
 using FbPtr = IBLMaps::FbPtr;
 
-constexpr usize       PRE_FILTER_MIPMAP_LEVELS = 5;
-constexpr glm::ivec2  CUBEMAP_DIMENSIONS       = {1024, 1024};
-constexpr glm::ivec2  IRRADIANCE_DIMENSIONS    = {32,     32};
-constexpr glm::ivec2  PRE_FILTER_DIMENSIONS    = {128,   128};
-constexpr glm::ivec2  BRDF_LUT_DIMENSIONS      = {512,   512};
-constexpr const char* HDR_MAP_PATH             = "gfx/Tropical_Beach_3k.hdr";
+// Constants
+constexpr usize      PRE_FILTER_MIPMAP_LEVELS = {5};
+constexpr glm::ivec2 CUBEMAP_DIMENSIONS       = {1024, 1024};
+constexpr glm::ivec2 IRRADIANCE_DIMENSIONS    = {32,     32};
+constexpr glm::ivec2 PRE_FILTER_DIMENSIONS    = {128,   128};
+constexpr glm::ivec2 BRDF_LUT_DIMENSIONS      = {512,   512};
 
 IBLMaps::IBLMaps()
 {
+	// Projection
 	const glm::mat4 projection = glm::perspective
 	(
 		glm::radians(90.0f),
@@ -32,6 +39,7 @@ IBLMaps::IBLMaps()
 		10.0f
 	);
 
+	// Views (per-face)
 	const std::array<glm::mat4, 6> views =
 	{
 		glm::lookAt(glm::vec3(0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
@@ -42,11 +50,16 @@ IBLMaps::IBLMaps()
 		glm::lookAt(glm::vec3(0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
 	};
 
+	// Cube
 	const VAO cube = LoadCube();
 
+	// Convert equiangular map to a cube map
 	ConvertToCubeMap(projection, views, cube);
+	// Create the diffuse irradiance map
 	GenerateIrradiance(projection, views, cube);
+	// Create the pre=filtered specular map
 	PreFilterSpecular(projection, views, cube);
+	// Calculate BRDF lookup texture
 	CalculateBRDF();
 }
 
@@ -57,6 +70,7 @@ void IBLMaps::ConvertToCubeMap
 	const VAO& cube
 )
 {
+	// Create cube map FBO
 	auto cubeMapFBO = CreateCubeMapFBO(CUBEMAP_DIMENSIONS, true);
 
 	// Data
@@ -102,6 +116,7 @@ void IBLMaps::GenerateIrradiance
 	const VAO& cube
 )
 {
+	// Create cube map FBO
 	auto irradianceFBO = CreateCubeMapFBO(IRRADIANCE_DIMENSIONS);
 
 	// Shaders and renderers
@@ -140,6 +155,7 @@ void IBLMaps::PreFilterSpecular
 	const VAO& cube
 )
 {
+	// Create cube map FBO
 	auto preFilterFBO = CreateCubeMapFBO(PRE_FILTER_DIMENSIONS, true);
 
 	// Generate mipmaps
@@ -197,6 +213,7 @@ void IBLMaps::PreFilterSpecular
 
 void IBLMaps::CalculateBRDF()
 {
+	// Create 2D FBO
 	auto brdfFBO = Create2DFBO(BRDF_LUT_DIMENSIONS);
 	auto quad    = LoadQuad();
 
@@ -238,8 +255,8 @@ FbPtr IBLMaps::CreateCubeMapFBO(const glm::ivec2& dimensions, bool isMipMapped)
 
 	Renderer::FBOAttachment depth = {};
 	{
-		depth.internalFormat = GL_DEPTH_COMPONENT24;
-		depth.slot           = GL_DEPTH_ATTACHMENT;
+		depth.intFormat = GL_DEPTH_COMPONENT24;
+		depth.slot      = GL_DEPTH_ATTACHMENT;
 	}
 
 	std::vector<GLenum> drawBuffers =
@@ -279,8 +296,8 @@ FbPtr IBLMaps::Create2DFBO(const glm::ivec2& dimensions)
 
 	Renderer::FBOAttachment depth = {};
 	{
-		depth.internalFormat = GL_DEPTH_COMPONENT24;
-		depth.slot           = GL_DEPTH_ATTACHMENT;
+		depth.intFormat = GL_DEPTH_COMPONENT24;
+		depth.slot      = GL_DEPTH_ATTACHMENT;
 	}
 
 	std::vector<GLenum> drawBuffers =
@@ -342,10 +359,13 @@ void IBLMaps::UnbindRender(FbPtr& FBO)
 
 TxPtr IBLMaps::LoadHDRMap()
 {
+	// Get settings
+	const auto& settings = Settings::GetInstance();
+	// Load HDR map
 	TxPtr hdrMap = std::make_shared<Texture>();
 
 	stbi_set_flip_vertically_on_load(true);
-	auto data = hdrMap->LoadImageHDR(HDR_MAP_PATH);
+	auto data = hdrMap->LoadImageHDR(settings.ibl.envMapPath);
 	stbi_set_flip_vertically_on_load(false);
 
 	hdrMap->CreateTexture();

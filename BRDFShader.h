@@ -8,8 +8,9 @@ namespace Shader
 	class BRDFShader : public ShaderProgram
 	{
 	public:
+		// Constructor
 		BRDFShader();
-		// Only here due to requirements set on virtual function inheritance
+		// Get all uniform locations (Unused in this shader)
 		void GetUniformLocations() override;
 	};
 }

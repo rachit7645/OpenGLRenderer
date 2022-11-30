@@ -4,17 +4,20 @@
 		"width" : 1024,
 		"height": 576
 	},
-	"gl":
+	"shadows":
 	{
-		"red"  : 8,
-		"green": 8,
-		"blue" : 8,
-		"alpha": 8,
-		"depth": 24
+		"width" : 2048,
+		"height": 2048,
+		"offset": 10.0
 	},
-	"resources":
+	"ibl":
 	{
-		"path": "../res/"
+		"env_map_path": "gfx/Milkyway_small.hdr"
+	},
+	"player":
+	{
+		"run_speed" : 45.0,
+		"turn_speed": 160.0
 	},
 	"camera":
 	{

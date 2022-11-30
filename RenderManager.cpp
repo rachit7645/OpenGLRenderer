@@ -43,7 +43,7 @@ RenderManager::RenderManager()
 	const auto& settings = Settings::GetInstance();
 
 	m_matrices->LoadProjection(glm::perspective(glm::radians(FOV), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
-	m_shared->LoadResolution(settings.windowDimensions, NEAR_PLANE, FAR_PLANE);
+	m_shared->LoadResolution(settings.window.dimensions, NEAR_PLANE, FAR_PLANE);
 
 	// Dump shaders
 	m_fastInstancedShader.DumpToFile("dumps/FIS.s");
@@ -191,11 +191,11 @@ void RenderManager::CopyDepth()
 	glBlitFramebuffer
 	(
 		0, 0,
-		settings.windowDimensions.x,
-		settings.windowDimensions.y,
+		settings.window.dimensions.x,
+		settings.window.dimensions.y,
 		0, 0,
-		settings.windowDimensions.x,
-		settings.windowDimensions.y,
+		settings.window.dimensions.x,
+		settings.window.dimensions.y,
 		GL_DEPTH_BUFFER_BIT,
 		GL_NEAREST
 	);

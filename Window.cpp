@@ -52,11 +52,11 @@ Window::Window()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
 	// RGBA8 + Depth24 Framebuffer
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE,   settings.glColor.r);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,  settings.glColor.g);
-	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, settings.glColor.b);
-	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, settings.glColor.a);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, settings.glDepth);
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE,   8);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,  8);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
 	// Create SDL window
 	m_window = SDL_CreateWindow
@@ -64,8 +64,8 @@ Window::Window()
 		"Rachit's Engine",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
-		settings.windowDimensions.x,
-		settings.windowDimensions.y,
+		settings.window.dimensions.x,
+		settings.window.dimensions.y,
 		SDL_WINDOW_FLAGS
 	);
 
@@ -125,11 +125,11 @@ Window::Window()
 	ImGui_ImplOpenGL3_Init("#version 430 core");
 
 	// Set resource directory
-	Files::SetResourceDirectory(settings.resourcesPath);
+	Files::SetResourceDirectory("../res/");
 	// Initialise input subsystem
 	Inputs::Init();
 	// Initialise other GL things
-	GL::Init(settings.windowDimensions);
+	GL::Init(settings.window.dimensions);
 }
 
 bool Window::PollEvents()
