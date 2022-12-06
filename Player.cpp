@@ -11,6 +11,11 @@ using Renderer::Model;
 using Renderer::MeshTextures;
 using Engine::Settings;
 
+Player::Player()
+	: Entity(nullptr, glm::vec3(0.0f), glm::vec3(0.0f), 0.0f)
+{
+}
+
 Player::Player
 (
 	MdPtr model,

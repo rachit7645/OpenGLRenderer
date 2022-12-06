@@ -42,7 +42,6 @@ add_executable(engine
 	Entity.cpp
 	Maths.cpp
 	Camera.cpp
-	MainLoop.cpp
 	RenderManager.cpp
 	Mesh.cpp
 	Player.cpp
@@ -90,6 +89,7 @@ add_executable(engine
 	DirectionalLight.cpp
 	SpotLight.cpp
 	Settings.cpp
+	Instance.cpp
 )
 
 # Precompiled Headers

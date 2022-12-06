@@ -58,8 +58,8 @@ Window::Window()
 	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-	// Create SDL window
-	m_window = SDL_CreateWindow
+	// Create SDL handle
+	handle = SDL_CreateWindow
 	(
 		"Rachit's Engine",
 		SDL_WINDOWPOS_UNDEFINED,
@@ -69,22 +69,22 @@ Window::Window()
 		SDL_WINDOW_FLAGS
 	);
 
-	// If window creation failed
-	if (m_window == nullptr)
+	// If handle creation failed
+	if (handle == nullptr)
 	{
 		LOG_ERROR("SDL_CreateWindow Failed\n{}\n", SDL_GetError());
 	}
-	// Log window address
-	LOG_INFO("Created SDL_Window with address: {}\n", reinterpret_cast<void*>(m_window));
+	// Log handle address
+	LOG_INFO("Created SDL_Window with address: {}\n", reinterpret_cast<void*>(handle));
 	
-	// For sanity, raise window
-	SDL_RaiseWindow(m_window);
+	// For sanity, raise handle
+	SDL_RaiseWindow(handle);
 	// Set mouse mode
 	SDL_ShowCursor(SDL_FALSE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 
 	// Create dummy GL context
-	m_glContext = SDL_GL_CreateContext(m_window);
+	m_glContext = SDL_GL_CreateContext(handle);
 	// If context creation fails
 	if (m_glContext == nullptr)
 	{
@@ -92,7 +92,7 @@ Window::Window()
 	}
 
 	// Make the context current
-	if (SDL_GL_MakeCurrent(m_window, m_glContext) != 0)
+	if (SDL_GL_MakeCurrent(handle, m_glContext) != 0)
 	{
 		LOG_ERROR("SDL_GL_MakeCurrent Failed\n{}\n", SDL_GetError());
 	}
@@ -121,7 +121,7 @@ Window::Window()
 	ImGui::StyleColorsDark();
 
 	// Initialise ImGui backend
-	ImGui_ImplSDL2_InitForOpenGL(m_window, m_glContext);
+	ImGui_ImplSDL2_InitForOpenGL(handle, m_glContext);
 	ImGui_ImplOpenGL3_Init("#version 430 core");
 
 	// Set resource directory
@@ -191,6 +191,6 @@ Window::~Window()
 	ImGui::DestroyContext();
 
 	SDL_GL_DeleteContext(m_glContext);
-	SDL_DestroyWindow(m_window);
+	SDL_DestroyWindow(handle);
 	SDL_Quit();
 }

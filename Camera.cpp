@@ -12,11 +12,6 @@ using Engine::Settings;
 bool m_toMoveCamera = true;
 bool m_toZoomCamera = true;
 
-Camera::Camera(Player* player)
-    : player(player)
-{
-}
-
 void Camera::Move()
 {
 	// If there is mouse scroll input

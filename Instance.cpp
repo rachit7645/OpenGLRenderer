@@ -1,15 +1,7 @@
-#include "Window.h"
+#include "Instance.h"
 
-#include "Model.h"
-#include "Entity.h"
-#include "Player.h"
-#include "MeshTextures.h"
 #include "Resources.h"
-#include "imgui.h"
-#include "GUI.h"
-#include "WaterTile.h"
-#include "RenderManager.h"
-#include "Camera.h"
+#include "MeshTextures.h"
 
 // Using namespaces
 using namespace Engine;
@@ -18,136 +10,19 @@ using namespace Engine;
 namespace chrono = std::chrono;
 
 // Usings
-using Renderer::Texture;
-using Renderer::Model;
 using Renderer::MeshTextures;
-using Renderer::GUI;
-using Renderer::FrameBuffer;
-using Renderer::RenderManager;
-using Renderer::Mode;
-using Entities::Entity;
-using Entities::Skybox;
-using Entities::DirectionalLight;
-using Entities::PointLight;
-using Entities::SpotLight;
-using Entities::Camera;
-using Waters::WaterTile;
 
-// TODO: Move MainLoop to separate class, move data to said class
-// TODO: Live editing of entities, etc. with ImGui
+// TODO: Add editing support for entities
 
-void Window::MainLoop()
+Instance::Instance()
 {
-	// Default textures to use in case of missing textures
-	auto defaultTextures = MeshTextures
-	(
-		Resources::GetTexture("gfx/def.png"),
-		Resources::GetTexture("gfx/defNrm.png"),
-		Resources::GetTexture("gfx/def.png")
-	);
+	InitEntities();
+	InitLights();
+	InitMisc();
+}
 
-	// Models
-	auto playerModel  = Resources::GetModel("gfx/Mario/Mario.gltf",     defaultTextures);
-	auto cottageModel = Resources::GetModel("gfx/Cottage/Cottage.gltf", defaultTextures);
-	auto benchModel   = Resources::GetModel("gfx/Bench/Bench.gltf",     defaultTextures);
-	auto boxModel     = Resources::GetModel("gfx/Box/scene.gltf",       defaultTextures);
-
-	// Entities
-	std::vector<Entity> entities;
-	{
-		entities.emplace_back
-		(
-			cottageModel,
-			glm::vec3(0.0f),
-			glm::vec3(0.0f),
-			50.0f
-		);
-
-		entities.emplace_back
-		(
-			benchModel,
-			glm::vec3(44.0f, 0.0f, -40.0f),
-			glm::vec3(0.0f, -90.0f, 0.0f),
-			5.0f
-		);
-
-		entities.emplace_back
-		(
-			boxModel,
-			glm::vec3(-44.0f, 3.6f, -45.0f),
-			glm::vec3(-90.0f, 0.0f, 0.0f),
-			2.0f
-		);
-	}
-
-	// Player
-	auto player = Entities::Player
-	(
-		playerModel,
-		glm::vec3(13.0f, 7.0f, 17.0f),
-		glm::vec3(0.0f, 180.0f, 0.0f),
-		1.0f
-	);
-
-	// Directional lights
-	std::vector<DirectionalLight> dirLights;
-	{
-		// Sun
-		dirLights.emplace_back
-		(
-			glm::vec3(0.1f, 1.0f, 0.1f),
-			glm::vec3(0.3f, 0.3f, 0.3f),
-			glm::vec3(1.0f, 1.0f, 1.0f)
-		);
-	}
-
-	// Point lights
-	std::vector<PointLight> pointLights;
-	{
-		pointLights.emplace_back
-		(
-			glm::vec3(40.0f, 4.0f, -40.0f),
-			glm::vec3(0.0f, 1.0f, 1.0f),
-			glm::vec3(1.0f, 7.0f, 5.0f),
-			glm::vec3(1.0f, 0.022f, 0.0019f)
-		);
-	}
-
-	// Spot lights
-	std::vector<SpotLight> spotLights;
-	{
-		spotLights.emplace_back
-		(
-			glm::vec3(-40.0f, 4.0f, 40.0f),
-			glm::vec3(1.0f, 0.0f, 0.0f),
-			glm::vec3(10.0f, 1.0f, 1.0f),
-			glm::vec3(1.0f, 0.007f, 0.0002f),
-			glm::vec3(0.0f, 0.0f, -0.8f),
-			glm::vec2(10.0f, 25.0f)
-		);
-	}
-
-	// GUI (Currently unused)
-	std::vector<GUI> guis;
-	{
-	}
-
-	// Waters
-	std::vector<WaterTile> waters;
-	{
-		waters.emplace_back
-		(
-			Resources::GetTexture("gfx/waterDUDV.png"),
-			Resources::GetTexture("gfx/normal.png"),
-			glm::vec3(120.0f, 3.7f, -2.0f)
-		);
-	}
-
-	// Camera
-	auto camera = Entities::Camera(&player);
-	// Renderer
-	auto renderer = Renderer::RenderManager();
-
+void Instance::Run()
+{
 	// Set start time
 	m_startTime = m_frameStartTime = chrono::steady_clock::now();
 
@@ -155,52 +30,52 @@ void Window::MainLoop()
 	{
 		// Prepare ImGui
 		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplSDL2_NewFrame(m_window);
+		ImGui_ImplSDL2_NewFrame(m_window.handle);
 		ImGui::NewFrame();
 
 		// Update
-		ImGuiDisplay(dirLights, pointLights, spotLights);
-		player.Move();
-		camera.Move();
+		ImGuiDisplay();
+		m_player.Move();
+		m_camera.Move();
 
 		// Begin render
-		renderer.BeginFrame(entities, dirLights, pointLights, spotLights, player);
+		m_renderer.BeginFrame(m_entities, m_dirLights, m_pointLights, m_spotLights, m_player);
 		// Draw shadow framebuffer
-		renderer.RenderShadows(camera, dirLights[0].position);
+		m_renderer.RenderShadows(m_camera, m_dirLights[0].position);
 		// Draw water framebuffers
-		renderer.RenderWaterFBOs(waters, camera);
+		m_renderer.RenderWaterFBOs(m_waters, m_camera);
 
 		// Deferred geometry pass
-		renderer.RenderGBuffer(camera);
+		m_renderer.RenderGBuffer(m_camera);
 		// Deferred lighting pass
-		renderer.RenderLighting(camera);
+		m_renderer.RenderLighting(m_camera);
 
 		// Copy depth from gBuffer
-		renderer.CopyDepth();
+		m_renderer.CopyDepth();
 		// Render waters
-		renderer.RenderWaters(waters);
+		m_renderer.RenderWaters(m_waters);
 		// Render skybox
-		renderer.RenderSkybox();
+		m_renderer.RenderSkybox();
 		// Render GUIs
-		renderer.RenderGUIs(guis);
+		m_renderer.RenderGUIs(m_guis);
 		// End render
-		renderer.EndFrame();
+		m_renderer.EndFrame();
 
 		// ImGui render pass
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		// Swap window
-		SDL_GL_SwapWindow(m_window);
+		// Swap handle
+		SDL_GL_SwapWindow(m_window.handle);
 		// Calculate FPS
 		CalculateFPS();
 
 		// Poll events
-		if (PollEvents()) break;
+		if (m_window.PollEvents()) break;
 	}
 }
 
-void Window::CalculateFPS()
+void Instance::CalculateFPS()
 {
 	// Calculate end time
 	m_endTime = chrono::steady_clock::now();
@@ -228,12 +103,7 @@ void Window::CalculateFPS()
 	++m_FPS;
 }
 
-void Window::ImGuiDisplay
-(
-	std::vector<DirectionalLight>& dirLights,
-	std::vector<PointLight>& pointLights,
-	std::vector<SpotLight>& spotLights
-)
+void Instance::ImGuiDisplay()
 {
 	// If menu bar is visible
 	if (ImGui::BeginMainMenuBar())
@@ -266,7 +136,7 @@ void Window::ImGuiDisplay
 					// Light selector
 					ImGui::Combo("Slot", &m_selectedDirLight, indices.data(), indices.size());
 					// Select light
-					auto& light = dirLights[m_selectedDirLight];
+					auto& light = m_dirLights[m_selectedDirLight];
 					// Position
 					ImGui::InputFloat3("Position", &light.position[0], "%.1f");
 					// Color
@@ -283,7 +153,7 @@ void Window::ImGuiDisplay
 					// Light selector
 					ImGui::Combo("Slot", &m_selectedPointLight, indices.data(), indices.size());
 					// Select light
-					auto& light = pointLights[m_selectedPointLight];
+					auto& light = m_pointLights[m_selectedPointLight];
 					// Position
 					ImGui::InputFloat3("Position", &light.position[0], "%.1f");
 					// Color
@@ -302,7 +172,7 @@ void Window::ImGuiDisplay
 					// Light selector
 					ImGui::Combo("Slot", &m_selectedSpotLight, indices.data(), indices.size());
 					// Select light
-					auto& light = spotLights[m_selectedSpotLight];
+					auto& light = m_spotLights[m_selectedSpotLight];
 					// Position
 					ImGui::InputFloat3("Position", &light.position[0], "%.1f");
 					// Color
@@ -338,7 +208,7 @@ void Window::ImGuiDisplay
 	ImGuiUpdate();
 }
 
-void Window::ImGuiUpdate()
+void Instance::ImGuiUpdate()
 {
 	// Calculate selections
 	GLenum selectedPolyMode = m_wireframe ? GL_LINE : GL_FILL;
@@ -357,4 +227,109 @@ void Window::ImGuiUpdate()
 		SDL_GL_SetSwapInterval(selectedSwapMode);
 		m_currentSwapMode = selectedSwapMode;
 	}
+}
+
+void Instance::InitEntities()
+{
+	// Default textures
+	auto defaultTextures = MeshTextures
+	(
+		Resources::GetTexture("gfx/def.png"),
+		Resources::GetTexture("gfx/defNrm.png"),
+		Resources::GetTexture("gfx/def.png")
+	);
+
+	// All models
+	auto playerModel  = Resources::GetModel("gfx/Mario/Mario.gltf",     defaultTextures);
+	auto cottageModel = Resources::GetModel("gfx/Cottage/Cottage.gltf", defaultTextures);
+	auto benchModel   = Resources::GetModel("gfx/Bench/Bench.gltf",     defaultTextures);
+	auto boxModel     = Resources::GetModel("gfx/Box/scene.gltf",       defaultTextures);
+
+	// Entities
+	m_entities =
+	{
+		{
+			cottageModel,
+			glm::vec3(0.0f),
+			glm::vec3(0.0f),
+			50.0f
+		},
+		{
+			benchModel,
+			glm::vec3(44.0f, 0.0f, -40.0f),
+			glm::vec3(0.0f, -90.0f, 0.0f),
+			5.0f
+		},
+		{
+			boxModel,
+			glm::vec3(-44.0f, 3.6f, -45.0f),
+			glm::vec3(-90.0f, 0.0f, 0.0f),
+			2.0f
+		}
+	};
+
+	// Player
+	m_player =
+	{
+		playerModel,
+		glm::vec3(13.0f, 7.0f, 17.0f),
+		glm::vec3(0.0f, 180.0f, 0.0f),
+		1.0f
+	};
+
+	// Attach player
+	m_camera.player = &m_player;
+}
+
+void Instance::InitLights()
+{
+	// Directional lights
+	m_dirLights =
+	{
+		{
+			glm::vec3(0.1f, 1.0f, 0.1f),
+			glm::vec3(0.3f, 0.3f, 0.3f),
+			glm::vec3(1.0f, 1.0f, 1.0f)
+		}
+	};
+
+	// Point lights
+	m_pointLights =
+	{
+		{
+			glm::vec3(40.0f, 4.0f, -40.0f),
+			glm::vec3(0.0f, 1.0f, 1.0f),
+			glm::vec3(1.0f, 7.0f, 5.0f),
+			glm::vec3(1.0f, 0.022f, 0.0019f)
+		}
+	};
+
+	// Spot lights
+	m_spotLights =
+	{
+		{
+			glm::vec3(-40.0f, 4.0f, 40.0f),
+			glm::vec3(1.0f, 0.0f, 0.0f),
+			glm::vec3(10.0f, 1.0f, 1.0f),
+			glm::vec3(1.0f, 0.007f, 0.0002f),
+			glm::vec3(0.0f, 0.0f, -0.8f),
+			glm::vec2(10.0f, 25.0f)
+		}
+	};
+}
+
+void Instance::InitMisc()
+{
+	// GUIs (Currently unused)
+	m_guis = {};
+
+	// Waters
+	m_waters =
+	{
+		{
+			Resources::GetTexture("gfx/waterDUDV.png"),
+			Resources::GetTexture("gfx/normal.png"),
+			glm::vec3(120.0f, 3.7f, -2.0f)
+		}
+	};
 }

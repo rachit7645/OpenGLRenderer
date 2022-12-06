@@ -10,13 +10,14 @@ namespace Entities
 	class Camera
 	{
 	public:
-		// Main constructor
-		explicit Camera(Player* player);
-		// Data
-		Player*   player   = nullptr;
+		// Player
+		Player* player = nullptr;
+		// Position
 		glm::vec3 position = {0.0f, 0.0f, 0.0f};
+		// Euler rotation
 		glm::vec3 rotation = {5.0f, 0.0f, 0.0f};
-		f32       distance = 25.0f;
+		// Distance from player
+		f32 distance = 25.0f;
 		// Camera update function
 		void Move();
 		// Invert pitch
@@ -26,8 +27,9 @@ namespace Entities
 		// Global flag to zoom camera
 		static bool& GetToZoomCamera();
 	private:
-		// Internal data
-		f32  m_angle    = 0.0f;
+		// Angle around player
+		f32 m_angle = 0.0f;
+		// Flag to cap pitch
 		bool m_capPitch = true;
 		// Display ImGui widgets
 		void ImGuiDisplay();
