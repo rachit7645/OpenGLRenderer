@@ -9,6 +9,7 @@ layout (location = 2) out vec3 gMaterial;
 in vec2 txCoords;
 in vec3 worldPos;
 in vec3 unitNormal;
+in mat3 TBNMatrix;
 
 uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
@@ -35,21 +36,8 @@ vec3 GetNormalFromMap(vec3 normal)
 {
 	// Tangent normal from normal map
 	vec3 tangentNormal = normal * 2.0f - 1.0f;
-
-	// Take the deriviatives
-	vec3 Q1  = dFdx(worldPos);
-	vec3 Q2  = dFdy(worldPos);
-	vec2 st1 = dFdx(txCoords);
-	vec2 st2 = dFdy(txCoords);
-
-	// Calculate TBN matrix
-	vec3 N   = unitNormal;
-	vec3 T   = normalize(Q1 * st2.t - Q2 * st1.t);
-	vec3 B   = -normalize(cross(N, T));
-	mat3 TBN = mat3(T, B, N);
-
 	// Return world space normal
-	return normalize(TBN * tangentNormal);
+	return normalize(TBNMatrix * tangentNormal);
 }
 
 vec2 PackNormal(vec3 normal)

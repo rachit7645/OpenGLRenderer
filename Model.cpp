@@ -15,7 +15,9 @@
 
 using namespace Renderer;
 
-constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph;
+constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate   | aiProcess_FlipUVs          | aiProcess_OptimizeMeshes   |
+							 aiProcess_OptimizeGraph | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace |
+							 aiProcess_GenUVCoords;
 
 Model::Model(const std::string_view path, const MeshTextures& textures)
 {
@@ -61,22 +63,25 @@ Mesh Model::ProcessMesh
 	const std::string& directory
 )
 {
+	// Data vectors
 	std::vector<Vertex> vertices;
 	std::vector<u32>    indices;
 
 	for (u32 i = 0; i < mesh->mNumVertices; i++)
 	{
-		const auto aiZeroVector = aiVector3D(0.0f, 0.0f, 0.0f);
-
+		// Retrieve data
 		const aiVector3D& position = mesh->mVertices[i];
 		const aiVector3D& normal   = mesh->mNormals[i];
-		const aiVector3D& texCoord = mesh->HasTextureCoords(0) ? mesh->mTextureCoords[0][i] : aiZeroVector;
+		const aiVector3D& texCoord = mesh->mTextureCoords[0][i];
+		const aiVector3D& tangent  = mesh->mTangents[i];
 
+		// Convert to GL friendly data
 		vertices.emplace_back
 		(
 			glm::vec3(position.x, position.y, position.z),
 			glm::vec2(texCoord.x, texCoord.y),
-			glm::vec3(normal.x, normal.y, normal.z)
+			glm::vec3(normal.x, normal.y, normal.z),
+			glm::vec3(tangent.x, tangent.y, tangent.z)
 		);
 	}
 
@@ -88,12 +93,7 @@ Mesh Model::ProcessMesh
 		indices.emplace_back(face.mIndices[2]);
 	}
 
-	return Mesh
-	(
-		vertices,
-		indices,
-		ProcessTextures(mesh, scene, textures, directory)
-	);
+	return Mesh(vertices, indices, ProcessTextures(mesh, scene, textures, directory));
 }
 
 MeshTextures Model::ProcessTextures
@@ -104,33 +104,31 @@ MeshTextures Model::ProcessTextures
 	const std::string& directory
 )
 {
-	aiString path;
+	// Default textures
 	MeshTextures textures = pTextures;
-
+	// Current materials
 	aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
 
+	// Utility lambda
+	auto GetTexture = [directory, mat] (TxPtr& texture, aiTextureType type, unsigned int index)
+	{
+		// Path variable
+		aiString path;
+		// Get texture
+		mat->GetTexture(type, index, &path);
+		// If texture is available
+		if (path.length > 0)
+		{
+			texture = Resources::GetTexture(directory + path.C_Str());
+		}
+	};
+
 	// Albedo
-	mat->GetTexture(AI_MATKEY_BASE_COLOR_TEXTURE, &path);
-	if (path.length > 0)
-	{
-		textures.albedo = Resources::GetTexture(directory + path.C_Str());
-	}
-
+	GetTexture(textures.albedo, AI_MATKEY_BASE_COLOR_TEXTURE);
 	// Normal
-	path.Clear();
-	mat->GetTexture(AI_MATKEY_NORMALS_TEXTURE, &path);
-	if (path.length > 0)
-	{
-		textures.normal = Resources::GetTexture(directory + path.C_Str());
-	}
-
-	// AO + Roughness + Metallic (GLTF is weird)
-	path.Clear();
-	mat->GetTexture(AI_MATKEY_ROUGHNESS_TEXTURE, &path);
-	if (path.length > 0)
-	{
-		textures.aoRghMtl = Resources::GetTexture(directory + path.C_Str());
-	}
+	GetTexture(textures.normal, AI_MATKEY_NORMALS_TEXTURE);
+	// AO + Roughness + Metallic
+	GetTexture(textures.aoRghMtl, AI_MATKEY_ROUGHNESS_TEXTURE);
 
 	return textures;
 }

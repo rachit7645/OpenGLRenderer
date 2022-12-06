@@ -50,7 +50,7 @@ void Window::MainLoop()
 	auto playerModel  = Resources::GetModel("gfx/Mario/Mario.gltf",     defaultTextures);
 	auto cottageModel = Resources::GetModel("gfx/Cottage/Cottage.gltf", defaultTextures);
 	auto benchModel   = Resources::GetModel("gfx/Bench/Bench.gltf",     defaultTextures);
-	auto boxModel     = Resources::GetModel("gfx/Box/scene.gltf", defaultTextures);
+	auto boxModel     = Resources::GetModel("gfx/Box/scene.gltf",       defaultTextures);
 
 	// Entities
 	std::vector<Entity> entities;
@@ -84,7 +84,7 @@ void Window::MainLoop()
 	auto player = Entities::Player
 	(
 		playerModel,
-		glm::vec3(13.0f, 6.0f, 17.0f),
+		glm::vec3(13.0f, 7.0f, 17.0f),
 		glm::vec3(0.0f, 180.0f, 0.0f),
 		1.0f
 	);
@@ -175,7 +175,7 @@ void Window::MainLoop()
 		// Deferred lighting pass
 		renderer.RenderLighting(camera);
 
-		// Copy glDepth from gBuffer
+		// Copy depth from gBuffer
 		renderer.CopyDepth();
 		// Render waters
 		renderer.RenderWaters(waters);

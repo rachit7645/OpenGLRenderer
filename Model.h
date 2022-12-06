@@ -1,6 +1,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include <memory>
 #include <vector>
 #include <string_view>
 
@@ -15,6 +16,8 @@ namespace Renderer
 	class Model
 	{
 	public:
+		// Usings
+		using TxPtr = std::shared_ptr<Texture>;
 		// Main constructor
 		Model(const std::string_view path, const MeshTextures& textures);
 		// Data

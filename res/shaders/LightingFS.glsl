@@ -1,7 +1,5 @@
 #version 430 core
 
-// TODO: Tweak shadow bias modifier
-
 // Constants
 const float PI                 = 3.14159265359;
 const int   MAX_LIGHTS         = 4;
@@ -11,7 +9,7 @@ const int   MAX_LAYER_COUNT    = 16;
 const float MIN_BIAS           = 0.005f;
 const float MAX_BIAS           = 0.05f;
 const float SHADOW_AMOUNT      = 0.16f;
-const float BIAS_MODIFIER      = 0.5f;
+const float BIAS_MODIFIER      = 0.35f;
 const float PCF_COUNT          = 1.2f;
 const float TOTAL_TEXELS       = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.0f);
 
