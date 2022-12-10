@@ -1,18 +1,20 @@
 #include "Player.h"
 
-#include "MeshTextures.h"
-#include "Model.h"
-#include "Material.h"
 #include "Inputs.h"
+#include "Settings.h"
 
+// Using namespaces
 using namespace Entities;
 
+// Usings
 using Renderer::Model;
 using Renderer::MeshTextures;
-using Renderer::Material;
+using Engine::Settings;
 
-constexpr auto PLAYER_RUN_SPEED  = 45.0f;
-constexpr auto PLAYER_TURN_SPEED = 160.0f;
+Player::Player()
+	: Entity(nullptr, glm::vec3(0.0f), glm::vec3(0.0f), 0.0f)
+{
+}
 
 Player::Player
 (
@@ -62,21 +64,24 @@ void Player::ImGuiDisplay()
 
 void Player::CheckInputs()
 {
+	// Get settings
+	const auto& settings = Settings::GetInstance();
+
 	if (Inputs::IsKeyPressed(SDL_SCANCODE_W))
 	{
-		m_runSpeed = PLAYER_RUN_SPEED;
+		m_runSpeed = settings.player.runSpeed;
 	}
 	else if (Inputs::IsKeyPressed(SDL_SCANCODE_S))
 	{
-		m_runSpeed = -PLAYER_RUN_SPEED;
+		m_runSpeed = -settings.player.runSpeed;
 	}
 
 	if (Inputs::IsKeyPressed(SDL_SCANCODE_A))
 	{
-		m_turnSpeed = PLAYER_TURN_SPEED;
+		m_turnSpeed = settings.player.turnSpeed;
 	}
 	else if (Inputs::IsKeyPressed(SDL_SCANCODE_D))
 	{
-		m_turnSpeed = -PLAYER_TURN_SPEED;
+		m_turnSpeed = -settings.player.turnSpeed;
 	}
 }

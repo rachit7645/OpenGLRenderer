@@ -20,6 +20,7 @@ namespace Entities
 			const glm::vec3& rotation,
 			f32 scale
 		);
+		Entity();
 
 		MdPtr     model;
 		glm::vec3 position;

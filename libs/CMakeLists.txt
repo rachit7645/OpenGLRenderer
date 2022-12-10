@@ -17,7 +17,7 @@ set(OpenGL_GL_PREFERENCE GLVND)
 find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
 
-# Source files
+# ImGui source files
 add_library(imgui SHARED
 	imgui/imgui.cpp
 	imgui/imgui_draw.cpp
@@ -28,6 +28,7 @@ add_library(imgui SHARED
 	imgui/misc/cpp/imgui_stdlib.cpp
 )
 
+# ImGui precompiled headers
 target_precompile_headers(imgui PRIVATE
 	imgui/imconfig.h
 	imgui/imgui.h
@@ -55,3 +56,22 @@ target_compile_options(imgui PRIVATE -g)
 target_compile_options(imgui PRIVATE -msse2)
 # Link libraries
 target_link_libraries(imgui OpenGL::GL SDL2::SDL2)
+
+# SIMD JSON source files
+add_library(simdjson STATIC simdjson/singleheader/simdjson.cpp)
+
+# SIMD JSON precompiled headers
+target_precompile_headers(simdjson PRIVATE simdjson/singleheader/simdjson.h)
+
+# SIMD JSON includes
+target_include_directories(simdjson PUBLIC simdjson/singleheader/)
+# Disable warnings
+target_compile_options(simdjson PRIVATE -w)
+# -O3 optimisations
+target_compile_options(simdjson PRIVATE -O3)
+# Debug output
+target_compile_options(simdjson PRIVATE -g)
+# Enable SSE2
+target_compile_options(simdjson PRIVATE -msse2)
+# SIMD JSON libs
+target_link_libraries(simdjson)

@@ -9,8 +9,6 @@
 
 using namespace Renderer;
 
-// TODO: Add view layer functionality
-
 Texture::Texture(const std::string_view path)
 {
 	auto data = LoadImage(path);
@@ -25,11 +23,52 @@ Texture::Texture(const std::string_view path)
 	SetParameter(GL_TEXTURE_LOD_BIAS,   TEXTURE_LOD_BIAS);
 
 	SetPixelParameter(GL_UNPACK_ALIGNMENT, 1);
-	LoadImageData(data, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+	LoadImageData(data, GL_RGB, GL_RGB, GL_UNSIGNED_BYTE);
 	GenerateMipmaps();
 
 	Unbind();
 	stbi_image_free(data);
+}
+
+Texture::Texture(const std::array<const std::string_view, 6>& files)
+{
+	// Set internal data
+	type = GL_TEXTURE_CUBE_MAP;
+
+	// Create texture
+	CreateTexture();
+	// Bind it
+	Bind();
+
+	// Set parameters
+	SetParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	SetParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	SetParameter(GL_TEXTURE_WRAP_S,     GL_CLAMP_TO_EDGE);
+	SetParameter(GL_TEXTURE_WRAP_T,     GL_CLAMP_TO_EDGE);
+	SetParameter(GL_TEXTURE_WRAP_R,     GL_CLAMP_TO_EDGE);
+	SetParameter(GL_TEXTURE_LOD_BIAS,   TEXTURE_LOD_BIAS);
+	// Set pixel parameters
+	SetPixelParameter(GL_UNPACK_ALIGNMENT, 1);
+
+	for (usize i = 0; i < files.size(); ++i)
+	{
+		// Load data
+		f32* data = LoadImageHDR(files[i]);
+		// Upload to VRAM
+		LoadImageData
+		(
+			reinterpret_cast<u8*>(data),
+			GL_RGB16F,
+			GL_RGB,
+			GL_FLOAT,
+			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i
+		);
+		// Free memory
+		stbi_image_free(data);
+	}
+
+	// Unbind
+	Unbind();
 }
 
 u8* Texture::LoadImage(const std::string_view path)
@@ -42,7 +81,28 @@ u8* Texture::LoadImage(const std::string_view path)
 		&width,
 		&height,
 		&channels,
-		STBI_rgb_alpha
+		STBI_rgb
+	);
+
+	if (data == nullptr)
+	{
+		LOG_ERROR("Unable to load texture: {}\n", path);
+	}
+
+	return data;
+}
+
+f32* Texture::LoadImageHDR(const std::string_view path)
+{
+	LOG_INFO("Loading texture: {}\n", path);
+
+	f32* data = stbi_loadf
+	(
+		(Files::GetResourceDirectory() + path.data()).c_str(),
+		&width,
+		&height,
+		&channels,
+		STBI_rgb
 	);
 
 	if (data == nullptr)
@@ -78,11 +138,11 @@ void Texture::SetParameter(GLenum name, const GLfloat* param)
 	glTexParameterfv(type, name, param);
 }
 
-void Texture::LoadImageData(u8* data, GLint internalFormat, GLint format, GLint dataType)
+void Texture::LoadImageData(u8* data, GLint internalFormat, GLint format, GLint dataType, GLenum target)
 {
 	glTexImage2D
 	(
-		type,
+		target ? target : type,
 		0,
 		internalFormat,
 		width,
@@ -94,11 +154,11 @@ void Texture::LoadImageData(u8* data, GLint internalFormat, GLint format, GLint 
 	);
 }
 
-void Texture::LoadImageData3D(u8* data, GLint internalFormat, GLint format, GLint dataType)
+void Texture::LoadImageData3D(u8* data, GLint internalFormat, GLint format, GLint dataType, GLenum target)
 {
 	glTexImage3D
 	(
-		type,
+		target ? target : type,
 		0,
 		internalFormat,
 		width,

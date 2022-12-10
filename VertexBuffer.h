@@ -20,7 +20,7 @@ namespace Renderer
 		void Bind(GLenum type)   const;
 		void Unbind(GLenum type) const;
 
-		GLuint id   = 0;
+		GLuint id = 0;
 	protected:
 		void CreateBuffer();
 

@@ -14,15 +14,12 @@ out vec3 txCoords;
 
 void main()
 {
-	// HACK: Editing view matrix in the shader
-	mat4 editedView = viewMatrix;
 	// Disable translation
-	editedView[3][0] = 0.0f;
-	editedView[3][1] = 0.0f;
-	editedView[3][2] = 0.0f;
-	// Set the z position to the w position
-	// This makes it so that during perspective division z / w = w / w = 1.0f
-	// This means that the driver will (hopefully) use early depth test
-	gl_Position = (projectionMatrix * editedView * modelMatrix * vec4(position, 1.0f)).xyww;
-	txCoords    = position;
+	mat4 rotView = mat4(mat3(viewMatrix));
+	// Convert to clip space
+	gl_Position = projectionMatrix * rotView * modelMatrix * vec4(position, 1.0f);
+	// Early depth test
+	gl_Position = gl_Position.xyww;
+	// TxCoords
+	txCoords = position;
 }

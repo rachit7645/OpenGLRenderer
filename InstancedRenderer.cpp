@@ -100,7 +100,7 @@ void InstancedRenderer::PrepareMesh(const Mesh& mesh, Mode mode)
 void InstancedRenderer::LoadDiffuse(const Mesh& mesh)
 {
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, mesh.textures.diffuse->id);
+	glBindTexture(GL_TEXTURE_2D, mesh.textures.albedo->id);
 }
 
 void InstancedRenderer::UnbindMesh()

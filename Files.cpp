@@ -2,11 +2,14 @@
 
 #include <filesystem>
 
+// Namespace alias
+namespace filesystem = std::filesystem;
+
 std::string m_resDir;
 
 void Files::SetResourceDirectory(const std::string_view relPath)
 {
-	m_resDir = std::filesystem::absolute(relPath).u8string();
+	m_resDir = filesystem::absolute(relPath).u8string();
 }
 
 const std::string& Files::GetResourceDirectory()
@@ -16,10 +19,11 @@ const std::string& Files::GetResourceDirectory()
 
 std::string Files::GetName(const std::string_view path)
 {
-	return std::filesystem::path(path).filename().u8string();
+	return filesystem::path(path).filename().u8string();
 }
 
-std::string Files::GetRelative(const std::string_view path)
+std::string Files::GetDirectory(const std::string_view path)
 {
-	return std::filesystem::relative(path, m_resDir).u8string();
+	return filesystem::path(path).parent_path().u8string() +
+	       static_cast<char>(filesystem::path::preferred_separator);
 }

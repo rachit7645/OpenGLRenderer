@@ -8,8 +8,9 @@ namespace Shader
 	class FastInstancedShader : public ShaderProgram
 	{
 	public:
+		// Constructor
 		FastInstancedShader();
-
+		// Get all uniform locations (Unused in this shader)
 		void GetUniformLocations() override;
 	};
 }

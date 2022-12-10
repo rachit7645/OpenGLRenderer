@@ -36,7 +36,7 @@ namespace GL
 		template<typename T>
 		struct DataSTD140
 		{
-			alignas(16) T data;
+			alignas(16) T data = {};
 		};
 	}
 

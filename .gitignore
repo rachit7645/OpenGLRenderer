@@ -1,6 +1,9 @@
 /build/
 /.idea/
 /.vscode/
-/res/gfx/Link
-/libs/stb
-/libs/imgui
+/py/
+/res/gfx/Link/
+/res/gfx/Mario/
+/libs/stb/
+/libs/imgui/
+/libs/simdjson/

@@ -1,32 +1,32 @@
 #include "Camera.h"
 
-#include "Imgui.h"
+#include "imgui.h"
 #include "Inputs.h"
+#include "Settings.h"
 
 using namespace Entities;
 
-constexpr auto CAMERA_ZOOM_SPEED = 1.0f;
-constexpr auto CAMERA_PITCH_MIN  = 0.0f;
-constexpr auto CAMERA_PITCH_MAX  = 90.0f;
+using Engine::Settings;
 
-Camera::Camera(Player* player)
-    : player(player)
-{
-}
+// Global flags
+bool m_toMoveCamera = true;
+bool m_toZoomCamera = true;
 
 void Camera::Move()
 {
-	if (g_ToZoomCamera)
+	// If there is mouse scroll input
+	if (m_toZoomCamera)
 	{
 		CalculateZoom();
-		g_ToZoomCamera = false;
+		m_toZoomCamera = false;
 	}
 
-	if (g_ToMoveCamera)
+	// If there is mouse movement
+	if (m_toMoveCamera)
 	{
 		CalculatePitch();
 		CalculateAAP();
-		g_ToMoveCamera = false;
+		m_toMoveCamera = false;
 	}
 
 	CalculatePosition();
@@ -56,13 +56,16 @@ void Camera::ImGuiDisplay()
 
 void Camera::CalculatePosition()
 {
+	// Calculate base and altitude
 	f32 hDistance = distance * std::cos(glm::radians(rotation.x));
 	f32 vDistance = distance * std::sin(glm::radians(rotation.x));
 
+	// Calculate offsets
 	f32 theta   = player->rotation.y + m_angle;
 	f32 offsetX = hDistance * std::sin(glm::radians(theta));
 	f32 offsetZ = hDistance * std::cos(glm::radians(theta));
 
+	// Apply modifiers
 	position.x = player->position.x - offsetX;
 	position.z = player->position.z - offsetZ;
 	position.y = player->position.y + vDistance;
@@ -71,44 +74,65 @@ void Camera::CalculatePosition()
 
 void Camera::CalculateZoom()
 {
+	// Get mouse scroll
 	auto& mouseScroll = Inputs::GetMouseScroll();
+	// Get settings
+	const auto& settings = Settings::GetInstance();
 
-	// If scroll direction is positive, reduce distance from player
 	if (mouseScroll.y > 0)
 	{
 		for (ssize i = 0; i < mouseScroll.y; ++i)
 		{
-			distance -= CAMERA_ZOOM_SPEED;
+			distance -= settings.camera.zoomSpeed;
 		}
 	}
-	// If scroll direction is negative, increase distance from player
 	else
 	{
 		for (ssize i = 0; i < -mouseScroll.y; ++i)
 		{
-			distance += CAMERA_ZOOM_SPEED;
+			distance += settings.camera.zoomSpeed;
 		}
 	}
 }
 
 void Camera::CalculatePitch()
 {
+	// Get mouse position
 	auto& mousePos = Inputs::GetMousePos();
-	rotation.x    -= static_cast<f32>(mousePos.y * 0.1);
+	// Get settings
+	const auto& settings = Settings::GetInstance();
 
+	// Calculate pitch
+	rotation.x -= static_cast<f32>(mousePos.y) * settings.camera.pitchSpeed;
+
+	// Cap pitch
 	if (m_capPitch)
 	{
-		rotation.x = glm::clamp<f32>(rotation.x, CAMERA_PITCH_MIN, CAMERA_PITCH_MAX);
+		rotation.x = glm::clamp(rotation.x, settings.camera.minPitch, settings.camera.maxPitch);
 	}
 }
 
 void Camera::CalculateAAP()
 {
-	auto& mousePos     = Inputs::GetMousePos();
-	m_angle -= static_cast<f32>(mousePos.x * 0.3);
+	// Get mouse pos
+	auto& mousePos = Inputs::GetMousePos();
+	// Get settings
+	const auto& settings = Settings::GetInstance();
+	// Calculate angle
+	m_angle -= static_cast<f32>(mousePos.x) * settings.camera.aapSpeed;
 }
 
 void Camera::InvertPitch()
 {
 	rotation.x = -rotation.x;
+}
+
+bool& Camera::GetToMoveCamera()
+{
+	return m_toMoveCamera;
+}
+
+bool& Camera::GetToZoomCamera()
+{
+	return m_toZoomCamera;
 }

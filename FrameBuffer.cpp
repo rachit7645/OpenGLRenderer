@@ -2,10 +2,11 @@
 
 #include "Log.h"
 #include "Window.h"
+#include "Settings.h"
 
 using namespace Renderer;
 
-using Window::DIMENSIONS;
+using Engine::Settings;
 
 void FrameBuffer::CreateFrameBuffer()
 {
@@ -14,7 +15,7 @@ void FrameBuffer::CreateFrameBuffer()
 
 void FrameBuffer::AddTexture(TxPtr& texture, const FBOAttachment& attachment)
 {
-	texture = std::make_shared<Texture>();
+	texture         = std::make_shared<Texture>();
 	texture->width  = width;
 	texture->height = height;
 	texture->type   = GL_TEXTURE_2D;
@@ -29,7 +30,7 @@ void FrameBuffer::AddTexture(TxPtr& texture, const FBOAttachment& attachment)
 	texture->LoadImageData
 	(
 		nullptr,
-		attachment.internalFormat,
+		attachment.intFormat,
 		attachment.format,
 		attachment.dataType
 	);
@@ -46,7 +47,37 @@ void FrameBuffer::AddTexture(TxPtr& texture, const FBOAttachment& attachment)
 	);
 }
 
-void FrameBuffer::AddArrayTexture(TxPtr& texture, const FBOAttachment& attachment)
+void FrameBuffer::AddTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment)
+{
+	texture = std::make_shared<Texture>();
+	texture->width  = width;
+	texture->height = height;
+	texture->type   = GL_TEXTURE_CUBE_MAP;
+
+	texture->CreateTexture();
+	texture->Bind();
+	texture->SetParameter(GL_TEXTURE_MIN_FILTER, attachment.minFilter);
+	texture->SetParameter(GL_TEXTURE_MAG_FILTER, attachment.maxFilter);
+	texture->SetParameter(GL_TEXTURE_WRAP_S,     attachment.wrapMode);
+	texture->SetParameter(GL_TEXTURE_WRAP_T,     attachment.wrapMode);
+	texture->SetParameter(GL_TEXTURE_WRAP_R,     attachment.wrapMode);
+
+	for (usize i = 0; i < 6; ++i)
+	{
+		texture->LoadImageData
+		(
+			nullptr,
+			attachment.intFormat,
+			attachment.format,
+			attachment.dataType,
+			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i
+		);
+	}
+
+	texture->Unbind();
+}
+
+void FrameBuffer::AddTextureArray(TxPtr& texture, const FBOAttachment& attachment)
 {
 	texture = std::make_shared<Texture>();
 	texture->width  = width;
@@ -69,7 +100,7 @@ void FrameBuffer::AddArrayTexture(TxPtr& texture, const FBOAttachment& attachmen
 	texture->LoadImageData3D
 	(
 		nullptr,
-		attachment.internalFormat,
+		attachment.intFormat,
 		attachment.format,
 		attachment.dataType
 	);
@@ -91,7 +122,7 @@ void FrameBuffer::AddBuffer(RdBufPtr& buffer, const FBOAttachment& attachment)
 	(
 		width,
 		height,
-		attachment.internalFormat
+		attachment.intFormat
 	);
 
 	glFramebufferRenderbuffer
@@ -156,8 +187,11 @@ void FrameBuffer::Bind() const
 
 void FrameBuffer::Unbind() const
 {
+	// Get settings
+	const auto& settings = Settings::GetInstance();
+	// Unbind
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, DIMENSIONS.x, DIMENSIONS.y);
+	glViewport(0, 0, settings.window.dimensions.x, settings.window.dimensions.y);
 }
 
 FrameBuffer::~FrameBuffer()

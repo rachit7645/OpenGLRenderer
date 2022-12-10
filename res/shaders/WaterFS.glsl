@@ -6,26 +6,10 @@ const float SHINE_DAMPER    = 16.0f;
 const float REFLECTIVITY    = 0.2f;
 const float MIN_SPECULAR    = 0.0f;
 const float NORMAL_FACTOR_Y = 0.1f;
-const int   MAX_LIGHTS      = 4;
-
-struct Light
-{
-	vec4 position;
-	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular;
-	vec4 attenuation;
-};
-
-layout(std140, binding = 1) uniform Lights
-{
-	Light lights[MAX_LIGHTS];
-};
 
 layout(std140, binding = 2) uniform Shared
 {
 	vec4 clipPlane;
-	vec4 skyColor;
 	vec4 cameraPos;
 	vec4 resolution;
 };
@@ -115,5 +99,5 @@ vec3 CalculateSpecular(vec3 unitNormal)
 	float specularFactor = dot(halfwayDir, unitNormal);
 	specularFactor       = max(specularFactor, MIN_SPECULAR);
 	float dampedFactor   = pow(specularFactor, SHINE_DAMPER);
-	return dampedFactor * REFLECTIVITY * lights[0].specular.rgb;
+	return dampedFactor * REFLECTIVITY * vec3(1.0f);
 }

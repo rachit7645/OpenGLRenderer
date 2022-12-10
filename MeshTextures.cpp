@@ -2,8 +2,15 @@
 
 using namespace Renderer;
 
-MeshTextures::MeshTextures(TxPtr diffuse, TxPtr specular)
-	: diffuse(std::move(diffuse)),
-	  specular(std::move(specular))
+
+MeshTextures::MeshTextures
+(
+	TxPtr albedo,
+	TxPtr normal,
+	TxPtr aoRghMtl
+)
+	: albedo(std::move(albedo)),
+	  normal(std::move(normal)),
+	  aoRghMtl(std::move(aoRghMtl))
 {
 }

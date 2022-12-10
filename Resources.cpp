@@ -8,7 +8,6 @@
 using Renderer::Texture;
 using Renderer::Model;
 using Renderer::MeshTextures;
-using Renderer::Material;
 
 using namespace Resources;
 
@@ -31,12 +30,7 @@ TxPtr Resources::GetTexture(const std::string& path)
 	}
 }
 
-MdPtr Resources::GetModel
-(
-	const std::string& path,
-	const MeshTextures& textures,
-	const Material& material
-)
+MdPtr Resources::GetModel(const std::string& path, const MeshTextures& textures)
 {
 	auto result = m_models.find(path);
 	if (result != m_models.end())
@@ -46,7 +40,7 @@ MdPtr Resources::GetModel
 	}
 	else
 	{
-		return m_models[path] = std::make_shared<Model>(path, textures, material);
+		return m_models[path] = std::make_shared<Model>(path, textures);
 	}
 }
 

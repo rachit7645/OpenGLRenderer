@@ -23,7 +23,7 @@ namespace Waters
 		TxPtr dudvMap;
 		TxPtr normalMap;
 		// Y: Height
-		glm::vec3 position;
+		glm::vec3 position = {0.0f, 0.0f, 0.0f};
 	};
 }
 

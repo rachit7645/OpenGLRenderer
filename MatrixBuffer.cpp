@@ -8,16 +8,32 @@ using namespace Renderer;
 
 using Detail::MatrixBufferGLSL;
 using Entities::Camera;
-using Entities::Light;
+using Entities::PointLight;
 
 MatrixBuffer::MatrixBuffer()
 	: UniformBuffer(0, sizeof(MatrixBufferGLSL), GL_STATIC_DRAW)
 {
+	// Bind buffer
+	glBindBuffer(GL_UNIFORM_BUFFER, id);
+	// Initialise empty data
+	MatrixBufferGLSL matrixBuffer = {};
+	// Buffer empty data
+	glBufferSubData
+	(
+		GL_UNIFORM_BUFFER,
+		static_cast<GLintptr>(0),
+		static_cast<GLsizeiptr>(sizeof(MatrixBufferGLSL)),
+		reinterpret_cast<const void*>(&matrixBuffer)
+	);
+	// Unbind buffer
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void MatrixBuffer::LoadView(const Camera& camera)
 {
+	// Create view matrix
 	auto view = Maths::CreateViewMatrix(camera);
+	// Load to UBO
 	glBindBuffer(GL_UNIFORM_BUFFER, id);
 	glBufferSubData
 	(
@@ -31,6 +47,7 @@ void MatrixBuffer::LoadView(const Camera& camera)
 
 void MatrixBuffer::LoadProjection(const glm::mat4& projection)
 {
+	// Load to UBO
 	glBindBuffer(GL_UNIFORM_BUFFER, id);
 	glBufferSubData
 	(

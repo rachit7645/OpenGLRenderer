@@ -29,8 +29,7 @@ namespace Renderer
 		void EndRender();
 		void LoadData(const EntityVector& entities);
 		void PrepareMesh(const Mesh& mesh);
-		void LoadDiffuse(const Mesh& mesh);
-		void LoadSpecular(const Mesh& mesh);
+		void LoadTextures(const Mesh& mesh);
 		void UnbindMesh();
 	};
 }

@@ -1,18 +1,25 @@
 #include "Model.h"
 
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+
 #include "Resources.h"
 #include "Log.h"
 #include "Files.h"
 #include "Vertex.h"
 
+// HACK: Assimp doesn't define a macro for this
+#ifndef AI_MATKEY_NORMALS_TEXTURE
+#define AI_MATKEY_NORMALS_TEXTURE aiTextureType_NORMALS, 0
+#endif
+
 using namespace Renderer;
 
-Model::Model
-(
-	const std::string_view path,
-	const MeshTextures& textures,
-	const Material& material
-)
+constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate   | aiProcess_FlipUVs          | aiProcess_OptimizeMeshes   |
+							 aiProcess_OptimizeGraph | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace |
+							 aiProcess_GenUVCoords;
+
+Model::Model(const std::string_view path, const MeshTextures& textures)
 {
 	Assimp::Importer importer;
 
@@ -24,7 +31,7 @@ Model::Model
 		LOG_ERROR("Model Load Failed: {}", importer.GetErrorString());
 	}
 
-	ProcessNode(scene->mRootNode, scene, textures, material);
+	ProcessNode(scene->mRootNode, scene, textures, Files::GetDirectory(path));
 }
 
 void Model::ProcessNode
@@ -32,19 +39,19 @@ void Model::ProcessNode
 	aiNode* node,
 	const aiScene* scene,
 	const MeshTextures& textures,
-	const Material& material
+	const std::string& directory
 )
 {
 	// Iterate over all the node's meshes
 	for (u32 i = 0; i < node->mNumMeshes; ++i)
 	{
-		meshes.emplace_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], scene, textures, material));
+		meshes.emplace_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], scene, textures, directory));
 	}
 
 	// Iterate over all the child meshes
 	for (u32 i = 0; i < node->mNumChildren; ++i)
 	{
-		ProcessNode(node->mChildren[i], scene, textures, material);
+		ProcessNode(node->mChildren[i], scene, textures, directory);
 	}
 }
 
@@ -53,25 +60,28 @@ Mesh Model::ProcessMesh
 	aiMesh* mesh,
 	const aiScene* scene,
 	const MeshTextures& textures,
-	const Material& material
+	const std::string& directory
 )
 {
+	// Data vectors
 	std::vector<Vertex> vertices;
 	std::vector<u32>    indices;
 
 	for (u32 i = 0; i < mesh->mNumVertices; i++)
 	{
-		const auto aiZeroVector = aiVector3D(0.0f, 0.0f, 0.0f);
-
+		// Retrieve data
 		const aiVector3D& position = mesh->mVertices[i];
 		const aiVector3D& normal   = mesh->mNormals[i];
-		const aiVector3D& texCoord = mesh->HasTextureCoords(0) ? mesh->mTextureCoords[0][i] : aiZeroVector;
+		const aiVector3D& texCoord = mesh->mTextureCoords[0][i];
+		const aiVector3D& tangent  = mesh->mTangents[i];
 
+		// Convert to GL friendly data
 		vertices.emplace_back
 		(
 			glm::vec3(position.x, position.y, position.z),
 			glm::vec2(texCoord.x, texCoord.y),
-			glm::vec3(normal.x, normal.y, normal.z)
+			glm::vec3(normal.x, normal.y, normal.z),
+			glm::vec3(tangent.x, tangent.y, tangent.z)
 		);
 	}
 
@@ -83,57 +93,42 @@ Mesh Model::ProcessMesh
 		indices.emplace_back(face.mIndices[2]);
 	}
 
-	return Mesh
-	(
-		vertices,
-		indices,
-		ProcessTextures(mesh, scene, textures),
-		ProcessMaterial(mesh, scene, material)
-	);
+	return Mesh(vertices, indices, ProcessTextures(mesh, scene, textures, directory));
 }
 
 MeshTextures Model::ProcessTextures
 (
 	aiMesh* mesh,
 	const aiScene* scene,
-	const MeshTextures& pTextures
+	const MeshTextures& pTextures,
+	const std::string& directory
 )
 {
-	aiString path;
+	// Default textures
 	MeshTextures textures = pTextures;
-
+	// Current materials
 	aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
-	mat->GetTexture(aiTextureType_DIFFUSE, 0, &path);
-	if (path.length > 0)
-	{
-		textures.diffuse = Resources::GetTexture(path.C_Str());
-	}
 
-	path.Clear();
-	mat->GetTexture(aiTextureType_SPECULAR, 0, &path);
-	if (path.length > 0)
+	// Utility lambda
+	auto GetTexture = [directory, mat] (TxPtr& texture, aiTextureType type, unsigned int index)
 	{
-		textures.specular = Resources::GetTexture(path.C_Str());
-	}
+		// Path variable
+		aiString path;
+		// Get texture
+		mat->GetTexture(type, index, &path);
+		// If texture is available
+		if (path.length > 0)
+		{
+			texture = Resources::GetTexture(directory + path.C_Str());
+		}
+	};
+
+	// Albedo
+	GetTexture(textures.albedo, AI_MATKEY_BASE_COLOR_TEXTURE);
+	// Normal
+	GetTexture(textures.normal, AI_MATKEY_NORMALS_TEXTURE);
+	// AO + Roughness + Metallic
+	GetTexture(textures.aoRghMtl, AI_MATKEY_ROUGHNESS_TEXTURE);
 
 	return textures;
-}
-
-Material Model::ProcessMaterial
-(
-	aiMesh* mesh,
-	const aiScene* scene,
-	const Material& pMaterial
-)
-{
-	Material    material = pMaterial;
-	aiMaterial* mat      = scene->mMaterials[mesh->mMaterialIndex];
-
-	mat->Get(AI_MATKEY_SHININESS,          &material.shineDamper,  nullptr);
-	mat->Get(AI_MATKEY_SHININESS_STRENGTH, &material.reflectivity, nullptr);
-
-	material.shineDamper  = std::max(material.shineDamper,  1.0f);
-	material.reflectivity = std::max(material.reflectivity, 0.0f);
-
-	return material;
 }

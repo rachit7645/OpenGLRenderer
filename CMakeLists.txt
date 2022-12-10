@@ -1,3 +1,5 @@
+# TODO: Add install functionality
+
 cmake_minimum_required(VERSION 3.0.0)
 project(engine VERSION 0.1.0)
 
@@ -40,28 +42,22 @@ add_executable(engine
 	Entity.cpp
 	Maths.cpp
 	Camera.cpp
-	MainLoop.cpp
 	RenderManager.cpp
-	Material.cpp 
 	Mesh.cpp
 	Player.cpp
 	Files.cpp
 	SkyboxShader.cpp
 	SkyboxRenderer.cpp
-	CubeMap.cpp
 	Skybox.cpp
 	Inputs.cpp
 	MatrixBuffer.cpp
 	UniformBuffer.cpp
 	LightsBuffer.cpp
-	Light.cpp
+	PointLight.cpp
 	Resources.cpp
 	Time.cpp
 	GL.cpp
 	FrameBuffer.cpp
-	GUI.cpp
-	GUIShader.cpp
-	GUIRenderer.cpp
 	RenderBuffer.cpp
 	WaterShader.cpp
 	WaterRenderer.cpp
@@ -82,6 +78,15 @@ add_executable(engine
 	LightingRenderer.cpp
 	LightingShader.cpp
 	Vertex.cpp
+	IBLMaps.cpp
+	ConverterShader.cpp
+	ConvolutionShader.cpp
+	PreFilterShader.cpp
+	BRDFShader.cpp
+	DirectionalLight.cpp
+	SpotLight.cpp
+	Settings.cpp
+	Instance.cpp
 )
 
 # Precompiled Headers
@@ -110,7 +115,10 @@ target_precompile_headers(engine PRIVATE
 	<glm/mat4x4.hpp>
 	<glm/trigonometric.hpp>
 	<glm/ext/vector_int2.hpp>
+	<glm/ext/vector_int4.hpp>
 	<glm/gtc/matrix_transform.hpp>
+	# SIMD JSON Headers
+	libs/simdjson/singleheader/simdjson.h
 	# C++ STL Headers
 	<unordered_map>
 	<vector>
@@ -147,4 +155,4 @@ target_compile_options(engine PRIVATE -g)
 # Enable SSE2
 target_compile_options(engine PRIVATE -msse2)
 # Link libraries
-target_link_libraries(engine OpenGL::GL GLEW::GLEW SDL2::SDL2 fmt::fmt assimp imgui)
+target_link_libraries(engine SDL2::SDL2 OpenGL::GL GLEW::GLEW fmt::fmt assimp imgui simdjson)

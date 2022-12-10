@@ -3,70 +3,94 @@
 #include <vector>
 #include <GL/glew.h>
 
-#include "GLM.h"
 #include "FBOAttachment.h"
 #include "Window.h"
+#include "Settings.h"
 
 using namespace Renderer;
+
+using Engine::Settings;
+
+// GBuffer Layout
+// Buffer   | Type     | R        | G         | B        | A
+// Normal   | RG16F    | normal.x | normal.y  | NONE     | NONE
+// Albedo   | RGB8U    | albedo.r | albedo.g  | albedo.b | NONE
+// Material | RGB8U    | ao       | roughness | metallic | NONE
+// Depth    | D24F_S8U | depth    | stencil   | NONE     | NONE
 
 GBuffer::GBuffer()
 	: buffer(std::make_shared<FrameBuffer>())
 {
-	Renderer::FBOAttachment position =
-	{
-		GL_NEAREST,
-		GL_NEAREST,
-		GL_REPEAT,
-		GL_RGBA32F,
-		GL_RGBA,
-		GL_FLOAT,
-		GL_COLOR_ATTACHMENT0
-	};
+	// Get settings
+	const auto& settings = Settings::GetInstance();
 
+	// Normal attachment
 	Renderer::FBOAttachment normal =
 	{
 		GL_NEAREST,
 		GL_NEAREST,
-		GL_REPEAT,
-		GL_RGBA32F,
-		GL_RGBA,
+		GL_CLAMP_TO_EDGE,
+		GL_RG16F,
+		GL_RG,
 		GL_FLOAT,
-		GL_COLOR_ATTACHMENT1
+		GL_COLOR_ATTACHMENT0
 	};
 
+	// Albedo attachment
 	Renderer::FBOAttachment albedo =
 	{
 		GL_NEAREST,
 		GL_NEAREST,
-		GL_REPEAT,
-		GL_RGBA,
-		GL_RGBA,
-		GL_FLOAT,
+		GL_CLAMP_TO_EDGE,
+		GL_RGB8,
+		GL_RGB,
+		GL_UNSIGNED_BYTE,
+		GL_COLOR_ATTACHMENT1
+	};
+
+	// Material attachment
+	Renderer::FBOAttachment material =
+	{
+		GL_NEAREST,
+		GL_NEAREST,
+		GL_CLAMP_TO_EDGE,
+		GL_RGB8,
+		GL_RGB,
+		GL_UNSIGNED_BYTE,
 		GL_COLOR_ATTACHMENT2
 	};
 
-	Renderer::FBOAttachment depth = {};
+	// Depth attachment
+	Renderer::FBOAttachment depth =
 	{
-		depth.internalFormat = GL_DEPTH_COMPONENT24;
-		depth.slot           = GL_DEPTH_ATTACHMENT;
-	}
-
-	std::vector<GLenum> drawBuffers =
-	{
-		position.slot,
-		normal.slot,
-		albedo.slot
+		GL_NEAREST,
+		GL_NEAREST,
+		GL_CLAMP_TO_EDGE,
+		GL_DEPTH24_STENCIL8,
+		GL_DEPTH_COMPONENT,
+		GL_FLOAT,
+		GL_DEPTH_STENCIL_ATTACHMENT
 	};
 
-	buffer->width  = Window::DIMENSIONS.x;
-	buffer->height = Window::DIMENSIONS.y;
+	// Selected draw buffers
+	std::vector<GLenum> drawBuffers =
+	{
+		normal.slot,
+		albedo.slot,
+		material.slot
+	};
 
+	// Set buffer width and height
+	buffer->width  = settings.window.dimensions.x;
+	buffer->height = settings.window.dimensions.y;
+
+	// Create frame buffer
 	buffer->CreateFrameBuffer();
 	buffer->Bind();
-	buffer->AddTexture(buffer->colorTextures[0], position);
-	buffer->AddTexture(buffer->colorTextures[1], normal);
-	buffer->AddTexture(buffer->colorTextures[2], albedo);
-	buffer->AddBuffer(buffer->depthRenderBuffer, depth);
+	buffer->AddTexture(buffer->colorTextures[0], normal);
+	buffer->AddTexture(buffer->colorTextures[1], albedo);
+	buffer->AddTexture(buffer->colorTextures[2], material);
+	buffer->AddTexture(buffer->depthTexture,     depth);
 	buffer->SetDrawBuffers(drawBuffers);
 	buffer->CheckStatus();
 	buffer->EnableDepth();
@@ -75,10 +99,12 @@ GBuffer::GBuffer()
 
 void GBuffer::BindGBuffer() const
 {
+	// Bind
 	buffer->Bind();
 }
 
 void GBuffer::BindDefaultFBO() const
 {
+	// Unbind
 	buffer->Unbind();
 }

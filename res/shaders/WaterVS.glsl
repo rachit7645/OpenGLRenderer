@@ -3,13 +3,29 @@
 const float TEXTURE_TILING = 4.0f;
 const int   MAX_LIGHTS     = 4;
 
-struct Light
+struct DirLight
 {
 	vec4 position;
-	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular;
+	vec4 color;
+	vec4 intensity;
+};
+
+struct PointLight
+{
+	vec4 position;
+	vec4 color;
+	vec4 intensity;
 	vec4 attenuation;
+};
+
+struct SpotLight
+{
+	vec4 position;
+	vec4 color;
+	vec4 intensity;
+	vec4 attenuation;
+	vec4 direction;
+	vec4 cutOff;
 };
 
 layout(std140, binding = 0) uniform Matrices
@@ -20,13 +36,20 @@ layout(std140, binding = 0) uniform Matrices
 
 layout(std140, binding = 1) uniform Lights
 {
-	Light lights[MAX_LIGHTS];
+	// Directional lights
+	int      numDirLights;
+	DirLight dirLights[MAX_LIGHTS];
+	// Point lights
+	int        numPointLights;
+	PointLight pointLights[MAX_LIGHTS];
+	// Spot Lights
+	int numSpotLights;
+	SpotLight spotLights[MAX_LIGHTS];
 };
 
 layout(std140, binding = 2) uniform Shared
 {
 	vec4 clipPlane;
-	vec4 skyColor;
 	vec4 cameraPos;
 	vec4 resolution;
 };
@@ -62,5 +85,5 @@ void CalculateTxCoords()
 void CalculateLighting(vec4 worldPos)
 {
 	unitCameraVector = normalize(cameraPos.xyz - worldPos.xyz);
-	unitLightVector  = normalize(lights[0].position.xyz - worldPos.xyz);
+	unitLightVector  = normalize(-dirLights[0].position.xyz);
 }

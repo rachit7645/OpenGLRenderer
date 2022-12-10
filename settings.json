@@ -1,0 +1,30 @@
+{
+	"window":
+	{
+		"width" : 1024,
+		"height": 576
+	},
+	"shadows":
+	{
+		"width" : 2048,
+		"height": 2048,
+		"offset": 10.0
+	},
+	"ibl":
+	{
+		"env_map_path": "gfx/Milkyway_small.hdr"
+	},
+	"player":
+	{
+		"run_speed" : 45.0,
+		"turn_speed": 170.0
+	},
+	"camera":
+	{
+		"zoom_speed" : 1.0,
+		"pitch_speed": 0.1,
+		"aap_speed"  : 0.3,
+		"pitch_min"  : 0.0,
+		"pitch_max"  : 90.0
+	}
+}

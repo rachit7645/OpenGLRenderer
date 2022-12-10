@@ -2,8 +2,6 @@
 
 using namespace Shader;
 
-using Renderer::Material;
-
 constexpr auto VERTEX_PATH = "shaders/GeometryPassVS.glsl",
 	FRAGMENT_PATH = "shaders/GeometryPassFS.glsl";
 
@@ -15,20 +13,14 @@ GBufferShader::GBufferShader()
 
 void GBufferShader::GetUniformLocations()
 {
-	m_uniforms["diffuseTexture"]  = GetUniformLocation("diffuseTexture");
-	m_uniforms["specularTexture"] = GetUniformLocation("specularTexture");
-	m_uniforms["shineDamper"]     = GetUniformLocation("shineDamper");
-	m_uniforms["reflectivity"]    = GetUniformLocation("reflectivity");
+	m_uniforms["albedoMap"] = GetUniformLocation("albedoMap");
+	m_uniforms["normalMap"] = GetUniformLocation("normalMap");
+	m_uniforms["aoRghMtl"]  = GetUniformLocation("aoRghMtl");
 }
 
 void GBufferShader::ConnectTextureUnits()
 {
-	LoadUniform(m_uniforms["diffuseTexture"],  0);
-	LoadUniform(m_uniforms["specularTexture"], 1);
-}
-
-void GBufferShader::LoadMaterial(const Material& material)
-{
-	LoadUniform(m_uniforms["shineDamper"],  material.shineDamper);
-	LoadUniform(m_uniforms["reflectivity"], material.reflectivity);
+	LoadUniform(m_uniforms["albedoMap"], 0);
+	LoadUniform(m_uniforms["normalMap"], 1);
+	LoadUniform(m_uniforms["aoRghMtl"],  2);
 }

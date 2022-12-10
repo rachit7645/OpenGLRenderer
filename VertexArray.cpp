@@ -8,16 +8,19 @@ VertexArray::VertexArray(const std::vector<Vertex>& vertices, const std::vector<
 	// Create VAO
 	glGenVertexArrays(1, &id);
 	glBindVertexArray(id);
+
 	// Enable attributes
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
 
 	// Create vertex buffer
 	buffers["vertices"] = std::make_shared<VertexBuffer>();
 	buffers["vertices"]->CreateBuffer();
 	buffers["vertices"]->Bind(GL_ARRAY_BUFFER);
 	buffers["vertices"]->BufferData(GL_ARRAY_BUFFER, vertices);
+
 	// Enable position
 	buffers["vertices"]->SetVertexAttribute
 	(
@@ -27,7 +30,8 @@ VertexArray::VertexArray(const std::vector<Vertex>& vertices, const std::vector<
 		sizeof(Vertex),
 		reinterpret_cast<void*>(offsetof(Vertex, position))
 	);
-	// Enable texture coordinates
+
+	// Enable texture coords
 	buffers["vertices"]->SetVertexAttribute
 	(
 		1,
@@ -36,6 +40,7 @@ VertexArray::VertexArray(const std::vector<Vertex>& vertices, const std::vector<
 		sizeof(Vertex),
 		reinterpret_cast<void*>(offsetof(Vertex, txCoord))
 	);
+
 	// Enable normals
 	buffers["vertices"]->SetVertexAttribute
 	(
@@ -45,6 +50,17 @@ VertexArray::VertexArray(const std::vector<Vertex>& vertices, const std::vector<
 		sizeof(Vertex),
 		reinterpret_cast<void*>(offsetof(Vertex, normal))
 	);
+
+	// Enable tangents
+	buffers["vertices"]->SetVertexAttribute
+	(
+		3,
+		3,
+		GL_FLOAT,
+		sizeof(Vertex),
+		reinterpret_cast<void*>(offsetof(Vertex, tangent))
+	);
+
 	// Unbind
 	buffers["vertices"]->Unbind(GL_ARRAY_BUFFER);
 

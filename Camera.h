@@ -5,30 +5,32 @@
 #include "Util.h"
 #include "Player.h"
 
-// HACK: Global Flags
-inline bool g_ToMoveCamera = true;
-inline bool g_ToZoomCamera = true;
-
 namespace Entities
 {
 	class Camera
 	{
 	public:
-		explicit Camera(Player* player);
-
-		Player*   player   = nullptr;
+		// Player
+		Player* player = nullptr;
+		// Position
 		glm::vec3 position = {0.0f, 0.0f, 0.0f};
-		glm::vec3 rotation = {5.0f, 0.0f, 0.0f};
-		f32       distance = 35.0f;
-
+		// Euler rotation
+		glm::vec3 rotation = {13.0f, 0.0f, 0.0f};
+		// Distance from player
+		f32 distance = 25.0f;
 		// Camera update function
 		void Move();
 		// Invert pitch
 		void InvertPitch();
+		// Global flag to move camera
+		static bool& GetToMoveCamera();
+		// Global flag to zoom camera
+		static bool& GetToZoomCamera();
 	private:
-		f32  m_angle    = 0.0f;
+		// Angle around player
+		f32 m_angle = 0.0f;
+		// Flag to cap pitch
 		bool m_capPitch = true;
-
 		// Display ImGui widgets
 		void ImGuiDisplay();
 		// Calculates zoom aka distance from player
@@ -37,7 +39,7 @@ namespace Entities
 		void CalculatePitch();
 		// Calculates angle around player
 		void CalculateAAP();
-		// Calculates position, and m_rotation
+		// Calculates position and rotation
 		void CalculatePosition();
 	};
 }

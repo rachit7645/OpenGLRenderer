@@ -10,6 +10,7 @@
 #include <glm/trigonometric.hpp>
 
 #include <glm/ext/vector_int2.hpp>
+#include <glm/ext/vector_int4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #endif

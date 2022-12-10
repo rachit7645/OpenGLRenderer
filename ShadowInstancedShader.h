@@ -8,8 +8,9 @@ namespace Shader
 	class ShadowInstancedShader : public ShaderProgram
 	{
 	public:
+		// Constructor
 		ShadowInstancedShader();
-
+		// Get all uniform locations (Unused in this shader)
 		void GetUniformLocations() override;
 	};
 }

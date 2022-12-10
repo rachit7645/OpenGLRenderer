@@ -1,16 +1,30 @@
 #version 430 core
 
-const float AMBIENT_STRENGTH = 1.0f;
-const int   MAX_LIGHTS       = 4;
-const int   NUM_LIGHTS       = 4;
+const int MAX_LIGHTS = 4;
 
-struct Light
+struct DirLight
 {
 	vec4 position;
-	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular;
+	vec4 color;
+	vec4 intensity;
+};
+
+struct PointLight
+{
+	vec4 position;
+	vec4 color;
+	vec4 intensity;
 	vec4 attenuation;
+};
+
+struct SpotLight
+{
+	vec4 position;
+	vec4 color;
+	vec4 intensity;
+	vec4 attenuation;
+	vec4 direction;
+	vec4 cutOff;
 };
 
 struct Instance
@@ -26,13 +40,20 @@ layout(std140, binding = 0) uniform Matrices
 
 layout(std140, binding = 1) uniform Lights
 {
-	Light lights[MAX_LIGHTS];
+	// Directional lights
+	int      numDirLights;
+	DirLight dirLights[MAX_LIGHTS];
+	// Point lights
+	int        numPointLights;
+	PointLight pointLights[MAX_LIGHTS];
+	// Spot Lights
+	int numSpotLights;
+	SpotLight spotLights[MAX_LIGHTS];
 };
 
 layout(std140, binding = 2) uniform Shared
 {
 	vec4 clipPlane;
-	vec4 skyColor;
 	vec4 cameraPos;
 	vec4 resolution;
 };
@@ -47,48 +68,37 @@ layout(location = 1) in vec2 textureCoords;
 layout(location = 2) in vec3 normal;
 
 out vec2 txCoords;
-out vec4 vertexColor;
+out vec3 unitNormal;
+out vec4 worldPosition;
 
-float CalculateAttFactor(int index, vec4 worldPosition);
-vec4  CalculateAmbient(int index);
-vec4  CalculateDiffuse(int index, vec3 normal, vec3 lightDir);
+out vec3 unitDirLightVector[MAX_LIGHTS];
+out vec3 unitPointLightVector[MAX_LIGHTS];
+out vec3 unitSpotLightVector[MAX_LIGHTS];
+out vec3 unitSpotLightDirVector[MAX_LIGHTS];
 
 void main()
 {
-	vec4 worldPosition = instances[gl_InstanceID].modelMatrix * vec4(position, 1.0f);
+	worldPosition      = instances[gl_InstanceID].modelMatrix * vec4(position, 1.0f);
 	gl_Position        = projectionMatrix * viewMatrix * worldPosition;
 	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
 	txCoords           = textureCoords;
 
 	vec4 transNormal = instances[gl_InstanceID].modelMatrix * vec4(normal, 0.0f);
-	vec3 unitNormal  = normalize(transNormal.xyz);
+	unitNormal       = normalize(transNormal.xyz);
 
-	for (int i = 0; i < min(MAX_LIGHTS, NUM_LIGHTS); ++i)
+	for (int i = 0; i < numDirLights; ++i)
 	{
-		vec3  lightDir  = normalize(lights[i].position.xyz - worldPosition.xyz);
-		float attFactor = CalculateAttFactor(i, worldPosition);
-		vec4  ambient   = CalculateAmbient(i) * attFactor;
-		vec4  diffuse   = CalculateDiffuse(i, unitNormal, lightDir);
-		vertexColor    += ambient + diffuse;
+		unitDirLightVector[i] = normalize(-dirLights[i].position.xyz);
 	}
-}
 
-float CalculateAttFactor(int index, vec4 worldPosition)
-{
-	vec4  ATT       = lights[index].attenuation;
-	float distance  = length(lights[index].position.xyz - worldPosition.xyz);
-	float attFactor = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
-	return 1.0f / attFactor;
-}
+	for (int i = 0; i < numPointLights; ++i)
+	{
+		unitPointLightVector[i] = normalize(pointLights[i].position.xyz - worldPosition.xyz);
+	}
 
-vec4 CalculateAmbient(int index)
-{
-	return vec4(AMBIENT_STRENGTH * lights[index].ambient.rgb, 1.0f);
-}
-
-vec4 CalculateDiffuse(int index, vec3 normal, vec3 lightDir)
-{
-	float nDot1      = dot(normal, lightDir);
-	float brightness = max(nDot1, 0.0f);
-	return vec4(brightness * lights[index].diffuse.rgb, 1.0f);
+	for (int i = 0; i < numSpotLights; ++i)
+	{
+		unitSpotLightVector[i]    = normalize(spotLights[i].position.xyz - worldPosition.xyz);
+		unitSpotLightDirVector[i] = normalize(-spotLights[i].direction.xyz);
+	}
 }
