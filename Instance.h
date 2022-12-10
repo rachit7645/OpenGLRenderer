@@ -8,7 +8,6 @@
 #include "DirectionalLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
-#include "GUI.h"
 #include "WaterTile.h"
 #include "Util.h"
 #include "Player.h"
@@ -23,7 +22,6 @@ namespace Engine
 	public:
 		// Vector tags
 		using EntityVec  = std::vector<Entities::Entity>;
-		using GUIs       = std::vector<Renderer::GUI>;
 		using WaterTiles = std::vector<Waters::WaterTile>;
 		// Lights vector tags
 		using DirLights   = std::vector<Entities::DirectionalLight>;
@@ -58,8 +56,6 @@ namespace Engine
 
 		// Entity vector
 		EntityVec m_entities = {};
-		// GUIs vector
-		GUIs m_guis = {};
 		// Water tiles
 		WaterTiles m_waters = {};
 

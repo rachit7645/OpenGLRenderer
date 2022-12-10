@@ -15,7 +15,7 @@ namespace Entities
 		// Position
 		glm::vec3 position = {0.0f, 0.0f, 0.0f};
 		// Euler rotation
-		glm::vec3 rotation = {5.0f, 0.0f, 0.0f};
+		glm::vec3 rotation = {13.0f, 0.0f, 0.0f};
 		// Distance from player
 		f32 distance = 25.0f;
 		// Camera update function

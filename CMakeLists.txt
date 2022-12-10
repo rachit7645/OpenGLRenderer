@@ -58,9 +58,6 @@ add_executable(engine
 	Time.cpp
 	GL.cpp
 	FrameBuffer.cpp
-	GUI.cpp
-	GUIShader.cpp
-	GUIRenderer.cpp
 	RenderBuffer.cpp
 	WaterShader.cpp
 	WaterRenderer.cpp

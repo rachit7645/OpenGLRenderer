@@ -227,8 +227,8 @@ void IBLMaps::CalculateBRDF()
 	shader.Start();
 
 	// Draw
-	glClearColor(GL_CLEAR_COLOR.r, GL_CLEAR_COLOR.g, GL_CLEAR_COLOR.b, GL_CLEAR_COLOR.a);
-	glClear(GL_CLEAR_FLAGS);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, quad->vertexCount);
 
 	// Unbind
@@ -343,8 +343,8 @@ void IBLMaps::RenderCubeFace(FbPtr& FBO, const VAO& cube, usize face, GLint leve
 		level
 	);
 	// Clear FBO
-	glClearColor(GL_CLEAR_COLOR.r, GL_CLEAR_COLOR.g, GL_CLEAR_COLOR.b, GL_CLEAR_COLOR.a);
-	glClear(GL_CLEAR_FLAGS);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Render cube
 	glDrawArrays(GL_TRIANGLES, 0, cube->vertexCount);
 }

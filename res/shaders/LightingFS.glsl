@@ -1,18 +1,20 @@
 #version 430 core
 
-// Constants
+// Lighting constants
 const float PI                 = 3.14159265359;
 const int   MAX_LIGHTS         = 4;
 const float MAX_REFLECTION_LOD = 4.0f;
 const float INV_GAMMA_FACTOR   = 1.0f / 2.2f;
-const int   MAX_LAYER_COUNT    = 16;
-const float MIN_BIAS           = 0.005f;
-const float MAX_BIAS           = 0.05f;
-const float SHADOW_AMOUNT      = 0.16f;
-const float BIAS_MODIFIER      = 0.35f;
-const float PCF_COUNT          = 1.2f;
-const float TOTAL_TEXELS       = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.0f);
+// Shadow constants
+const int   MAX_LAYER_COUNT = 16;
+const float MIN_BIAS        = 0.005f;
+const float MAX_BIAS        = 0.05f;
+const float SHADOW_AMOUNT   = 0.16f;
+const float BIAS_MODIFIER   = 0.35f;
+const float PCF_COUNT       = 1.2f;
+const float TOTAL_TEXELS    = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.0f);
 
+// Directional Light
 struct DirLight
 {
 	vec4 position;
@@ -20,6 +22,7 @@ struct DirLight
 	vec4 intensity;
 };
 
+// Point Light
 struct PointLight
 {
 	vec4 position;
@@ -28,6 +31,7 @@ struct PointLight
 	vec4 attenuation;
 };
 
+// Spot Light
 struct SpotLight
 {
 	vec4 position;
@@ -38,6 +42,7 @@ struct SpotLight
 	vec4 cutOff;
 };
 
+// Per-fragment GBuffer Data
 struct GBuffer
 {
 	vec3  fragPos;
@@ -48,6 +53,7 @@ struct GBuffer
 	float ao;
 };
 
+// Per-fragment Shared Data
 struct SharedData
 {
 	vec3 N;
@@ -56,6 +62,7 @@ struct SharedData
 	vec3 F0;
 };
 
+// Common Light Information
 struct LightInfo
 {
 	vec3  position;
@@ -427,17 +434,22 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0, float roughness)
 
 int GetCurrentLayer(GBuffer gBuffer)
 {
-	vec4  viewPosition = viewMatrix * vec4(gBuffer.fragPos, 1.0f);
-	float depthValue   = abs(viewPosition.z);
-
-	// Set it to this as default to avoid a branch
+	// Get view-space position
+	vec4 viewPosition = viewMatrix * vec4(gBuffer.fragPos, 1.0f);
+	// Get depth
+	float depthValue = abs(viewPosition.z);
+	// Set layer to the highest value
 	int layer = cascadeCount;
 
+	// For each cascade
 	for (int i = 0; i < cascadeCount; ++i)
 	{
+		// If depth is less than distance
 		if (depthValue < cascadeDistances[i])
 		{
+			// Select layer
 			layer = i;
+			// Exit loop
 			break;
 		}
 	}
@@ -447,7 +459,7 @@ int GetCurrentLayer(GBuffer gBuffer)
 
 float CalculateBias(int layer, vec3 lightDir, GBuffer gBuffer)
 {
-	// Using normal map's normal
+	// Calculate slope-scaled bias
 	float bias = max(MAX_BIAS * (1.0f - dot(gBuffer.normal, lightDir)), MIN_BIAS);
 	// Select bias type
 	float selection = WhenEqual(vec4(layer), vec4(cascadeCount)).x;
@@ -468,17 +480,23 @@ float CalculateBias(int layer, vec3 lightDir, GBuffer gBuffer)
 
 float CalculateShadow(vec3 lightDir, GBuffer gBuffer)
 {
+	// Calculate current cascade
 	int layer = GetCurrentLayer(gBuffer);
-
+	// Get shadow space position
 	vec4 lightSpacePos = shadowMatrices[layer] * vec4(gBuffer.fragPos, 1.0f);
-	vec3 projCoords    = lightSpacePos.xyz / lightSpacePos.w;
-	projCoords         = projCoords * 0.5f + 0.5f;
+	// Perform perspective division
+	vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
+	projCoords      = projCoords * 0.5f + 0.5f;
+	// Calculate depth
 	float currentDepth = projCoords.z;
-	float bias         = CalculateBias(layer, lightDir, gBuffer);
+	// Calculate bias
+	float bias = CalculateBias(layer, lightDir, gBuffer);
+	// Calculate texel size
+	vec2 texelSize = 1.0f / vec2(textureSize(shadowMap, 0));
 
-	float shadow    = 0.0f;
-	vec2  texelSize = 1.0f / vec2(textureSize(shadowMap, 0));
-
+	// Store shadow
+	float shadow = 0.0f;
+	// Perform percentage closer filtering
 	for (float x = -PCF_COUNT; x <= PCF_COUNT; ++x)
 	{
 		for (float y = -PCF_COUNT; y <= PCF_COUNT; ++y)
@@ -488,8 +506,11 @@ float CalculateShadow(vec3 lightDir, GBuffer gBuffer)
 		}
 	}
 
+	// Divide shadow by total texels
 	shadow /= TOTAL_TEXELS;
+	// Modify by shadow amount
 	shadow *= SHADOW_AMOUNT;
+	// Return if depth < 1.0f
 	return shadow * WhenLesser(vec4(currentDepth), vec4(1.0f)).x;
 }
 

@@ -12,8 +12,6 @@ namespace chrono = std::chrono;
 // Usings
 using Renderer::MeshTextures;
 
-// TODO: Add editing support for entities
-
 Instance::Instance()
 {
 	InitEntities();
@@ -50,14 +48,10 @@ void Instance::Run()
 		// Deferred lighting pass
 		m_renderer.RenderLighting(m_camera);
 
-		// Copy depth from gBuffer
-		m_renderer.CopyDepth();
 		// Render waters
 		m_renderer.RenderWaters(m_waters);
 		// Render skybox
 		m_renderer.RenderSkybox();
-		// Render GUIs
-		m_renderer.RenderGUIs(m_guis);
 		// End render
 		m_renderer.EndFrame();
 
@@ -272,9 +266,9 @@ void Instance::InitEntities()
 	m_player =
 	{
 		playerModel,
-		glm::vec3(13.0f, 7.0f, 17.0f),
+		glm::vec3(13.0f, 2.3f, 17.0f),
 		glm::vec3(0.0f, 180.0f, 0.0f),
-		1.0f
+		0.03f
 	};
 
 	// Attach player
@@ -320,9 +314,6 @@ void Instance::InitLights()
 
 void Instance::InitMisc()
 {
-	// GUIs (Currently unused)
-	m_guis = {};
-
 	// Waters
 	m_waters =
 	{

@@ -17,7 +17,7 @@
 	"player":
 	{
 		"run_speed" : 45.0,
-		"turn_speed": 160.0
+		"turn_speed": 170.0
 	},
 	"camera":
 	{

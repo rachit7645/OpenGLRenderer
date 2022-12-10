@@ -25,7 +25,6 @@ RenderManager::RenderManager()
 	  m_gRenderer(m_gShader, m_instances),
 	  m_lightRenderer(m_lightShader, m_shadowMap, m_gBuffer, m_iblMaps),
 	  m_skyboxRenderer(m_skyboxShader),
-	  m_guiRenderer(m_guiShader),
 	  m_waterRenderer(m_waterShader, m_waterFBOs),
 	  m_skybox(m_iblMaps.cubeMap),
 	  m_matrices(std::make_shared<MatrixBuffer>()),
@@ -36,12 +35,19 @@ RenderManager::RenderManager()
 	  m_glVersion(GL::GetString(GL_VERSION)),
 	  m_glslVersion(GL::GetString(GL_SHADING_LANGUAGE_VERSION)),
 	  m_isGPUMemoryInfo(glewGetExtension("GL_NVX_gpu_memory_info")),
-	  totalMemory(static_cast<f32>(GL::GetIntegerv(GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX)) / 1024.0f),
 	  m_currentFBO(m_waterFBOs.reflectionFBO->colorTextures[0])
 {
 	// Get settings
 	const auto& settings = Settings::GetInstance();
 
+	// Memory info check
+	if (m_isGPUMemoryInfo)
+	{
+		GLint total   = GL::GetIntegerv(GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX);
+		m_totalMemory = static_cast<f32>(total) / 1024.0f;
+	}
+
+	// Load matrices
 	m_matrices->LoadProjection(glm::perspective(glm::radians(FOV), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
 	m_shared->LoadResolution(settings.window.dimensions, NEAR_PLANE, FAR_PLANE);
 
@@ -51,7 +57,6 @@ RenderManager::RenderManager()
 	m_gShader.DumpToFile("dumps/GS.s");
 	m_lightShader.DumpToFile("dumps/LS.s");
 	m_skyboxShader.DumpToFile("dumps/SKB.s");
-	m_guiShader.DumpToFile("dumps/GUI.s");
 	m_waterShader.DumpToFile("dumps/WTR.s");
 }
 
@@ -92,9 +97,10 @@ void RenderManager::RenderShadows(const Camera& camera, const glm::vec3& lightPo
 	// Peter-panning fix
 	glCullFace(GL_FRONT);
 	// Render
-	RenderScene(camera, Mode::Shadow, glm::vec4(0.0f));
+	RenderShadowScene(camera);
 	// Reset
 	glCullFace(GL_BACK);
+	// Unbind shadow map
 	m_shadowMap.BindDefaultFBO();
 }
 
@@ -118,14 +124,14 @@ void RenderManager::RenderWaterFBOs(const WaterTiles& waters, Camera& camera)
 	camera.position.y -= distance;
 	camera.InvertPitch();
 	// Render
-	RenderScene(camera, Mode::Fast, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].position.y));
+	RenderWaterScene(camera, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].position.y));
 	// Move it back to its original position
 	camera.position.y += distance;
 	camera.InvertPitch();
 
 	// Refraction pass
 	m_waterFBOs.BindRefraction();
-	RenderScene(camera, Mode::Fast, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].position.y));
+	RenderWaterScene(camera, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].position.y));
 
 	// Disable clip plane 0
 	glDisable(GL_CLIP_DISTANCE0);
@@ -135,20 +141,49 @@ void RenderManager::RenderWaterFBOs(const WaterTiles& waters, Camera& camera)
 
 void RenderManager::RenderGBuffer(const Camera& camera)
 {
+	// Enable stencil
+	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	// Bind GBuffer
 	m_gBuffer.BindGBuffer();
-	Prepare(camera);
+	// Clear FBO
+	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	// Set stencil parameters
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	glStencilMask(0xFF);
+	// Load data
+	m_matrices->LoadView(camera);
+	m_shared->LoadCameraPos(camera);
+	// Render
 	m_gRenderer.Render(m_entities);
+	// Unbind GBuffer
 	m_gBuffer.BindDefaultFBO();
+	// Disable stencil
+	glDisable(GL_STENCIL_TEST);
 }
 
 void RenderManager::RenderLighting(const Camera& camera)
 {
 	// Disable depth test
 	glDisable(GL_DEPTH_TEST);
-	Prepare(camera);
+	// Enable stencil
+	glEnable(GL_STENCIL_TEST);
+	// Clear FBO
+	Clear(GL_COLOR_BUFFER_BIT);
+	// Copy depth
+	CopyDepth();
+	// Set stencil parameters
+	glStencilFunc(GL_EQUAL, 1, 0xFF);
+	glStencilMask(0x00);
+	// Load data
+	m_matrices->LoadView(camera);
+	m_shared->LoadCameraPos(camera);
+	// Do lighting pass
 	m_lightShader.Start();
 	m_lightRenderer.Render();
 	m_lightShader.Stop();
+	// Disable stencil
+	glDisable(GL_STENCIL_TEST);
 	// Re-enable depth test
 	glEnable(GL_DEPTH_TEST);
 }
@@ -164,20 +199,6 @@ void RenderManager::RenderSkybox()
 	m_skyboxShader.Stop();
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);
-}
-
-void RenderManager::RenderGUIs(const GUIs& guis)
-{
-	// Disable depth test
-	glDisable(GL_DEPTH_TEST);
-	// Enable blending
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	m_guiShader.Start();
-	m_guiRenderer.Render(guis);
-	m_guiShader.Stop();
-	glDisable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
 }
 
 void RenderManager::CopyDepth()
@@ -196,11 +217,42 @@ void RenderManager::CopyDepth()
 		0, 0,
 		settings.window.dimensions.x,
 		settings.window.dimensions.y,
-		GL_DEPTH_BUFFER_BIT,
+		GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
 		GL_NEAREST
 	);
 	// Unbind
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void RenderManager::Clear(GLbitfield flags)
+{
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(flags);
+}
+
+void RenderManager::RenderWaterScene(const Camera& camera, const glm::vec4& clipPlane)
+{
+	// Clear FBO
+	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Load data
+	m_matrices->LoadView(camera);
+	m_shared->LoadCameraPos(camera);
+	m_shared->LoadClipPlane(clipPlane);
+	// Render entities
+	m_instancedRenderer.Render(m_entities, Mode::Fast);
+	// Render skybox
+	RenderSkybox();
+}
+
+void RenderManager::RenderShadowScene(const Camera& camera)
+{
+	// Clear FBO
+	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Load data
+	m_matrices->LoadView(camera);
+	m_shared->LoadCameraPos(camera);
+	// Render entities
+	m_instancedRenderer.Render(m_entities, Mode::Shadow);
 }
 
 void RenderManager::ProcessEntity(Entity& entity)
@@ -222,28 +274,6 @@ void RenderManager::ProcessEntities(EntityVec& entities)
 	{
 		ProcessEntity(entity);
 	}
-}
-
-void RenderManager::RenderScene(const Camera& camera, Mode mode, const glm::vec4& clipPlane)
-{
-	Prepare(camera, clipPlane);
-	RenderEntities(mode);
-	RenderSkybox();
-}
-
-void RenderManager::Prepare(const Camera& camera, const glm::vec4& clipPlane)
-{
-	glClearColor(GL_CLEAR_COLOR.r, GL_CLEAR_COLOR.g, GL_CLEAR_COLOR.b, GL_CLEAR_COLOR.a);
-	glClear(GL_CLEAR_FLAGS);
-
-	m_matrices->LoadView(camera);
-	m_shared->LoadClipPlane(clipPlane);
-	m_shared->LoadCameraPos(camera);
-}
-
-void RenderManager::RenderEntities(Mode mode)
-{
-	m_instancedRenderer.Render(m_entities, mode);
 }
 
 // This kinda sucks, but it works
@@ -270,7 +300,7 @@ void RenderManager::RenderImGui()
 				GLint available       = GL::GetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX);
 				f32   availableMemory = static_cast<f32>(available) / 1024.0f;
 				// Display
-				ImGui::Text("Available | Total:\n%.2f MB | %.2f MB", availableMemory, totalMemory);
+				ImGui::Text("Available | Total:\n%.2f MB | %.2f MB", availableMemory, m_totalMemory);
 			}
 
 			// End menu
