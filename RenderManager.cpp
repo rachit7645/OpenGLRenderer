@@ -96,10 +96,13 @@ void RenderManager::RenderShadows(const Camera& camera, const glm::vec3& lightPo
 	m_shadowMap.Update(camera, lightPos);
 	// Peter-panning fix
 	glCullFace(GL_FRONT);
+	// Cascade clipping fix
+	glEnable(GL_DEPTH_CLAMP);
 	// Render
 	RenderShadowScene(camera);
 	// Reset
 	glCullFace(GL_BACK);
+	glDisable(GL_DEPTH_CLAMP);
 	// Unbind shadow map
 	m_shadowMap.BindDefaultFBO();
 }
@@ -169,7 +172,7 @@ void RenderManager::RenderLighting(const Camera& camera)
 	// Enable stencil
 	glEnable(GL_STENCIL_TEST);
 	// Clear FBO
-	Clear(GL_COLOR_BUFFER_BIT);
+	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	// Copy depth
 	CopyDepth();
 	// Set stencil parameters

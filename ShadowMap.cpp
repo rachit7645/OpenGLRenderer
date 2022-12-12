@@ -63,7 +63,9 @@ ShadowMap::ShadowMap()
 	// Set color buffer to none
 	buffer->SetDrawBuffer(GL_NONE);
 	buffer->SetReadBuffer(GL_NONE);
+	// Create depth texture
 	buffer->AddTextureArray(buffer->depthTexture, depth);
+	// Finish up
 	buffer->CheckStatus();
 	buffer->EnableDepth();
 	buffer->Unbind();
@@ -149,9 +151,9 @@ glm::mat4 ShadowMap::CalculateProjMatrix(const Vec4s& corners, const glm::mat4& 
 	// Get settings
 	const auto& settings = Settings::GetInstance();
 
-	// Set min and max to the max f32 value supported
+	// Set min and max to the min or max f32 value supported
 	auto min = glm::vec3(std::numeric_limits<f32>::max());
-	auto max = glm::vec3(std::numeric_limits<f32>::min());
+	auto max = glm::vec3(std::numeric_limits<f32>::lowest());
 
 	// For all corners
 	for (const auto& corner : corners)

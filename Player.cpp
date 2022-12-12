@@ -10,6 +10,7 @@ using namespace Entities;
 using Renderer::Model;
 using Renderer::MeshTextures;
 using Engine::Settings;
+using Inputs::InputHandler;
 
 Player::Player()
 	: Entity(nullptr, glm::vec3(0.0f), glm::vec3(0.0f), 0.0f)
@@ -66,21 +67,23 @@ void Player::CheckInputs()
 {
 	// Get settings
 	const auto& settings = Settings::GetInstance();
+	// Get inputs
+	auto& inputs = InputHandler::GetInstance();
 
-	if (Inputs::IsKeyPressed(SDL_SCANCODE_W))
+	if (inputs.IsKeyPressed(SDL_SCANCODE_W))
 	{
 		m_runSpeed = settings.player.runSpeed;
 	}
-	else if (Inputs::IsKeyPressed(SDL_SCANCODE_S))
+	else if (inputs.IsKeyPressed(SDL_SCANCODE_S))
 	{
 		m_runSpeed = -settings.player.runSpeed;
 	}
 
-	if (Inputs::IsKeyPressed(SDL_SCANCODE_A))
+	if (inputs.IsKeyPressed(SDL_SCANCODE_A))
 	{
 		m_turnSpeed = settings.player.turnSpeed;
 	}
-	else if (Inputs::IsKeyPressed(SDL_SCANCODE_D))
+	else if (inputs.IsKeyPressed(SDL_SCANCODE_D))
 	{
 		m_turnSpeed = -settings.player.turnSpeed;
 	}

@@ -7,6 +7,7 @@
 using namespace Entities;
 
 using Engine::Settings;
+using Inputs::InputHandler;
 
 // Global flags
 bool m_toMoveCamera = true;
@@ -75,7 +76,7 @@ void Camera::CalculatePosition()
 void Camera::CalculateZoom()
 {
 	// Get mouse scroll
-	auto& mouseScroll = Inputs::GetMouseScroll();
+	const auto& mouseScroll = InputHandler::GetInstance().GetMouseScroll();
 	// Get settings
 	const auto& settings = Settings::GetInstance();
 
@@ -98,7 +99,7 @@ void Camera::CalculateZoom()
 void Camera::CalculatePitch()
 {
 	// Get mouse position
-	auto& mousePos = Inputs::GetMousePos();
+	const auto& mousePos = InputHandler::GetInstance().GetMousePos();
 	// Get settings
 	const auto& settings = Settings::GetInstance();
 
@@ -115,7 +116,7 @@ void Camera::CalculatePitch()
 void Camera::CalculateAAP()
 {
 	// Get mouse pos
-	auto& mousePos = Inputs::GetMousePos();
+	const auto& mousePos = InputHandler::GetInstance().GetMousePos();
 	// Get settings
 	const auto& settings = Settings::GetInstance();
 	// Calculate angle

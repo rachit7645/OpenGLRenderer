@@ -1,27 +1,31 @@
 #include "Inputs.h"
 
-#include "Util.h"
+using namespace Inputs;
 
-glm::ivec2 m_mousePos;
-glm::ivec2 m_mouseScroll;
-const u8*  m_keys;
-
-void Inputs::Init()
+InputHandler::InputHandler()
+	: m_keys(SDL_GetKeyboardState(nullptr))
 {
-	m_keys = SDL_GetKeyboardState(nullptr);
 }
 
-glm::ivec2& Inputs::GetMousePos()
+glm::ivec2& InputHandler::GetMousePos()
 {
 	return m_mousePos;
 }
 
-glm::ivec2& Inputs::GetMouseScroll()
+glm::ivec2& InputHandler::GetMouseScroll()
 {
 	return m_mouseScroll;
 }
 
-bool Inputs::IsKeyPressed(SDL_Scancode key)
+bool InputHandler::IsKeyPressed(SDL_Scancode key)
 {
 	return static_cast<bool>(m_keys[key]);
+}
+
+InputHandler& InputHandler::GetInstance()
+{
+	// Static storage
+	static InputHandler inputs;
+	// Return
+	return inputs;
 }

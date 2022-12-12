@@ -11,6 +11,8 @@
 
 using namespace Shader;
 
+using Files::FileHandler;
+
 constexpr auto SHADER_ERROR_BUFFER_SIZE = 4096;
 
 ShaderProgram::ShaderProgram(const std::string_view vertexPath, const std::string_view fragmentPath)
@@ -85,7 +87,9 @@ void ShaderProgram::DumpToFile(const std::string_view path) const
 GLuint ShaderProgram::LoadShader(GLenum type, const std::string_view path)
 {
 	LOG_INFO("Loading shader: {}\n", path);
-	auto fs = std::ifstream(Files::GetResourceDirectory() + path.data(), std::ios::in);
+
+	auto& files = FileHandler::GetInstance();
+	auto  fs    = std::ifstream(files.GetResourceDirectory() + path.data(), std::ios::in);
 
 	if (!fs.is_open())
 	{

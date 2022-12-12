@@ -16,6 +16,8 @@ using namespace Engine;
 
 using Entities::Camera;
 using Engine::Settings;
+using Inputs::InputHandler;
+using Files::FileHandler;
 
 constexpr u32 SDL_WINDOW_FLAGS  = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
@@ -126,9 +128,8 @@ Window::Window()
 	ImGui_ImplOpenGL3_Init("#version 430 core");
 
 	// Set resource directory
-	Files::SetResourceDirectory("../res/");
-	// Initialise input subsystem
-	Inputs::Init();
+	auto& files = FileHandler::GetInstance();
+	files.SetResourceDirectory("../res/");
 	// Initialise other GL things
 	GL::Init(settings.window.dimensions);
 }
@@ -165,12 +166,12 @@ bool Window::PollEvents()
 			break;
 
 		case SDL_MOUSEWHEEL:
-			Inputs::GetMouseScroll()  = glm::ivec2(m_event.wheel.x, m_event.wheel.y);
+			InputHandler::GetInstance().GetMouseScroll() = glm::ivec2(m_event.wheel.x, m_event.wheel.y);
 			Camera::GetToZoomCamera() = true;
 			break;
 
 		case SDL_MOUSEMOTION:
-			Inputs::GetMousePos()     = glm::ivec2(m_event.motion.xrel, m_event.motion.yrel);
+			InputHandler::GetInstance().GetMousePos() = glm::ivec2(m_event.motion.xrel, m_event.motion.yrel);
 			Camera::GetToMoveCamera() = true;
 			break;
 

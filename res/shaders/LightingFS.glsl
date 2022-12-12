@@ -482,6 +482,7 @@ float CalculateShadow(vec3 lightDir, GBuffer gBuffer)
 {
 	// Calculate current cascade
 	int layer = GetCurrentLayer(gBuffer);
+
 	// Get shadow space position
 	vec4 lightSpacePos = shadowMatrices[layer] * vec4(gBuffer.fragPos, 1.0f);
 	// Perform perspective division
@@ -496,13 +497,17 @@ float CalculateShadow(vec3 lightDir, GBuffer gBuffer)
 
 	// Store shadow
 	float shadow = 0.0f;
-	// Perform percentage closer filtering
+
+	// For each x offset
 	for (float x = -PCF_COUNT; x <= PCF_COUNT; ++x)
 	{
+		// For each y offset
 		for (float y = -PCF_COUNT; y <= PCF_COUNT; ++y)
 		{
+			// Get offseted depth
 			float pcfDepth = texture(shadowMap, vec3(projCoords.xy + vec2(x, y) * texelSize, layer)).r;
-			shadow        += WhenGreater(vec4(currentDepth - bias), vec4(pcfDepth)).x;
+			// Perform shadow comparision
+			shadow += WhenGreater(vec4(currentDepth - bias), vec4(pcfDepth)).x;
 		}
 	}
 

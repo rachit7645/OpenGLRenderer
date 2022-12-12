@@ -15,6 +15,8 @@
 
 using namespace Renderer;
 
+using Files::FileHandler;
+
 constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate   | aiProcess_FlipUVs          | aiProcess_OptimizeMeshes   |
 							 aiProcess_OptimizeGraph | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace |
 							 aiProcess_GenUVCoords;
@@ -24,14 +26,16 @@ Model::Model(const std::string_view path, const MeshTextures& textures)
 	Assimp::Importer importer;
 
 	LOG_INFO("Loading model: {}\n", path);
-	const aiScene* scene = importer.ReadFile((Files::GetResourceDirectory() + path.data()).c_str(), ASSIMP_FLAGS);
+
+	auto& files          = FileHandler::GetInstance();
+	const aiScene* scene = importer.ReadFile((files.GetResourceDirectory() + path.data()).c_str(), ASSIMP_FLAGS);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
 		LOG_ERROR("Model Load Failed: {}", importer.GetErrorString());
 	}
 
-	ProcessNode(scene->mRootNode, scene, textures, Files::GetDirectory(path));
+	ProcessNode(scene->mRootNode, scene, textures, files.GetDirectory(path));
 }
 
 void Model::ProcessNode
