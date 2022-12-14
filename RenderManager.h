@@ -32,6 +32,11 @@
 #include "DirectionalLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+#include "ConverterShader.h"
+#include "ConvolutionShader.h"
+#include "PreFilterShader.h"
+#include "BRDFShader.h"
+#include "IBLRenderer.h"
 
 namespace Renderer
 {
@@ -55,7 +60,16 @@ namespace Renderer
 		Renderer::ShadowMap       m_shadowMap;
 		Waters::WaterFrameBuffers m_waterFBOs;
 		Renderer::GBuffer         m_gBuffer;
-		Renderer::IBLMaps         m_iblMaps;
+
+		// Image Based Lighting renderers & shaders
+		Shader::ConverterShader   m_converterShader;
+		Shader::ConvolutionShader m_convolutionShader;
+		Shader::PreFilterShader   m_preFilterShader;
+		Shader::BRDFShader        m_brdfShader;
+		Renderer::IBLRenderer     m_iblRenderer;
+
+		// IBL Map
+		Renderer::IBLMaps m_iblMaps;
 
 		// Instances Shader Storage Buffer
 		std::shared_ptr<InstanceBuffer> m_instances;

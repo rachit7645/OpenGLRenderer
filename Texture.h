@@ -69,6 +69,7 @@ namespace Renderer
 		// All classes that can access the pipeline mode
 		friend class FrameBuffer;
 		friend class IBLMaps;
+		friend class IBLRenderer;
 	};
 }
 #endif

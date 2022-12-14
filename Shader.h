@@ -31,9 +31,6 @@ namespace Shader
 		void Start() const;
 		// Stop shader
 		void Stop() const;
-
-		// Dump shader to file
-		void DumpToFile(const std::string_view path) const;
 	protected:
 		// Query uniform location
 		GLint GetUniformLocation(const char* name) const;
@@ -60,6 +57,8 @@ namespace Shader
 		void CheckProgram(const std::string_view message, GLenum type) const;
 		// Check shader compilation errors
 		void CheckShader(const std::string_view message, GLuint shaderID, GLenum type) const;
+		// Dump shader to file
+		void DumpToFile(const std::string_view path) const;
 	};
 }
 

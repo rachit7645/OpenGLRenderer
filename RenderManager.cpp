@@ -20,7 +20,9 @@ using Waters::WaterFrameBuffers;
 using Engine::Settings;
 
 RenderManager::RenderManager()
-	: m_instances(std::make_shared<InstanceBuffer>()),
+	: m_iblRenderer(m_converterShader, m_convolutionShader, m_preFilterShader, m_brdfShader),
+	  m_iblMaps(m_iblRenderer),
+	  m_instances(std::make_shared<InstanceBuffer>()),
 	  m_instancedRenderer(m_fastInstancedShader, m_shadowInstancedShader, m_shadowMap, m_instances),
 	  m_gRenderer(m_gShader, m_instances),
 	  m_lightRenderer(m_lightShader, m_shadowMap, m_gBuffer, m_iblMaps),
@@ -50,14 +52,6 @@ RenderManager::RenderManager()
 	// Load matrices
 	m_matrices->LoadProjection(glm::perspective(glm::radians(FOV), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
 	m_shared->LoadResolution(settings.window.dimensions, NEAR_PLANE, FAR_PLANE);
-
-	// Dump shaders
-	m_fastInstancedShader.DumpToFile("dumps/FIS.s");
-	m_shadowInstancedShader.DumpToFile("dumps/SIS.s");
-	m_gShader.DumpToFile("dumps/GS.s");
-	m_lightShader.DumpToFile("dumps/LS.s");
-	m_skyboxShader.DumpToFile("dumps/SKB.s");
-	m_waterShader.DumpToFile("dumps/WTR.s");
 }
 
 void RenderManager::BeginFrame

@@ -17,22 +17,35 @@ constexpr auto SHADER_ERROR_BUFFER_SIZE = 4096;
 
 ShaderProgram::ShaderProgram(const std::string_view vertexPath, const std::string_view fragmentPath)
 {
+	// Create shader program
 	programID = glCreateProgram();
 
+	// Create shaders
 	GLuint vertexShaderID   = LoadShader(GL_VERTEX_SHADER,   vertexPath);
 	GLuint fragmentShaderID = LoadShader(GL_FRAGMENT_SHADER, fragmentPath);
 
+	// Attach shaders
 	glAttachShader(programID, vertexShaderID);
 	glAttachShader(programID, fragmentShaderID);
 
+	// Link program
 	glLinkProgram(programID);
 	CheckProgram(fmt::format("Shader link failed for: {}, {}", vertexPath, fragmentPath), GL_LINK_STATUS);
 
+	// Delete shaders
 	glDeleteShader(vertexShaderID);
 	glDeleteShader(fragmentShaderID);
 
+	// Validate program
 	glValidateProgram(programID);
 	CheckProgram(fmt::format("Shader validation failed for: {}, {}", vertexPath, fragmentPath), GL_VALIDATE_STATUS);
+
+	// Calculate dump name
+	auto& files    = FileHandler::GetInstance();
+	auto  vertex   = files.GetName(vertexPath);
+	auto  fragment = files.GetName(fragmentPath);
+	// Dump shader
+	DumpToFile("dumps/" + vertex + "_" + fragment);
 }
 
 ShaderProgram::ShaderProgram
@@ -42,25 +55,39 @@ ShaderProgram::ShaderProgram
 	const std::string_view geometryPath
 )
 {
+	// Create shader program
 	programID = glCreateProgram();
 
+	// Create shaders
 	GLuint vertexShaderID   = LoadShader(GL_VERTEX_SHADER,   vertexPath);
 	GLuint fragmentShaderID = LoadShader(GL_FRAGMENT_SHADER, fragmentPath);
 	GLuint geometryShaderID = LoadShader(GL_GEOMETRY_SHADER, geometryPath);
 
+	// Attach shaders
 	glAttachShader(programID, vertexShaderID);
 	glAttachShader(programID, fragmentShaderID);
 	glAttachShader(programID, geometryShaderID);
 
+	// Link program
 	glLinkProgram(programID);
 	CheckProgram(fmt::format("Shader link failed for: {}, {}, {}", vertexPath, fragmentPath, geometryPath), GL_LINK_STATUS);
 
+	// Delete shaders
 	glDeleteShader(vertexShaderID);
 	glDeleteShader(fragmentShaderID);
 	glDeleteShader(geometryShaderID);
 
+	// Validate program
 	glValidateProgram(programID);
 	CheckProgram(fmt::format("Shader validation failed for: {}, {}, {}", vertexPath, fragmentPath, geometryPath), GL_VALIDATE_STATUS);
+
+	// Calculate dump name
+	auto& files    = FileHandler::GetInstance();
+	auto  vertex   = files.GetName(vertexPath);
+	auto  fragment = files.GetName(fragmentPath);
+	auto  geometry = files.GetName(geometryPath);
+	// Dump shader
+	DumpToFile("dumps/" + vertex + "_" + fragment + "_" + geometry);
 }
 
 void ShaderProgram::DumpToFile(const std::string_view path) const
@@ -79,7 +106,6 @@ void ShaderProgram::DumpToFile(const std::string_view path) const
 		reinterpret_cast<void*>(binary.data())
 	);
 
-	LOG_DEBUG("Dumping Shader: {}\n", path);
 	auto file = std::ofstream(path.data());
 	file.write(binary.data(), length);
 }

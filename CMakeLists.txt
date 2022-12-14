@@ -87,6 +87,7 @@ add_executable(engine
 	SpotLight.cpp
 	Settings.cpp
 	Instance.cpp
+	IBLRenderer.cpp
 )
 
 # Precompiled Headers
