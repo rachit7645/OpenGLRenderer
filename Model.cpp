@@ -7,6 +7,7 @@
 #include "Log.h"
 #include "Files.h"
 #include "Vertex.h"
+#include "AABB.h"
 
 // HACK: Assimp doesn't define a macro for this
 #ifndef AI_MATKEY_NORMALS_TEXTURE
@@ -82,10 +83,10 @@ Mesh Model::ProcessMesh
 		// Convert to GL friendly data
 		vertices.emplace_back
 		(
-			glm::vec3(position.x, position.y, position.z),
-			glm::vec2(texCoord.x, texCoord.y),
-			glm::vec3(normal.x, normal.y, normal.z),
-			glm::vec3(tangent.x, tangent.y, tangent.z)
+			glm::ai_cast(position),
+			glm::ai_cast(texCoord),
+			glm::ai_cast(normal),
+			glm::ai_cast(tangent)
 		);
 	}
 
@@ -97,7 +98,11 @@ Mesh Model::ProcessMesh
 		indices.emplace_back(face.mIndices[2]);
 	}
 
-	return Mesh(vertices, indices, ProcessTextures(mesh, scene, textures, directory));
+	// Get AABB of the mesh
+	auto aabb = Maths::AABB(mesh->mAABB);
+
+	// Return
+	return Mesh(vertices, indices, ProcessTextures(mesh, scene, textures, directory), aabb);
 }
 
 MeshTextures Model::ProcessTextures

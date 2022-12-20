@@ -13,4 +13,12 @@
 #include <glm/ext/vector_int4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <assimp/types.h>
+
+namespace glm
+{
+	vec2 ai_cast(const aiVector2D& vector);
+	vec3 ai_cast(const aiVector3D& vector);
+}
+
 #endif

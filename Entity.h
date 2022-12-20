@@ -11,8 +11,12 @@ namespace Entities
 	class Entity
 	{
 	public:
+		// Usings
         using MdPtr = std::shared_ptr<Renderer::Model>;
 
+		// Default constructor
+		Entity() = default;
+		// Main constructor
 		Entity
         (
 			MdPtr sharedModel,
@@ -20,12 +24,15 @@ namespace Entities
 			const glm::vec3& rotation,
 			f32 scale
 		);
-		Entity();
 
-		MdPtr     model;
+		// Pointer to model
+		MdPtr model;
+		// Position
 		glm::vec3 position;
+		// Rotation
 		glm::vec3 rotation;
-		f32       scale;
+		// Scale
+		f32 scale;
 	};
 }
 

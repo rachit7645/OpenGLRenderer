@@ -7,6 +7,7 @@
 #include "VertexArray.h"
 #include "MeshTextures.h"
 #include "Vertex.h"
+#include "AABB.h"
 
 namespace Renderer
 {
@@ -15,16 +16,22 @@ namespace Renderer
 	public:
 		// Usings
 		using VAO = std::shared_ptr<VertexArray>;
+
 		// Main constructor
 		Mesh
 		(
 			const std::vector<Vertex>& vertices,
 			const std::vector<u32>& indices,
-			const MeshTextures& textures
+			const Renderer::MeshTextures& textures,
+			const Maths::AABB& aabb
 		);
-		// Data
-		VAO          vao;
+
+		// Vertex Attribute Object
+		VAO vao;
+		// Textures
 		MeshTextures textures;
+		// Axis Aligned Bounding Box
+		Maths::AABB aabb;
 	};
 }
 

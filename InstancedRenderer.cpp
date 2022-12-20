@@ -23,13 +23,19 @@ InstancedRenderer::InstancedRenderer
 
 void InstancedRenderer::Render(const Batch& batch, Mode mode)
 {
+	// Begin render pass
 	BeginRender(mode);
+	// For each pair
 	for (const auto& [model, entities] : batch)
 	{
+		// Load instance data
 		LoadData(entities);
+		// For each mesh
 		for (const auto& mesh : model->meshes)
 		{
+			// Prepare mesh
 			PrepareMesh(mesh, mode);
+			// Draw instances
 			glDrawElementsInstanced
 			(
 				GL_TRIANGLES,
@@ -38,9 +44,11 @@ void InstancedRenderer::Render(const Batch& batch, Mode mode)
 				nullptr,
 				static_cast<GLint>(entities.size())
 			);
+			// Unbind mesh
 			UnbindMesh();
 		}
 	}
+	// End render pass
 	EndRender(mode);
 }
 

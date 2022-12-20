@@ -7,6 +7,7 @@
 #include "Window.h"
 #include "GL.h"
 #include "Settings.h"
+#include "Log.h"
 
 using namespace Renderer;
 
@@ -138,6 +139,8 @@ void RenderManager::RenderWaterFBOs(const WaterTiles& waters, Camera& camera)
 
 void RenderManager::RenderGBuffer(const Camera& camera)
 {
+	// Do culling
+	CullEntities(camera);
 	// Enable stencil
 	glEnable(GL_STENCIL_TEST);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -152,11 +155,13 @@ void RenderManager::RenderGBuffer(const Camera& camera)
 	m_matrices->LoadView(camera);
 	m_shared->LoadCameraPos(camera);
 	// Render
-	m_gRenderer.Render(m_entities);
+	m_gRenderer.Render(m_culledEntities);
 	// Unbind GBuffer
 	m_gBuffer.BindDefaultFBO();
 	// Disable stencil
 	glDisable(GL_STENCIL_TEST);
+	// Clear map
+	m_culledEntities.clear();
 }
 
 void RenderManager::RenderLighting(const Camera& camera)
@@ -229,6 +234,8 @@ void RenderManager::Clear(GLbitfield flags)
 
 void RenderManager::RenderWaterScene(const Camera& camera, const glm::vec4& clipPlane)
 {
+	// Do culling
+	CullEntities(camera);
 	// Clear FBO
 	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Load data
@@ -236,25 +243,32 @@ void RenderManager::RenderWaterScene(const Camera& camera, const glm::vec4& clip
 	m_shared->LoadCameraPos(camera);
 	m_shared->LoadClipPlane(clipPlane);
 	// Render entities
-	m_instancedRenderer.Render(m_entities, Mode::Fast);
+	m_instancedRenderer.Render(m_culledEntities, Mode::Fast);
 	// Render skybox
 	RenderSkybox();
+	// Clear map
+	m_culledEntities.clear();
 }
 
 void RenderManager::RenderShadowScene(const Camera& camera)
 {
+	// Do culling
+	CullEntities(camera);
 	// Clear FBO
 	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Load data
 	m_matrices->LoadView(camera);
 	m_shared->LoadCameraPos(camera);
 	// Render entities
-	m_instancedRenderer.Render(m_entities, Mode::Shadow);
+	m_instancedRenderer.Render(m_culledEntities, Mode::Shadow);
+	// Clear map
+	m_culledEntities.clear();
 }
 
 void RenderManager::ProcessEntity(Entity& entity)
 {
 	auto iter = m_entities.find(entity.model);
+
 	if (iter != m_entities.end())
 	{
 		iter->second.emplace_back(&entity);
@@ -271,6 +285,26 @@ void RenderManager::ProcessEntities(EntityVec& entities)
 	{
 		ProcessEntity(entity);
 	}
+}
+
+void RenderManager::CullEntities(const Entities::Camera& camera)
+{
+	// Copy data
+	m_culledEntities = m_entities;
+
+	#if 0
+	// Update view frustum
+	m_viewFrustum.Update(camera);
+
+	// Loop over all pairs
+	for (auto& [model, entities] : m_culledEntities)
+	{
+		(void) std::remove_if(entities.begin(), entities.end(), [&] (const auto& entity)
+		{
+			return !m_viewFrustum.IsOnFrustum(*entity);
+		});
+	}
+	#endif
 }
 
 // This kinda sucks, but it works

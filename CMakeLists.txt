@@ -88,6 +88,9 @@ add_executable(engine
 	Settings.cpp
 	Instance.cpp
 	IBLRenderer.cpp
+	Frustum.cpp
+	AABB.cpp
+	GLM.cpp
 )
 
 # Precompiled Headers

@@ -17,13 +17,19 @@ GBufferRenderer::GBufferRenderer(GBufferShader& shader, BufferPtr instances)
 
 void GBufferRenderer::Render(const Batch& batch)
 {
+	// Begin render pass
 	BeginRender();
+	// For each pair
 	for (const auto& [model, entities] : batch)
 	{
+		// Load instance data
 		LoadData(entities);
+		// For each mesh
 		for (const auto& mesh : model->meshes)
 		{
+			// Prepare mesh
 			PrepareMesh(mesh);
+			// Draw instances
 			glDrawElementsInstanced
 			(
 				GL_TRIANGLES,
@@ -32,9 +38,11 @@ void GBufferRenderer::Render(const Batch& batch)
 				nullptr,
 				static_cast<GLint>(entities.size())
 			);
+			// Unbind mesh
 			UnbindMesh();
 		}
 	}
+	// End render pass
 	EndRender();
 }
 
