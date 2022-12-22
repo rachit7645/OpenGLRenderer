@@ -28,6 +28,7 @@ glm::mat4 Maths::CreateModelMatrixT(const glm::vec3& translation)
 	glm::mat4 matrix(1.0f);
 	// 2. Translate it by translation vector
 	matrix = glm::translate(matrix, translation);
+	// Return
 	return matrix;
 }
 
@@ -51,6 +52,7 @@ glm::mat4 Maths::CreateModelMatrixTS(const glm::vec3& translation, f32 scale)
 	matrix = glm::translate(matrix, translation);
 	// 4. Scale the matrix
 	matrix = glm::scale(matrix, glm::vec3(scale));
+	// Return
 	return matrix;
 }
 
@@ -76,5 +78,6 @@ glm::mat4 Maths::CreateViewMatrix(const Camera& camera)
 	matrix = glm::rotate(matrix, glm::radians(camera.rotation.z), glm::vec3(0, 0, 1));
 	// 3. Translate by the inverse of the camera position
 	matrix = glm::translate(matrix, -camera.position);
+	// Return
 	return matrix;
 }

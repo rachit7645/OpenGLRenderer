@@ -3,6 +3,7 @@
 #include "imgui.h"
 #include "Inputs.h"
 #include "Settings.h"
+#include "Maths.h"
 
 using namespace Entities;
 
@@ -126,6 +127,29 @@ void Camera::CalculateAAP()
 void Camera::InvertPitch()
 {
 	rotation.x = -rotation.x;
+}
+
+glm::vec3 Camera::GetForward() const
+{
+	// Calculate forward
+	auto forward = glm::vec3
+	(
+		std::cos(glm::radians(rotation.y)) * std::cos(glm::radians(rotation.x)),
+		std::sin(glm::radians(rotation.x)),
+		std::sin(glm::radians(rotation.y)) * std::cos(glm::radians(rotation.y))
+	);
+	// Return
+	return glm::normalize(forward);
+}
+
+glm::vec3 Camera::GetUp() const
+{
+	glm::normalize(glm::cross(GetRight(), GetForward()));
+}
+
+glm::vec3 Camera::GetRight() const
+{
+	return glm::normalize(glm::cross(GetForward(), glm::vec3(0.0f, 1.0f, 0.0f)));
 }
 
 bool& Camera::GetToMoveCamera()

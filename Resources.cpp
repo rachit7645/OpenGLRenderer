@@ -11,7 +11,7 @@ using Renderer::MeshTextures;
 
 using namespace Resources;
 
-// Note: This implementation is not the fastest, but it works very well
+// TODO: Replace with singleton
 
 std::unordered_map<std::string, TxPtr> m_textures;
 std::unordered_map<std::string, MdPtr> m_models;

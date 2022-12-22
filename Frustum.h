@@ -5,6 +5,7 @@
 #include "Util.h"
 #include "Entity.h"
 #include "AABB.h"
+#include "Plane.h"
 
 namespace Maths
 {
@@ -14,13 +15,11 @@ namespace Maths
 		// Default constructor
 		Frustum() = default;
 
-		// Update frustum
-		void Update(const Entities::Camera& camera);
 		// Check for intersection
-		bool IsOnFrustum(const Entities::Entity& entity);
+		bool IsOnFrustum(const Entities::Camera& camera, const Entities::Entity& entity);
 
 		// Planes
-		std::array<glm::vec4, 6> planes;
+		std::array<Maths::Plane, 6> planes;
 		// Plane IDs
 		enum PlaneIDs : usize
 		{
@@ -32,17 +31,17 @@ namespace Maths
 			PLANE_FAR    = 5
 		};
 	private:
+		// Update Planes
+		void Update(const Entities::Camera& camera, const Entities::Entity& entity);
 		// Get global AABB
-		AABB GetGlobalAABB(const Entities::Entity& entity, const AABB& aabb);
+		AABB GetGlobalAABB(const AABB& aabb);
 		// Check if AABB is on plane
-		bool IsOnPlane(const glm::vec4& plane, const AABB& aabb);
+		bool IsOnPlane(const Maths::Plane& plane, const AABB& aabb);
 		// Get distance between a plane and a point
-		f32 GetDistance(const glm::vec4& plane, const glm::vec3 point);
+		f32 GetDistance(const Maths::Plane& plane, const glm::vec3& point);
 
-		// Projection
-		glm::mat4 m_projection;
-		// View
-		glm::mat4 m_view;
+		// Model
+		glm::mat4 m_model;
 	};
 }
 

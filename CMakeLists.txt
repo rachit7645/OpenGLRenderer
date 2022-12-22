@@ -91,6 +91,7 @@ add_executable(engine
 	Frustum.cpp
 	AABB.cpp
 	GLM.cpp
+	Plane.cpp
 )
 
 # Precompiled Headers
