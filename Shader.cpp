@@ -11,7 +11,7 @@
 
 using namespace Shader;
 
-using Files::FileHandler;
+using Engine::Files;
 
 constexpr auto SHADER_ERROR_BUFFER_SIZE = 4096;
 
@@ -41,7 +41,7 @@ ShaderProgram::ShaderProgram(const std::string_view vertexPath, const std::strin
 	CheckProgram(fmt::format("Shader validation failed for: {}, {}", vertexPath, fragmentPath), GL_VALIDATE_STATUS);
 
 	// Calculate dump name
-	auto& files    = FileHandler::GetInstance();
+	auto& files    = Files::GetInstance();
 	auto  vertex   = files.GetName(vertexPath);
 	auto  fragment = files.GetName(fragmentPath);
 	// Dump shader
@@ -82,7 +82,7 @@ ShaderProgram::ShaderProgram
 	CheckProgram(fmt::format("Shader validation failed for: {}, {}, {}", vertexPath, fragmentPath, geometryPath), GL_VALIDATE_STATUS);
 
 	// Calculate dump name
-	auto& files    = FileHandler::GetInstance();
+	auto& files    = Files::GetInstance();
 	auto  vertex   = files.GetName(vertexPath);
 	auto  fragment = files.GetName(fragmentPath);
 	auto  geometry = files.GetName(geometryPath);
@@ -114,8 +114,8 @@ GLuint ShaderProgram::LoadShader(GLenum type, const std::string_view path)
 {
 	LOG_INFO("Loading shader: {}\n", path);
 
-	auto& files = FileHandler::GetInstance();
-	auto  fs    = std::ifstream(files.GetResourceDirectory() + path.data(), std::ios::in);
+	auto& files = Files::GetInstance();
+	auto  fs    = std::ifstream(files.GetResources() + path.data(), std::ios::in);
 
 	if (!fs.is_open())
 	{

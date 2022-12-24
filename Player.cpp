@@ -10,7 +10,7 @@ using namespace Entities;
 using Renderer::Model;
 using Renderer::MeshTextures;
 using Engine::Settings;
-using Inputs::InputHandler;
+using Engine::Inputs;
 
 Player::Player()
 	: Entity(nullptr, glm::vec3(0.0f), glm::vec3(0.0f), 0.0f)
@@ -68,7 +68,7 @@ void Player::CheckInputs()
 	// Get settings
 	const auto& settings = Settings::GetInstance();
 	// Get inputs
-	auto& inputs = InputHandler::GetInstance();
+	auto& inputs = Inputs::GetInstance();
 
 	if (inputs.IsKeyPressed(SDL_SCANCODE_W))
 	{

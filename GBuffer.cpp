@@ -12,11 +12,11 @@ using namespace Renderer;
 using Engine::Settings;
 
 // GBuffer Layout
-// Buffer   | Type     | R        | G         | B        | A
-// Normal   | RG16F    | normal.x | normal.y  | NONE     | NONE
-// Albedo   | RGB8U    | albedo.r | albedo.g  | albedo.b | NONE
-// Material | RGB8U    | ao       | roughness | metallic | NONE
-// Depth    | D24F_S8U | depth    | stencil   | NONE     | NONE
+// Buffer   | Type  | R        | G         | B        | A
+// Normal   | RG16F | normal.x | normal.y  | NONE     | NONE
+// Albedo   | RGB8U | albedo.r | albedo.g  | albedo.b | NONE
+// Material | RGB8U | ao       | roughness | metallic | NONE
+// Depth    | D24F  | depth    | NONE      | NONE     | NONE
 
 GBuffer::GBuffer()
 	: buffer(std::make_shared<FrameBuffer>())
@@ -66,10 +66,10 @@ GBuffer::GBuffer()
 		GL_NEAREST,
 		GL_NEAREST,
 		GL_CLAMP_TO_EDGE,
-		GL_DEPTH24_STENCIL8,
+		GL_DEPTH_COMPONENT24,
 		GL_DEPTH_COMPONENT,
 		GL_FLOAT,
-		GL_DEPTH_STENCIL_ATTACHMENT
+		GL_DEPTH_ATTACHMENT
 	};
 
 	// Selected draw buffers

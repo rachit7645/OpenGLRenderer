@@ -7,7 +7,6 @@
 #include "VertexArray.h"
 #include "MeshTextures.h"
 #include "Vertex.h"
-#include "AABB.h"
 
 namespace Renderer
 {
@@ -22,16 +21,13 @@ namespace Renderer
 		(
 			const std::vector<Vertex>& vertices,
 			const std::vector<u32>& indices,
-			const Renderer::MeshTextures& textures,
-			const Maths::AABB& aabb
+			const Renderer::MeshTextures& textures
 		);
 
 		// Vertex Attribute Object
 		VAO vao;
 		// Textures
 		MeshTextures textures;
-		// Axis Aligned Bounding Box
-		Maths::AABB aabb;
 	};
 }
 

@@ -9,7 +9,7 @@
 
 using namespace Renderer;
 
-using Files::FileHandler;
+using Engine::Files;
 
 Texture::Texture(const std::string_view path)
 {
@@ -77,11 +77,11 @@ u8* Texture::LoadImage(const std::string_view path)
 {
 	LOG_INFO("Loading texture: {}\n", path);
 
-	auto& files = FileHandler::GetInstance();
+	auto& files = Files::GetInstance();
 
 	u8* data = stbi_load
 	(
-		(files.GetResourceDirectory() + path.data()).c_str(),
+		(files.GetResources() + path.data()).c_str(),
 		&width,
 		&height,
 		&channels,
@@ -100,11 +100,11 @@ f32* Texture::LoadImageHDR(const std::string_view path)
 {
 	LOG_INFO("Loading texture: {}\n", path);
 
-	auto& files = FileHandler::GetInstance();
+	auto& files = Files::GetInstance();
 
 	f32* data = stbi_loadf
 	(
-		(files.GetResourceDirectory() + path.data()).c_str(),
+		(files.GetResources() + path.data()).c_str(),
 		&width,
 		&height,
 		&channels,

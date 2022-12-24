@@ -1,31 +1,34 @@
 #include "Inputs.h"
 
-using namespace Inputs;
+using namespace Engine;
 
-InputHandler::InputHandler()
+Inputs::Inputs()
 	: m_keys(SDL_GetKeyboardState(nullptr))
 {
 }
 
-glm::ivec2& InputHandler::GetMousePos()
+glm::ivec2& Inputs::GetMousePos()
 {
+	// Return mouse position
 	return m_mousePos;
 }
 
-glm::ivec2& InputHandler::GetMouseScroll()
+glm::ivec2& Inputs::GetMouseScroll()
 {
+	// Return mouse scroll
 	return m_mouseScroll;
 }
 
-bool InputHandler::IsKeyPressed(SDL_Scancode key)
+bool Inputs::IsKeyPressed(SDL_Scancode key)
 {
+	// Return key state
 	return static_cast<bool>(m_keys[key]);
 }
 
-InputHandler& InputHandler::GetInstance()
+Inputs& Inputs::GetInstance()
 {
 	// Static storage
-	static InputHandler inputs;
+	static Inputs inputs;
 	// Return
 	return inputs;
 }

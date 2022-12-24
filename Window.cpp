@@ -12,13 +12,15 @@
 #include "GL.h"
 #include "Settings.h"
 
+// TODO: Create GLEW functions
+
+// Using namespaces
 using namespace Engine;
 
+// Usings
 using Entities::Camera;
-using Engine::Settings;
-using Inputs::InputHandler;
-using Files::FileHandler;
 
+// Window flags
 constexpr u32 SDL_WINDOW_FLAGS  = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
 Window::Window()
@@ -29,6 +31,7 @@ Window::Window()
 	// Get SDL version
 	SDL_version version = {};
 	SDL_GetVersion(&version);
+
 	// Log it
 	LOG_INFO
 	(
@@ -41,6 +44,7 @@ Window::Window()
 	// Initialise SDL2
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
+		// Log error
 		LOG_ERROR("SDL_Init Failed\n{}\n", SDL_GetError());
 	}
 
@@ -53,13 +57,12 @@ Window::Window()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
-	// RGBA8 + Depth24 Framebuffer
+	// RGBA8 + D24 Framebuffer
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE,     8);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,    8);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,   8);
 	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE,   8);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,   24);
-	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 	// Create SDL handle
 	handle = SDL_CreateWindow
@@ -75,8 +78,10 @@ Window::Window()
 	// If handle creation failed
 	if (handle == nullptr)
 	{
+		// Log error
 		LOG_ERROR("SDL_CreateWindow Failed\n{}\n", SDL_GetError());
 	}
+
 	// Log handle address
 	LOG_INFO("Created SDL_Window with address: {}\n", reinterpret_cast<void*>(handle));
 	
@@ -88,17 +93,21 @@ Window::Window()
 
 	// Create dummy GL context
 	m_glContext = SDL_GL_CreateContext(handle);
+
 	// If context creation fails
 	if (m_glContext == nullptr)
 	{
+		// Log error
 		LOG_ERROR("SDL_GL_CreateContext Failed\n{}\n", SDL_GetError());
 	}
 
 	// Make the context current
 	if (SDL_GL_MakeCurrent(handle, m_glContext) != 0)
 	{
+		// Log error
 		LOG_ERROR("SDL_GL_MakeCurrent Failed\n{}\n", SDL_GetError());
 	}
+
 	// Log address
 	LOG_INFO("Created SDL_GLContext with address: {}\n", reinterpret_cast<void*>(&m_glContext));
 
@@ -128,70 +137,84 @@ Window::Window()
 	ImGui_ImplOpenGL3_Init("#version 430 core");
 
 	// Set resource directory
-	auto& files = FileHandler::GetInstance();
-	files.SetResourceDirectory("../res/");
+	auto& files = Files::GetInstance();
+	files.SetResources("../res/");
 	// Initialise other GL things
 	GL::Init(settings.window.dimensions);
 }
 
 bool Window::PollEvents()
 {
+	// While events exist
 	while (SDL_PollEvent(&m_event))
 	{
+		// ImGUI process event
 		ImGui_ImplSDL2_ProcessEvent(&m_event);
 
+		// Switch event types
 		switch (m_event.type)
 		{
+		// Event to quit
 		case SDL_QUIT:
 			return true;
 
+		// Key event
 		case SDL_KEYDOWN:
 			switch (m_event.key.keysym.scancode)
 			{
+			// If F1 is pressed
 			case SDL_SCANCODE_F1:
-				if (m_isInputCaptured)
-				{
-					SDL_SetRelativeMouseMode(SDL_FALSE);
-					m_isInputCaptured = !m_isInputCaptured;
-				}
-				else
-				{
-					SDL_SetRelativeMouseMode(SDL_TRUE);
-					m_isInputCaptured = !m_isInputCaptured;
-				}
+				// Toggle mouse mode
+				SDL_SetRelativeMouseMode(static_cast<SDL_bool>(!m_isInputCaptured));
+				// Toggle flag
+				m_isInputCaptured = !m_isInputCaptured;
 				break;
+			// Default key handler
 			default:
 				break;
 			}
 			break;
 
+		// Mouse scroll event
 		case SDL_MOUSEWHEEL:
-			InputHandler::GetInstance().GetMouseScroll() = glm::ivec2(m_event.wheel.x, m_event.wheel.y);
+			// Store scroll position
+			Inputs::GetInstance().GetMouseScroll() = glm::ivec2(m_event.wheel.x, m_event.wheel.y);
+			// Set camera zoom flag
 			Camera::GetToZoomCamera() = true;
 			break;
 
+		// Mouse motion event
 		case SDL_MOUSEMOTION:
-			InputHandler::GetInstance().GetMousePos() = glm::ivec2(m_event.motion.xrel, m_event.motion.yrel);
+			// Store mouse position
+			Inputs::GetInstance().GetMousePos() = glm::ivec2(m_event.motion.xrel, m_event.motion.yrel);
+			// Set camera movement flag
 			Camera::GetToMoveCamera() = true;
 			break;
 
+		// Default event handler
 		default:
 			break;
 		}
 	}
+
+	// Return
 	return false;
 }
 
 Window::~Window()
 {
+	// Log
 	LOG_INFO("{}\n", "Quiting SDL2");
 
-	Resources::Delete();
+	// Clear resources
+	Resources::GetInstance().Delete();
 
+	// Close ImGUI
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
 
+	// CLose SDL
 	SDL_GL_DeleteContext(m_glContext);
 	SDL_DestroyWindow(handle);
 	SDL_Quit();

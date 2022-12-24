@@ -136,48 +136,29 @@ void RenderManager::RenderWaterFBOs(const WaterTiles& waters, Camera& camera)
 	m_waterFBOs.BindDefaultFBO();
 }
 
-// FIXME: Disabled stencil
 void RenderManager::RenderGBuffer(const Camera& camera)
 {
-	// Do culling
-	CullEntities(camera);
-	// Enable stencil
-	/*glEnable(GL_STENCIL_TEST);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);*/
 	// Bind GBuffer
 	m_gBuffer.BindGBuffer();
 	// Clear FBO
-	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT /*| GL_STENCIL_BUFFER_BIT*/);
-	// Set stencil parameters
-	/*glStencilFunc(GL_ALWAYS, 1, 0xFF);
-	glStencilMask(0xFF);*/
+	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Load data
 	m_matrices->LoadView(camera);
 	m_shared->LoadCameraPos(camera);
 	// Render
-	m_gRenderer.Render(m_culledEntities);
+	m_gRenderer.Render(m_entities);
 	// Unbind GBuffer
 	m_gBuffer.BindDefaultFBO();
-	// Disable stencil
-	/*glDisable(GL_STENCIL_TEST);*/
-	// Clear map
-	m_culledEntities.clear();
 }
 
-// FIXME: Disabled stencil
 void RenderManager::RenderLighting(const Camera& camera)
 {
 	// Disable depth test
 	glDisable(GL_DEPTH_TEST);
-	// Enable stencil
-	/*glEnable(GL_STENCIL_TEST);*/
 	// Clear FBO
-	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT /*| GL_STENCIL_BUFFER_BIT*/);
+	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Copy depth
 	CopyDepth();
-	// Set stencil parameters
-	/*glStencilFunc(GL_EQUAL, 1, 0xFF);
-	glStencilMask(0x00);*/
 	// Load data
 	m_matrices->LoadView(camera);
 	m_shared->LoadCameraPos(camera);
@@ -185,8 +166,6 @@ void RenderManager::RenderLighting(const Camera& camera)
 	m_lightShader.Start();
 	m_lightRenderer.Render();
 	m_lightShader.Stop();
-	// Disable stencil
-	/*glDisable(GL_STENCIL_TEST);*/
 	// Re-enable depth test
 	glEnable(GL_DEPTH_TEST);
 }
@@ -204,7 +183,6 @@ void RenderManager::RenderSkybox()
 	glDepthFunc(GL_LESS);
 }
 
-// FIXME: Weird stencil copying
 void RenderManager::CopyDepth()
 {
 	// Get settings
@@ -221,7 +199,7 @@ void RenderManager::CopyDepth()
 		0, 0,
 		settings.window.dimensions.x,
 		settings.window.dimensions.y,
-		GL_DEPTH_BUFFER_BIT /*| GL_STENCIL_BUFFER_BIT*/,
+		GL_DEPTH_BUFFER_BIT,
 		GL_NEAREST
 	);
 	// Unbind
@@ -237,8 +215,6 @@ void RenderManager::Clear(GLbitfield flags)
 
 void RenderManager::RenderWaterScene(const Camera& camera, const glm::vec4& clipPlane)
 {
-	// Do culling
-	CullEntities(camera);
 	// Clear FBO
 	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Load data
@@ -246,26 +222,20 @@ void RenderManager::RenderWaterScene(const Camera& camera, const glm::vec4& clip
 	m_shared->LoadCameraPos(camera);
 	m_shared->LoadClipPlane(clipPlane);
 	// Render entities
-	m_instancedRenderer.Render(m_culledEntities, Mode::Fast);
+	m_instancedRenderer.Render(m_entities, Mode::Fast);
 	// Render skybox
 	RenderSkybox();
-	// Clear map
-	m_culledEntities.clear();
 }
 
 void RenderManager::RenderShadowScene(const Camera& camera)
 {
-	// Do culling
-	CullEntities(camera);
 	// Clear FBO
 	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Load data
 	m_matrices->LoadView(camera);
 	m_shared->LoadCameraPos(camera);
 	// Render entities
-	m_instancedRenderer.Render(m_culledEntities, Mode::Shadow);
-	// Clear map
-	m_culledEntities.clear();
+	m_instancedRenderer.Render(m_entities, Mode::Shadow);
 }
 
 void RenderManager::ProcessEntity(Entity& entity)
@@ -288,26 +258,6 @@ void RenderManager::ProcessEntities(EntityVec& entities)
 	{
 		ProcessEntity(entity);
 	}
-}
-
-void RenderManager::CullEntities(const Entities::Camera& camera)
-{
-	// Copy data
-	m_culledEntities = m_entities;
-
-	#if 0
-	// Loop over all pairs
-	for (auto& [model, entities] : m_culledEntities)
-	{
-		// Find elements to be removed
-		auto toRemove = std::remove_if(entities.begin(), entities.end(), [&] (const auto& entity)
-		{
-			return !m_viewFrustum.IsOnFrustum(camera, *entity);
-		});
-		// Remove elements
-		entities.erase(toRemove, entities.end());
-	}
-	#endif
 }
 
 // This kinda sucks, but it works

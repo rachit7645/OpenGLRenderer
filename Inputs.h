@@ -6,13 +6,13 @@
 #include "GLM.h"
 #include "Util.h"
 
-namespace Inputs
+namespace Engine
 {
-	class InputHandler
+	class Inputs
 	{
 	private:
 		// Main constructor
-		InputHandler();
+		Inputs();
 	public:
 		// Get mouse position
 		glm::ivec2& GetMousePos();
@@ -29,7 +29,7 @@ namespace Inputs
 		const u8* m_keys = nullptr;
 	public:
 		// Get instance
-		static InputHandler& GetInstance();
+		static Inputs& GetInstance();
 	};
 }
 

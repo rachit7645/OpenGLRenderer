@@ -225,19 +225,22 @@ void Instance::ImGuiUpdate()
 
 void Instance::InitEntities()
 {
+	// Get resource handle
+	auto& resources = Resources::GetInstance();
+
 	// Default textures
 	auto defaultTextures = MeshTextures
 	(
-		Resources::GetTexture("gfx/def.png"),
-		Resources::GetTexture("gfx/defNrm.png"),
-		Resources::GetTexture("gfx/def.png")
+		resources.GetTexture("gfx/def.png"),
+		resources.GetTexture("gfx/defNrm.png"),
+		resources.GetTexture("gfx/def.png")
 	);
 
 	// All models
-	auto playerModel  = Resources::GetModel("gfx/Mario/Mario.gltf",     defaultTextures);
-	auto cottageModel = Resources::GetModel("gfx/Cottage/Cottage.gltf", defaultTextures);
-	auto benchModel   = Resources::GetModel("gfx/Bench/Bench.gltf",     defaultTextures);
-	auto boxModel     = Resources::GetModel("gfx/Box/scene.gltf",       defaultTextures);
+	auto playerModel  = resources.GetModel("gfx/Mario/Mario.gltf",     defaultTextures);
+	auto cottageModel = resources.GetModel("gfx/Cottage/Cottage.gltf", defaultTextures);
+	auto benchModel   = resources.GetModel("gfx/Bench/Bench.gltf",     defaultTextures);
+	auto boxModel     = resources.GetModel("gfx/Box/scene.gltf",       defaultTextures);
 
 	// Entities
 	m_entities =
@@ -314,12 +317,15 @@ void Instance::InitLights()
 
 void Instance::InitMisc()
 {
+	// Get resource handle
+	auto& resources = Resources::GetInstance();
+
 	// Waters
 	m_waters =
 	{
 		{
-			Resources::GetTexture("gfx/waterDUDV.png"),
-			Resources::GetTexture("gfx/normal.png"),
+			resources.GetTexture("gfx/waterDUDV.png"),
+			resources.GetTexture("gfx/normal.png"),
 			glm::vec3(120.0f, 3.7f, -2.0f)
 		}
 	};

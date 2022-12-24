@@ -8,7 +8,7 @@
 using namespace Entities;
 
 using Engine::Settings;
-using Inputs::InputHandler;
+using Engine::Inputs;
 
 // Global flags
 bool m_toMoveCamera = true;
@@ -77,7 +77,7 @@ void Camera::CalculatePosition()
 void Camera::CalculateZoom()
 {
 	// Get mouse scroll
-	const auto& mouseScroll = InputHandler::GetInstance().GetMouseScroll();
+	const auto& mouseScroll = Inputs::GetInstance().GetMouseScroll();
 	// Get settings
 	const auto& settings = Settings::GetInstance();
 
@@ -100,7 +100,7 @@ void Camera::CalculateZoom()
 void Camera::CalculatePitch()
 {
 	// Get mouse position
-	const auto& mousePos = InputHandler::GetInstance().GetMousePos();
+	const auto& mousePos = Inputs::GetInstance().GetMousePos();
 	// Get settings
 	const auto& settings = Settings::GetInstance();
 
@@ -117,7 +117,7 @@ void Camera::CalculatePitch()
 void Camera::CalculateAAP()
 {
 	// Get mouse pos
-	const auto& mousePos = InputHandler::GetInstance().GetMousePos();
+	const auto& mousePos = Inputs::GetInstance().GetMousePos();
 	// Get settings
 	const auto& settings = Settings::GetInstance();
 	// Calculate angle
@@ -131,20 +131,19 @@ void Camera::InvertPitch()
 
 glm::vec3 Camera::GetForward() const
 {
-	// Calculate forward
-	auto forward = glm::vec3
-	(
-		std::cos(glm::radians(rotation.y)) * std::cos(glm::radians(rotation.x)),
-		std::sin(glm::radians(rotation.x)),
-		std::sin(glm::radians(rotation.y)) * std::cos(glm::radians(rotation.y))
-	);
+	// Calculate rotation matrix
+	auto matrix = Maths::CreateModelMatrixR(rotation);
+	// Store forward vector
+	glm::vec3 forward = glm::vec3(0.0f, 0.0f, -1.0f);
+	// Rotate forward vector
+	forward = matrix * glm::vec4(forward, 1.0f);
 	// Return
 	return glm::normalize(forward);
 }
 
 glm::vec3 Camera::GetUp() const
 {
-	glm::normalize(glm::cross(GetRight(), GetForward()));
+	return glm::normalize(glm::cross(GetRight(), GetForward()));
 }
 
 glm::vec3 Camera::GetRight() const

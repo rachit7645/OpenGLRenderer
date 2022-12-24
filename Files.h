@@ -4,18 +4,18 @@
 #include <string_view>
 #include <string>
 
-namespace Files
+namespace Engine
 {
-	class FileHandler
+	class Files
 	{
 	private:
 		// Default constructor
-		FileHandler() = default;
+		Files() = default;
 	public:
 		// Set resource directory
-		void SetResourceDirectory(const std::string_view relPath);
+		void SetResources(const std::string_view relPath);
 		// Get resource directory
-		const std::string& GetResourceDirectory();
+		const std::string& GetResources();
 		// Get file name from path
 		std::string GetName(const std::string_view path);
 		// Get directory from path
@@ -25,7 +25,7 @@ namespace Files
 		std::string m_resDir;
 	public:
 		// Get instance
-		static FileHandler& GetInstance();
+		static Files& GetInstance();
 	};
 }
 

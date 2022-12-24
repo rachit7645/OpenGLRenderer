@@ -37,7 +37,6 @@
 #include "PreFilterShader.h"
 #include "BRDFShader.h"
 #include "IBLRenderer.h"
-#include "Frustum.h"
 
 namespace Renderer
 {
@@ -95,12 +94,8 @@ namespace Renderer
 
 		// The entity map
 		Batch m_entities;
-		// Culled entity map
-		Batch m_culledEntities;
 		// The Skybox
 		Entities::Skybox m_skybox;
-		// The view frustum
-		Maths::Frustum m_viewFrustum = {};
 
 		// Matrix Uniform Buffer
 		std::shared_ptr<MatrixBuffer> m_matrices;
@@ -158,8 +153,6 @@ namespace Renderer
 		void ProcessEntity(Entities::Entity& entity);
 		// Process a vector of entities
 		void ProcessEntities(EntityVec& entities);
-		// Cull entities
-		void CullEntities(const Entities::Camera& camera);
 		// Draw ImGui Windows
 		void RenderImGui();
 	};

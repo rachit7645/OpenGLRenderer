@@ -7,35 +7,50 @@
 #include "Log.h"
 #include "Files.h"
 #include "Vertex.h"
-#include "AABB.h"
+
+// TODO: Convert index format to uvec3
 
 // HACK: Assimp doesn't define a macro for this
 #ifndef AI_MATKEY_NORMALS_TEXTURE
 #define AI_MATKEY_NORMALS_TEXTURE aiTextureType_NORMALS, 0
 #endif
 
+// Using namespaces
 using namespace Renderer;
 
-using Files::FileHandler;
+// Usings
+using Engine::Files;
+using Engine::Resources;
 
-constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate   | aiProcess_FlipUVs          | aiProcess_OptimizeMeshes   |
-							 aiProcess_OptimizeGraph | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace |
-							 aiProcess_GenUVCoords;
+// Assimp flags
+constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate      | // Triangles are easier to work with
+							 aiProcess_FlipUVs          | // My textures are flipped
+							 aiProcess_OptimizeMeshes   | // Mesh optimisation
+							 aiProcess_OptimizeGraph    | // Scene optimisation
+							 aiProcess_GenSmoothNormals | // Generate normals if none are available
+							 aiProcess_CalcTangentSpace | // Generate tangents
+							 aiProcess_GenUVCoords;       // Generate texture coordinates
 
 Model::Model(const std::string_view path, const MeshTextures& textures)
 {
-	Assimp::Importer importer;
-
+	// Log
 	LOG_INFO("Loading model: {}\n", path);
 
-	auto& files          = FileHandler::GetInstance();
-	const aiScene* scene = importer.ReadFile((files.GetResourceDirectory() + path.data()).c_str(), ASSIMP_FLAGS);
+	// Get importer
+	Assimp::Importer importer;
+	// Get files handler
+	auto& files = Files::GetInstance();
 
+	// Load scene
+	const aiScene* scene = importer.ReadFile((files.GetResources() + path.data()).c_str(), ASSIMP_FLAGS);
+	// Check if scene is OK
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
+		// Log error
 		LOG_ERROR("Model Load Failed: {}", importer.GetErrorString());
 	}
 
+	// Process scene nodes
 	ProcessNode(scene->mRootNode, scene, textures, files.GetDirectory(path));
 }
 
@@ -50,12 +65,14 @@ void Model::ProcessNode
 	// Iterate over all the node's meshes
 	for (u32 i = 0; i < node->mNumMeshes; ++i)
 	{
+		// Add meshes
 		meshes.emplace_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], scene, textures, directory));
 	}
 
-	// Iterate over all the child meshes
+	// Iterate over all the child nodes
 	for (u32 i = 0; i < node->mNumChildren; ++i)
 	{
+		// Process nodes recursively
 		ProcessNode(node->mChildren[i], scene, textures, directory);
 	}
 }
@@ -68,41 +85,37 @@ Mesh Model::ProcessMesh
 	const std::string& directory
 )
 {
-	// Data vectors
+	// Vertex data (packed)
 	std::vector<Vertex> vertices;
-	std::vector<u32>    indices;
+	// Index data
+	std::vector<u32> indices;
 
-	for (u32 i = 0; i < mesh->mNumVertices; i++)
+	// For all vertices
+	for (u32 i = 0; i < mesh->mNumVertices; ++i)
 	{
-		// Retrieve data
-		const aiVector3D& position = mesh->mVertices[i];
-		const aiVector3D& normal   = mesh->mNormals[i];
-		const aiVector3D& texCoord = mesh->mTextureCoords[0][i];
-		const aiVector3D& tangent  = mesh->mTangents[i];
-
 		// Convert to GL friendly data
 		vertices.emplace_back
 		(
-			glm::ai_cast(position),
-			glm::ai_cast(texCoord),
-			glm::ai_cast(normal),
-			glm::ai_cast(tangent)
+			glm::ai_cast(mesh->mVertices[i]),
+			glm::ai_cast(mesh->mTextureCoords[0][i]),
+			glm::ai_cast(mesh->mNormals[i]),
+			glm::ai_cast(mesh->mTangents[i])
 		);
 	}
 
+	// For all faces
 	for (u32 i = 0; i < mesh->mNumFaces; ++i)
 	{
+		// Get faces
 		const aiFace& face = mesh->mFaces[i];
+		// Store indices
 		indices.emplace_back(face.mIndices[0]);
 		indices.emplace_back(face.mIndices[1]);
 		indices.emplace_back(face.mIndices[2]);
 	}
 
-	// Get AABB of the mesh
-	auto aabb = Maths::AABB(mesh->mAABB);
-
-	// Return
-	return Mesh(vertices, indices, ProcessTextures(mesh, scene, textures, directory), aabb);
+	// Return mesh
+	return Mesh(vertices, indices, ProcessTextures(mesh, scene, textures, directory));
 }
 
 MeshTextures Model::ProcessTextures
@@ -123,12 +136,14 @@ MeshTextures Model::ProcessTextures
 	{
 		// Path variable
 		aiString path;
+		// Resource handler
+		auto& resources = Resources::GetInstance();
 		// Get texture
 		mat->GetTexture(type, index, &path);
 		// If texture is available
 		if (path.length > 0)
 		{
-			texture = Resources::GetTexture(directory + path.C_Str());
+			texture = resources.GetTexture(directory + path.C_Str());
 		}
 	};
 
