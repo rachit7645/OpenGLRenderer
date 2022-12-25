@@ -1,9 +1,8 @@
 #include "Window.h"
 
-#include <string_view>
 #include <GL/glew.h>
 
-#include "imgui.h"
+#include "ImGui.h"
 #include "Log.h"
 #include "Camera.h"
 #include "Files.h"
@@ -11,8 +10,6 @@
 #include "Resources.h"
 #include "GL.h"
 #include "Settings.h"
-
-// TODO: Create GLEW functions
 
 // Using namespaces
 using namespace Engine;
@@ -112,14 +109,13 @@ Window::Window()
 	LOG_INFO("Created SDL_GLContext with address: {}\n", reinterpret_cast<void*>(&m_glContext));
 
 	// Initialize the real OpenGL context
-	auto glewVersion = reinterpret_cast<const char*>(glewGetString(GLEW_VERSION));
-	LOG_INFO("Initializing GLEW version: {}\n", std::string_view(glewVersion));
-
+	LOG_INFO("Initializing GLEW version: {}\n", GLEW::GetString(GLEW_VERSION));
 	// Due to a bug in glew, set it to experimental mode
 	glewExperimental = GL_TRUE;
 	// If GLEW init fails
 	if (glewInit() != GLEW_OK)
 	{
+		// Log error
 		LOG_ERROR("{}\n", "glewInit Failed");
 	}
 	// Log debug info

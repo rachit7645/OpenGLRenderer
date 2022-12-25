@@ -8,8 +8,6 @@
 #include "Files.h"
 #include "Vertex.h"
 
-// TODO: Convert index format to uvec3
-
 // HACK: Assimp doesn't define a macro for this
 #ifndef AI_MATKEY_NORMALS_TEXTURE
 #define AI_MATKEY_NORMALS_TEXTURE aiTextureType_NORMALS, 0

@@ -90,6 +90,35 @@ ShaderProgram::ShaderProgram
 	DumpToFile("dumps/" + vertex + "_" + fragment + "_" + geometry);
 }
 
+ShaderProgram::ShaderProgram(const std::string_view computePath)
+{
+	// Create shader program
+	programID = glCreateProgram();
+
+	// Create shader
+	GLuint computeShaderID = LoadShader(GL_COMPUTE_SHADER, computePath);
+
+	// Attach shader
+	glAttachShader(programID, computeShaderID);
+
+	// Link program
+	glLinkProgram(programID);
+	CheckProgram(fmt::format("Shader link failed for: {}", computePath), GL_LINK_STATUS);
+
+	// Delete shader
+	glDeleteShader(computeShaderID);
+
+	// Validate program
+	glValidateProgram(programID);
+	CheckProgram(fmt::format("Shader validation failed for: {}", computePath), GL_VALIDATE_STATUS);
+
+	// Calculate dump name
+	auto& files   = Files::GetInstance();
+	auto  compute = files.GetName(computePath);
+	// Dump shader
+	DumpToFile("dumps/" + compute);
+}
+
 void ShaderProgram::DumpToFile(const std::string_view path) const
 {
 	GLint length;

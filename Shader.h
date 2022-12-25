@@ -12,15 +12,17 @@ namespace Shader
 	class ShaderProgram
 	{
 	public:
-		// Creates a vertex and fragment shader and links em' into a program
+		// Shader with vertex and fragment stages
 		ShaderProgram(const std::string_view vertexPath, const std::string_view fragmentPath);
-		// Geometry shader version
+		// Shader with vertex, geometry and fragment stages
 		ShaderProgram
 		(
 			const std::string_view vertexPath,
 			const std::string_view fragmentPath,
 			const std::string_view geometryPath
 		);
+		// Shader with compute stage
+		ShaderProgram(const std::string_view computePath);
 		// Destructor
 		virtual ~ShaderProgram();
 

@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-#include "imgui.h"
+#include "ImGui.h"
 #include "Inputs.h"
 #include "Settings.h"
 #include "Maths.h"

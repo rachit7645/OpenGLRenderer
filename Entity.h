@@ -24,6 +24,8 @@ namespace Entities
 			const glm::vec3& rotation,
 			f32 scale
 		);
+		// Destructor
+		virtual ~Entity() = default;
 
 		// Pointer to model
 		MdPtr model;

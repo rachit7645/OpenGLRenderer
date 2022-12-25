@@ -53,6 +53,7 @@ namespace Renderer
 		using MdPtr       = std::shared_ptr<Model>;
 		using Batch       = std::unordered_map<MdPtr, EntityPtrs>;
 		using TxPtr       = std::shared_ptr<Texture>;
+
 		// Main constructor
 		RenderManager();
 	private:

@@ -1,5 +1,6 @@
 #include "WaterTile.h"
 
+// Using namespaces
 using namespace Waters;
 
 WaterTile::WaterTile(TxPtr dudvMap, TxPtr normalMap, const glm::vec3& position)

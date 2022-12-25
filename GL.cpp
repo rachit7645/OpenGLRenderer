@@ -17,6 +17,7 @@ void GL::CheckErrors
 	UNUSED const void* userParam
 )
 {
+	// Error sources map
 	static const std::unordered_map<GLenum, const char*>
 	GL_ERROR_SOURCES =
 	{
@@ -28,6 +29,7 @@ void GL::CheckErrors
 		{GL_DEBUG_SOURCE_OTHER,          "[OTHER]"          }
 	};
 
+	// Error types map
 	static const std::unordered_map<GLenum, const char*>
 	GL_ERROR_TYPES =
 	{
@@ -42,6 +44,7 @@ void GL::CheckErrors
 		{GL_DEBUG_TYPE_OTHER,               "[OTHER]"              }
 	};
 
+	// Error severity map
 	static const std::unordered_map<GLenum, const char*>
 	GL_ERROR_SEVERITY =
 	{
@@ -51,23 +54,33 @@ void GL::CheckErrors
 		{GL_DEBUG_SEVERITY_NOTIFICATION, "[SEVERITY_NOTIFICATION]"}
 	};
 
+	// Look up strings
 	auto sourceStr   = GL_ERROR_SOURCES.find(source)->second;
 	auto typeStr     = GL_ERROR_TYPES.find(type)->second;
 	auto severityStr = GL_ERROR_SEVERITY.find(severity)->second;
 
+	// Log
 	LOG_GL("{} {} {} [ID={}]:\n{}\n", sourceStr, typeStr, severityStr, id, message);
 }
 
 GLint GL::GetIntegerv(GLenum param)
 {
+	// Store value
 	GLint value;
+	// Get value
 	glGetIntegerv(param, &value);
+	// Return value
 	return value;
 }
 
 std::string_view GL::GetString(GLenum name)
 {
-	return std::string_view(reinterpret_cast<const char*>(glGetString(name)));
+	// Get string
+	auto string = glGetString(name);
+	// Convert to different format
+	auto newString = reinterpret_cast<const char*>(string);
+	// Return
+	return std::string_view(newString);
 }
 
 void GL::Init(const glm::ivec2& dimensions)
@@ -104,6 +117,7 @@ void GL::Init(const glm::ivec2& dimensions)
 
 void GL::LogDebugInfo()
 {
+	// Integer logger
 	#define LOG_INTEGER(str, x) \
 		do \
         { \
@@ -111,6 +125,7 @@ void GL::LogDebugInfo()
         } \
 		while (0)
 
+	// String logger
 	#define LOG_STRING(str, x) \
 		do \
         { \
@@ -118,30 +133,58 @@ void GL::LogDebugInfo()
         } \
 		while (0)
 
-	// Log strings
-	LOG_STRING("GL_VENDOR",                   GL_VENDOR);
-	LOG_STRING("GL_RENDERER",                 GL_RENDERER);
+	// Log GPU info
+	LOG_STRING("GL_VENDOR",   GL_VENDOR);
+	LOG_STRING("GL_RENDERER", GL_RENDERER);
+	// Log OpenGL versions
 	LOG_STRING("GL_VERSION",                  GL_VERSION);
 	LOG_STRING("GL_SHADING_LANGUAGE_VERSION", GL_SHADING_LANGUAGE_VERSION);
-	// Log integers
-	LOG_INTEGER("GL_MAX_FRAMEBUFFER_HEIGHT",      GL_MAX_FRAMEBUFFER_HEIGHT);
-	LOG_INTEGER("GL_MAX_FRAMEBUFFER_WIDTH",       GL_MAX_FRAMEBUFFER_WIDTH);
-	LOG_INTEGER("GL_MAX_FRAMEBUFFER_SAMPLES",     GL_MAX_FRAMEBUFFER_SAMPLES);
-	LOG_INTEGER("GL_MAX_COLOR_ATTACHMENTS",       GL_MAX_COLOR_ATTACHMENTS);
-	LOG_INTEGER("GL_MAX_DRAW_BUFFERS",            GL_MAX_DRAW_BUFFERS);
-	LOG_INTEGER("GL_MAX_TEXTURE_SIZE",            GL_MAX_TEXTURE_SIZE);
-	LOG_INTEGER("GL_MAX_TEXTURE_BUFFER_SIZE",     GL_MAX_TEXTURE_BUFFER_SIZE);
-	LOG_INTEGER("GL_MAX_3D_TEXTURE_SIZE",         GL_MAX_3D_TEXTURE_SIZE);
-	LOG_INTEGER("GL_MAX_CUBE_MAP_TEXTURE_SIZE",   GL_MAX_CUBE_MAP_TEXTURE_SIZE);
-	LOG_INTEGER("GL_MAX_TEXTURE_LOD_BIAS",        GL_MAX_TEXTURE_LOD_BIAS);
-	LOG_INTEGER("GL_MAX_TEXTURE_MAX_ANISOTROPY",  GL_MAX_TEXTURE_MAX_ANISOTROPY);
-	LOG_INTEGER("GL_MAX_SAMPLES",                 GL_MAX_SAMPLES);
+
+	// Log framebuffer info
+	LOG_INTEGER("GL_MAX_FRAMEBUFFER_HEIGHT",  GL_MAX_FRAMEBUFFER_HEIGHT);
+	LOG_INTEGER("GL_MAX_FRAMEBUFFER_WIDTH",   GL_MAX_FRAMEBUFFER_WIDTH);
+	LOG_INTEGER("GL_MAX_FRAMEBUFFER_SAMPLES", GL_MAX_FRAMEBUFFER_SAMPLES);
+	LOG_INTEGER("GL_MAX_COLOR_ATTACHMENTS",   GL_MAX_COLOR_ATTACHMENTS);
+	LOG_INTEGER("GL_MAX_DRAW_BUFFERS",        GL_MAX_DRAW_BUFFERS);
+	// Log texture info
+	LOG_INTEGER("GL_MAX_TEXTURE_SIZE",           GL_MAX_TEXTURE_SIZE);
+	LOG_INTEGER("GL_MAX_TEXTURE_BUFFER_SIZE",    GL_MAX_TEXTURE_BUFFER_SIZE);
+	LOG_INTEGER("GL_MAX_3D_TEXTURE_SIZE",        GL_MAX_3D_TEXTURE_SIZE);
+	LOG_INTEGER("GL_MAX_CUBE_MAP_TEXTURE_SIZE",  GL_MAX_CUBE_MAP_TEXTURE_SIZE);
+	LOG_INTEGER("GL_MAX_TEXTURE_LOD_BIAS",       GL_MAX_TEXTURE_LOD_BIAS);
+	LOG_INTEGER("GL_MAX_TEXTURE_MAX_ANISOTROPY", GL_MAX_TEXTURE_MAX_ANISOTROPY);
+	LOG_INTEGER("GL_MAX_SAMPLES",                GL_MAX_SAMPLES);
+	// Log uniform info
+	LOG_INTEGER("GL_MAX_UNIFORM_LOCATIONS", GL_MAX_UNIFORM_LOCATIONS);
+	// Log uniform buffer info
 	LOG_INTEGER("GL_MAX_UNIFORM_BLOCK_SIZE",      GL_MAX_UNIFORM_BLOCK_SIZE);
 	LOG_INTEGER("GL_MAX_UNIFORM_BUFFER_BINDINGS", GL_MAX_UNIFORM_BUFFER_BINDINGS);
-	LOG_INTEGER("GL_MAX_UNIFORM_LOCATIONS",       GL_MAX_UNIFORM_LOCATIONS);
 	LOG_INTEGER("GL_MAX_VERTEX_UNIFORM_BLOCKS",   GL_MAX_VERTEX_UNIFORM_BLOCKS);
 	LOG_INTEGER("GL_MAX_FRAGMENT_UNIFORM_BLOCKS", GL_MAX_FRAGMENT_UNIFORM_BLOCKS);
-	LOG_INTEGER("GL_MAX_VERTEX_ATTRIBS",          GL_MAX_VERTEX_ATTRIBS);
-	LOG_INTEGER("GL_MAX_ELEMENTS_VERTICES",       GL_MAX_ELEMENTS_VERTICES);
-	LOG_INTEGER("GL_MAX_ELEMENTS_INDICES",        GL_MAX_ELEMENTS_INDICES);
+	LOG_INTEGER("GL_MAX_GEOMETRY_UNIFORM_BLOCKS", GL_MAX_GEOMETRY_UNIFORM_BLOCKS);
+	// Log shader storage buffer info
+	LOG_INTEGER("GL_MAX_SHADER_STORAGE_BLOCK_SIZE",      GL_MAX_SHADER_STORAGE_BLOCK_SIZE);
+	LOG_INTEGER("GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS", GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS);
+	LOG_INTEGER("GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS",   GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS);
+	LOG_INTEGER("GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS", GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS);
+	LOG_INTEGER("GL_MAX_GEOMETRY_SHADER_STORAGE_BLOCKS", GL_MAX_GEOMETRY_SHADER_STORAGE_BLOCKS);
+	// Log vertex info
+	LOG_INTEGER("GL_MAX_VERTEX_ATTRIBS",    GL_MAX_VERTEX_ATTRIBS);
+	LOG_INTEGER("GL_MAX_ELEMENTS_VERTICES", GL_MAX_ELEMENTS_VERTICES);
+	LOG_INTEGER("GL_MAX_ELEMENTS_INDICES",  GL_MAX_ELEMENTS_INDICES);
+}
+
+std::string_view GLEW::GetString(GLenum name)
+{
+	// Get string
+	auto string = glewGetString(name);
+	// Convert to different format
+	auto newString = reinterpret_cast<const char*>(string);
+	// Return
+	return std::string_view(newString);
+}
+
+bool GLEW::GetExtension(const std::string_view name)
+{
+	return glewGetExtension(name.data());
 }

@@ -47,25 +47,36 @@ namespace Renderer
 		// Calculates BRDF LUT
 		void CalculateBRDF(TxPtr& brdfLut);
 	private:
+		// Prepare rendering
 		void PrepareRender(FbPtr& FBO, const VAO& vao);
+		// End rendering
 		void UnbindRender(FbPtr& FBO);
-
+		// Render cube face
 		void RenderCubeFace(FbPtr& FBO, usize face, GLint level = 0);
+		// Render quad
 		void RenderQuad();
 
+		// Create cube map FBO
 		FbPtr CreateCubeMapFBO(const glm::ivec2& dimensions, bool isMipMapped = false);
+		// Create 2D FBO
 		FbPtr Create2DFBO(const glm::ivec2& dimensions);
-
+		// Get projection matrix
 		glm::mat4 LoadProjection();
+		// Get view matrix
 		std::array<glm::mat4, 6> LoadViews();
-
+		// Load cube
 		VAO LoadCube();
+		// Load quad
 		VAO LoadQuad();
 
+		// Projection matrix
 		glm::mat4 m_projection;
+		// View matrix
 		std::array<glm::mat4, 6> m_views;
 
+		// Cube VAO
 		VAO m_cube;
+		// Quad VAO
 		VAO m_quad;
 	};
 }

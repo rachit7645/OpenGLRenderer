@@ -106,6 +106,7 @@ target_precompile_headers(engine PRIVATE
 	<assimp/Importer.hpp>
 	<assimp/scene.h>
 	<assimp/postprocess.h>
+	<assimp/types.h>
 	# FMT Headers
 	<fmt/core.h>
 	<fmt/format.h>
@@ -115,9 +116,11 @@ target_precompile_headers(engine PRIVATE
 	<glm/vec3.hpp>
 	<glm/vec4.hpp>
 	<glm/mat4x4.hpp>
-	<glm/trigonometric.hpp>
 	<glm/ext/vector_int2.hpp>
 	<glm/ext/vector_int4.hpp>
+	<glm/ext/vector_uint3.hpp>
+	<glm/trigonometric.hpp>
+	<glm/geometric.hpp>
 	<glm/gtc/matrix_transform.hpp>
 	# SIMD JSON Headers
 	libs/simdjson/singleheader/simdjson.h

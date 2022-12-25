@@ -2,7 +2,6 @@
 
 using namespace Shader;
 
-
 constexpr auto VERTEX_PATH = "shaders/ComputeBRDF_VS.glsl",
 	FRAGMENT_PATH = "shaders/ComputeBRDF_FS.glsl";
 

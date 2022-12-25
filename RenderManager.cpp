@@ -36,7 +36,7 @@ RenderManager::RenderManager()
 	  m_glRenderer(GL::GetString(GL_RENDERER)),
 	  m_glVersion(GL::GetString(GL_VERSION)),
 	  m_glslVersion(GL::GetString(GL_SHADING_LANGUAGE_VERSION)),
-	  m_isGPUMemoryInfo(glewGetExtension("GL_NVX_gpu_memory_info")),
+	  m_isGPUMemoryInfo(GLEW::GetExtension("GL_NVX_gpu_memory_info")),
 	  m_currentFBO(m_waterFBOs.reflectionFBO->colorTextures[0])
 {
 	// Get settings

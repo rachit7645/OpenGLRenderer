@@ -18,10 +18,10 @@ namespace Waters
 
 namespace Renderer
 {
-	// This class is constructed in a pipeline-like form, thus providing absolute control
 	class FrameBuffer
 	{
 	public:
+		// Usings
 		using TxPtr    = std::shared_ptr<Texture>;
 		using RdBufPtr = std::shared_ptr<RenderBuffer>;
 
@@ -30,7 +30,9 @@ namespace Renderer
 		// Destructor
 		~FrameBuffer();
 
-		void Bind()   const;
+		// Bind frame buffer
+		void Bind() const;
+		// Unbind frame buffer
 		void Unbind() const;
 
 		// Framebuffer dimensions
@@ -50,21 +52,30 @@ namespace Renderer
 		RdBufPtr colorRenderBuffer;
 		RdBufPtr depthRenderBuffer;
 
+		// Set buffers
 		void SetDrawBuffer(GLenum value);
 		void SetReadBuffer(GLenum value);
 	protected:
+		// Creates a new FBO
 		void CreateFrameBuffer();
 
+		// Add 2D texture
 		void AddTexture(TxPtr& texture, const FBOAttachment& attachment);
+		// Add cube map texture
 		void AddTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment);
+		// Add texture array
 		void AddTextureArray(TxPtr& texture, const FBOAttachment& attachment);
+		// Add render buffer
 		void AddBuffer(RdBufPtr& buffer, const FBOAttachment& attachment);
 
+		// Set draw buffers
 		void SetDrawBuffers(const std::vector<GLenum>& buffers);
+		// Enable depth
 		void EnableDepth();
-
+		// Check status
 		void CheckStatus();
 	public:
+		// Classes that can access pipeline mode
 		friend class ShadowMap;
 		friend class GBuffer;
 		friend class IBLRenderer;
