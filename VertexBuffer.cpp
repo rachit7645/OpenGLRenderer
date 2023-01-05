@@ -82,7 +82,7 @@ VertexBuffer::~VertexBuffer()
 	// ID must not be zero
 	if (id)
 	{
-		// Delete buffer
+		// Clear buffer
 		glDeleteBuffers(1, &id);
 	}
 }

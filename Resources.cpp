@@ -57,7 +57,7 @@ MdPtr Resources::GetModel(const std::string& path, const MeshTextures& textures)
 	}
 }
 
-void Resources::Delete()
+void Resources::Clear()
 {
 	// Clear textures
 	m_textures.clear();

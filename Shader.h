@@ -14,6 +14,7 @@ namespace Shader
 	public:
 		// Shader with vertex and fragment stages
 		ShaderProgram(const std::string_view vertexPath, const std::string_view fragmentPath);
+
 		// Shader with vertex, geometry and fragment stages
 		ShaderProgram
 		(
@@ -21,30 +22,36 @@ namespace Shader
 			const std::string_view fragmentPath,
 			const std::string_view geometryPath
 		);
-		// Shader with compute stage
-		ShaderProgram(const std::string_view computePath);
+
 		// Destructor
 		virtual ~ShaderProgram();
-
-		// Shader program ID
-		GLuint programID;
 
 		// Start shader
 		void Start() const;
 		// Stop shader
 		void Stop() const;
+
+		// Shader program ID
+		GLuint programID;
 	protected:
 		// Query uniform location
 		GLint GetUniformLocation(const char* name) const;
 
-		// Uniform loading functions 
-		void LoadUniform(GLint location, GLint value)             const;
-		void LoadUniform(GLint location, GLuint value)            const;
-		void LoadUniform(GLint location, GLfloat value)           const;
-		void LoadUniform(GLint location, bool value)              const;
+		// Load s32 uniform
+		void LoadUniform(GLint location, GLint value) const;
+		// Load u32 uniform
+		void LoadUniform(GLint location, GLuint value) const;
+		// Load f32 uniform
+		void LoadUniform(GLint location, GLfloat value) const;
+		// Load bool uniform
+		void LoadUniform(GLint location, bool value) const;
+		// Load vec2 uniform
 		void LoadUniform(GLint location, const glm::vec2& vector) const;
+		// Load vec3 uniform
 		void LoadUniform(GLint location, const glm::vec3& vector) const;
+		// Load vec4 uniform
 		void LoadUniform(GLint location, const glm::vec4& vector) const;
+		// Load mat4 uniform
 		void LoadUniform(GLint location, const glm::mat4& matrix) const;
 
 		// Load all uniforms

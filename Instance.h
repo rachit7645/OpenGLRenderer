@@ -92,6 +92,7 @@ namespace Engine
 		bool m_wireframe = false;
 		// (Adaptive) V-SYNC flag
 		bool m_vsync = true;
+
 		// Selected directional light
 		s32 m_selectedDirLight = 0;
 		// Selected point light

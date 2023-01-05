@@ -234,7 +234,7 @@ FrameBuffer::~FrameBuffer()
 	// ID should not be zero
 	if (id != 0)
 	{
-		// Delete FBO
+		// Clear FBO
 		glDeleteFramebuffers(1, &id);
 	}
 }

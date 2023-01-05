@@ -88,6 +88,10 @@ Mesh Model::ProcessMesh
 	// Index data
 	std::vector<u32> indices;
 
+	// Pre-allocate memory
+	vertices.reserve(mesh->mNumVertices);
+	indices.reserve(mesh->mNumFaces * 3);
+
 	// For all vertices
 	for (u32 i = 0; i < mesh->mNumVertices; ++i)
 	{

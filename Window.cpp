@@ -46,7 +46,6 @@ Window::Window()
 	}
 
 	// Set up opengl context
-	LOG_INFO("{}\n", "Setting up OpenGL context");
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
@@ -78,9 +77,6 @@ Window::Window()
 		// Log error
 		LOG_ERROR("SDL_CreateWindow Failed\n{}\n", SDL_GetError());
 	}
-
-	// Log handle address
-	LOG_INFO("Created SDL_Window with address: {}\n", reinterpret_cast<void*>(handle));
 	
 	// For sanity, raise handle
 	SDL_RaiseWindow(handle);
@@ -105,9 +101,6 @@ Window::Window()
 		LOG_ERROR("SDL_GL_MakeCurrent Failed\n{}\n", SDL_GetError());
 	}
 
-	// Log address
-	LOG_INFO("Created SDL_GLContext with address: {}\n", reinterpret_cast<void*>(&m_glContext));
-
 	// Initialize the real OpenGL context
 	LOG_INFO("Initializing GLEW version: {}\n", GLEW::GetString(GLEW_VERSION));
 	// Due to a bug in glew, set it to experimental mode
@@ -118,8 +111,6 @@ Window::Window()
 		// Log error
 		LOG_ERROR("{}\n", "glewInit Failed");
 	}
-	// Log debug info
-	GL::LogDebugInfo();
 
 	// Initialise Dear ImGui
 	LOG_INFO("Initializing Dear ImGui version: {}\n", ImGui::GetVersion());
@@ -199,11 +190,8 @@ bool Window::PollEvents()
 
 Window::~Window()
 {
-	// Log
-	LOG_INFO("{}\n", "Quiting SDL2");
-
 	// Clear resources
-	Resources::GetInstance().Delete();
+	Resources::GetInstance().Clear();
 
 	// Close ImGUI
 	ImGui_ImplOpenGL3_Shutdown();

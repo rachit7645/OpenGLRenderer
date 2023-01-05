@@ -7,8 +7,10 @@
 #include "Files.h"
 #include "Util.h"
 
+// Using namespaces
 using namespace Renderer;
 
+// Usings
 using Engine::Files;
 
 Texture::Texture(const std::string_view path)
@@ -226,7 +228,7 @@ Texture::~Texture()
 	// ID must not be zero
 	if (id)
 	{
-		// Delete texture
+		// Clear texture
 		glDeleteTextures(1, &id);
 	}
 }

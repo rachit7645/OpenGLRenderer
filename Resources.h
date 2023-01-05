@@ -26,7 +26,7 @@ namespace Engine
 		// Otherwise it generates it (slow)
 		MdPtr GetModel(const std::string& path, const Renderer::MeshTextures& textures);
 		// Clears the cache
-		void Delete();
+		void Clear();
 	private:
 		// Texture map
 		std::unordered_map<std::string, TxPtr> m_textures;

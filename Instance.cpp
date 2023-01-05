@@ -75,13 +75,15 @@ void Instance::CalculateFPS()
 	m_endTime = chrono::steady_clock::now();
 	// Calculate frame duration
 	auto duration = chrono::duration_cast<chrono::milliseconds>(m_endTime - m_frameStartTime);
+	// Calculate cycle duration
+	auto cycleDuration = m_endTime - m_startTime;
 	// Calculate frame delta
 	g_Delta = static_cast<f32>(static_cast<f64>(duration.count()) / 1000.0);
 	// Set this/next frame's start time
 	m_frameStartTime = m_endTime;
 
 	// If a second has passed
-	if (m_endTime - m_startTime >= chrono::seconds(1))
+	if (cycleDuration >= chrono::seconds(1))
 	{
 		// Set this cycle's start time
 		m_startTime = m_endTime;

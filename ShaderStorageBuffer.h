@@ -14,11 +14,14 @@ namespace Renderer
 		ShaderStorageBuffer(GLuint slot, GLsizeiptr size, GLenum usage);
 		// Destructor
 		~ShaderStorageBuffer();
-
-		GLuint     id    = 0;
-		GLuint     slot  = 0;
-		GLsizeiptr size  = 0;
-		GLenum     usage = 0;
+		// Buffer ID
+		GLuint id = 0;
+		// Buffer slot
+		GLuint slot = 0;
+		// Buffer max size
+		GLsizeiptr size = 0;
+		// Buffer usage hint
+		GLenum usage = 0;
 	};
 }
 

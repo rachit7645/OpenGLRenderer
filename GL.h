@@ -27,8 +27,6 @@ namespace GL
 
 	// Initialize OpenGL info
 	void Init(const glm::ivec2& dimensions);
-	// Log debug information
-	void LogDebugInfo();
 
 	namespace Detail
 	{
