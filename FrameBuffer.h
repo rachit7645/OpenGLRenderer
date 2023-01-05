@@ -80,6 +80,7 @@ namespace Renderer
 		friend class GBuffer;
 		friend class IBLRenderer;
 		friend class LightingBuffer;
+		friend class BloomBuffer;
 		friend class Waters::WaterFrameBuffers;
 	};
 }

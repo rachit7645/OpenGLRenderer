@@ -40,6 +40,7 @@
 #include "LightingBuffer.h"
 #include "PostProcessShader.h"
 #include "PostProcessRenderer.h"
+#include "BloomBuffer.h"
 
 namespace Renderer
 {
@@ -65,6 +66,7 @@ namespace Renderer
 		Waters::WaterFrameBuffers m_waterFBOs;
 		Renderer::GBuffer         m_gBuffer;
 		Renderer::LightingBuffer  m_lightingBuffer;
+		Renderer::BloomBuffer     m_bloomBuffer;
 
 		// Image Based Lighting renderers and shaders
 		Shader::ConverterShader   m_converterShader;

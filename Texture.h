@@ -70,6 +70,7 @@ namespace Renderer
 		friend class FrameBuffer;
 		friend class IBLMaps;
 		friend class IBLRenderer;
+		friend class BloomBuffer;
 	};
 }
 #endif

@@ -92,6 +92,7 @@ add_executable(engine
 	LightingBuffer.cpp
 	PostProcessShader.cpp
 	PostProcessRenderer.cpp
+	BloomBuffer.cpp
 )
 
 # Precompiled Headers
