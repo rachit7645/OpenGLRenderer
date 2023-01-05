@@ -89,6 +89,7 @@ add_executable(engine
 	Instance.cpp
 	IBLRenderer.cpp
 	GLM.cpp
+	LightingBuffer.cpp
 )
 
 # Precompiled Headers
