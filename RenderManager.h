@@ -37,6 +37,9 @@
 #include "PreFilterShader.h"
 #include "BRDFShader.h"
 #include "IBLRenderer.h"
+#include "LightingBuffer.h"
+#include "PostProcessShader.h"
+#include "PostProcessRenderer.h"
 
 namespace Renderer
 {
@@ -61,8 +64,9 @@ namespace Renderer
 		Renderer::ShadowMap       m_shadowMap;
 		Waters::WaterFrameBuffers m_waterFBOs;
 		Renderer::GBuffer         m_gBuffer;
+		Renderer::LightingBuffer  m_lightingBuffer;
 
-		// Image Based Lighting renderers & shaders
+		// Image Based Lighting renderers and shaders
 		Shader::ConverterShader   m_converterShader;
 		Shader::ConvolutionShader m_convolutionShader;
 		Shader::PreFilterShader   m_preFilterShader;
@@ -80,10 +84,12 @@ namespace Renderer
 		Renderer::InstancedRenderer   m_instancedRenderer;
 
 		// Deferred renderers and shaders
-		Shader::GBufferShader      m_gShader;
-		Renderer::GBufferRenderer  m_gRenderer;
-		Shader::LightingShader     m_lightShader;
-		Renderer::LightingRenderer m_lightRenderer;
+		Shader::GBufferShader         m_gShader;
+		Renderer::GBufferRenderer     m_gRenderer;
+		Shader::LightingShader        m_lightShader;
+		Renderer::LightingRenderer    m_lightRenderer;
+		Shader::PostProcessShader     m_postShader;
+		Renderer::PostProcessRenderer m_postRenderer;
 
 		// Skybox renderer and shader
 		Shader::SkyboxShader     m_skyboxShader;
@@ -139,6 +145,8 @@ namespace Renderer
 		void RenderGBuffer(const Entities::Camera& camera);
 		// Render lighting pass
 		void RenderLighting(const Entities::Camera& camera);
+		// Render post process pass
+		void RenderPostProcess();
 		// Render skybox
 		void RenderSkybox();
 	private:

@@ -4,7 +4,6 @@
 #include <GL/glew.h>
 
 #include "FBOAttachment.h"
-#include "Window.h"
 #include "Settings.h"
 
 using namespace Renderer;

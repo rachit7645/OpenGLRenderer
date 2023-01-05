@@ -47,6 +47,8 @@ void Instance::Run()
 		m_renderer.RenderGBuffer(m_camera);
 		// Deferred lighting pass
 		m_renderer.RenderLighting(m_camera);
+		// Post-processing pass
+		m_renderer.RenderPostProcess();
 
 		// Render waters
 		m_renderer.RenderWaters(m_waters);

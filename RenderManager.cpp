@@ -26,6 +26,7 @@ RenderManager::RenderManager()
 	  m_instancedRenderer(m_fastInstancedShader, m_shadowInstancedShader, m_shadowMap, m_instances),
 	  m_gRenderer(m_gShader, m_instances),
 	  m_lightRenderer(m_lightShader, m_shadowMap, m_gBuffer, m_iblMaps),
+	  m_postRenderer(m_postShader, m_lightingBuffer),
 	  m_skyboxRenderer(m_skyboxShader),
 	  m_waterRenderer(m_waterShader, m_waterFBOs),
 	  m_skybox(m_iblMaps.cubeMap),
@@ -153,12 +154,12 @@ void RenderManager::RenderGBuffer(const Camera& camera)
 
 void RenderManager::RenderLighting(const Camera& camera)
 {
+	// Bind FBO
+	m_lightingBuffer.BindLightingBuffer();
 	// Disable depth test
 	glDisable(GL_DEPTH_TEST);
 	// Clear FBO
 	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// Copy depth
-	CopyDepth();
 	// Load data
 	m_matrices->LoadView(camera);
 	m_shared->LoadCameraPos(camera);
@@ -166,6 +167,24 @@ void RenderManager::RenderLighting(const Camera& camera)
 	m_lightShader.Start();
 	m_lightRenderer.Render();
 	m_lightShader.Stop();
+	// Re-enable depth test
+	glEnable(GL_DEPTH_TEST);
+	// Unbind FBO
+	m_lightingBuffer.BindDefaultFBO();
+}
+
+void RenderManager::RenderPostProcess()
+{
+	// Disable depth test
+	glDisable(GL_DEPTH_TEST);
+	// Clear FBO
+	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Copy depth
+	CopyDepth();
+	// Do post-processing pass
+	m_postShader.Start();
+	m_postRenderer.Render();
+	m_postShader.Stop();
 	// Re-enable depth test
 	glEnable(GL_DEPTH_TEST);
 }
@@ -321,6 +340,11 @@ void RenderManager::RenderImGui()
 			if (ImGui::Button("GDepth"))
 			{
 				m_currentFBO = m_gBuffer.buffer->depthTexture;
+			}
+
+			if (ImGui::Button("Lighting"))
+			{
+				m_currentFBO = m_lightingBuffer.buffer->colorTextures[0];
 			}
 
 			ImGui::EndMenu();

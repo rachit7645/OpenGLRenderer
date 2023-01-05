@@ -90,6 +90,8 @@ add_executable(engine
 	IBLRenderer.cpp
 	GLM.cpp
 	LightingBuffer.cpp
+	PostProcessShader.cpp
+	PostProcessRenderer.cpp
 )
 
 # Precompiled Headers

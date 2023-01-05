@@ -1,13 +1,5 @@
 #version 430 core
 
-// Shared UBO
-layout(std140, binding = 2) uniform Shared
-{
-	vec4 clipPlane;
-	vec4 cameraPos;
-	vec4 resolution;
-};
-
 // Vertex inputs
 in vec2 txCoords;
 
@@ -21,7 +13,7 @@ layout (location = 0) out vec3 downsample;
 void main()
 {
 	// Get texel size
-	vec2 srcTexelSize = 1.0f / resolution;
+	vec2 srcTexelSize = 1.0f / vec2(textureSize(srcTexture, 0));
 
 	// Get inputs
 	float x = srcTexelSize.x;

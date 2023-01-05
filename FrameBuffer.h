@@ -79,6 +79,7 @@ namespace Renderer
 		friend class ShadowMap;
 		friend class GBuffer;
 		friend class IBLRenderer;
+		friend class LightingBuffer;
 		friend class Waters::WaterFrameBuffers;
 	};
 }
