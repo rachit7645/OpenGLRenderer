@@ -6,15 +6,9 @@
 
 #include "GLM.h"
 
-// TODO: Add opengl state checks
-
-// Quick wrappers around OpenGL calls
 namespace GL
 {
-	GLint            GetIntegerv(GLenum param);
-	std::string_view GetString(GLenum name);
-
-	// glDebugMessageCallback Function
+	// Debug message callback
 	void CheckErrors
 	(
 		GLenum source,
@@ -26,22 +20,37 @@ namespace GL
 		const void* userParam
 	);
 
+	// Get integer
+	GLint GetIntegerv(GLenum param);
+	// Get string
+	std::string_view GetString(GLenum name);
+
 	// Initialize OpenGL info
 	void Init(const glm::ivec2& dimensions);
-	// Log debug information
-	void LogDebugInfo();
 
 	namespace Detail
 	{
+		// std140 data storage rules
 		template<typename T>
 		struct DataSTD140
 		{
+			// Stored data
 			alignas(16) T data = {};
 		};
 	}
 
+	// A float in std140 form
 	using Float = Detail::DataSTD140<GLfloat>;
-	using Int   = Detail::DataSTD140<GLint>;
+	// An int in std140 form
+	using Int = Detail::DataSTD140<GLint>;
+}
+
+namespace GLEW
+{
+	// Get string
+	std::string_view GetString(GLenum name);
+	// Check is extension is supported
+	bool GetExtension(const std::string_view name);
 }
 
 #endif

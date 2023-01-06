@@ -1,4 +1,3 @@
-
 #include "PreFilterShader.h"
 
 using namespace Shader;

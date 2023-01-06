@@ -32,14 +32,14 @@ namespace Logger
 #define IMPL_LOG(type, format, ...) \
 	do \
 	{ \
-		Logger::Log(type, Util::GetTime(), Files::GetName(__FILE__), __LINE__, FMT_STRING(format), __VA_ARGS__); \
+		Logger::Log(type, Util::GetTime(), Engine::Files::GetInstance().GetName(__FILE__), __LINE__, FMT_STRING(format), __VA_ARGS__); \
 	} \
 	while (0)
 
 #define IMPL_LOG_EXIT(type, format, ...) \
 	do \
 	{ \
-		Logger::Log("ERROR", Util::GetTime(), Files::GetName(__FILE__), __LINE__, FMT_STRING(format), __VA_ARGS__); \
+		IMPL_LOG(type, format, __VA_ARGS__); \
     	std::exit(-1); \
 	} \
 	while (0)

@@ -14,11 +14,14 @@ namespace Renderer
 		UniformBuffer(GLuint slot, GLsizeiptr size, GLenum usage);
 		// Destructor
 		~UniformBuffer();
-
-		GLuint     slot  = 0;
-		GLsizeiptr size  = 0;
-		GLuint     id    = 0;
-		GLenum     usage = 0;
+		// Buffer ID
+		GLuint id = 0;
+		// Buffer slot
+		GLuint slot = 0;
+		// Buffer max size
+		GLsizeiptr size = 0;
+		// Buffer usage hint
+		GLenum usage = 0;
 	};
 }
 

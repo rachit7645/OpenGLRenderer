@@ -5,18 +5,25 @@
 
 namespace Renderer
 {
-	// A PDD class describing an Frame Buffer Object attachment
 	class FBOAttachment
 	{
 	public:
-		GLint    minFilter = 0;
-		GLint    maxFilter = 0;
-		GLint    wrapMode  = 0;
-		GLint    intFormat = 0;
-		GLint    format    = 0;
-		GLint    dataType  = 0;
-		GLenum   slot      = 0;
-		GLfloat* border    = nullptr;
+		// Minimum texture filter
+		GLint minFilter = 0;
+		// Maximum texture filter
+		GLint maxFilter = 0;
+		// Texture wrapping mode
+		GLint wrapMode = 0;
+		// Internal texture format
+		GLint intFormat = 0;
+		// Texture format
+		GLint format = 0;
+		// Data type
+		GLint dataType = 0;
+		// Attachment slot
+		GLenum slot = 0;
+		// Border, if any
+		GLfloat* border = nullptr;
 	};
 }
 

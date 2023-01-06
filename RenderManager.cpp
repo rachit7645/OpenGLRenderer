@@ -20,10 +20,14 @@ using Waters::WaterFrameBuffers;
 using Engine::Settings;
 
 RenderManager::RenderManager()
-	: m_instances(std::make_shared<InstanceBuffer>()),
+	: m_iblRenderer(m_converterShader, m_convolutionShader, m_preFilterShader, m_brdfShader),
+	  m_iblMaps(m_iblRenderer),
+	  m_instances(std::make_shared<InstanceBuffer>()),
 	  m_instancedRenderer(m_fastInstancedShader, m_shadowInstancedShader, m_shadowMap, m_instances),
 	  m_gRenderer(m_gShader, m_instances),
 	  m_lightRenderer(m_lightShader, m_shadowMap, m_gBuffer, m_iblMaps),
+	  m_postRenderer(m_postShader, m_lightingBuffer, m_bloomBuffer),
+	  m_bloomRenderer(m_downSampleShader, m_upSampleShader, m_lightingBuffer, m_bloomBuffer),
 	  m_skyboxRenderer(m_skyboxShader),
 	  m_waterRenderer(m_waterShader, m_waterFBOs),
 	  m_skybox(m_iblMaps.cubeMap),
@@ -34,7 +38,7 @@ RenderManager::RenderManager()
 	  m_glRenderer(GL::GetString(GL_RENDERER)),
 	  m_glVersion(GL::GetString(GL_VERSION)),
 	  m_glslVersion(GL::GetString(GL_SHADING_LANGUAGE_VERSION)),
-	  m_isGPUMemoryInfo(glewGetExtension("GL_NVX_gpu_memory_info")),
+	  m_isGPUMemoryInfo(GLEW::GetExtension("GL_NVX_gpu_memory_info")),
 	  m_currentFBO(m_waterFBOs.reflectionFBO->colorTextures[0])
 {
 	// Get settings
@@ -50,14 +54,6 @@ RenderManager::RenderManager()
 	// Load matrices
 	m_matrices->LoadProjection(glm::perspective(glm::radians(FOV), ASPECT_RATIO, NEAR_PLANE, FAR_PLANE));
 	m_shared->LoadResolution(settings.window.dimensions, NEAR_PLANE, FAR_PLANE);
-
-	// Dump shaders
-	m_fastInstancedShader.DumpToFile("dumps/FIS.s");
-	m_shadowInstancedShader.DumpToFile("dumps/SIS.s");
-	m_gShader.DumpToFile("dumps/GS.s");
-	m_lightShader.DumpToFile("dumps/LS.s");
-	m_skyboxShader.DumpToFile("dumps/SKB.s");
-	m_waterShader.DumpToFile("dumps/WTR.s");
 }
 
 void RenderManager::BeginFrame
@@ -96,19 +92,27 @@ void RenderManager::RenderShadows(const Camera& camera, const glm::vec3& lightPo
 	m_shadowMap.Update(camera, lightPos);
 	// Peter-panning fix
 	glCullFace(GL_FRONT);
+	// Cascade clipping fix
+	glEnable(GL_DEPTH_CLAMP);
 	// Render
 	RenderShadowScene(camera);
 	// Reset
 	glCullFace(GL_BACK);
+	glDisable(GL_DEPTH_CLAMP);
 	// Unbind shadow map
 	m_shadowMap.BindDefaultFBO();
 }
 
 void RenderManager::RenderWaters(const WaterTiles& waters)
 {
+	// Bind FBO
+	m_lightingBuffer.BindLightingBuffer();
+	// Render waters
 	m_waterShader.Start();
 	m_waterRenderer.Render(waters);
 	m_waterShader.Stop();
+	// Unbind FBO
+	m_lightingBuffer.BindDefaultFBO();
 }
 
 // TODO: Render multiple FBOs for water tiles
@@ -141,16 +145,10 @@ void RenderManager::RenderWaterFBOs(const WaterTiles& waters, Camera& camera)
 
 void RenderManager::RenderGBuffer(const Camera& camera)
 {
-	// Enable stencil
-	glEnable(GL_STENCIL_TEST);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 	// Bind GBuffer
 	m_gBuffer.BindGBuffer();
 	// Clear FBO
-	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	// Set stencil parameters
-	glStencilFunc(GL_ALWAYS, 1, 0xFF);
-	glStencilMask(0xFF);
+	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Load data
 	m_matrices->LoadView(camera);
 	m_shared->LoadCameraPos(camera);
@@ -158,23 +156,16 @@ void RenderManager::RenderGBuffer(const Camera& camera)
 	m_gRenderer.Render(m_entities);
 	// Unbind GBuffer
 	m_gBuffer.BindDefaultFBO();
-	// Disable stencil
-	glDisable(GL_STENCIL_TEST);
 }
 
 void RenderManager::RenderLighting(const Camera& camera)
 {
+	// Bind FBO
+	m_lightingBuffer.BindLightingBuffer();
 	// Disable depth test
 	glDisable(GL_DEPTH_TEST);
-	// Enable stencil
-	glEnable(GL_STENCIL_TEST);
 	// Clear FBO
-	Clear(GL_COLOR_BUFFER_BIT);
-	// Copy depth
-	CopyDepth();
-	// Set stencil parameters
-	glStencilFunc(GL_EQUAL, 1, 0xFF);
-	glStencilMask(0x00);
+	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Load data
 	m_matrices->LoadView(camera);
 	m_shared->LoadCameraPos(camera);
@@ -182,23 +173,72 @@ void RenderManager::RenderLighting(const Camera& camera)
 	m_lightShader.Start();
 	m_lightRenderer.Render();
 	m_lightShader.Stop();
-	// Disable stencil
-	glDisable(GL_STENCIL_TEST);
+	// Re-enable depth test
+	glEnable(GL_DEPTH_TEST);
+	// Copy depth
+	CopyDepth();
+	// Unbind FBO
+	m_lightingBuffer.BindDefaultFBO();
+}
+
+void RenderManager::RenderBloom()
+{
+	// Disable depth test
+	glDisable(GL_DEPTH_TEST);
+	// Bind frame buffer
+	m_bloomBuffer.BindBloomBuffer();
+	// Clear FBO
+	Clear(GL_COLOR_BUFFER_BIT);
+
+	// Start down shader
+	m_downSampleShader.Start();
+	// Render down samples
+	m_bloomRenderer.RenderDownSamples();
+	// Stop down shader
+	m_downSampleShader.Stop();
+
+	// Enable additive blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
+	glBlendEquation(GL_FUNC_ADD);
+
+	// Start up shader
+	m_upSampleShader.Start();
+	// Render up samples
+	m_bloomRenderer.RenderUpSamples();
+	// Stop up shader
+	m_upSampleShader.Stop();
+
+	// Unbind frame buffer
+	m_bloomBuffer.BindDefaultFBO();
+	// Disable blending
+	glDisable(GL_BLEND);
+	// Enable depth test
+	glEnable(GL_DEPTH_TEST);
+}
+
+void RenderManager::RenderPostProcess()
+{
+	// Disable depth test
+	glDisable(GL_DEPTH_TEST);
+	// Clear FBO
+	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Do post-processing pass
+	m_postShader.Start();
+	m_postRenderer.Render();
+	m_postShader.Stop();
 	// Re-enable depth test
 	glEnable(GL_DEPTH_TEST);
 }
 
 void RenderManager::RenderSkybox()
 {
-	// Since z / w will be 1.0f, we need to use GL_LEQUAL to avoid Z fighting
-	glDepthFunc(GL_LEQUAL);
-	// Disable depth writing for performance
-	glDepthMask(GL_FALSE);
-	m_skyboxShader.Start();
-	m_skyboxRenderer.Render(m_skybox);
-	m_skyboxShader.Stop();
-	glDepthMask(GL_TRUE);
-	glDepthFunc(GL_LESS);
+	// Bind FBO
+	m_lightingBuffer.BindLightingBuffer();
+	// Render skybox
+	RenderSkyboxScene();
+	// Unbind FBO
+	m_lightingBuffer.BindDefaultFBO();
 }
 
 void RenderManager::CopyDepth()
@@ -207,7 +247,7 @@ void RenderManager::CopyDepth()
 	const auto& settings = Settings::GetInstance();
 	// Bind buffers
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_gBuffer.buffer->id);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_lightingBuffer.buffer->id);
 	// Copy depth
 	glBlitFramebuffer
 	(
@@ -217,11 +257,12 @@ void RenderManager::CopyDepth()
 		0, 0,
 		settings.window.dimensions.x,
 		settings.window.dimensions.y,
-		GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
+		GL_DEPTH_BUFFER_BIT,
 		GL_NEAREST
 	);
 	// Unbind
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
 void RenderManager::Clear(GLbitfield flags)
@@ -241,7 +282,7 @@ void RenderManager::RenderWaterScene(const Camera& camera, const glm::vec4& clip
 	// Render entities
 	m_instancedRenderer.Render(m_entities, Mode::Fast);
 	// Render skybox
-	RenderSkybox();
+	RenderSkyboxScene();
 }
 
 void RenderManager::RenderShadowScene(const Camera& camera)
@@ -255,9 +296,23 @@ void RenderManager::RenderShadowScene(const Camera& camera)
 	m_instancedRenderer.Render(m_entities, Mode::Shadow);
 }
 
+void RenderManager::RenderSkyboxScene()
+{
+	// Since z / w will be 1.0f, we need to use GL_LEQUAL to avoid Z fighting
+	glDepthFunc(GL_LEQUAL);
+	// Disable depth writing for performance
+	glDepthMask(GL_FALSE);
+	m_skyboxShader.Start();
+	m_skyboxRenderer.Render(m_skybox);
+	m_skyboxShader.Stop();
+	glDepthMask(GL_TRUE);
+	glDepthFunc(GL_LESS);
+}
+
 void RenderManager::ProcessEntity(Entity& entity)
 {
 	auto iter = m_entities.find(entity.model);
+
 	if (iter != m_entities.end())
 	{
 		iter->second.emplace_back(&entity);
@@ -337,6 +392,16 @@ void RenderManager::RenderImGui()
 			if (ImGui::Button("GDepth"))
 			{
 				m_currentFBO = m_gBuffer.buffer->depthTexture;
+			}
+
+			if (ImGui::Button("Lighting"))
+			{
+				m_currentFBO = m_lightingBuffer.buffer->colorTextures[0];
+			}
+
+			if (ImGui::Button("Bloom"))
+			{
+				m_currentFBO = m_bloomBuffer.mipChain[0];
 			}
 
 			ImGui::EndMenu();

@@ -14,7 +14,7 @@ namespace Renderer
 		RenderBuffer(GLsizei width, GLsizei height, GLenum internalformat);
 		// Destructor
 		~RenderBuffer();
-
+		// OpenGL ID
 		GLuint id = 0;
 	};
 }

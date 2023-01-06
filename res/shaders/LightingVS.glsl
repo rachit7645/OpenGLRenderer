@@ -22,5 +22,4 @@ void main()
 	// Set inverse matrices
 	invProj = inverse(projectionMatrix);
 	invView = inverse(viewMatrix);
-
 }

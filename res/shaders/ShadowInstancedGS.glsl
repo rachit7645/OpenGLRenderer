@@ -2,11 +2,14 @@
 
 // TODO: Make invocation count dynamic
 
+// Constants
 const int MAX_LAYER_COUNT = 16;
 
+// Geometry inputs & outputs
 layout(triangles,      invocations  = 5)  in;
 layout(triangle_strip, max_vertices = 3) out;
 
+// Shadow buffer
 layout (std140, binding = 4) uniform ShadowBuffer
 {
 	int   cascadeCount;
@@ -16,11 +19,16 @@ layout (std140, binding = 4) uniform ShadowBuffer
 
 void main()
 {
+	// For each vertex
 	for (int i = 0; i < 3; ++i)
 	{
+		// Calculate position
 		gl_Position = shadowMatrices[gl_InvocationID] * gl_in[i].gl_Position;
-		gl_Layer    = gl_InvocationID;
+		// Calculate shadow map layer
+		gl_Layer = gl_InvocationID;
+		// Output vertex
 		EmitVertex();
 	}
+	// Finish primitive
 	EndPrimitive();
 }

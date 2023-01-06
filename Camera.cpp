@@ -1,12 +1,14 @@
 #include "Camera.h"
 
-#include "imgui.h"
+#include "ImGui.h"
 #include "Inputs.h"
 #include "Settings.h"
+#include "Maths.h"
 
 using namespace Entities;
 
 using Engine::Settings;
+using Engine::Inputs;
 
 // Global flags
 bool m_toMoveCamera = true;
@@ -75,7 +77,7 @@ void Camera::CalculatePosition()
 void Camera::CalculateZoom()
 {
 	// Get mouse scroll
-	auto& mouseScroll = Inputs::GetMouseScroll();
+	const auto& mouseScroll = Inputs::GetInstance().GetMouseScroll();
 	// Get settings
 	const auto& settings = Settings::GetInstance();
 
@@ -98,7 +100,7 @@ void Camera::CalculateZoom()
 void Camera::CalculatePitch()
 {
 	// Get mouse position
-	auto& mousePos = Inputs::GetMousePos();
+	const auto& mousePos = Inputs::GetInstance().GetMousePos();
 	// Get settings
 	const auto& settings = Settings::GetInstance();
 
@@ -115,7 +117,7 @@ void Camera::CalculatePitch()
 void Camera::CalculateAAP()
 {
 	// Get mouse pos
-	auto& mousePos = Inputs::GetMousePos();
+	const auto& mousePos = Inputs::GetInstance().GetMousePos();
 	// Get settings
 	const auto& settings = Settings::GetInstance();
 	// Calculate angle
@@ -125,6 +127,28 @@ void Camera::CalculateAAP()
 void Camera::InvertPitch()
 {
 	rotation.x = -rotation.x;
+}
+
+glm::vec3 Camera::GetForward() const
+{
+	// Calculate rotation matrix
+	auto matrix = Maths::CreateModelMatrixR(rotation);
+	// Store forward vector
+	glm::vec3 forward = glm::vec3(0.0f, 0.0f, -1.0f);
+	// Rotate forward vector
+	forward = matrix * glm::vec4(forward, 1.0f);
+	// Return
+	return glm::normalize(forward);
+}
+
+glm::vec3 Camera::GetUp() const
+{
+	return glm::normalize(glm::cross(GetRight(), GetForward()));
+}
+
+glm::vec3 Camera::GetRight() const
+{
+	return glm::normalize(glm::cross(GetForward(), glm::vec3(0.0f, 1.0f, 0.0f)));
 }
 
 bool& Camera::GetToMoveCamera()

@@ -8,12 +8,15 @@
 
 namespace Waters
 {
+	// Tile size
 	constexpr auto WATER_TILE_SIZE = 30;
 
 	class WaterTile
 	{
 	public:
+		// Usings
 		using TxPtr = std::shared_ptr<Renderer::Texture>;
+
 		// Default constructor
 		WaterTile() = default;
 		// Main constructor
@@ -22,7 +25,8 @@ namespace Waters
 		// Maps
 		TxPtr dudvMap;
 		TxPtr normalMap;
-		// Y: Height
+
+		// Position
 		glm::vec3 position = {0.0f, 0.0f, 0.0f};
 	};
 }

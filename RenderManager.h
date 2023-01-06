@@ -32,6 +32,18 @@
 #include "DirectionalLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+#include "ConverterShader.h"
+#include "ConvolutionShader.h"
+#include "PreFilterShader.h"
+#include "BRDFShader.h"
+#include "IBLRenderer.h"
+#include "LightingBuffer.h"
+#include "PostProcessShader.h"
+#include "PostProcessRenderer.h"
+#include "BloomBuffer.h"
+#include "DownSampleShader.h"
+#include "UpSampleShader.h"
+#include "BloomRenderer.h"
 
 namespace Renderer
 {
@@ -48,6 +60,8 @@ namespace Renderer
 		using MdPtr       = std::shared_ptr<Model>;
 		using Batch       = std::unordered_map<MdPtr, EntityPtrs>;
 		using TxPtr       = std::shared_ptr<Texture>;
+		using FbPtr       = std::shared_ptr<FrameBuffer>;
+
 		// Main constructor
 		RenderManager();
 	private:
@@ -55,7 +69,18 @@ namespace Renderer
 		Renderer::ShadowMap       m_shadowMap;
 		Waters::WaterFrameBuffers m_waterFBOs;
 		Renderer::GBuffer         m_gBuffer;
-		Renderer::IBLMaps         m_iblMaps;
+		Renderer::LightingBuffer  m_lightingBuffer;
+		Renderer::BloomBuffer     m_bloomBuffer;
+
+		// Image Based Lighting renderers and shaders
+		Shader::ConverterShader   m_converterShader;
+		Shader::ConvolutionShader m_convolutionShader;
+		Shader::PreFilterShader   m_preFilterShader;
+		Shader::BRDFShader        m_brdfShader;
+		Renderer::IBLRenderer     m_iblRenderer;
+
+		// IBL Map
+		Renderer::IBLMaps m_iblMaps;
 
 		// Instances Shader Storage Buffer
 		std::shared_ptr<InstanceBuffer> m_instances;
@@ -65,10 +90,17 @@ namespace Renderer
 		Renderer::InstancedRenderer   m_instancedRenderer;
 
 		// Deferred renderers and shaders
-		Shader::GBufferShader      m_gShader;
-		Renderer::GBufferRenderer  m_gRenderer;
-		Shader::LightingShader     m_lightShader;
-		Renderer::LightingRenderer m_lightRenderer;
+		Shader::GBufferShader         m_gShader;
+		Renderer::GBufferRenderer     m_gRenderer;
+		Shader::LightingShader        m_lightShader;
+		Renderer::LightingRenderer    m_lightRenderer;
+		Shader::PostProcessShader     m_postShader;
+		Renderer::PostProcessRenderer m_postRenderer;
+
+		// Bloom renderer and shaders
+		Shader::DownSampleShader m_downSampleShader;
+		Shader::UpSampleShader   m_upSampleShader;
+		Renderer::BloomRenderer  m_bloomRenderer;
 
 		// Skybox renderer and shader
 		Shader::SkyboxShader     m_skyboxShader;
@@ -124,6 +156,10 @@ namespace Renderer
 		void RenderGBuffer(const Entities::Camera& camera);
 		// Render lighting pass
 		void RenderLighting(const Entities::Camera& camera);
+		// Render bloom passes
+		void RenderBloom();
+		// Render post process pass
+		void RenderPostProcess();
 		// Render skybox
 		void RenderSkybox();
 	private:
@@ -135,6 +171,8 @@ namespace Renderer
 		void RenderWaterScene(const Entities::Camera& camera, const glm::vec4& clipPlane);
 		// Render shadow scene (forward)
 		void RenderShadowScene(const Entities::Camera& camera);
+		// Render skybox scene
+		void RenderSkyboxScene();
 		// Process entities into the entity map
 		void ProcessEntity(Entities::Entity& entity);
 		// Process a vector of entities

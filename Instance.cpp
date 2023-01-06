@@ -52,6 +52,12 @@ void Instance::Run()
 		m_renderer.RenderWaters(m_waters);
 		// Render skybox
 		m_renderer.RenderSkybox();
+
+		// Bloom passes
+		m_renderer.RenderBloom();
+		// Post-processing pass
+		m_renderer.RenderPostProcess();
+
 		// End render
 		m_renderer.EndFrame();
 
@@ -75,13 +81,15 @@ void Instance::CalculateFPS()
 	m_endTime = chrono::steady_clock::now();
 	// Calculate frame duration
 	auto duration = chrono::duration_cast<chrono::milliseconds>(m_endTime - m_frameStartTime);
+	// Calculate cycle duration
+	auto cycleDuration = m_endTime - m_startTime;
 	// Calculate frame delta
 	g_Delta = static_cast<f32>(static_cast<f64>(duration.count()) / 1000.0);
 	// Set this/next frame's start time
 	m_frameStartTime = m_endTime;
 
 	// If a second has passed
-	if (m_endTime - m_startTime >= chrono::seconds(1))
+	if (cycleDuration >= chrono::seconds(1))
 	{
 		// Set this cycle's start time
 		m_startTime = m_endTime;
@@ -225,19 +233,22 @@ void Instance::ImGuiUpdate()
 
 void Instance::InitEntities()
 {
+	// Get resource handle
+	auto& resources = Resources::GetInstance();
+
 	// Default textures
 	auto defaultTextures = MeshTextures
 	(
-		Resources::GetTexture("gfx/def.png"),
-		Resources::GetTexture("gfx/defNrm.png"),
-		Resources::GetTexture("gfx/def.png")
+		resources.GetTexture("gfx/def.png"),
+		resources.GetTexture("gfx/defNrm.png"),
+		resources.GetTexture("gfx/def.png")
 	);
 
 	// All models
-	auto playerModel  = Resources::GetModel("gfx/Mario/Mario.gltf",     defaultTextures);
-	auto cottageModel = Resources::GetModel("gfx/Cottage/Cottage.gltf", defaultTextures);
-	auto benchModel   = Resources::GetModel("gfx/Bench/Bench.gltf",     defaultTextures);
-	auto boxModel     = Resources::GetModel("gfx/Box/scene.gltf",       defaultTextures);
+	auto playerModel  = resources.GetModel("gfx/Mario/Mario.gltf",     defaultTextures);
+	auto cottageModel = resources.GetModel("gfx/Cottage/Cottage.gltf", defaultTextures);
+	auto benchModel   = resources.GetModel("gfx/Bench/Bench.gltf",     defaultTextures);
+	auto boxModel     = resources.GetModel("gfx/Box/scene.gltf",       defaultTextures);
 
 	// Entities
 	m_entities =
@@ -314,12 +325,15 @@ void Instance::InitLights()
 
 void Instance::InitMisc()
 {
+	// Get resource handle
+	auto& resources = Resources::GetInstance();
+
 	// Waters
 	m_waters =
 	{
 		{
-			Resources::GetTexture("gfx/waterDUDV.png"),
-			Resources::GetTexture("gfx/normal.png"),
+			resources.GetTexture("gfx/waterDUDV.png"),
+			resources.GetTexture("gfx/normal.png"),
 			glm::vec3(120.0f, 3.7f, -2.0f)
 		}
 	};

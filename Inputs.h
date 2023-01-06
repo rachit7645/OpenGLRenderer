@@ -4,15 +4,33 @@
 #include <SDL2/SDL.h>
 
 #include "GLM.h"
+#include "Util.h"
 
-namespace Inputs
+namespace Engine
 {
-	void Init();
-
-	glm::ivec2& GetMousePos();
-	glm::ivec2& GetMouseScroll();
-
-	bool IsKeyPressed(SDL_Scancode key);
+	class Inputs
+	{
+	private:
+		// Main constructor
+		Inputs();
+	public:
+		// Get mouse position
+		glm::ivec2& GetMousePos();
+		// Get mouse scroll
+		glm::ivec2& GetMouseScroll();
+		// Check if key is pressed
+		bool IsKeyPressed(SDL_Scancode key);
+	private:
+		// Mouse Position
+		glm::ivec2 m_mousePos = {0, 0};
+		// Mouse scroll
+		glm::ivec2 m_mouseScroll = {0, 0};
+		// Key array
+		const u8* m_keys = nullptr;
+	public:
+		// Get instance
+		static Inputs& GetInstance();
+	};
 }
 
 #endif

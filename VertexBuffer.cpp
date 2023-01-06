@@ -4,11 +4,13 @@ using namespace Renderer;
 
 void VertexBuffer::CreateBuffer()
 {
+	// Generate buffer
 	glGenBuffers(1, &id);
 }
 
 void VertexBuffer::BufferData(GLenum type, const std::vector<Vertex>& data)
 {
+	// Buffer packed data
 	glBufferData
 	(
 		type,
@@ -20,6 +22,7 @@ void VertexBuffer::BufferData(GLenum type, const std::vector<Vertex>& data)
 
 void VertexBuffer::BufferData(GLenum type, const std::vector<GLfloat>& data)
 {
+	// Buffer f32 data
 	glBufferData
 	(
 		type,
@@ -31,6 +34,7 @@ void VertexBuffer::BufferData(GLenum type, const std::vector<GLfloat>& data)
 
 void VertexBuffer::BufferData(GLenum type, const std::vector<GLuint>& data)
 {
+	// Buffer u32 data
 	glBufferData
 	(
 		type,
@@ -49,6 +53,7 @@ void VertexBuffer::SetVertexAttribute
 	const void* pointer
 )
 {
+	// Set vertex attribute
 	glVertexAttribPointer
 	(
 		index,
@@ -62,11 +67,13 @@ void VertexBuffer::SetVertexAttribute
 
 void VertexBuffer::Bind(GLenum type) const
 {
+	// Bind
 	glBindBuffer(type, id);
 }
 
 void VertexBuffer::Unbind(GLenum type) const
 {
+	// Unbind
 	glBindBuffer(type, 0);
 }
 
@@ -75,6 +82,7 @@ VertexBuffer::~VertexBuffer()
 	// ID must not be zero
 	if (id)
 	{
+		// Clear buffer
 		glDeleteBuffers(1, &id);
 	}
 }

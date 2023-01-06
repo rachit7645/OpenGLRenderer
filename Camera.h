@@ -10,6 +10,20 @@ namespace Entities
 	class Camera
 	{
 	public:
+		// Camera update function
+		void Move();
+		// Invert pitch
+		void InvertPitch();
+
+		glm::vec3 GetForward() const;
+		glm::vec3 GetUp() const;
+		glm::vec3 GetRight() const;
+
+		// Global flag to move camera
+		static bool& GetToMoveCamera();
+		// Global flag to zoom camera
+		static bool& GetToZoomCamera();
+
 		// Player
 		Player* player = nullptr;
 		// Position
@@ -18,19 +32,7 @@ namespace Entities
 		glm::vec3 rotation = {13.0f, 0.0f, 0.0f};
 		// Distance from player
 		f32 distance = 25.0f;
-		// Camera update function
-		void Move();
-		// Invert pitch
-		void InvertPitch();
-		// Global flag to move camera
-		static bool& GetToMoveCamera();
-		// Global flag to zoom camera
-		static bool& GetToZoomCamera();
 	private:
-		// Angle around player
-		f32 m_angle = 0.0f;
-		// Flag to cap pitch
-		bool m_capPitch = true;
 		// Display ImGui widgets
 		void ImGuiDisplay();
 		// Calculates zoom aka distance from player
@@ -41,6 +43,11 @@ namespace Entities
 		void CalculateAAP();
 		// Calculates position and rotation
 		void CalculatePosition();
+
+		// Angle around player
+		f32 m_angle = 0.0f;
+		// Flag to cap pitch
+		bool m_capPitch = true;
 	};
 }
 

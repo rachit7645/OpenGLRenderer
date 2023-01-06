@@ -8,7 +8,9 @@ namespace Renderer
 	class Vertex
 	{
 	public:
-		// Constructor
+		// Default constructor
+		Vertex() = default;
+		// Main Constructor
 		Vertex
 		(
 			const glm::vec3& position,
@@ -17,13 +19,13 @@ namespace Renderer
 			const glm::vec3& tangent
 		);
 		// Vertex position
-		glm::vec3 position;
+		glm::vec3 position = {};
 		// Texture coordinates
-		glm::vec2 txCoord;
+		glm::vec2 txCoord = {};
 		// Vertex normal
-		glm::vec3 normal;
+		glm::vec3 normal = {};
 		// Vertex tangent
-		glm::vec3 tangent;
+		glm::vec3 tangent = {};
 	};
 }
 

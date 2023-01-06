@@ -4,7 +4,6 @@
 const float PI                 = 3.14159265359;
 const int   MAX_LIGHTS         = 4;
 const float MAX_REFLECTION_LOD = 4.0f;
-const float INV_GAMMA_FACTOR   = 1.0f / 2.2f;
 // Shadow constants
 const int   MAX_LAYER_COUNT = 16;
 const float MIN_BIAS        = 0.005f;
@@ -126,7 +125,7 @@ uniform samplerCube irradianceMap;
 uniform samplerCube prefilterMap;
 
 // Fragment outputs
-out vec4 outColor;
+out vec3 outColor;
 
 // Data functions
 GBuffer    GetGBufferData();
@@ -202,13 +201,8 @@ void main()
 	vec3 L  = normalize(-dirLights[0].position.xyz);
 	color  *= 1.0f - CalculateShadow(L, gBuffer);
 
-	// Perform Reinhard operator
-	color = color / (color + vec3(1.0f));
-	// Gamma correction
-	color = pow(color, vec3(INV_GAMMA_FACTOR));
-
 	// Output color
-	outColor = vec4(color, 1.0f);
+	outColor = color;
 }
 
 GBuffer GetGBufferData()
@@ -482,6 +476,7 @@ float CalculateShadow(vec3 lightDir, GBuffer gBuffer)
 {
 	// Calculate current cascade
 	int layer = GetCurrentLayer(gBuffer);
+
 	// Get shadow space position
 	vec4 lightSpacePos = shadowMatrices[layer] * vec4(gBuffer.fragPos, 1.0f);
 	// Perform perspective division
@@ -496,13 +491,17 @@ float CalculateShadow(vec3 lightDir, GBuffer gBuffer)
 
 	// Store shadow
 	float shadow = 0.0f;
-	// Perform percentage closer filtering
+
+	// For each x offset
 	for (float x = -PCF_COUNT; x <= PCF_COUNT; ++x)
 	{
+		// For each y offset
 		for (float y = -PCF_COUNT; y <= PCF_COUNT; ++y)
 		{
+			// Get offseted depth
 			float pcfDepth = texture(shadowMap, vec3(projCoords.xy + vec2(x, y) * texelSize, layer)).r;
-			shadow        += WhenGreater(vec4(currentDepth - bias), vec4(pcfDepth)).x;
+			// Perform shadow comparision
+			shadow += WhenGreater(vec4(currentDepth - bias), vec4(pcfDepth)).x;
 		}
 	}
 

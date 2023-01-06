@@ -17,17 +17,25 @@ namespace Renderer
 		// Destructor
 		~VertexBuffer();
 
-		void Bind(GLenum type)   const;
+		// Bind vertex buffer
+		void Bind(GLenum type) const;
+		// Unbind vertex buffer
 		void Unbind(GLenum type) const;
 
+		// Buffer ID
 		GLuint id = 0;
 	protected:
+		// Creates a buffer
 		void CreateBuffer();
 
+		// Buffer packed vertex data
 		void BufferData(GLenum type, const std::vector<Vertex>& data);
+		// Buffer floating point vertex data
 		void BufferData(GLenum type, const std::vector<GLfloat>& data);
+		// Buffer unsigned vertex data
 		void BufferData(GLenum type, const std::vector<GLuint>& data);
 
+		// Set vertex attribute
 		void SetVertexAttribute
 		(
 			GLuint index,
@@ -37,6 +45,7 @@ namespace Renderer
 			const void* pointer
 		);
 	public:
+		// Classes that can access pipeline mode
 		friend class VertexArray;
 	};
 }

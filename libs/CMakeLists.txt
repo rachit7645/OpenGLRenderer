@@ -58,7 +58,7 @@ target_compile_options(imgui PRIVATE -msse2)
 target_link_libraries(imgui OpenGL::GL SDL2::SDL2)
 
 # SIMD JSON source files
-add_library(simdjson STATIC simdjson/singleheader/simdjson.cpp)
+add_library(simdjson SHARED simdjson/singleheader/simdjson.cpp)
 
 # SIMD JSON precompiled headers
 target_precompile_headers(simdjson PRIVATE simdjson/singleheader/simdjson.h)

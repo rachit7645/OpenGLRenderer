@@ -104,6 +104,7 @@ VertexArray::~VertexArray()
 	// ID must not be zero
 	if (id)
 	{
+		// Clear VAO
 		glDeleteVertexArrays(1, &id);
 	}
 }
