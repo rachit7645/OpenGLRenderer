@@ -8,9 +8,15 @@ using namespace Renderer;
 // Usings
 using Shader::PostProcessShader;
 
-PostProcessRenderer::PostProcessRenderer(PostProcessShader& shader, LightingBuffer& lightingBuffer)
+PostProcessRenderer::PostProcessRenderer
+(
+	PostProcessShader& shader,
+	LightingBuffer& lightingBuffer,
+	BloomBuffer& bloomBuffer
+)
 	: shader(shader),
-	  lightingBuffer(lightingBuffer)
+	  lightingBuffer(lightingBuffer),
+	  bloomBuffer(bloomBuffer)
 {
 	// Vertex data
 	const std::vector<f32> QUAD_VERTICES =
@@ -37,6 +43,9 @@ void PostProcessRenderer::Render()
 	// Bind lighting buffer
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, lightingBuffer.buffer->colorTextures[0]->id);
+	// Bind bloom buffer
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, bloomBuffer.mipChain[0]->id);
 	// Render quad
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, m_vao->vertexCount);
 	// Unbind vao

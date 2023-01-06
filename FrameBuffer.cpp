@@ -16,7 +16,7 @@ void FrameBuffer::CreateFrameBuffer()
 	glGenFramebuffers(1, &id);
 }
 
-void FrameBuffer::AddTexture(TxPtr& texture, const FBOAttachment& attachment)
+void FrameBuffer::CreateTexture(TxPtr& texture, const FBOAttachment& attachment)
 {
 	// Set up texture
 	texture         = std::make_shared<Texture>();
@@ -43,19 +43,9 @@ void FrameBuffer::AddTexture(TxPtr& texture, const FBOAttachment& attachment)
 
 	// Unbind texture
 	texture->Unbind();
-
-	// Attach texture
-	glFramebufferTexture2D
-	(
-		GL_FRAMEBUFFER,
-		attachment.slot,
-		texture->type,
-		texture->id,
-		0
-	);
 }
 
-void FrameBuffer::AddTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment)
+void FrameBuffer::CreateTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment)
 {
 	// Set up cube map
 	texture         = std::make_shared<Texture>();
@@ -90,7 +80,7 @@ void FrameBuffer::AddTextureCubeMap(TxPtr& texture, const FBOAttachment& attachm
 	texture->Unbind();
 }
 
-void FrameBuffer::AddTextureArray(TxPtr& texture, const FBOAttachment& attachment)
+void FrameBuffer::CreateTextureArray(TxPtr& texture, const FBOAttachment& attachment)
 {
 	// Set up texture array
 	texture         = std::make_shared<Texture>();
@@ -124,7 +114,28 @@ void FrameBuffer::AddTextureArray(TxPtr& texture, const FBOAttachment& attachmen
 
 	// Unbind
 	texture->Unbind();
+}
 
+void FrameBuffer::AttachTexture(TxPtr& texture, const FBOAttachment& attachment)
+{
+	// Attach texture
+	glFramebufferTexture2D
+	(
+		GL_FRAMEBUFFER,
+		attachment.slot,
+		texture->type,
+		texture->id,
+		0
+	);
+}
+
+void FrameBuffer::AttachTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment)
+{
+	throw std::runtime_error("OpenGL has different rules on cubemap attachment!");
+}
+
+void FrameBuffer::AttachTextureArray(TxPtr& texture, const FBOAttachment& attachment)
+{
 	// Attach texture
 	glFramebufferTexture
 	(
@@ -133,6 +144,30 @@ void FrameBuffer::AddTextureArray(TxPtr& texture, const FBOAttachment& attachmen
 		texture->id,
 		0
 	);
+}
+
+void FrameBuffer::AddTexture(TxPtr& texture, const FBOAttachment& attachment)
+{
+	// Create texture
+	CreateTexture(texture, attachment);
+	// Attach texture
+	AttachTexture(texture, attachment);
+}
+
+void FrameBuffer::AddTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment)
+{
+	// Create cube map
+	CreateTextureCubeMap(texture, attachment);
+	// Don't attach cube map (IT WILL BREAK EVERYTHING)
+	// AttachCubeMap(texture, attachment);
+}
+
+void FrameBuffer::AddTextureArray(TxPtr& texture, const FBOAttachment& attachment)
+{
+	// Create texture array
+	CreateTextureArray(texture, attachment);
+	// Attach texture
+	AttachTextureArray(texture, attachment);
 }
 
 void FrameBuffer::AddBuffer(RdBufPtr& buffer, const FBOAttachment& attachment)

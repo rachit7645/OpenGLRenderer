@@ -93,6 +93,9 @@ add_executable(engine
 	PostProcessShader.cpp
 	PostProcessRenderer.cpp
 	BloomBuffer.cpp
+	DownSampleShader.cpp
+	UpSampleShader.cpp
+	BloomRenderer.cpp
 )
 
 # Precompiled Headers

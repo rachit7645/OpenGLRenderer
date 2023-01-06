@@ -59,6 +59,20 @@ namespace Renderer
 		// Creates a new FBO
 		void CreateFrameBuffer();
 
+		// Create 2D texture
+		void CreateTexture(TxPtr& texture, const FBOAttachment& attachment);
+		// Create cube map texture
+		void CreateTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment);
+		// Create texture array
+		void CreateTextureArray(TxPtr& texture, const FBOAttachment& attachment);
+
+		// Attach 2D texture
+		void AttachTexture(TxPtr& texture, const FBOAttachment& attachment);
+		// Attach cube map texture
+		UNUSED void AttachTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment);
+		// Attach texture array
+		void AttachTextureArray(TxPtr& texture, const FBOAttachment& attachment);
+
 		// Add 2D texture
 		void AddTexture(TxPtr& texture, const FBOAttachment& attachment);
 		// Add cube map texture

@@ -16,10 +16,14 @@ PostProcessShader::PostProcessShader()
 
 void PostProcessShader::GetUniformLocations()
 {
+	// Uniforms
 	m_uniforms["lightingBuffer"] = GetUniformLocation("lightingBuffer");
+	m_uniforms["bloomBuffer"]    = GetUniformLocation("bloomBuffer");
 }
 
 void PostProcessShader::ConnectTextureUnits()
 {
+	// Connect units
 	LoadUniform(m_uniforms["lightingBuffer"], 0);
+	LoadUniform(m_uniforms["bloomBuffer"],    1);
 }

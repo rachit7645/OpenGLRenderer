@@ -18,19 +18,19 @@ void main()
 	float y = filterRadius;
 
 	// Top row samples (A - B - C)
-	vec3 a = texture(srcTexture, vec2(texCoord.x - x, texCoord.y + y)).rgb;
-	vec3 b = texture(srcTexture, vec2(texCoord.x,     texCoord.y + y)).rgb;
-	vec3 c = texture(srcTexture, vec2(texCoord.x + x, texCoord.y + y)).rgb;
+	vec3 a = texture(srcTexture, vec2(txCoords.x - x, txCoords.y + y)).rgb;
+	vec3 b = texture(srcTexture, vec2(txCoords.x,     txCoords.y + y)).rgb;
+	vec3 c = texture(srcTexture, vec2(txCoords.x + x, txCoords.y + y)).rgb;
 
 	// Middle row samples (D - E - F)
-	vec3 d = texture(srcTexture, vec2(texCoord.x - x, texCoord.y)).rgb;
-	vec3 e = texture(srcTexture, vec2(texCoord.x,     texCoord.y)).rgb;
-	vec3 f = texture(srcTexture, vec2(texCoord.x + x, texCoord.y)).rgb;
+	vec3 d = texture(srcTexture, vec2(txCoords.x - x, txCoords.y)).rgb;
+	vec3 e = texture(srcTexture, vec2(txCoords.x,     txCoords.y)).rgb;
+	vec3 f = texture(srcTexture, vec2(txCoords.x + x, txCoords.y)).rgb;
 
 	// Bottom row samples (G - H - I)
-	vec3 g = texture(srcTexture, vec2(texCoord.x - x, texCoord.y - y)).rgb;
-	vec3 h = texture(srcTexture, vec2(texCoord.x,     texCoord.y - y)).rgb;
-	vec3 i = texture(srcTexture, vec2(texCoord.x + x, texCoord.y - y)).rgb;
+	vec3 g = texture(srcTexture, vec2(txCoords.x - x, txCoords.y - y)).rgb;
+	vec3 h = texture(srcTexture, vec2(txCoords.x,     txCoords.y - y)).rgb;
+	vec3 i = texture(srcTexture, vec2(txCoords.x + x, txCoords.y - y)).rgb;
 
 	// Apply weighted distribution using a 3x3 tent filter
 	upsample  = e * 4.0f;

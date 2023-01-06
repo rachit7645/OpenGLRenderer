@@ -6,6 +6,7 @@
 #include "VertexArray.h"
 #include "LightingBuffer.h"
 #include "PostProcessShader.h"
+#include "BloomBuffer.h"
 
 namespace Renderer
 {
@@ -15,10 +16,16 @@ namespace Renderer
 		// Usings
 		using VAO = std::shared_ptr<VertexArray>;
 		// Main constructor
-		PostProcessRenderer(Shader::PostProcessShader& shader, Renderer::LightingBuffer& lightingBuffer);
+		PostProcessRenderer
+		(
+			Shader::PostProcessShader& shader,
+			Renderer::LightingBuffer& lightingBuffer,
+			Renderer::BloomBuffer& bloomBuffer
+		);
 		// Data
 		Shader::PostProcessShader& shader;
 		Renderer::LightingBuffer&  lightingBuffer;
+		Renderer::BloomBuffer&     bloomBuffer;
 		// Render post process pass
 		void Render();
 	private:
