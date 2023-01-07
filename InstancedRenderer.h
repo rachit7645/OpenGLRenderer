@@ -12,38 +12,54 @@
 #include "RenderConstants.h"
 #include "ShadowInstancedShader.h"
 #include "ShadowMap.h"
+#include "IBLMaps.h"
 
 namespace Renderer
 {
 	class InstancedRenderer
 	{
 	public:
+		// Usings
 		using BufferPtr    = std::shared_ptr<InstanceBuffer>;
 		using MdPtr        = std::shared_ptr<Model>;
 		using EntityVector = std::vector<Entities::Entity*>;
 		using Batch        = std::unordered_map<MdPtr, EntityVector>;
 
+		// Main constructor
 		InstancedRenderer
 		(
 			Shader::FastInstancedShader& fastShader,
 			Shader::ShadowInstancedShader& shadowShader,
 			Renderer::ShadowMap& shadowMap,
+			Renderer::IBLMaps& iblMaps,
 			BufferPtr instances
 		);
 
+		// Shaders
 		Shader::FastInstancedShader& fastShader;
 		Shader::ShadowInstancedShader& shadowShader;
 
+		// Other data
 		Renderer::ShadowMap& shadowMap;
+		Renderer::IBLMaps&   iblMaps;
 		BufferPtr            instances;
 
+		// Render batch
 		void Render(const Batch& batch, Mode mode);
 	private:
+		// Begin rendering
 		void BeginRender(Mode mode);
+		// End rendering
 		void EndRender(Mode mode);
+		// Load instance data
 		void LoadData(const EntityVector& entities);
+		// Prepare mesh
 		void PrepareMesh(const Mesh& mesh, Mode mode);
-		void LoadDiffuse(const Mesh& mesh);
+		// Load textures
+		void LoadTextures(const Mesh& mesh);
+		// Load IBL textures
+		void LoadIBLTextures();
+		// Unbind mesh
 		void UnbindMesh();
 	};
 }

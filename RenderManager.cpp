@@ -23,7 +23,7 @@ RenderManager::RenderManager()
 	: m_iblRenderer(m_converterShader, m_convolutionShader, m_preFilterShader, m_brdfShader),
 	  m_iblMaps(m_iblRenderer),
 	  m_instances(std::make_shared<InstanceBuffer>()),
-	  m_instancedRenderer(m_fastInstancedShader, m_shadowInstancedShader, m_shadowMap, m_instances),
+	  m_instancedRenderer(m_fastInstancedShader, m_shadowInstancedShader, m_shadowMap, m_iblMaps, m_instances),
 	  m_gRenderer(m_gShader, m_instances),
 	  m_lightRenderer(m_lightShader, m_shadowMap, m_gBuffer, m_iblMaps),
 	  m_postRenderer(m_postShader, m_lightingBuffer, m_bloomBuffer),
@@ -187,8 +187,6 @@ void RenderManager::RenderBloom()
 	glDisable(GL_DEPTH_TEST);
 	// Bind frame buffer
 	m_bloomBuffer.BindBloomBuffer();
-	// Clear FBO
-	Clear(GL_COLOR_BUFFER_BIT);
 
 	// Start down shader
 	m_downSampleShader.Start();

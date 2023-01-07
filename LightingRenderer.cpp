@@ -52,13 +52,13 @@ void LightingRenderer::Render()
 	// Activate shadow map
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, shadowMap.buffer->depthTexture->id);
-	// Active irradiance map
+	// Activate irradiance map
 	glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, iblMaps.irradiance->id);
-	// Active pre-filter map
+	// Activate pre-filter map
 	glActiveTexture(GL_TEXTURE6);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, iblMaps.preFilter->id);
-	// Active BRDF LUT map
+	// Activate BRDF LUT map
 	glActiveTexture(GL_TEXTURE7);
 	glBindTexture(GL_TEXTURE_2D, iblMaps.brdfLut->id);
 	// Render quad

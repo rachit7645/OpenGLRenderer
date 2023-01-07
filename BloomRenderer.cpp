@@ -64,7 +64,7 @@ void BloomRenderer::RenderDownSamples()
 	for (usize i = 0; i < bloomBuffer.mipChain.size(); ++i)
 	{
 		// Check first sample flag
-		if (i > 0)
+		if (i == 1)
 		{
 			downShader.SetIsFirstSample(false);
 		}

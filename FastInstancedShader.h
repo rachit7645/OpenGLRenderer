@@ -10,7 +10,9 @@ namespace Shader
 	public:
 		// Constructor
 		FastInstancedShader();
-		// Get all uniform locations (Unused in this shader)
+		// Connects GL texture units
+		void ConnectTextureUnits();
+		// Get all uniform locations
 		void GetUniformLocations() override;
 	};
 }
