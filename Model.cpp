@@ -8,11 +8,6 @@
 #include "Files.h"
 #include "Vertex.h"
 
-// HACK: Assimp doesn't define a macro for this
-#ifndef AI_MATKEY_NORMALS_TEXTURE
-#define AI_MATKEY_NORMALS_TEXTURE aiTextureType_NORMALS, 0
-#endif
-
 // Using namespaces
 using namespace Renderer;
 
@@ -22,12 +17,12 @@ using Engine::Resources;
 
 // Assimp flags
 constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate      | // Triangles are easier to work with
-							 aiProcess_FlipUVs          | // My textures are flipped
-							 aiProcess_OptimizeMeshes   | // Mesh optimisation
-							 aiProcess_OptimizeGraph    | // Scene optimisation
+							 aiProcess_FlipUVs          | // Flip textures
+							 aiProcess_OptimizeMeshes   | // Optimise meshes
+							 aiProcess_OptimizeGraph    | // Optimise scene graph
 							 aiProcess_GenSmoothNormals | // Generate normals if none are available
-							 aiProcess_CalcTangentSpace | // Generate tangents
-							 aiProcess_GenUVCoords;       // Generate texture coordinates
+							 aiProcess_CalcTangentSpace | // Generate tangents if none are available
+							 aiProcess_GenUVCoords;       // Generate texture coordinates if none are available
 
 Model::Model(const std::string_view path, const MeshTextures& textures)
 {
@@ -134,14 +129,14 @@ MeshTextures Model::ProcessTextures
 	aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
 
 	// Utility lambda
-	auto GetTexture = [directory, mat] (TxPtr& texture, aiTextureType type, unsigned int index)
+	auto GetTexture = [directory, mat] (TxPtr& texture, aiTextureType type)
 	{
 		// Path variable
 		aiString path;
 		// Resource handler
 		auto& resources = Resources::GetInstance();
 		// Get texture
-		mat->GetTexture(type, index, &path);
+		mat->GetTexture(type, 0, &path);
 		// If texture is available
 		if (path.length > 0)
 		{
@@ -150,11 +145,13 @@ MeshTextures Model::ProcessTextures
 	};
 
 	// Albedo
-	GetTexture(textures.albedo, AI_MATKEY_BASE_COLOR_TEXTURE);
+	GetTexture(textures.albedo, aiTextureType_BASE_COLOR);
 	// Normal
-	GetTexture(textures.normal, AI_MATKEY_NORMALS_TEXTURE);
+	GetTexture(textures.normal, aiTextureType_NORMALS);
 	// AO + Roughness + Metallic
-	GetTexture(textures.aoRghMtl, AI_MATKEY_ROUGHNESS_TEXTURE);
+	GetTexture(textures.aoRghMtl, aiTextureType_DIFFUSE_ROUGHNESS);
+	// Emission
+	GetTexture(textures.emmisive, aiTextureType_EMISSIVE);
 
 	return textures;
 }

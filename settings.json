@@ -12,7 +12,7 @@
 	},
 	"ibl":
 	{
-		"env_map_path": "gfx/Milkyway_small.hdr"
+		"env_map_path": "gfx/IBL/Milkyway_small.hdr"
 	},
 	"player":
 	{

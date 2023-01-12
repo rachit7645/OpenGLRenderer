@@ -13,14 +13,16 @@ GBufferShader::GBufferShader()
 
 void GBufferShader::GetUniformLocations()
 {
-	m_uniforms["albedoMap"] = GetUniformLocation("albedoMap");
-	m_uniforms["normalMap"] = GetUniformLocation("normalMap");
-	m_uniforms["aoRghMtl"]  = GetUniformLocation("aoRghMtl");
+	m_uniforms["albedoMap"]   = GetUniformLocation("albedoMap");
+	m_uniforms["normalMap"]   = GetUniformLocation("normalMap");
+	m_uniforms["aoRghMtlMap"] = GetUniformLocation("aoRghMtlMap");
+	m_uniforms["emmisiveMap"] = GetUniformLocation("emmisiveMap");
 }
 
 void GBufferShader::ConnectTextureUnits()
 {
-	LoadUniform(m_uniforms["albedoMap"], 0);
-	LoadUniform(m_uniforms["normalMap"], 1);
-	LoadUniform(m_uniforms["aoRghMtl"],  2);
+	LoadUniform(m_uniforms["albedoMap"],   0);
+	LoadUniform(m_uniforms["normalMap"],   1);
+	LoadUniform(m_uniforms["aoRghMtlMap"], 2);
+	LoadUniform(m_uniforms["emmisiveMap"], 3);
 }

@@ -4,6 +4,7 @@
 const float PI                 = 3.14159265359;
 const int   MAX_LIGHTS         = 4;
 const float MAX_REFLECTION_LOD = 4.0f;
+
 // Shadow constants
 const int   MAX_LAYER_COUNT = 16;
 const float MIN_BIAS        = 0.005f;
@@ -47,6 +48,7 @@ struct GBuffer
 	vec3  fragPos;
 	vec3  normal;
 	vec3  albedo;
+	vec3  emmisive;
 	float metallic;
 	float roughness;
 	float ao;
@@ -115,6 +117,7 @@ in flat mat4 invView;
 // Samplers
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
+uniform sampler2D gEmmisive;
 uniform sampler2D gMaterial;
 uniform sampler2D gDepth;
 uniform sampler2D brdfLUT;
@@ -197,6 +200,8 @@ void main()
 	vec3 ambient = CalculateAmbient(sharedData, gBuffer);
 	// Add up color
 	vec3 color = ambient + Lo;
+	// Apply emmision
+	color = color + gBuffer.emmisive;
 	// Calculate shadow
 	vec3 L  = normalize(-dirLights[0].position.xyz);
 	color  *= 1.0f - CalculateShadow(L, gBuffer);
@@ -211,6 +216,7 @@ GBuffer GetGBufferData()
 	// Retrieve data from G-buffer
 	vec4 gNorm = texture(gNormal,   txCoords);
 	vec4 gAlb  = texture(gAlbedo,   txCoords);
+	vec4 gEmm  = texture(gEmmisive, txCoords);
 	vec4 gMat  = texture(gMaterial, txCoords);
 	// Reconstruct Position
 	gBuffer.fragPos = ReconstructPosition();
@@ -218,6 +224,8 @@ GBuffer GetGBufferData()
 	gBuffer.normal = UnpackNormal(gNorm.rg);
 	// Albedo
 	gBuffer.albedo = gAlb.rgb;
+	// Emmisive color
+	gBuffer.emmisive = gEmm.rgb;
 	// AO + Roughness + Metallic
 	gBuffer.ao        = gMat.r;
 	gBuffer.roughness = gMat.g;

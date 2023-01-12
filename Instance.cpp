@@ -241,7 +241,8 @@ void Instance::InitEntities()
 	(
 		resources.GetTexture("gfx/def.png"),
 		resources.GetTexture("gfx/defNrm.png"),
-		resources.GetTexture("gfx/def.png")
+		resources.GetTexture("gfx/def.png"),
+		resources.GetTexture("gfx/defEmm.png")
 	);
 
 	// All models
@@ -332,8 +333,8 @@ void Instance::InitMisc()
 	m_waters =
 	{
 		{
-			resources.GetTexture("gfx/waterDUDV.png"),
-			resources.GetTexture("gfx/normal.png"),
+			resources.GetTexture("gfx/Water/waterDUDV.png"),
+			resources.GetTexture("gfx/Water/normal.png"),
 			glm::vec3(120.0f, 3.7f, -2.0f)
 		}
 	};

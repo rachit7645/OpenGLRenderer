@@ -80,7 +80,7 @@ void main()
 	}
 
 	// Fix for black spots
-	downsample  = max(downsample, 0.0001f);
+	downsample = max(downsample, 0.0001f);
 }
 
 vec3 ToSRGB(vec3 color)

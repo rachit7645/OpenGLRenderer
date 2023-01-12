@@ -11,11 +11,12 @@ using namespace Renderer;
 using Engine::Settings;
 
 // GBuffer Layout
-// Buffer   | Type  | R        | G         | B        | A
-// Normal   | RG16F | normal.x | normal.y  | NONE     | NONE
-// Albedo   | RGB8U | albedo.r | albedo.g  | albedo.b | NONE
-// Material | RGB8U | ao       | roughness | metallic | NONE
-// Depth    | D24F  | depth    | NONE      | NONE     | NONE
+// Buffer   | Type  | R          | G          | B          | A
+// Normal   | RG16F | normal.x   | normal.y   | NONE       | NONE
+// Albedo   | RGB8U | albedo.r   | albedo.g   | albedo.b   | NONE
+// Emmisive | RGB8U | emmisive.r | emmisive.g | emmisive.b | NONE
+// Material | RGB8U | ao         | roughness  | metallic   | NONE
+// Depth    | D24F  | depth      | NONE       | NONE       | NONE
 
 GBuffer::GBuffer()
 	: buffer(std::make_shared<FrameBuffer>())
@@ -47,6 +48,18 @@ GBuffer::GBuffer()
 		GL_COLOR_ATTACHMENT1
 	};
 
+	// Emission attachment
+	Renderer::FBOAttachment emmisive =
+	{
+		GL_NEAREST,
+		GL_NEAREST,
+		GL_CLAMP_TO_EDGE,
+		GL_RGB8,
+		GL_RGB,
+		GL_UNSIGNED_BYTE,
+		GL_COLOR_ATTACHMENT2
+	};
+
 	// Material attachment
 	Renderer::FBOAttachment material =
 	{
@@ -56,7 +69,7 @@ GBuffer::GBuffer()
 		GL_RGB8,
 		GL_RGB,
 		GL_UNSIGNED_BYTE,
-		GL_COLOR_ATTACHMENT2
+		GL_COLOR_ATTACHMENT3
 	};
 
 	// Depth attachment
@@ -76,6 +89,7 @@ GBuffer::GBuffer()
 	{
 		normal.slot,
 		albedo.slot,
+		emmisive.slot,
 		material.slot
 	};
 
@@ -88,7 +102,8 @@ GBuffer::GBuffer()
 	buffer->Bind();
 	buffer->AddTexture(buffer->colorTextures[0], normal);
 	buffer->AddTexture(buffer->colorTextures[1], albedo);
-	buffer->AddTexture(buffer->colorTextures[2], material);
+	buffer->AddTexture(buffer->colorTextures[2], emmisive);
+	buffer->AddTexture(buffer->colorTextures[3], material);
 	buffer->AddTexture(buffer->depthTexture,     depth);
 	buffer->SetDrawBuffers(drawBuffers);
 	buffer->CheckStatus();
