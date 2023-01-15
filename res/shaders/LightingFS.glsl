@@ -76,12 +76,14 @@ struct LightInfo
 
 // UBOs and SSBOs
 
+// Matrix buffer
 layout(std140, binding = 0) uniform Matrices
 {
 	mat4 projectionMatrix;
 	mat4 viewMatrix;
 };
 
+// Lights buffer
 layout(std140, binding = 1) uniform Lights
 {
 	// Directional lights
@@ -95,6 +97,7 @@ layout(std140, binding = 1) uniform Lights
 	SpotLight spotLights[MAX_LIGHTS];
 };
 
+// Shared buffer
 layout(std140, binding = 2) uniform Shared
 {
 	vec4 clipPlane;
@@ -102,6 +105,7 @@ layout(std140, binding = 2) uniform Shared
 	vec4 resolution;
 };
 
+// Shadow buffer
 layout (std140, binding = 4) uniform ShadowBuffer
 {
 	int   cascadeCount;
@@ -128,7 +132,7 @@ uniform samplerCube irradianceMap;
 uniform samplerCube prefilterMap;
 
 // Fragment outputs
-out vec3 outColor;
+layout(location = 0) out vec3 outColor;
 
 // Data functions
 GBuffer    GetGBufferData();
@@ -152,6 +156,7 @@ vec3 UnpackNormal(vec2 normal);
 float DistributionGGX(vec3 N, vec3 H, float roughness);
 float GeometrySchlickGGX(float NdotV, float roughness);
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
+vec3  FresnelSchlick(float cosTheta, vec3 F0);
 vec3  FresnelSchlick(float cosTheta, vec3 F0, float roughness);
 
 // Shadow functions
@@ -352,7 +357,7 @@ vec3 CalculateLight(SharedData sharedData, GBuffer gBuffer, LightInfo lightInfo)
 	// Cook-Torrance BRDF
 	float NDF = DistributionGGX(sharedData.N, H, gBuffer.roughness);
 	float G   = GeometrySmith(sharedData.N, sharedData.V, L, gBuffer.roughness);
-	vec3  F   = FresnelSchlick(max(dot(H, sharedData.V), 0.0f), sharedData.F0, gBuffer.roughness);
+	vec3  F   = FresnelSchlick(max(dot(H, sharedData.V), 0.0f), sharedData.F0);
 
 	// Combine specular
 	vec3 numerator = NDF * G * F;
@@ -427,6 +432,11 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 	float ggx1  = GeometrySchlickGGX(NdotL, roughness);
 
 	return ggx1 * ggx2;
+}
+
+vec3 FresnelSchlick(float cosTheta, vec3 F0)
+{
+	return F0 + (1.0f - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
 }
 
 vec3 FresnelSchlick(float cosTheta, vec3 F0, float roughness)

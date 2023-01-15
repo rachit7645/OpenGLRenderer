@@ -1,22 +1,26 @@
 #version 430 core
 
+// Constants
 const float GAMMA_FACTOR = 2.2f;
 
-layout (location = 0) out vec2 gNormal;
-layout (location = 1) out vec3 gAlbedo;
-layout (location = 2) out vec3 gEmmisive;
-layout (location = 3) out vec3 gMaterial;
-
+// Vertex inputs
 in vec2 txCoords;
 in vec3 worldPos;
-in vec3 unitNormal;
 in mat3 TBNMatrix;
 
+// Uniforms
 uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
 uniform sampler2D aoRghMtlMap;
 uniform sampler2D emmisiveMap;
 
+// Fragment outputs
+layout (location = 0) out vec2 gNormal;
+layout (location = 1) out vec3 gAlbedo;
+layout (location = 2) out vec3 gEmmisive;
+layout (location = 3) out vec3 gMaterial;
+
+// Normal functions
 vec3 GetNormalFromMap(vec3 normal);
 vec2 PackNormal(vec3 normal);
 
@@ -32,7 +36,7 @@ void main()
 	// Albedo
 	gAlbedo = pow(gAlb.rgb, vec3(GAMMA_FACTOR));
 	// Emmisive color
-	gEmmisive = gEmm.rgb;
+	gEmmisive = pow(gEmm.rgb, vec3(GAMMA_FACTOR));
 	// AO + Roughness + Metallic
 	gMaterial = gMat.rgb;
 }
