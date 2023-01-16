@@ -19,6 +19,7 @@ glm::mat4 Maths::CreateModelMatrix
 	matrix = glm::rotate(matrix, glm::radians(rotation.z), glm::vec3(0, 0, 1));
 	// 4. Scale the matrix
 	matrix = glm::scale(matrix, glm::vec3(scale));
+	// Return
 	return matrix;
 }
 

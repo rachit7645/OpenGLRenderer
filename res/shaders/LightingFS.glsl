@@ -141,16 +141,13 @@ LightInfo  GetDirLightInfo(int index);
 LightInfo  GetPointLightInfo(int index, GBuffer gBuffer);
 LightInfo  GetSpotLightInfo(int index, GBuffer gBuffer);
 
-// Branchless functions
-vec4 WhenGreater(vec4 x, vec4 y);
-vec4 WhenLesser(vec4 x, vec4 y);
-vec4 WhenEqual(vec4 x, vec4 y);
+// Memory compression functions
+vec3 ReconstructPosition();
+vec3 UnpackNormal(vec2 normal);
 
 // Light functions
 vec3 CalculateLight(SharedData sharedData, GBuffer gBuffer, LightInfo lightInfo);
 vec3 CalculateAmbient(SharedData sharedData, GBuffer gBuffer);
-vec3 ReconstructPosition();
-vec3 UnpackNormal(vec2 normal);
 
 // PBR Functions
 float DistributionGGX(vec3 N, vec3 H, float roughness);
@@ -160,9 +157,15 @@ vec3  FresnelSchlick(float cosTheta, vec3 F0);
 vec3  FresnelSchlick(float cosTheta, vec3 F0, float roughness);
 
 // Shadow functions
+float TanArcCos(float x);
 int   GetCurrentLayer(GBuffer gBuffer);
 float CalculateBias(int layer, vec3 lightDir, GBuffer gBuffer);
 float CalculateShadow(vec3 lightDir, GBuffer gBuffer);
+
+// Branchless functions
+vec4 WhenGreater(vec4 x, vec4 y);
+vec4 WhenLesser(vec4 x, vec4 y);
+vec4 WhenEqual(vec4 x, vec4 y);
 
 void main()
 {
@@ -254,34 +257,6 @@ SharedData GetSharedData(GBuffer gBuffer)
 	return sharedData;
 }
 
-vec3 ReconstructPosition()
-{
-	// Get depth
-	float depth = texture(gDepth, txCoords).r;
-	// Invert projection
-	vec4 projectedPos = invProj * (vec4(txCoords, depth, 1.0f) * 2.0f - 1.0f);
-	// Invert view
-	vec3 viewPos = projectedPos.xyz / projectedPos.w;
-	// Get world position
-	vec3 worldPos = vec3(invView * vec4(viewPos, 1.0f));
-	// Return
-	return worldPos;
-}
-
-vec3 UnpackNormal(vec2 normal)
-{
-	// Convert back to [-1, 1]
-	vec2  fEnc = normal * 4.0f - 2.0f;
-	float f    = dot(fEnc, fEnc);
-	float g    = sqrt(1.0f - f / 4.0f);
-	// Store result
-	vec3 unpacked;
-	unpacked.xy = fEnc * g;
-	unpacked.z  = 1.0f - f / 2.0f;
-	// Return
-	return unpacked;
-}
-
 LightInfo GetDirLightInfo(int index)
 {
 	LightInfo info;
@@ -345,6 +320,34 @@ LightInfo GetSpotLightInfo(int index, GBuffer gBuffer)
 	info.spotIntensity = smoothstep(0.0f, 1.0f, (theta - spotLights[index].cutOff.y) / epsilon);
 	// Return
 	return info;
+}
+
+vec3 ReconstructPosition()
+{
+	// Get depth
+	float depth = texture(gDepth, txCoords).r;
+	// Invert projection
+	vec4 projectedPos = invProj * (vec4(txCoords, depth, 1.0f) * 2.0f - 1.0f);
+	// Invert view
+	vec3 viewPos = projectedPos.xyz / projectedPos.w;
+	// Get world position
+	vec3 worldPos = vec3(invView * vec4(viewPos, 1.0f));
+	// Return
+	return worldPos;
+}
+
+vec3 UnpackNormal(vec2 normal)
+{
+	// Convert back to [-1, 1]
+	vec2  fEnc = normal * 4.0f - 2.0f;
+	float f    = dot(fEnc, fEnc);
+	float g    = sqrt(1.0f - f / 4.0f);
+	// Store result
+	vec3 unpacked;
+	unpacked.xy = fEnc * g;
+	unpacked.z  = 1.0f - f / 2.0f;
+	// Return
+	return unpacked;
 }
 
 vec3 CalculateLight(SharedData sharedData, GBuffer gBuffer, LightInfo lightInfo)
@@ -469,10 +472,20 @@ int GetCurrentLayer(GBuffer gBuffer)
 	return layer;
 }
 
+// Faster version of the tangent of inverse cosine function
+float TanArcCos(float x)
+{
+	// tan(acos(x)) = sqrt(1 - x^2) / x
+	return sqrt(1.0f - pow(x, 2.0f)) / x;
+}
+
 float CalculateBias(int layer, vec3 lightDir, GBuffer gBuffer)
 {
 	// Calculate slope-scaled bias
-	float bias = max(MAX_BIAS * (1.0f - dot(gBuffer.normal, lightDir)), MIN_BIAS);
+	float cosTheta = clamp(dot(gBuffer.normal, lightDir), 0.0f, 1.0f);
+	float bias     = MIN_BIAS * TanArcCos(cosTheta);
+	bias           = clamp(bias, 0.0f, MAX_BIAS);
+
 	// Select bias type
 	float selection = WhenEqual(vec4(layer), vec4(cascadeCount)).x;
 	selection       = clamp(selection, 0.0f, 1.0f);
@@ -487,6 +500,7 @@ float CalculateBias(int layer, vec3 lightDir, GBuffer gBuffer)
 	// bias2 will cancel out, leaving bias 1
 	bias = bias1 * selection + bias2 * (1.0f - selection);
 
+	// Return
 	return bias;
 }
 
