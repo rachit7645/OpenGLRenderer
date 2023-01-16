@@ -22,6 +22,7 @@ layout (location = 3) out vec3 gMaterial;
 
 // Normal functions
 vec3 GetNormalFromMap(vec3 normal);
+vec2 OctWrap(vec2 vector);
 vec2 PackNormal(vec3 normal);
 
 void main()
@@ -49,11 +50,37 @@ vec3 GetNormalFromMap(vec3 normal)
 	return normalize(TBNMatrix * tangentNormal);
 }
 
+// FIXME: Remove conditionals
+vec2 OctWrap(vec2 vector)
+{
+	// Calculate wrapped vector
+	vec2 wrapped = 1.0f - abs(vector.yx);
+
+	// X check
+	if (vector.x < 0.0f)
+	{
+		wrapped.x = -wrapped.x;
+	}
+
+	// Y check
+	if (vector.y < 0.0f)
+	{
+		wrapped.y = -wrapped.y;
+	}
+
+	// Return wrapped vector
+	return wrapped;
+}
+
+// FIXME: Remove conditionals
 vec2 PackNormal(vec3 normal)
 {
-	// Pack normal
-	float p      = sqrt(normal.z * 8.0f + 8.0f);
-	vec2  result = normal.xy / p + 0.5f;
-	// Return
-	return result;
+	// Division
+	normal /= abs(normal.x) + abs(normal.y) + abs(normal.z);
+	// Wrap check
+	normal.xy = normal.z > 0.0f ? normal.xy : OctWrap(normal.xy);
+	// Convert range
+	normal.xy = normal.xy * 0.5f + 0.5f;
+	// Return packed normal
+	return normal.xy;
 }

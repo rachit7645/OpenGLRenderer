@@ -145,10 +145,17 @@ void RenderManager::RenderWaterFBOs(const WaterTiles& waters, Camera& camera)
 
 void RenderManager::RenderGBuffer(const Camera& camera)
 {
+	// Enable stencil
+	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 	// Bind GBuffer
 	m_gBuffer.BindGBuffer();
+	// Clear all bits
+	glStencilMask(0xFF);
 	// Clear FBO
-	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	// Set stencil parameters
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
 	// Load data
 	m_matrices->LoadView(camera);
 	m_shared->LoadCameraPos(camera);
@@ -156,6 +163,8 @@ void RenderManager::RenderGBuffer(const Camera& camera)
 	m_gRenderer.Render(m_entities);
 	// Unbind GBuffer
 	m_gBuffer.BindDefaultFBO();
+	// Disable stencil
+	glDisable(GL_STENCIL_TEST);
 }
 
 void RenderManager::RenderLighting(const Camera& camera)
@@ -164,8 +173,19 @@ void RenderManager::RenderLighting(const Camera& camera)
 	m_lightingBuffer.BindLightingBuffer();
 	// Disable depth test
 	glDisable(GL_DEPTH_TEST);
+	// Enable stencil
+	glEnable(GL_STENCIL_TEST);
+	// Clear all bits
+	glStencilMask(0xFF);
 	// Clear FBO
-	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	// Copy depth
+	CopyDepth();
+	// Bind FBO again
+	m_lightingBuffer.BindLightingBuffer();
+	// Set stencil parameters
+	glStencilFunc(GL_EQUAL, 1, 0xFF);
+	glStencilMask(0x00);
 	// Load data
 	m_matrices->LoadView(camera);
 	m_shared->LoadCameraPos(camera);
@@ -173,10 +193,10 @@ void RenderManager::RenderLighting(const Camera& camera)
 	m_lightShader.Start();
 	m_lightRenderer.Render();
 	m_lightShader.Stop();
+	// Disable stencil
+	glDisable(GL_STENCIL_TEST);
 	// Re-enable depth test
 	glEnable(GL_DEPTH_TEST);
-	// Copy depth
-	CopyDepth();
 	// Unbind FBO
 	m_lightingBuffer.BindDefaultFBO();
 }
@@ -255,7 +275,7 @@ void RenderManager::CopyDepth()
 		0, 0,
 		settings.window.dimensions.x,
 		settings.window.dimensions.y,
-		GL_DEPTH_BUFFER_BIT,
+		GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
 		GL_NEAREST
 	);
 	// Unbind

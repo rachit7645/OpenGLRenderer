@@ -16,7 +16,7 @@ using Engine::Settings;
 // Albedo   | RGB8U | albedo.r   | albedo.g   | albedo.b   | NONE
 // Emmisive | RGB8U | emmisive.r | emmisive.g | emmisive.b | NONE
 // Material | RGB8U | ao         | roughness  | metallic   | NONE
-// Depth    | D24F  | depth      | NONE       | NONE       | NONE
+// Depth    | D24S8 | depth      | stencil    | NONE       | NONE
 
 GBuffer::GBuffer()
 	: buffer(std::make_shared<FrameBuffer>())
@@ -30,9 +30,9 @@ GBuffer::GBuffer()
 		GL_NEAREST,
 		GL_NEAREST,
 		GL_CLAMP_TO_EDGE,
-		GL_RG16F,
+		GL_RG8,
 		GL_RG,
-		GL_FLOAT,
+		GL_UNSIGNED_BYTE,
 		GL_COLOR_ATTACHMENT0
 	};
 
@@ -78,10 +78,10 @@ GBuffer::GBuffer()
 		GL_NEAREST,
 		GL_NEAREST,
 		GL_CLAMP_TO_EDGE,
-		GL_DEPTH_COMPONENT24,
+		GL_DEPTH24_STENCIL8,
 		GL_DEPTH_COMPONENT,
 		GL_FLOAT,
-		GL_DEPTH_ATTACHMENT
+		GL_DEPTH_STENCIL_ATTACHMENT
 	};
 
 	// Selected draw buffers

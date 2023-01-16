@@ -143,7 +143,7 @@ LightInfo  GetSpotLightInfo(int index, GBuffer gBuffer);
 
 // Memory compression functions
 vec3 ReconstructPosition();
-vec3 UnpackNormal(vec2 normal);
+vec3 UnpackNormal(vec2 pNormal);
 
 // Light functions
 vec3 CalculateLight(SharedData sharedData, GBuffer gBuffer, LightInfo lightInfo);
@@ -336,18 +336,21 @@ vec3 ReconstructPosition()
 	return worldPos;
 }
 
-vec3 UnpackNormal(vec2 normal)
+// FIXME: Remove conditionals
+vec3 UnpackNormal(vec2 pNormal)
 {
-	// Convert back to [-1, 1]
-	vec2  fEnc = normal * 4.0f - 2.0f;
-	float f    = dot(fEnc, fEnc);
-	float g    = sqrt(1.0f - f / 4.0f);
-	// Store result
-	vec3 unpacked;
-	unpacked.xy = fEnc * g;
-	unpacked.z  = 1.0f - f / 2.0f;
-	// Return
-	return unpacked;
+	// Convert range of packed normal
+	pNormal = pNormal * 2.0f - 1.0f;
+	// Create new normal
+	vec3 normal = vec3(pNormal.x, pNormal.y, 1.0f - abs(pNormal.x) - abs(pNormal.y));
+	// Calculate flags
+	float flag = max(-normal.z, 0.0f);
+	// X check
+	normal.x += normal.x >= 0.0f ? -flag : flag;
+	// Y check
+	normal.y += normal.y >= 0.0f ? -flag : flag;
+	// Return normalised normal
+	return normalize(normal);
 }
 
 vec3 CalculateLight(SharedData sharedData, GBuffer gBuffer, LightInfo lightInfo)
