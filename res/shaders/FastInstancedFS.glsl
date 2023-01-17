@@ -17,12 +17,13 @@ uniform samplerCube prefilterMap;
 uniform sampler2D   brdfLUT;
 
 // Fragment outputs
-out vec3 outColor;
+layout (location = 0) out vec3 outColor;
 
 // Lighting functions
 vec3 CalculateAmbient(vec3 albedo, vec3 aoRghMtl);
 vec3 FresnelSchlick(float cosTheta, vec3 F0, float roughness);
 
+// Entry point
 void main()
 {
 	// Fetch albedo color
@@ -76,7 +77,9 @@ vec3 CalculateAmbient(vec3 albedo, vec3 aoRghMtl)
 	return ambient;
 }
 
+// Fresnel equation function with injected roughness paramenter for IBL
 vec3 FresnelSchlick(float cosTheta, vec3 F0, float roughness)
 {
+	// Clamp to avoid artifacts
 	return F0 + (max(vec3(1.0f - roughness), F0) - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
 }

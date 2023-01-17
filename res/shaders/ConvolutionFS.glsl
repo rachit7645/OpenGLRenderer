@@ -1,14 +1,19 @@
 #version 430 core
 
+// Constanats
 const float PI           = 3.14159265359;
 const float SAMPLE_DELTA = 0.025f;
 
+// Vertex inputs
 in vec3 worldPos;
 
+// Uniforms
 uniform samplerCube envMap;
 
-out vec3 outColor;
+// Fragment outputs
+layout (location = 0) out vec3 outColor;
 
+// Entry point
 void main()
 {
 	// Get normal

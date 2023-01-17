@@ -12,7 +12,7 @@ using Engine::Settings;
 
 // GBuffer Layout
 // Buffer   | Type  | R          | G          | B          | A
-// Normal   | RG16F | normal.x   | normal.y   | NONE       | NONE
+// Normal   | RG8U  | normal.x   | normal.y   | NONE       | NONE
 // Albedo   | RGB8U | albedo.r   | albedo.g   | albedo.b   | NONE
 // Emmisive | RGB8U | emmisive.r | emmisive.g | emmisive.b | NONE
 // Material | RGB8U | ao         | roughness  | metallic   | NONE

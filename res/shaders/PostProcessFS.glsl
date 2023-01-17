@@ -12,7 +12,7 @@ uniform sampler2D lightingBuffer;
 uniform sampler2D bloomBuffer;
 
 // Fragment outputs
-out vec4 outColor;
+layout (location = 0) out vec4 outColor;
 
 // Tone mappers
 vec3 ToneMap(vec3 color);

@@ -38,6 +38,7 @@ out vec3 unitNormal;
 out vec3 viewDir;
 out vec4 worldPosition;
 
+// Entry point
 void main()
 {
 	// Calculate position

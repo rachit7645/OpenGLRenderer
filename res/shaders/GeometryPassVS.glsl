@@ -30,6 +30,7 @@ out vec2 txCoords;
 out vec3 worldPos;
 out mat3 TBNMatrix;
 
+// Entry point
 void main()
 {
 	// Transform vertex by model matrix

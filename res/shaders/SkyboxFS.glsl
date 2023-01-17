@@ -1,11 +1,15 @@
 #version 430 core
 
+// Vertex inputs
 in vec3 txCoords;
 
+// Uniforms
 uniform samplerCube cubeMap;
 
-out vec3 outColor;
+// Fragment outputs
+layout (location = 0) out vec3 outColor;
 
+// Entry point
 void main()
 {
 	// Sample cube map

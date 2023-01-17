@@ -4,6 +4,9 @@
 #include "Instance.h"
 #include "Util.h"
 
+// TODO: Optimise unused depth buffers
+// TODO: Make engine restartable
+
 int main(UNUSED int argc, UNUSED char** argv)
 {
 	// Create instance

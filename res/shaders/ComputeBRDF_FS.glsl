@@ -7,8 +7,9 @@ const uint  SAMPLE_COUNT = 1024u;
 
 // Vertex inputs
 in vec2 txCoords;
+
 // Fragment outputs
-out vec2 outColor;
+layout (location = 0) out vec2 outColor;
 
 // Integration function
 vec2 IntegrateBRDF(float NdotV, float roughness);
@@ -103,7 +104,7 @@ vec2 Hammersley(uint i, uint N)
 
 vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, vec3 tangent, vec3 bitangent, float roughness)
 {
-	// Using Pixar squared roughness
+	// Using Disney squared roughness
 	float a = roughness * roughness;
 
 	// Calculate trigonometric ratios
@@ -121,7 +122,7 @@ vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, vec3 tangent, vec3 bitangent, float ro
 
 	// Create sample vector
 	vec3 sampleVec = tangent * H.x + bitangent * H.y + N * H.z;
-	// Return
+	// Return normalised
 	return normalize(sampleVec);
 }
 
@@ -146,8 +147,8 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 	float NdotV = max(dot(N, V), 0.0f);
 	float NdotL = max(dot(N, L), 0.0f);
 	// Different geometry calculations
-	float ggx2  = GeometrySchlickGGX(NdotV, roughness);
-	float ggx1  = GeometrySchlickGGX(NdotL, roughness);
+	float ggx2 = GeometrySchlickGGX(NdotV, roughness);
+	float ggx1 = GeometrySchlickGGX(NdotL, roughness);
 	// Return multiplication
 	return ggx1 * ggx2;
 }
