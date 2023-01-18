@@ -33,27 +33,23 @@ BloomBuffer::BloomBuffer()
 		GL_COLOR_ATTACHMENT0
 	};
 
-	// Depth attachment (unused)
-	Renderer::FBOAttachment depth = {};
-	{
-		depth.intFormat = GL_DEPTH_COMPONENT24;
-		depth.slot      = GL_DEPTH_ATTACHMENT;
-	}
-
 	// Draw buffers
 	std::vector<GLenum> drawBuffers =
 	{
 		color0.slot
 	};
 
-	// Set buffer width and height
-	buffer->width  = settings.window.dimensions.x;
-	buffer->height = settings.window.dimensions.y;
-
 	// Create frame buffer
 	buffer->CreateFrameBuffer();
 	buffer->Bind();
-	buffer->AddBuffer(buffer->depthRenderBuffer, depth);
+
+	// Set default width and height
+	// Allows us to skip having to add a depth buffer and thus save memory
+	// Requires GL 4.3+ / ARB_framebuffer_no_attachments
+	buffer->SetParameter(GL_FRAMEBUFFER_DEFAULT_WIDTH,  settings.window.dimensions.x);
+	buffer->SetParameter(GL_FRAMEBUFFER_DEFAULT_HEIGHT, settings.window.dimensions.y);
+
+	// Set drawable buffers
 	buffer->SetDrawBuffers(drawBuffers);
 
 	// Store mipmap size
@@ -94,7 +90,6 @@ BloomBuffer::BloomBuffer()
 	buffer->height = settings.window.dimensions.y;
 	// Finish FBO creation
 	buffer->CheckStatus();
-	buffer->EnableDepth();
 	buffer->Unbind();
 }
 

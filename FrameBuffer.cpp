@@ -129,7 +129,7 @@ void FrameBuffer::AttachTexture(TxPtr& texture, const FBOAttachment& attachment)
 	);
 }
 
-void FrameBuffer::AttachTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment)
+UNUSED void FrameBuffer::AttachTextureCubeMap(UNUSED TxPtr& texture, UNUSED const FBOAttachment& attachment)
 {
 	throw std::runtime_error("OpenGL has different rules on cubemap attachment!");
 }
@@ -200,6 +200,12 @@ void FrameBuffer::SetReadBuffer(GLenum value)
 {
 	// Set read buffer
 	glReadBuffer(value);
+}
+
+void FrameBuffer::SetParameter(GLenum pname, GLint param)
+{
+	// Set parameter
+	glFramebufferParameteri(GL_FRAMEBUFFER, pname, param);
 }
 
 void FrameBuffer::SetDrawBuffers(const std::vector<GLenum>& buffers)

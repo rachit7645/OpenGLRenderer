@@ -85,14 +85,18 @@ void IBLRenderer::ConvertToCubeMap(TxPtr& cubeMap, TxPtr& hdrMap)
 	// For each face
 	for (usize i = 0; i < m_views.size(); ++i)
 	{
+		// Load view matrix
 		converter.LoadView(m_views[i]);
+		// Render cube face
 		RenderCubeFace(cubeMapFBO, i);
 	}
 
 	// Unbind
 	UnbindRender(cubeMapFBO);
+	// Stop shader
 	converter.Stop();
 
+	// Store rendered texture
 	cubeMap = cubeMapFBO->colorTextures[0];
 
 	// Generate mipmaps
@@ -117,14 +121,18 @@ void IBLRenderer::GenerateIrradiance(TxPtr& irradiance, TxPtr& cubeMap)
 	// For each face
 	for (usize i = 0; i < m_views.size(); ++i)
 	{
+		// Load view matrix
 		convolution.LoadView(m_views[i]);
+		// Render cube face
 		RenderCubeFace(irradianceFBO, i);
 	}
 
 	// Unbind
 	UnbindRender(irradianceFBO);
+	// Stop shader
 	convolution.Stop();
 
+	// Store rendered texture
 	irradiance = irradianceFBO->colorTextures[0];
 }
 
@@ -165,13 +173,16 @@ void IBLRenderer::PreFilterSpecular(TxPtr& preFilterMap, TxPtr& cubeMap)
 		// For each face
 		for (usize i = 0; i < m_views.size(); ++i)
 		{
+			// Load view matrix
 			preFilter.LoadView(m_views[i]);
+			// Render cube face
 			RenderCubeFace(preFilterFBO, i, static_cast<GLint>(mip));
 		}
 	}
 
 	// Unbind
 	UnbindRender(preFilterFBO);
+	// Stop shader
 	preFilter.Stop();
 
 	preFilterMap = preFilterFBO->colorTextures[0];
@@ -190,8 +201,10 @@ void IBLRenderer::CalculateBRDF(TxPtr& brdfLut)
 	RenderQuad();
 	// Unbind
 	UnbindRender(brdfFBO);
+	// Stop shader
 	brdf.Stop();
 
+	// Store rendered texture
 	brdfLut = brdfFBO->colorTextures[0];
 }
 
@@ -208,8 +221,10 @@ void IBLRenderer::PrepareRender(FbPtr& FBO, const VAO& vao)
 
 void IBLRenderer::UnbindRender(FbPtr& FBO)
 {
+	// Reset rasterizer state
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
+	// Unbind
 	glBindVertexArray(0);
 	FBO->Unbind();
 }
@@ -234,15 +249,23 @@ void IBLRenderer::RenderCubeFace(FbPtr& FBO, usize face, GLint level)
 
 void IBLRenderer::RenderQuad()
 {
+	// Set rasterizer state
+	glDisable(GL_DEPTH_TEST);
+	// Clear FBO
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
+	// Render quad
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, m_quad->vertexCount);
+	// Reset rasterizer state
+	glEnable(GL_DEPTH_TEST);
 }
 
 FbPtr IBLRenderer::CreateCubeMapFBO(const glm::ivec2& dimensions, bool isMipMapped)
 {
+	// Allocate FBO on CPU
 	auto FBO = std::make_shared<FrameBuffer>();
 
+	// Color attachment
 	Renderer::FBOAttachment color0 =
 	{
 		isMipMapped ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR,
@@ -254,20 +277,24 @@ FbPtr IBLRenderer::CreateCubeMapFBO(const glm::ivec2& dimensions, bool isMipMapp
 		GL_COLOR_ATTACHMENT0
 	};
 
+	// Depth attachment
 	Renderer::FBOAttachment depth = {};
 	{
-		depth.intFormat = GL_DEPTH_COMPONENT24;
+		depth.intFormat = GL_DEPTH_COMPONENT16;
 		depth.slot      = GL_DEPTH_ATTACHMENT;
 	}
 
+	// Draw buffers
 	std::vector<GLenum> drawBuffers =
 	{
 		color0.slot
 	};
 
+	// Set FBO dimensions
 	FBO->width  = dimensions.x;
 	FBO->height = dimensions.y;
 
+	// Create FBO
 	FBO->CreateFrameBuffer();
 	FBO->Bind();
 	FBO->AddTextureCubeMap(FBO->colorTextures[0], color0);
@@ -277,13 +304,16 @@ FbPtr IBLRenderer::CreateCubeMapFBO(const glm::ivec2& dimensions, bool isMipMapp
 	FBO->EnableDepth();
 	FBO->Unbind();
 
+	// Return
 	return FBO;
 }
 
 FbPtr IBLRenderer::Create2DFBO(const glm::ivec2& dimensions)
 {
+	// Allocate FBO on CPU
 	auto FBO = std::make_shared<FrameBuffer>();
 
+	// Color attachment
 	Renderer::FBOAttachment color0 =
 	{
 		GL_LINEAR,
@@ -295,39 +325,37 @@ FbPtr IBLRenderer::Create2DFBO(const glm::ivec2& dimensions)
 		GL_COLOR_ATTACHMENT0
 	};
 
-	Renderer::FBOAttachment depth = {};
-	{
-		depth.intFormat = GL_DEPTH_COMPONENT24;
-		depth.slot      = GL_DEPTH_ATTACHMENT;
-	}
-
+	// Draw buffers
 	std::vector<GLenum> drawBuffers =
 	{
 		color0.slot
 	};
 
+	// Set FBO dimensions
 	FBO->width  = dimensions.x;
 	FBO->height = dimensions.y;
 
+	// Create FBO
 	FBO->CreateFrameBuffer();
 	FBO->Bind();
 	FBO->AddTexture(FBO->colorTextures[0], color0);
-	FBO->AddBuffer(FBO->depthRenderBuffer, depth);
 	FBO->SetDrawBuffers(drawBuffers);
 	FBO->CheckStatus();
-	FBO->EnableDepth();
 	FBO->Unbind();
 
+	// Return
 	return FBO;
 }
 
 glm::mat4 IBLRenderer::LoadProjection()
 {
+	// Projection matrix
 	return glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
 }
 
 std::array<glm::mat4, 6> IBLRenderer::LoadViews()
 {
+	// View matrix array
 	return
 	{
 		glm::lookAt(glm::vec3(0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
@@ -341,6 +369,7 @@ std::array<glm::mat4, 6> IBLRenderer::LoadViews()
 
 VAO IBLRenderer::LoadCube()
 {
+	// Cube vertices
 	const std::vector<f32> vertices =
 	{
 		// Face #1
@@ -387,11 +416,13 @@ VAO IBLRenderer::LoadCube()
 		-1.0f,  1.0f,  1.0f,
 	};
 
+	// Return cube
 	return std::make_shared<VertexArray>(3, vertices);
 }
 
 VAO IBLRenderer::LoadQuad()
 {
+	// Quad vertices
 	const std::vector<f32> QUAD_VERTICES =
 	{
 		-1.0f,  1.0f,
@@ -400,5 +431,6 @@ VAO IBLRenderer::LoadQuad()
 		 1.0f, -1.0f
 	};
 
+	// Return quad
 	return std::make_shared<VertexArray>(2, QUAD_VERTICES);
 }

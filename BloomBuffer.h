@@ -21,7 +21,7 @@ namespace Renderer
 		// Bind FBO
 		void BindBloomBuffer() const;
 		// Unbind FBO
-		void BindDefaultFBO()const;
+		void BindDefaultFBO() const;
 
 		// Frame buffer
 		FbPtr buffer;

@@ -82,6 +82,8 @@ namespace Renderer
 		// Add render buffer
 		void AddBuffer(RdBufPtr& buffer, const FBOAttachment& attachment);
 
+		// Set integer parameter
+		void SetParameter(GLenum pname, GLint param);
 		// Set draw buffers
 		void SetDrawBuffers(const std::vector<GLenum>& buffers);
 		// Enable depth
