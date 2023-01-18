@@ -32,24 +32,33 @@ TxPtr IBLMaps::LoadHDRMap()
 	// Load HDR map
 	TxPtr hdrMap = std::make_shared<Texture>();
 
+	// Flip texture
 	stbi_set_flip_vertically_on_load(true);
+	// Load data
 	auto data = hdrMap->LoadImageHDR(settings.ibl.envMapPath);
+	// Reset flip
 	stbi_set_flip_vertically_on_load(false);
 
+	// Create texture
 	hdrMap->CreateTexture();
-	hdrMap->Bind();
 
+	// Set parameters
 	hdrMap->SetParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	hdrMap->SetParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	hdrMap->SetParameter(GL_TEXTURE_WRAP_S,     GL_REPEAT);
 	hdrMap->SetParameter(GL_TEXTURE_WRAP_T,     GL_REPEAT);
 	hdrMap->SetParameter(GL_TEXTURE_LOD_BIAS,   TEXTURE_LOD_BIAS);
 
+	// Set pixel parameters
 	hdrMap->SetPixelParameter(GL_UNPACK_ALIGNMENT, 1);
-	hdrMap->LoadImageData(reinterpret_cast<u8*>(data), GL_RGB16F, GL_RGB, GL_FLOAT);
 
-	hdrMap->Unbind();
+	// Load texture data
+	hdrMap->Storage2D(GL_RGB16F);
+	hdrMap->LoadImageData(reinterpret_cast<u8*>(data), GL_RGB, GL_FLOAT);
+
+	// Free memory
 	stbi_image_free(data);
 
+	// Return
 	return hdrMap;
 }

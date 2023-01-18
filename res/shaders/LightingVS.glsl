@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 // Matrix buffer
 layout(std140, binding = 0) uniform Matrices

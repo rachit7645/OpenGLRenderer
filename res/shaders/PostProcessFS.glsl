@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 // Constants
 const float BLOOM_STRENGTH   = 0.03f;

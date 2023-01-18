@@ -100,9 +100,7 @@ void IBLRenderer::ConvertToCubeMap(TxPtr& cubeMap, TxPtr& hdrMap)
 	cubeMap = cubeMapFBO->colorTextures[0];
 
 	// Generate mipmaps
-	cubeMap->Bind();
 	cubeMap->GenerateMipmaps();
-	cubeMap->Unbind();
 }
 
 void IBLRenderer::GenerateIrradiance(TxPtr& irradiance, TxPtr& cubeMap)
@@ -142,9 +140,7 @@ void IBLRenderer::PreFilterSpecular(TxPtr& preFilterMap, TxPtr& cubeMap)
 	auto preFilterFBO = CreateCubeMapFBO(PRE_FILTER_DIMENSIONS, true);
 
 	// Generate mipmaps
-	preFilterFBO->colorTextures[0]->Bind();
 	preFilterFBO->colorTextures[0]->GenerateMipmaps();
-	preFilterFBO->colorTextures[0]->Unbind();
 
 	// Prepare
 	PrepareRender(preFilterFBO, m_cube);

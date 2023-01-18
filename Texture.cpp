@@ -17,8 +17,6 @@ Texture::Texture(const std::string_view path)
 {
 	// Create texture object
 	CreateTexture();
-	// Bind texture
-	Bind();
 
 	// Set parameters
 	SetParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -26,18 +24,21 @@ Texture::Texture(const std::string_view path)
 	SetParameter(GL_TEXTURE_WRAP_S,     GL_REPEAT);
 	SetParameter(GL_TEXTURE_WRAP_T,     GL_REPEAT);
 	SetParameter(GL_TEXTURE_LOD_BIAS,   TEXTURE_LOD_BIAS);
+
 	// Set pixel parameters
 	SetPixelParameter(GL_UNPACK_ALIGNMENT, 1);
 
 	// Load image
 	auto data = LoadImage(path);
+	// Check
+	assert(id != 0 && width > 0 && height > 0 && type == GL_TEXTURE_2D);
+	// Allocate memory
+	Storage2D(GL_RGB8);
 	// Load data
-	LoadImageData(data, GL_RGB, GL_RGB, GL_UNSIGNED_BYTE);
+	LoadImageData(data, GL_RGB, GL_UNSIGNED_BYTE);
 	// Generate mipmaps
 	GenerateMipmaps();
 
-	// Unbind
-	Unbind();
 	// Free image data
 	stbi_image_free(data);
 }
@@ -49,8 +50,6 @@ Texture::Texture(const std::array<const std::string_view, 6>& files)
 
 	// Create texture
 	CreateTexture();
-	// Bind it
-	Bind();
 
 	// Set parameters
 	SetParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -59,29 +58,33 @@ Texture::Texture(const std::array<const std::string_view, 6>& files)
 	SetParameter(GL_TEXTURE_WRAP_T,     GL_CLAMP_TO_EDGE);
 	SetParameter(GL_TEXTURE_WRAP_R,     GL_CLAMP_TO_EDGE);
 	SetParameter(GL_TEXTURE_LOD_BIAS,   TEXTURE_LOD_BIAS);
+
 	// Set pixel parameters
 	SetPixelParameter(GL_UNPACK_ALIGNMENT, 1);
 
+	// Allocate memory
+	Storage2D(GL_RGB16F);
+
 	// For each file
-	for (usize i = 0; i < files.size(); ++i)
+	for (auto file : files)
 	{
 		// Load data
-		f32* data = LoadImageHDR(files[i]);
+		f32* data = LoadImageHDR(file);
 		// Upload to VRAM
-		LoadImageData
+		LoadImageData3D
 		(
 			reinterpret_cast<u8*>(data),
-			GL_RGB16F,
 			GL_RGB,
-			GL_FLOAT,
-			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i
+			GL_FLOAT
 		);
 		// Free memory
 		stbi_image_free(data);
 	}
+}
 
-	// Unbind
-	Unbind();
+void Texture::Bind(GLuint unit)
+{
+	glBindTextureUnit(unit, id);
 }
 
 u8* Texture::LoadImage(const std::string_view path)
@@ -143,7 +146,7 @@ f32* Texture::LoadImageHDR(const std::string_view path)
 void Texture::CreateTexture()
 {
 	// Generate texture object
-	glGenTextures(1, &id);
+	glCreateTextures(type, 1, &id);
 }
 
 void Texture::SetPixelParameter(GLenum name, GLint param)
@@ -155,72 +158,88 @@ void Texture::SetPixelParameter(GLenum name, GLint param)
 void Texture::SetParameter(GLenum name, GLint param)
 {
 	// Set integer texture parameter
-	glTexParameteri(type, name, param);
+	glTextureParameteri(id, name, param);
 }
 
 void Texture::SetParameter(GLenum name, GLfloat param)
 {
 	// Set float texture parameter
-	glTexParameterf(type, name, param);
+	glTextureParameterf(id, name, param);
 }
 
 void Texture::SetParameter(GLenum name, const GLfloat* param)
 {
 	// Set float array texture parameter
-	glTexParameterfv(type, name, param);
+	glTextureParameterfv(id, name, param);
 }
 
-void Texture::LoadImageData(u8* data, GLint internalFormat, GLint format, GLint dataType, GLenum target)
+void Texture::Storage2D(GLenum internalFormat)
 {
-	// Load image data
-	glTexImage2D
+	// Allocate storage for texture
+	glTextureStorage2D
 	(
-		target ? target : type,
-		0,
-		internalFormat,
-		width,
-		height,
-		0,
-		format,
-		dataType,
-		data
+		id,             // Texture
+		1,              // Levels
+		internalFormat, // Internal Format
+		width,          // Width
+		height          // Height
 	);
 }
 
-void Texture::LoadImageData3D(u8* data, GLint internalFormat, GLint format, GLint dataType, GLenum target)
+void Texture::Storage3D(GLenum internalFormat)
 {
-	// Load 3D image data
-	glTexImage3D
+	// Allocate storage for texture
+	glTextureStorage3D
 	(
-		target ? target : type,
-		0,
-		internalFormat,
-		width,
-		height,
-		depth,
-		0,
-		format,
-		dataType,
-		data
+		id,             // Texture
+		1,              // Levels
+		internalFormat, // Internal Format
+		width,          // Width
+		height,         // Height
+		depth           // Depth
+	);
+}
+
+void Texture::LoadImageData(const u8* data, GLint format, GLint dataType)
+{
+	// Load image data
+	glTextureSubImage2D
+	(
+		id,       // Texture
+		0,        // Level
+		0,        // X-Offset
+		0,        // Y-Offset
+		width,    // Width
+		height,   // Height
+		format,   // Format
+		dataType, // Type
+		data      // Data
+	);
+}
+
+void Texture::LoadImageData3D(const u8* data, GLint format, GLint dataType)
+{
+	// Load image data
+	glTextureSubImage3D
+	(
+		id,       // Texture
+		0,        // Level
+		0,        // X-Offset
+		0,        // Y-Offset
+		0,        // Z-Offset
+		width,    // Width
+		height,   // Height
+		depth,    // Depth
+		format,   // Format
+		dataType, // Type
+		data      // Data
 	);
 }
 
 void Texture::GenerateMipmaps()
 {
 	// Generate mipmap
-	glGenerateMipmap(type);
-}
-
-void Texture::Bind() const
-{
-	// Bind texture
-	glBindTexture(type, id);
-}
-
-void Texture::Unbind() const
-{
-	// Unbind texture
-	glBindTexture(type, 0);
+	glGenerateTextureMipmap(id);
 }
 
 Texture::~Texture()

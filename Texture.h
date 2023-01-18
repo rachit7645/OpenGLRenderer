@@ -27,9 +27,7 @@ namespace Renderer
 		// Destructor 
 		virtual ~Texture();
 
-		// Bind and Unbind
-		void Bind()   const;
-		void Unbind() const;
+		void Bind(GLuint unit);
 
 		// Opengl Data
 		GLuint id   = 0;
@@ -53,10 +51,15 @@ namespace Renderer
 		// Sets an float array texture parameter
 		void SetParameter(GLenum name, const GLfloat* param);
 
+		// Sets 2D texture storage
+		void Storage2D(GLenum internalFormat);
+		// Set 3D texture storage
+		void Storage3D(GLenum internalFormat);
+
 		// Loads image data
-		void LoadImageData(u8* data, GLint internalFormat, GLint format, GLint dataType, GLenum target = 0);
+		void LoadImageData(const u8* data, GLint format, GLint dataType);
 		// Loads 3D image data (ex: Cube Maps, Texture Arrays, etc.)
-		void LoadImageData3D(u8* data, GLint internalFormat, GLint format, GLint dataType, GLenum target = 0);
+		void LoadImageData3D(const u8* data, GLint format, GLint dataType);
 
 		// Generates mipmaps for the texture
 		void GenerateMipmaps();

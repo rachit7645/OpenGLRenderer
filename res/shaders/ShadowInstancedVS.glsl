@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 // Struct describing an instance of an entity
 struct Instance

@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 // Entity instance
 struct Instance

@@ -87,15 +87,19 @@ void GL::Init(const glm::ivec2& dimensions)
 {
 	// Setup viewport
 	glViewport(0, 0, dimensions.x, dimensions.y);
+
 	// Enable Depth test
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 	glDepthRange(0.0, 1.0);
+
 	// Enable back-face culling
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+
 	// Enable seamless cube maps
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
 	// Enable Debug Output
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -127,5 +131,6 @@ std::string_view GLEW::GetString(GLenum name)
 
 bool GLEW::GetExtension(const std::string_view name)
 {
-	return glewGetExtension(name.data());
+	// Get extension
+	return static_cast<bool>(glewGetExtension(name.data()));
 }

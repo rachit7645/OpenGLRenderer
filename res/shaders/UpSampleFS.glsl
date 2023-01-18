@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 // Vertex inputs
 in vec2 txCoords;

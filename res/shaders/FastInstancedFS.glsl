@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 // Constants
 const float MAX_REFLECTION_LOD = 4.0f;

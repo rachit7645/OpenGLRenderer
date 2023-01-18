@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 // Constants
 const float INV_GAMMA_FACTOR = 1.0f / 2.2f;

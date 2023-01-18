@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 // Texture tiling factor
 const float TEXTURE_TILING = 4.0f;

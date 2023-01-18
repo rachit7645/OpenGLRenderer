@@ -26,23 +26,13 @@ void FrameBuffer::CreateTexture(TxPtr& texture, const FBOAttachment& attachment)
 
 	// Create texture
 	texture->CreateTexture();
-	texture->Bind();
 	texture->SetParameter(GL_TEXTURE_MIN_FILTER, attachment.minFilter);
 	texture->SetParameter(GL_TEXTURE_MAG_FILTER, attachment.maxFilter);
 	texture->SetParameter(GL_TEXTURE_WRAP_S,     attachment.wrapMode);
 	texture->SetParameter(GL_TEXTURE_WRAP_T,     attachment.wrapMode);
 
 	// Load data
-	texture->LoadImageData
-	(
-		nullptr,
-		attachment.intFormat,
-		attachment.format,
-		attachment.dataType
-	);
-
-	// Unbind texture
-	texture->Unbind();
+	texture->Storage2D(attachment.intFormat);
 }
 
 void FrameBuffer::CreateTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment)
@@ -55,29 +45,14 @@ void FrameBuffer::CreateTextureCubeMap(TxPtr& texture, const FBOAttachment& atta
 
 	// Create cube map
 	texture->CreateTexture();
-	texture->Bind();
 	texture->SetParameter(GL_TEXTURE_MIN_FILTER, attachment.minFilter);
 	texture->SetParameter(GL_TEXTURE_MAG_FILTER, attachment.maxFilter);
 	texture->SetParameter(GL_TEXTURE_WRAP_S,     attachment.wrapMode);
 	texture->SetParameter(GL_TEXTURE_WRAP_T,     attachment.wrapMode);
 	texture->SetParameter(GL_TEXTURE_WRAP_R,     attachment.wrapMode);
 
-	// For each face
-	for (usize i = 0; i < 6; ++i)
-	{
-		// Load data
-		texture->LoadImageData
-		(
-			nullptr,
-			attachment.intFormat,
-			attachment.format,
-			attachment.dataType,
-			GL_TEXTURE_CUBE_MAP_POSITIVE_X + i
-		);
-	}
-
-	// Unbind
-	texture->Unbind();
+	// Load data
+	texture->Storage2D(attachment.intFormat);
 }
 
 void FrameBuffer::CreateTextureArray(TxPtr& texture, const FBOAttachment& attachment)
@@ -91,7 +66,6 @@ void FrameBuffer::CreateTextureArray(TxPtr& texture, const FBOAttachment& attach
 
 	// Create texture array
 	texture->CreateTexture();
-	texture->Bind();
 	texture->SetParameter(GL_TEXTURE_MIN_FILTER, attachment.minFilter);
 	texture->SetParameter(GL_TEXTURE_MAG_FILTER, attachment.maxFilter);
 	texture->SetParameter(GL_TEXTURE_WRAP_S,     attachment.wrapMode);
@@ -104,16 +78,7 @@ void FrameBuffer::CreateTextureArray(TxPtr& texture, const FBOAttachment& attach
 	}
 
 	// Load data
-	texture->LoadImageData3D
-	(
-		nullptr,
-		attachment.intFormat,
-		attachment.format,
-		attachment.dataType
-	);
-
-	// Unbind
-	texture->Unbind();
+	texture->Storage3D(attachment.intFormat);
 }
 
 void FrameBuffer::AttachTexture(TxPtr& texture, const FBOAttachment& attachment)

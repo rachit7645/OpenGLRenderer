@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 // Constants
 const vec3  N            = vec3(0.0f, 0.0f, 1.0f);

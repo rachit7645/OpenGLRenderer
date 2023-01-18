@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 // Lighting constants
 const float PI                 = 3.14159265359;

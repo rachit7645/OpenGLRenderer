@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 // Vertex attibutes
 layout(location = 0) in vec2 position;

@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 // Constants
 const float PI           = 3.14159265359;

@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 // Constants
 const float WAVE_STRENGTH  = 0.04f;

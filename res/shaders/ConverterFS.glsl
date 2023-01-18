@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 // Approximation of inverse arc tangent
 const vec2 INVERSE_ATAN = vec2(0.1591f, 0.3183f);
