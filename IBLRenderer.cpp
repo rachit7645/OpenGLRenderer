@@ -79,8 +79,7 @@ void IBLRenderer::ConvertToCubeMap(TxPtr& cubeMap, TxPtr& hdrMap)
 	// Start shader
 	converter.Start();
 	// Bind HDR map
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, hdrMap->id);
+	hdrMap->Bind(0);
 
 	// For each face
 	for (usize i = 0; i < m_views.size(); ++i)
@@ -98,7 +97,6 @@ void IBLRenderer::ConvertToCubeMap(TxPtr& cubeMap, TxPtr& hdrMap)
 
 	// Store rendered texture
 	cubeMap = cubeMapFBO->colorTextures[0];
-
 	// Generate mipmaps
 	cubeMap->GenerateMipmaps();
 }
@@ -113,8 +111,7 @@ void IBLRenderer::GenerateIrradiance(TxPtr& irradiance, TxPtr& cubeMap)
 	// Start shader
 	convolution.Start();
 	// Bind environment map
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap->id);
+	cubeMap->Bind(0);
 
 	// For each face
 	for (usize i = 0; i < m_views.size(); ++i)
@@ -147,8 +144,7 @@ void IBLRenderer::PreFilterSpecular(TxPtr& preFilterMap, TxPtr& cubeMap)
 	// Start shader
 	preFilter.Start();
 	// Bind environment map
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap->id);
+	cubeMap->Bind(0);
 
 	// For each mipmap level
 	for (usize mip = 0; mip < PRE_FILTER_MIPMAP_LEVELS; ++mip)
@@ -181,6 +177,7 @@ void IBLRenderer::PreFilterSpecular(TxPtr& preFilterMap, TxPtr& cubeMap)
 	// Stop shader
 	preFilter.Stop();
 
+	// Store rendered texture
 	preFilterMap = preFilterFBO->colorTextures[0];
 }
 

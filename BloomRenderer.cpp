@@ -55,8 +55,7 @@ void BloomRenderer::RenderDownSamples()
 	// Bind vao
 	glBindVertexArray(m_vao->id);
 	// Bind lighting buffer
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, lightingBuffer.buffer->colorTextures[0]->id);
+	lightingBuffer.buffer->colorTextures[0]->Bind(0);
 	// Set first sample flag
 	downShader.SetIsFirstSample(true);
 
@@ -66,6 +65,7 @@ void BloomRenderer::RenderDownSamples()
 		// Check first sample flag
 		if (i == 1)
 		{
+			// Load uniform
 			downShader.SetIsFirstSample(false);
 		}
 		// Get mip
@@ -80,8 +80,7 @@ void BloomRenderer::RenderDownSamples()
 		// Render quad
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, m_vao->vertexCount);
 		// Set current mip as texture input
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, mip->id);
+		mip->Bind(0);
 	}
 
 	// Unbind vao
@@ -99,8 +98,7 @@ void BloomRenderer::RenderUpSamples()
 		auto& mip     = bloomBuffer.mipChain[i];
 		auto& nextMip = bloomBuffer.mipChain[i - 1];
 		// Bind source texture
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, mip->id);
+		mip->Bind(0);
 		// Set view port
 		glViewport(0, 0, nextMip->width, nextMip->height);
 		// Attach to FBO

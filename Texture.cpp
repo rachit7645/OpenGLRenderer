@@ -33,7 +33,7 @@ Texture::Texture(const std::string_view path)
 	// Check
 	assert(id != 0 && width > 0 && height > 0 && type == GL_TEXTURE_2D);
 	// Allocate memory
-	Storage2D(GL_RGB8);
+	Storage2DMipMap(GL_RGB8);
 	// Load data
 	LoadImageData(data, GL_RGB, GL_UNSIGNED_BYTE);
 	// Generate mipmaps
@@ -84,6 +84,7 @@ Texture::Texture(const std::array<const std::string_view, 6>& files)
 
 void Texture::Bind(GLuint unit)
 {
+	// Bind texture
 	glBindTextureUnit(unit, id);
 }
 
@@ -193,6 +194,47 @@ void Texture::Storage3D(GLenum internalFormat)
 	(
 		id,             // Texture
 		1,              // Levels
+		internalFormat, // Internal Format
+		width,          // Width
+		height,         // Height
+		depth           // Depth
+	);
+}
+
+void Texture::Storage2DMipMap(GLenum internalFormat)
+{
+	// Get the bigger dimension
+	auto max = std::max(width, height);
+	// Take the base 2 logarithm
+	auto log2Max = std::log2(max);
+	// Floor result and add 1 to get levels
+	auto levels = 1 + static_cast<GLsizei>(std::floor(log2Max));
+
+	// Allocate storage for texture
+	glTextureStorage2D
+	(
+		id,             // Texture
+		levels,         // Levels
+		internalFormat, // Internal Format
+		width,          // Width
+		height          // Height
+	);
+}
+
+void Texture::Storage3DMipMap(GLenum internalFormat)
+{
+	// Get the bigger dimension
+	auto max = std::max(width, height);
+	// Take the base 2 logarithm
+	auto log2Max = std::log2(max);
+	// Floor result and add 1 to get levels
+	auto levels = 1 + static_cast<GLsizei>(std::floor(log2Max));
+
+	// Allocate storage for texture
+	glTextureStorage3D
+	(
+		id,             // Texture
+		levels,         // Levels
 		internalFormat, // Internal Format
 		width,          // Width
 		height,         // Height

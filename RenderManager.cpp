@@ -329,22 +329,29 @@ void RenderManager::RenderSkyboxScene()
 
 void RenderManager::ProcessEntity(Entity& entity)
 {
+	// Try to see if a batch exists
 	auto iter = m_entities.find(entity.model);
 
+	// If batch exists
 	if (iter != m_entities.end())
 	{
+		// Add entity to the batch
 		iter->second.emplace_back(&entity);
 	}
+	// If the batch does not exists
 	else
 	{
+		// Create one
 		m_entities[entity.model] = {&entity};
 	}
 }
 
 void RenderManager::ProcessEntities(EntityVec& entities)
 {
+	// For each entity
 	for (auto& entity : entities)
 	{
+		// Process Entity
 		ProcessEntity(entity);
 	}
 }
@@ -352,8 +359,10 @@ void RenderManager::ProcessEntities(EntityVec& entities)
 // This kinda sucks, but it works
 void RenderManager::RenderImGui()
 {
+	// If menu bar is visible
 	if (ImGui::BeginMainMenuBar())
 	{
+		// if menu is visible
 		if (ImGui::BeginMenu("Renderer"))
 		{
 			// Display basic info
@@ -366,7 +375,7 @@ void RenderManager::RenderImGui()
 				m_glslVersion.c_str()
 			);
 
-			// If available
+			// If GPU memory information is available
 			if (m_isGPUMemoryInfo)
 			{
 				// Calculate available memory (MB)
@@ -380,63 +389,87 @@ void RenderManager::RenderImGui()
 			ImGui::EndMenu();
 		}
 
+		// If FBO viewer is visible
 		if (ImGui::BeginMenu("FBO Viewer"))
 		{
+			// If button was clicked
 			if (ImGui::Button("WaterReflection"))
 			{
+				// Set FBO
 				m_currentFBO = m_waterFBOs.reflectionFBO->colorTextures[0];
 			}
 
+			// If button was clicked
 			if (ImGui::Button("WaterRefraction"))
 			{
+				// Set FBO
 				m_currentFBO = m_waterFBOs.refractionFBO->colorTextures[0];
 			}
 
+			// If button was clicked
 			if (ImGui::Button("GNormal"))
 			{
+				// Set FBO
 				m_currentFBO = m_gBuffer.buffer->colorTextures[0];
 			}
 
+			// If button was clicked
 			if (ImGui::Button("GAlbedo"))
 			{
+				// Set FBO
 				m_currentFBO = m_gBuffer.buffer->colorTextures[1];
 			}
 
+			// If button was clicked
 			if (ImGui::Button("GEmmisive"))
 			{
+				// Set FBO
 				m_currentFBO = m_gBuffer.buffer->colorTextures[2];
 			}
 
+			// If button was clicked
 			if (ImGui::Button("GMaterial"))
 			{
+				// Set FBO
 				m_currentFBO = m_gBuffer.buffer->colorTextures[3];
 			}
 
+			// If button was clicked
 			if (ImGui::Button("GDepth"))
 			{
+				// Set FBO
 				m_currentFBO = m_gBuffer.buffer->depthTexture;
 			}
 
+			// If button was clicked
 			if (ImGui::Button("Lighting"))
 			{
+				// Set FBO
 				m_currentFBO = m_lightingBuffer.buffer->colorTextures[0];
 			}
 
+			// If button was clicked
 			if (ImGui::Button("Bloom"))
 			{
+				// Set FBO
 				m_currentFBO = m_bloomBuffer.mipChain[0];
 			}
 
+			// Close menu
 			ImGui::EndMenu();
 		}
 
+		// End main menu
 		ImGui::EndMainMenuBar();
 	}
 
+	// If current FBO displayer is visible
 	if (ImGui::Begin("CurrentFBO"))
 	{
+		// If child window is visible
 		if (ImGui::BeginChild("Current"))
 		{
+			// Show selected FBO
 			ImGui::Image
 			(
 				reinterpret_cast<ImTextureID>(m_currentFBO->id),
@@ -444,9 +477,11 @@ void RenderManager::RenderImGui()
 				ImVec2(0, 1),
 				ImVec2(1, 0)
 			);
+			// End child window
 			ImGui::EndChild();
 		}
 	}
 
+	// End imgui
 	ImGui::End();
 }

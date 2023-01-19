@@ -90,6 +90,9 @@ namespace Renderer
 		void EnableDepth();
 		// Check status
 		void CheckStatus();
+	private:
+		// Checks if the texture needs to generate mipmaps
+		bool CheckMipMap(GLenum minFilter);
 	public:
 		// Classes that can access pipeline mode
 		friend class ShadowMap;

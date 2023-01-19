@@ -56,6 +56,11 @@ namespace Renderer
 		// Set 3D texture storage
 		void Storage3D(GLenum internalFormat);
 
+		// Sets 2D texture storage with mipmaps
+		void Storage2DMipMap(GLenum internalFormat);
+		// Set 3D texture storage with mipmaps
+		void Storage3DMipMap(GLenum internalFormat);
+
 		// Loads image data
 		void LoadImageData(const u8* data, GLint format, GLint dataType);
 		// Loads 3D image data (ex: Cube Maps, Texture Arrays, etc.)

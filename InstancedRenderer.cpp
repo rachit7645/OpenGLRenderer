@@ -130,27 +130,23 @@ void InstancedRenderer::PrepareMesh(const Mesh& mesh, Mode mode)
 void InstancedRenderer::LoadTextures(const Mesh& mesh)
 {
 	// Load albedo
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, mesh.textures.albedo->id);
+	mesh.textures.albedo->Bind(0);
 	// Load aoMtlRgh
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, mesh.textures.aoRghMtl->id);
+	mesh.textures.aoRghMtl->Bind(1);
 }
 
 void InstancedRenderer::LoadIBLTextures()
 {
 	// Activate irradiance map
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, iblMaps.irradiance->id);
+	iblMaps.irradiance->Bind(2);
 	// Activate pre-filter map
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, iblMaps.preFilter->id);
+	iblMaps.preFilter->Bind(3);
 	// Activate BRDF LUT map
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, iblMaps.brdfLut->id);
+	iblMaps.brdfLut->Bind(4);
 }
 
 void InstancedRenderer::UnbindMesh()
 {
+	// Unbind VAO
 	glBindVertexArray(0);
 }

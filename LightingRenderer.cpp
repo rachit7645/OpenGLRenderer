@@ -38,32 +38,23 @@ void LightingRenderer::Render()
 	// Bind vao
 	glBindVertexArray(m_vao->id);
 	// Activate gNormal
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[0]->id);
+	gBuffer.buffer->colorTextures[0]->Bind(0);
 	// Activate gAlbedo
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[1]->id);
+	gBuffer.buffer->colorTextures[1]->Bind(1);
 	// Activate gEmmisive
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[2]->id);
+	gBuffer.buffer->colorTextures[2]->Bind(2);
 	// Activate gMaterial
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[3]->id);
+	gBuffer.buffer->colorTextures[3]->Bind(3);
 	// Activate gDepth
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->depthTexture->id);
+	gBuffer.buffer->depthTexture->Bind(4);
 	// Activate shadow map
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D_ARRAY, shadowMap.buffer->depthTexture->id);
+	shadowMap.buffer->depthTexture->Bind(5);
 	// Activate irradiance map
-	glActiveTexture(GL_TEXTURE6);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, iblMaps.irradiance->id);
+	iblMaps.irradiance->Bind(6);
 	// Activate pre-filter map
-	glActiveTexture(GL_TEXTURE7);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, iblMaps.preFilter->id);
+	iblMaps.preFilter->Bind(7);
 	// Activate BRDF LUT map
-	glActiveTexture(GL_TEXTURE8);
-	glBindTexture(GL_TEXTURE_2D, iblMaps.brdfLut->id);
+	iblMaps.brdfLut->Bind(8);
 	// Render quad
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, m_vao->vertexCount);
 	// Unbind vao

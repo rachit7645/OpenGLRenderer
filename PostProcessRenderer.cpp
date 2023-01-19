@@ -41,11 +41,9 @@ void PostProcessRenderer::Render()
 	// Bind vao
 	glBindVertexArray(m_vao->id);
 	// Bind lighting buffer
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, lightingBuffer.buffer->colorTextures[0]->id);
+	lightingBuffer.buffer->colorTextures[0]->Bind(0);
 	// Bind bloom buffer
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, bloomBuffer.mipChain[0]->id);
+	bloomBuffer.mipChain[0]->Bind(1);
 	// Render quad
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, m_vao->vertexCount);
 	// Unbind vao

@@ -10,6 +10,7 @@ GBufferRenderer::GBufferRenderer(GBufferShader& shader, BufferPtr instances)
 	: shader(shader),
 	  instances(std::move(instances))
 {
+	// Connect texture units
 	shader.Start();
 	shader.ConnectTextureUnits();
 	shader.Stop();
@@ -48,44 +49,46 @@ void GBufferRenderer::Render(const Batch& batch)
 
 void GBufferRenderer::BeginRender()
 {
+	// Bind
 	instances->Bind();
 	shader.Start();
 }
 
 void GBufferRenderer::EndRender()
 {
+	// Unbind
 	instances->Unbind();
 	shader.Stop();
 }
 
 void GBufferRenderer::LoadData(const EntityVector& entities)
 {
+	// Load data
 	instances->LoadInstanceData(entities);
 }
 
 void GBufferRenderer::PrepareMesh(const Mesh& mesh)
 {
+	// Bind VAO
 	glBindVertexArray(mesh.vao->id);
+	// Load textures
 	LoadTextures(mesh);
 }
 
 void GBufferRenderer::LoadTextures(const Mesh& mesh)
 {
 	// Activate albedo
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, mesh.textures.albedo->id);
+	mesh.textures.albedo->Bind(0);
 	// Activate normal
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, mesh.textures.normal->id);
+	mesh.textures.normal->Bind(1);
 	// Activate ambient occlusion, metallic and roughness
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, mesh.textures.aoRghMtl->id);
+	mesh.textures.aoRghMtl->Bind(2);
 	// Activate emmisive
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, mesh.textures.emmisive->id);
+	mesh.textures.emmisive->Bind(3);
 }
 
 void GBufferRenderer::UnbindMesh()
 {
+	// Unbind VAO
 	glBindVertexArray(0);
 }

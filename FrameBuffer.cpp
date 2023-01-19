@@ -31,8 +31,17 @@ void FrameBuffer::CreateTexture(TxPtr& texture, const FBOAttachment& attachment)
 	texture->SetParameter(GL_TEXTURE_WRAP_S,     attachment.wrapMode);
 	texture->SetParameter(GL_TEXTURE_WRAP_T,     attachment.wrapMode);
 
-	// Load data
-	texture->Storage2D(attachment.intFormat);
+	// If attachment has (or will have) mipmaps
+	if (CheckMipMap(attachment.minFilter))
+	{
+		// Allocate memory for base texture and mipmaps
+		texture->Storage2DMipMap(attachment.intFormat);
+	}
+	else
+	{
+		// Allocate memory for base texture
+		texture->Storage2D(attachment.intFormat);
+	}
 }
 
 void FrameBuffer::CreateTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment)
@@ -51,8 +60,17 @@ void FrameBuffer::CreateTextureCubeMap(TxPtr& texture, const FBOAttachment& atta
 	texture->SetParameter(GL_TEXTURE_WRAP_T,     attachment.wrapMode);
 	texture->SetParameter(GL_TEXTURE_WRAP_R,     attachment.wrapMode);
 
-	// Load data
-	texture->Storage2D(attachment.intFormat);
+	// If attachment has (or will have) mipmaps
+	if (CheckMipMap(attachment.minFilter))
+	{
+		// Allocate memory for base texture and mipmaps
+		texture->Storage2DMipMap(attachment.intFormat);
+	}
+	else
+	{
+		// Allocate memory for base texture
+		texture->Storage2D(attachment.intFormat);
+	}
 }
 
 void FrameBuffer::CreateTextureArray(TxPtr& texture, const FBOAttachment& attachment)
@@ -77,8 +95,17 @@ void FrameBuffer::CreateTextureArray(TxPtr& texture, const FBOAttachment& attach
 		texture->SetParameter(GL_TEXTURE_BORDER_COLOR, attachment.border);
 	}
 
-	// Load data
-	texture->Storage3D(attachment.intFormat);
+	// If attachment has (or will have) mipmaps
+	if (CheckMipMap(attachment.minFilter))
+	{
+		// Allocate memory for base texture and mipmaps
+		texture->Storage3DMipMap(attachment.intFormat);
+	}
+	else
+	{
+		// Allocate memory for base texture
+		texture->Storage3D(attachment.intFormat);
+	}
 }
 
 void FrameBuffer::AttachTexture(TxPtr& texture, const FBOAttachment& attachment)
@@ -96,6 +123,7 @@ void FrameBuffer::AttachTexture(TxPtr& texture, const FBOAttachment& attachment)
 
 UNUSED void FrameBuffer::AttachTextureCubeMap(UNUSED TxPtr& texture, UNUSED const FBOAttachment& attachment)
 {
+	// Throw error just in case I use this
 	throw std::runtime_error("OpenGL has different rules on cubemap attachment!");
 }
 
@@ -217,8 +245,6 @@ void FrameBuffer::CheckStatus()
 
 void FrameBuffer::Bind() const
 {
-	// Make sure that no texture is bound
-	glBindTexture(GL_TEXTURE_2D, 0);
 	// Bind buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, id);
 	// Set viewport
@@ -233,6 +259,34 @@ void FrameBuffer::Unbind() const
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	// Set viewport
 	glViewport(0, 0, settings.window.dimensions.x, settings.window.dimensions.y);
+}
+
+bool FrameBuffer::CheckMipMap(GLenum minFilter)
+{
+	// Array containing mip map filters
+	constexpr std::array<GLenum, 4> hasMipMaps =
+	{
+		GL_NEAREST_MIPMAP_NEAREST,
+		GL_LINEAR_MIPMAP_NEAREST,
+		GL_NEAREST_MIPMAP_LINEAR,
+		GL_LINEAR_MIPMAP_LINEAR
+	};
+
+	// Search for filter in array
+	auto result = std::find(hasMipMaps.begin(), hasMipMaps.end(), minFilter);
+
+	// If found
+	if (result != hasMipMaps.end())
+	{
+		// Return true
+		return true;
+	}
+	// If not found
+	else
+	{
+		// Return false
+		return false;
+	}
 }
 
 FrameBuffer::~FrameBuffer()

@@ -14,6 +14,7 @@ WaterRenderer::WaterRenderer(Shader::WaterShader& shader, Waters::WaterFrameBuff
 	: shader(shader),
 	  waterFBOs(waterFBOs)
 {
+	// Water tile vertices
 	const std::vector<f32> TILE_VERTICES =
 	{
 		-1.0f, -1.0f,
@@ -24,8 +25,10 @@ WaterRenderer::WaterRenderer(Shader::WaterShader& shader, Waters::WaterFrameBuff
 		 1.0f,  1.0f
 	};
 
+	// Create water tile VAO
 	m_vao = std::make_shared<VertexArray>(2, TILE_VERTICES);
 
+	// Connect texture units
 	shader.Start();
 	shader.ConnectTextureUnits();
 	shader.Stop();
@@ -33,12 +36,17 @@ WaterRenderer::WaterRenderer(Shader::WaterShader& shader, Waters::WaterFrameBuff
 
 void WaterRenderer::Render(const std::vector<WaterTile>& waters)
 {
+	// Prepare renderer
 	Prepare();
+	// For each water
 	for (const auto& water : waters)
 	{
+		// Prepare water
 		PrepareWater(water);
+		// Render water
 		glDrawArrays(GL_TRIANGLES, 0, m_vao->vertexCount);
 	}
+	// Unbind renderer
 	Unbind();
 }
 
@@ -47,10 +55,8 @@ void WaterRenderer::Prepare()
 	// Bind vao
 	glBindVertexArray(m_vao->id);
 	// Bind framebuffers
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, waterFBOs.reflectionFBO->colorTextures[0]->id);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, waterFBOs.refractionFBO->colorTextures[0]->id);
+	waterFBOs.reflectionFBO->colorTextures[0]->Bind(0);
+	waterFBOs.refractionFBO->colorTextures[0]->Bind(1);
 	// Load dudv move factor
 	m_moveFactor += WATER_WAVE_SPEED * g_Delta;
 	m_moveFactor = std::fmod(m_moveFactor, 1.0f);
@@ -60,20 +66,20 @@ void WaterRenderer::Prepare()
 void WaterRenderer::PrepareWater(const WaterTile& water)
 {
 	// Bind maps
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, water.dudvMap->id);
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, water.normalMap->id);
-	// Load model matrix
+	water.dudvMap->Bind(2);
+	water.normalMap->Bind(3);
+	// Create model matrix
 	auto matrix = Maths::CreateModelMatrixTS
 	(
 		water.position,
 		Waters::WATER_TILE_SIZE
 	);
+	// Load model matrix
 	shader.LoadModelMatrix(matrix);
 }
 
 void WaterRenderer::Unbind()
 {
+	// Unbind VAO
 	glBindVertexArray(0);
 }
