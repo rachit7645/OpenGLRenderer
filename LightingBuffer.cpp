@@ -29,11 +29,11 @@ LightingBuffer::LightingBuffer()
 		GL_COLOR_ATTACHMENT0
 	};
 
-	// Depth attachment (unused)
+	// Depth and stencil attachment
 	Renderer::FBOAttachment depth = {};
 	{
-		depth.intFormat = GL_DEPTH_COMPONENT24;
-		depth.slot      = GL_DEPTH_ATTACHMENT;
+		depth.intFormat = GL_DEPTH24_STENCIL8;
+		depth.slot      = GL_DEPTH_STENCIL_ATTACHMENT;
 	}
 
 	// Draw buffers

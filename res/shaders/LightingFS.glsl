@@ -4,6 +4,7 @@
 const float PI                 = 3.14159265359;
 const int   MAX_LIGHTS         = 4;
 const float MAX_REFLECTION_LOD = 4.0f;
+
 // Shadow constants
 const int   MAX_LAYER_COUNT = 16;
 const float MIN_BIAS        = 0.005f;
@@ -47,6 +48,7 @@ struct GBuffer
 	vec3  fragPos;
 	vec3  normal;
 	vec3  albedo;
+	vec3  emmisive;
 	float metallic;
 	float roughness;
 	float ao;
@@ -72,14 +74,14 @@ struct LightInfo
 	float spotIntensity;
 };
 
-// UBOs and SSBOs
-
+// Matrix buffer
 layout(std140, binding = 0) uniform Matrices
 {
 	mat4 projectionMatrix;
 	mat4 viewMatrix;
 };
 
+// Lights buffer
 layout(std140, binding = 1) uniform Lights
 {
 	// Directional lights
@@ -93,6 +95,7 @@ layout(std140, binding = 1) uniform Lights
 	SpotLight spotLights[MAX_LIGHTS];
 };
 
+// Shared buffer
 layout(std140, binding = 2) uniform Shared
 {
 	vec4 clipPlane;
@@ -100,6 +103,7 @@ layout(std140, binding = 2) uniform Shared
 	vec4 resolution;
 };
 
+// Shadow buffer
 layout (std140, binding = 4) uniform ShadowBuffer
 {
 	int   cascadeCount;
@@ -115,6 +119,7 @@ in flat mat4 invView;
 // Samplers
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
+uniform sampler2D gEmmisive;
 uniform sampler2D gMaterial;
 uniform sampler2D gDepth;
 uniform sampler2D brdfLUT;
@@ -125,7 +130,7 @@ uniform samplerCube irradianceMap;
 uniform samplerCube prefilterMap;
 
 // Fragment outputs
-out vec3 outColor;
+layout (location = 0) out vec3 outColor;
 
 // Data functions
 GBuffer    GetGBufferData();
@@ -134,27 +139,31 @@ LightInfo  GetDirLightInfo(int index);
 LightInfo  GetPointLightInfo(int index, GBuffer gBuffer);
 LightInfo  GetSpotLightInfo(int index, GBuffer gBuffer);
 
-// Branchless functions
-vec4 WhenGreater(vec4 x, vec4 y);
-vec4 WhenLesser(vec4 x, vec4 y);
-vec4 WhenEqual(vec4 x, vec4 y);
+// Memory compression functions
+vec3 ReconstructPosition();
+vec3 UnpackNormal(vec2 pNormal);
 
 // Light functions
 vec3 CalculateLight(SharedData sharedData, GBuffer gBuffer, LightInfo lightInfo);
 vec3 CalculateAmbient(SharedData sharedData, GBuffer gBuffer);
-vec3 ReconstructPosition();
-vec3 UnpackNormal(vec2 normal);
 
 // PBR Functions
 float DistributionGGX(vec3 N, vec3 H, float roughness);
 float GeometrySchlickGGX(float NdotV, float roughness);
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
+vec3  FresnelSchlick(float cosTheta, vec3 F0);
 vec3  FresnelSchlick(float cosTheta, vec3 F0, float roughness);
 
 // Shadow functions
+float TanArcCos(float x);
 int   GetCurrentLayer(GBuffer gBuffer);
 float CalculateBias(int layer, vec3 lightDir, GBuffer gBuffer);
 float CalculateShadow(vec3 lightDir, GBuffer gBuffer);
+
+// Branchless functions
+vec4 WhenGreater(vec4 x, vec4 y);
+vec4 WhenLesser(vec4 x, vec4 y);
+vec4 WhenEqual(vec4 x, vec4 y);
 
 void main()
 {
@@ -197,6 +206,8 @@ void main()
 	vec3 ambient = CalculateAmbient(sharedData, gBuffer);
 	// Add up color
 	vec3 color = ambient + Lo;
+	// Apply emmision
+	color = color + gBuffer.emmisive;
 	// Calculate shadow
 	vec3 L  = normalize(-dirLights[0].position.xyz);
 	color  *= 1.0f - CalculateShadow(L, gBuffer);
@@ -211,6 +222,7 @@ GBuffer GetGBufferData()
 	// Retrieve data from G-buffer
 	vec4 gNorm = texture(gNormal,   txCoords);
 	vec4 gAlb  = texture(gAlbedo,   txCoords);
+	vec4 gEmm  = texture(gEmmisive, txCoords);
 	vec4 gMat  = texture(gMaterial, txCoords);
 	// Reconstruct Position
 	gBuffer.fragPos = ReconstructPosition();
@@ -218,6 +230,8 @@ GBuffer GetGBufferData()
 	gBuffer.normal = UnpackNormal(gNorm.rg);
 	// Albedo
 	gBuffer.albedo = gAlb.rgb;
+	// Emmisive color
+	gBuffer.emmisive = gEmm.rgb;
 	// AO + Roughness + Metallic
 	gBuffer.ao        = gMat.r;
 	gBuffer.roughness = gMat.g;
@@ -239,34 +253,6 @@ SharedData GetSharedData(GBuffer gBuffer)
 	sharedData.F0 = mix(vec3(0.04f), gBuffer.albedo, gBuffer.metallic);
 	// Return shared data
 	return sharedData;
-}
-
-vec3 ReconstructPosition()
-{
-	// Get depth
-	float depth = texture(gDepth, txCoords).r;
-	// Invert projection
-	vec4 projectedPos = invProj * (vec4(txCoords, depth, 1.0f) * 2.0f - 1.0f);
-	// Invert view
-	vec3 viewPos = projectedPos.xyz / projectedPos.w;
-	// Get world position
-	vec3 worldPos = vec3(invView * vec4(viewPos, 1.0f));
-	// Return
-	return worldPos;
-}
-
-vec3 UnpackNormal(vec2 normal)
-{
-	// Convert back to [-1, 1]
-	vec2  fEnc = normal * 4.0f - 2.0f;
-	float f    = dot(fEnc, fEnc);
-	float g    = sqrt(1.0f - f / 4.0f);
-	// Store result
-	vec3 unpacked;
-	unpacked.xy = fEnc * g;
-	unpacked.z  = 1.0f - f / 2.0f;
-	// Return
-	return unpacked;
 }
 
 LightInfo GetDirLightInfo(int index)
@@ -334,6 +320,37 @@ LightInfo GetSpotLightInfo(int index, GBuffer gBuffer)
 	return info;
 }
 
+vec3 ReconstructPosition()
+{
+	// Get depth
+	float depth = texture(gDepth, txCoords).r;
+	// Invert projection
+	vec4 projectedPos = invProj * (vec4(txCoords, depth, 1.0f) * 2.0f - 1.0f);
+	// Invert view
+	vec3 viewPos = projectedPos.xyz / projectedPos.w;
+	// Get world position
+	vec3 worldPos = vec3(invView * vec4(viewPos, 1.0f));
+	// Return
+	return worldPos;
+}
+
+// FIXME: Remove conditionals
+vec3 UnpackNormal(vec2 pNormal)
+{
+	// Convert range of packed normal
+	pNormal = pNormal * 2.0f - 1.0f;
+	// Create new normal
+	vec3 normal = vec3(pNormal.x, pNormal.y, 1.0f - abs(pNormal.x) - abs(pNormal.y));
+	// Calculate flags
+	float flag = max(-normal.z, 0.0f);
+	// X check
+	normal.x += normal.x >= 0.0f ? -flag : flag;
+	// Y check
+	normal.y += normal.y >= 0.0f ? -flag : flag;
+	// Return normalised normal
+	return normalize(normal);
+}
+
 vec3 CalculateLight(SharedData sharedData, GBuffer gBuffer, LightInfo lightInfo)
 {
 	// Irradiance
@@ -344,7 +361,7 @@ vec3 CalculateLight(SharedData sharedData, GBuffer gBuffer, LightInfo lightInfo)
 	// Cook-Torrance BRDF
 	float NDF = DistributionGGX(sharedData.N, H, gBuffer.roughness);
 	float G   = GeometrySmith(sharedData.N, sharedData.V, L, gBuffer.roughness);
-	vec3  F   = FresnelSchlick(max(dot(H, sharedData.V), 0.0f), sharedData.F0, gBuffer.roughness);
+	vec3  F   = FresnelSchlick(max(dot(H, sharedData.V), 0.0f), sharedData.F0);
 
 	// Combine specular
 	vec3 numerator = NDF * G * F;
@@ -386,43 +403,68 @@ vec3 CalculateAmbient(SharedData sharedData, GBuffer gBuffer)
 	return ambient;
 }
 
+// Trowbridge-Reitz Normal Distribution Function
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
-	float a      = roughness * roughness;
+	// Square roughness as proposed by Disney
+	float a = roughness * roughness;
+
+	// Calculate squares
 	float a2     = a * a;
 	float NdotH  = max(dot(N, H), 0.0f);
 	float NdotH2 = NdotH * NdotH;
 
+	// Calculate numerator and denominator
 	float nom   = a2;
 	float denom = (NdotH2 * (a2 - 1.0f) + 1.0f);
 	denom       = PI * denom * denom;
 
+	// Divide and return
 	return nom / denom;
 }
 
+// Schlick Geometry Function
 float GeometrySchlickGGX(float NdotV, float roughness)
 {
+	// Calculate various parameters
 	float r = (roughness + 1.0f);
+	// Square roughness as proposed by Disney
 	float k = (r * r) / 8.0f;
 
+	// Calculate numerator and denominator
 	float nom   = NdotV;
 	float denom = NdotV * (1.0f - k) + k;
 
+	// Divide and return
 	return nom / denom;
 }
 
+// Smith's method to combine Geometry functions
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 {
+	// Take dot products
 	float NdotV = max(dot(N, V), 0.0f);
 	float NdotL = max(dot(N, L), 0.0f);
-	float ggx2  = GeometrySchlickGGX(NdotV, roughness);
-	float ggx1  = GeometrySchlickGGX(NdotL, roughness);
 
+	// Calculate both geometry schlick outputs
+	float ggx2 = GeometrySchlickGGX(NdotV, roughness);
+	float ggx1 = GeometrySchlickGGX(NdotL, roughness);
+
+	// Combine and return
 	return ggx1 * ggx2;
 }
 
+// Fresnel equation function
+vec3 FresnelSchlick(float cosTheta, vec3 F0)
+{
+	// Clamp to avoid artifacts
+	return F0 + (1.0f - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
+}
+
+// Fresnel equation function with injected roughness paramenter for IBL
 vec3 FresnelSchlick(float cosTheta, vec3 F0, float roughness)
 {
+	// Clamp to avoid artifacts
 	return F0 + (max(vec3(1.0f - roughness), F0) - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
 }
 
@@ -451,10 +493,20 @@ int GetCurrentLayer(GBuffer gBuffer)
 	return layer;
 }
 
+// Faster version of the tangent of inverse cosine function
+float TanArcCos(float x)
+{
+	// tan(acos(x)) = sqrt(1 - x^2) / x
+	return sqrt(1.0f - pow(x, 2.0f)) / x;
+}
+
 float CalculateBias(int layer, vec3 lightDir, GBuffer gBuffer)
 {
 	// Calculate slope-scaled bias
-	float bias = max(MAX_BIAS * (1.0f - dot(gBuffer.normal, lightDir)), MIN_BIAS);
+	float cosTheta = clamp(dot(gBuffer.normal, lightDir), 0.0f, 1.0f);
+	float bias     = MIN_BIAS * TanArcCos(cosTheta);
+	bias           = clamp(bias, 0.0f, MAX_BIAS);
+
 	// Select bias type
 	float selection = WhenEqual(vec4(layer), vec4(cascadeCount)).x;
 	selection       = clamp(selection, 0.0f, 1.0f);
@@ -469,6 +521,7 @@ float CalculateBias(int layer, vec3 lightDir, GBuffer gBuffer)
 	// bias2 will cancel out, leaving bias 1
 	bias = bias1 * selection + bias2 * (1.0f - selection);
 
+	// Return
 	return bias;
 }
 

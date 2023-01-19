@@ -76,8 +76,10 @@ ShadowMap::ShadowMap()
 
 void ShadowMap::Update(const Camera& camera, const glm::vec3& lightPos)
 {
+	// Calculate cascade matrices
+	auto matrices = CalculateLightSpaceMatrices(camera, glm::normalize(-lightPos));
 	// Load updated cascade matrices
-	m_matrixBuffer->LoadMatrices(CalculateLightSpaceMatrices(camera, glm::normalize(-lightPos)));
+	m_matrixBuffer->LoadMatrices(matrices);
 }
 
 Mat4s ShadowMap::CalculateLightSpaceMatrices

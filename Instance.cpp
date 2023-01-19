@@ -140,7 +140,7 @@ void Instance::ImGuiDisplay()
 					// Select light
 					auto& light = m_dirLights[m_selectedDirLight];
 					// Position
-					ImGui::InputFloat3("Position", &light.position[0], "%.1f");
+					ImGui::DragFloat3("Position", &light.position[0], 0.5f, -500.0f, 500.0f, "%.1f");
 					// Color
 					ImGui::ColorEdit3("Color", &light.color[0]);
 					// Intensity
@@ -157,7 +157,7 @@ void Instance::ImGuiDisplay()
 					// Select light
 					auto& light = m_pointLights[m_selectedPointLight];
 					// Position
-					ImGui::InputFloat3("Position", &light.position[0], "%.1f");
+					ImGui::DragFloat3("Position", &light.position[0], 0.5f, -500.0f, 500.0f, "%.1f");
 					// Color
 					ImGui::ColorEdit3("Color", &light.color[0]);
 					// Intensity
@@ -176,7 +176,7 @@ void Instance::ImGuiDisplay()
 					// Select light
 					auto& light = m_spotLights[m_selectedSpotLight];
 					// Position
-					ImGui::InputFloat3("Position", &light.position[0], "%.1f");
+					ImGui::DragFloat3("Position", &light.position[0], 0.5f, -500.0f, 500.0f, "%.1f");
 					// Color
 					ImGui::ColorEdit3("Color", &light.color[0]);
 					// Intensity
@@ -184,7 +184,7 @@ void Instance::ImGuiDisplay()
 					// Attenuation
 					ImGui::InputFloat3("Attenuation", &light.attenuation[0], "%.4f");
 					// Direction
-					ImGui::InputFloat3("Direction", &light.direction[0], "%.1f");
+					ImGui::DragFloat3("Direction", &light.direction[0], 0.05f, -1.0f, 1.0f, "%.1f");
 					// Get cut off in degrees
 					auto degCutOff = light.GetCutOff();
 					// Cut off
@@ -241,7 +241,8 @@ void Instance::InitEntities()
 	(
 		resources.GetTexture("gfx/def.png"),
 		resources.GetTexture("gfx/defNrm.png"),
-		resources.GetTexture("gfx/def.png")
+		resources.GetTexture("gfx/def.png"),
+		resources.GetTexture("gfx/defEmm.png")
 	);
 
 	// All models
@@ -332,8 +333,8 @@ void Instance::InitMisc()
 	m_waters =
 	{
 		{
-			resources.GetTexture("gfx/waterDUDV.png"),
-			resources.GetTexture("gfx/normal.png"),
+			resources.GetTexture("gfx/Water/waterDUDV.png"),
+			resources.GetTexture("gfx/Water/normal.png"),
 			glm::vec3(120.0f, 3.7f, -2.0f)
 		}
 	};

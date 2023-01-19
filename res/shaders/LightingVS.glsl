@@ -1,17 +1,21 @@
 #version 430 core
 
+// Matrix buffer
 layout(std140, binding = 0) uniform Matrices
 {
 	mat4 projectionMatrix;
 	mat4 viewMatrix;
 };
 
+// Vertex inputs
 layout(location = 0) in vec2 position;
 
+// Vertex outputs
 out      vec2 txCoords;
 out flat mat4 invProj;
 out flat mat4 invView;
 
+// Entry point
 void main()
 {
 	// Set position

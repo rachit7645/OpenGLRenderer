@@ -69,7 +69,7 @@ namespace Renderer
 		// Attach 2D texture
 		void AttachTexture(TxPtr& texture, const FBOAttachment& attachment);
 		// Attach cube map texture
-		UNUSED void AttachTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment);
+		UNUSED void AttachTextureCubeMap(UNUSED TxPtr& texture, UNUSED const FBOAttachment& attachment);
 		// Attach texture array
 		void AttachTextureArray(TxPtr& texture, const FBOAttachment& attachment);
 
@@ -82,6 +82,8 @@ namespace Renderer
 		// Add render buffer
 		void AddBuffer(RdBufPtr& buffer, const FBOAttachment& attachment);
 
+		// Set integer parameter
+		void SetParameter(GLenum pname, GLint param);
 		// Set draw buffers
 		void SetDrawBuffers(const std::vector<GLenum>& buffers);
 		// Enable depth

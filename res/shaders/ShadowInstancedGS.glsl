@@ -17,6 +17,7 @@ layout (std140, binding = 4) uniform ShadowBuffer
 	float cascadeDistances[MAX_LAYER_COUNT];
 };
 
+// Entry point
 void main()
 {
 	// For each vertex

@@ -7,10 +7,12 @@ MeshTextures::MeshTextures
 (
 	TxPtr albedo,
 	TxPtr normal,
-	TxPtr aoRghMtl
+	TxPtr aoRghMtl,
+	TxPtr emmisive
 )
 	: albedo(std::move(albedo)),
 	  normal(std::move(normal)),
-	  aoRghMtl(std::move(aoRghMtl))
+	  aoRghMtl(std::move(aoRghMtl)),
+	  emmisive(std::move(emmisive))
 {
 }

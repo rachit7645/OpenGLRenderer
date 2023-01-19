@@ -64,7 +64,7 @@ void BloomRenderer::RenderDownSamples()
 	for (usize i = 0; i < bloomBuffer.mipChain.size(); ++i)
 	{
 		// Check first sample flag
-		if (i > 0)
+		if (i == 1)
 		{
 			downShader.SetIsFirstSample(false);
 		}
@@ -74,6 +74,9 @@ void BloomRenderer::RenderDownSamples()
 		glViewport(0, 0, mip->width, mip->height);
 		// Attach to FBO
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, mip->type, mip->id, 0);
+		// Clear
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
 		// Render quad
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, m_vao->vertexCount);
 		// Set current mip as texture input

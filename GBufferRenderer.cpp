@@ -80,6 +80,9 @@ void GBufferRenderer::LoadTextures(const Mesh& mesh)
 	// Activate ambient occlusion, metallic and roughness
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, mesh.textures.aoRghMtl->id);
+	// Activate emmisive
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, mesh.textures.emmisive->id);
 }
 
 void GBufferRenderer::UnbindMesh()

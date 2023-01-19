@@ -77,9 +77,10 @@ void main()
 		downsample += (a + c + g + i) * 0.03125f;
 		downsample += (b + d + f + h) * 0.0625f;
 		downsample += (j + k + l + m) * 0.125f;
-		// Fix for black spots
-		downsample  = max(downsample, 0.0001f);
 	}
+
+	// Fix for black spots
+	downsample = max(downsample, 0.0001f);
 }
 
 vec3 ToSRGB(vec3 color)

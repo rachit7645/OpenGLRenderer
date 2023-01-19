@@ -18,7 +18,7 @@ using namespace Engine;
 using Entities::Camera;
 
 // Window flags
-constexpr u32 SDL_WINDOW_FLAGS  = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
+constexpr u32 SDL_WINDOW_FLAGS = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
 Window::Window()
 {
@@ -116,7 +116,6 @@ Window::Window()
 	LOG_INFO("Initializing Dear ImGui version: {}\n", ImGui::GetVersion());
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	UNUSED ImGuiIO& io = ImGui::GetIO();
 	ImGui::StyleColorsDark();
 
 	// Initialise ImGui backend

@@ -1,7 +1,7 @@
 #version 430 core
 
 // Constants
-const float BLOOM_STRENGTH   = 0.07f;
+const float BLOOM_STRENGTH   = 0.03f;
 const float INV_GAMMA_FACTOR = 1.0f / 2.2f;
 
 // Vertex inputs
@@ -12,7 +12,7 @@ uniform sampler2D lightingBuffer;
 uniform sampler2D bloomBuffer;
 
 // Fragment outputs
-out vec4 outColor;
+layout (location = 0) out vec4 outColor;
 
 // Tone mappers
 vec3 ToneMap(vec3 color);
