@@ -163,9 +163,7 @@ namespace Renderer
 		// Render skybox
 		void RenderSkybox();
 	private:
-		// Clears current frame buffer according to set flags
-		void Clear(GLbitfield flags);
-		// Copy depth from GBuffer to main FBO
+		// Copy depth from GBuffer to the lighting buffer
 		void CopyDepth();
 		// Render water scene (forward)
 		void RenderWaterScene(const Entities::Camera& camera, const glm::vec4& clipPlane);

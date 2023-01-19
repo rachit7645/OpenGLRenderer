@@ -2,6 +2,9 @@
 
 #include <vector>
 
+#include "GL.h"
+#include "GLM.h"
+
 // Using namespaces
 using namespace Renderer;
 
@@ -154,8 +157,8 @@ void IBLRenderer::PreFilterSpecular(TxPtr& preFilterMap, TxPtr& cubeMap)
 		auto mipHeight = static_cast<GLint>(PRE_FILTER_DIMENSIONS.y * std::pow(0.5f, mip));
 
 		// Update framebuffer
-		glBindRenderbuffer(GL_RENDERBUFFER, preFilterFBO->depthRenderBuffer->id);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
+		preFilterFBO->depthRenderBuffer->SetStorage(mipWidth, mipHeight);
+		// Set viewport
 		glViewport(0, 0, mipWidth, mipHeight);
 
 		// Load roughness
@@ -191,7 +194,7 @@ void IBLRenderer::CalculateBRDF(TxPtr& brdfLut)
 	// Start shader
 	brdf.Start();
 	// Draw
-	RenderQuad();
+	RenderQuad(brdfFBO);
 	// Unbind
 	UnbindRender(brdfFBO);
 	// Stop shader
@@ -225,28 +228,27 @@ void IBLRenderer::UnbindRender(FbPtr& FBO)
 void IBLRenderer::RenderCubeFace(FbPtr& FBO, usize face, GLint level)
 {
 	// Assign texture
-	glFramebufferTexture2D
+	glNamedFramebufferTextureLayer
 	(
-		GL_FRAMEBUFFER,
+		FBO->id,
 		GL_COLOR_ATTACHMENT0,
-		GL_TEXTURE_CUBE_MAP_POSITIVE_X + face,
 		FBO->colorTextures[0]->id,
-		level
+		level,
+		static_cast<GLint>(face)
 	);
 	// Clear FBO
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GL::ClearColor(FBO->id, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+	GL::ClearDepth(FBO->id, 1.0f);
 	// Render cube
 	glDrawArrays(GL_TRIANGLES, 0, m_cube->vertexCount);
 }
 
-void IBLRenderer::RenderQuad()
+void IBLRenderer::RenderQuad(FbPtr& FBO)
 {
 	// Set rasterizer state
 	glDisable(GL_DEPTH_TEST);
 	// Clear FBO
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	GL::ClearColor(FBO->id, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	// Render quad
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, m_quad->vertexCount);
 	// Reset rasterizer state
@@ -289,13 +291,11 @@ FbPtr IBLRenderer::CreateCubeMapFBO(const glm::ivec2& dimensions, bool isMipMapp
 
 	// Create FBO
 	FBO->CreateFrameBuffer();
-	FBO->Bind();
 	FBO->AddTextureCubeMap(FBO->colorTextures[0], color0);
 	FBO->AddBuffer(FBO->depthRenderBuffer, depth);
 	FBO->SetDrawBuffers(drawBuffers);
 	FBO->CheckStatus();
 	FBO->EnableDepth();
-	FBO->Unbind();
 
 	// Return
 	return FBO;
@@ -330,11 +330,9 @@ FbPtr IBLRenderer::Create2DFBO(const glm::ivec2& dimensions)
 
 	// Create FBO
 	FBO->CreateFrameBuffer();
-	FBO->Bind();
 	FBO->AddTexture(FBO->colorTextures[0], color0);
 	FBO->SetDrawBuffers(drawBuffers);
 	FBO->CheckStatus();
-	FBO->Unbind();
 
 	// Return
 	return FBO;

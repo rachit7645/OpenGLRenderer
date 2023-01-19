@@ -3,21 +3,24 @@
 using namespace Renderer;
 
 RenderBuffer::RenderBuffer(GLsizei width, GLsizei height, GLenum internalformat)
+	: format(internalformat)
 {
 	// Create render buffer
-	glGenRenderbuffers(1, &id);
-	// Bind render buffer
-	glBindRenderbuffer(GL_RENDERBUFFER, id);
+	glCreateRenderbuffers(1, &id);
 	// Set storage format
-	glRenderbufferStorage
+	SetStorage(width, height);
+}
+
+void RenderBuffer::SetStorage(GLsizei width, GLsizei height)
+{
+	// Set storage format
+	glNamedRenderbufferStorage
 	(
-		GL_RENDERBUFFER,
-		internalformat,
+		id,
+		format,
 		width,
 		height
 	);
-	// Unbind render buffer
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
 RenderBuffer::~RenderBuffer()

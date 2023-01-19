@@ -54,7 +54,7 @@ namespace Renderer
 		// Render cube face
 		void RenderCubeFace(FbPtr& FBO, usize face, GLint level = 0);
 		// Render quad
-		void RenderQuad();
+		void RenderQuad(FbPtr& FBO);
 
 		// Create cube map FBO
 		FbPtr CreateCubeMapFBO(const glm::ivec2& dimensions, bool isMipMapped = false);

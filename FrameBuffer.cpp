@@ -13,7 +13,7 @@ using Engine::Settings;
 void FrameBuffer::CreateFrameBuffer()
 {
 	// Generate FBO ID
-	glGenFramebuffers(1, &id);
+	glCreateFramebuffers(1, &id);
 }
 
 void FrameBuffer::CreateTexture(TxPtr& texture, const FBOAttachment& attachment)
@@ -111,11 +111,10 @@ void FrameBuffer::CreateTextureArray(TxPtr& texture, const FBOAttachment& attach
 void FrameBuffer::AttachTexture(TxPtr& texture, const FBOAttachment& attachment)
 {
 	// Attach texture
-	glFramebufferTexture2D
+	glNamedFramebufferTexture
 	(
-		GL_FRAMEBUFFER,
+		id,
 		attachment.slot,
-		texture->type,
 		texture->id,
 		0
 	);
@@ -130,9 +129,9 @@ UNUSED void FrameBuffer::AttachTextureCubeMap(UNUSED TxPtr& texture, UNUSED cons
 void FrameBuffer::AttachTextureArray(TxPtr& texture, const FBOAttachment& attachment)
 {
 	// Attach texture
-	glFramebufferTexture
+	glNamedFramebufferTexture
 	(
-		GL_FRAMEBUFFER,
+		id,
 		attachment.slot,
 		texture->id,
 		0
@@ -174,9 +173,9 @@ void FrameBuffer::AddBuffer(RdBufPtr& buffer, const FBOAttachment& attachment)
 	);
 
 	// Attach render buffer
-	glFramebufferRenderbuffer
+	glNamedFramebufferRenderbuffer
 	(
-		GL_FRAMEBUFFER,
+		id,
 		attachment.slot,
 		GL_RENDERBUFFER,
 		buffer->id
@@ -186,25 +185,25 @@ void FrameBuffer::AddBuffer(RdBufPtr& buffer, const FBOAttachment& attachment)
 void FrameBuffer::SetDrawBuffer(GLenum value)
 {
 	// Set draw buffer
-	glDrawBuffer(value);
+	glNamedFramebufferDrawBuffer(id, value);
 }
 
 void FrameBuffer::SetReadBuffer(GLenum value)
 {
 	// Set read buffer
-	glReadBuffer(value);
+	glNamedFramebufferReadBuffer(id, value);
 }
 
 void FrameBuffer::SetParameter(GLenum pname, GLint param)
 {
 	// Set parameter
-	glFramebufferParameteri(GL_FRAMEBUFFER, pname, param);
+	glNamedFramebufferParameteri(id, pname, param);
 }
 
 void FrameBuffer::SetDrawBuffers(const std::vector<GLenum>& buffers)
 {
 	// Set draw buffers
-	glDrawBuffers(static_cast<GLsizei>(buffers.size()), buffers.data());
+	glNamedFramebufferDrawBuffers(id, static_cast<GLsizei>(buffers.size()), buffers.data());
 }
 
 void FrameBuffer::EnableDepth()
@@ -232,7 +231,7 @@ void FrameBuffer::CheckStatus()
 	};
 
 	// Check status
-	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	GLenum status = glCheckNamedFramebufferStatus(id, GL_FRAMEBUFFER);
 	// If framebuffer is incomplete
 	if (status != GL_FRAMEBUFFER_COMPLETE)
 	{

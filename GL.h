@@ -8,6 +8,9 @@
 
 namespace GL
 {
+	// Constants
+	constexpr GLint DEFAULT_FRAME_BUFFER = 0;
+
 	// Debug message callback
 	void CheckErrors
 	(
@@ -24,6 +27,13 @@ namespace GL
 	GLint GetIntegerv(GLenum param);
 	// Get string
 	std::string_view GetString(GLenum name);
+
+	// Clears current frame color
+	void ClearColor(GLuint id, const glm::vec4& color);
+	// Clears current frame depth
+	void ClearDepth(GLuint id, GLfloat depth);
+	// Clears current frame depth and stencil
+	void ClearDepthStencil(GLuint id, GLfloat depth, GLint stencil);
 
 	// Initialize OpenGL info
 	void Init(const glm::ivec2& dimensions);

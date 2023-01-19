@@ -41,7 +41,6 @@ BloomBuffer::BloomBuffer()
 
 	// Create frame buffer
 	buffer->CreateFrameBuffer();
-	buffer->Bind();
 
 	// Set default width and height
 	// Allows us to skip having to add a depth buffer and thus save memory
@@ -90,7 +89,6 @@ BloomBuffer::BloomBuffer()
 	buffer->height = settings.window.dimensions.y;
 	// Finish FBO creation
 	buffer->CheckStatus();
-	buffer->Unbind();
 }
 
 void BloomBuffer::BindBloomBuffer() const

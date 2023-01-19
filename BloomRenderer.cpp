@@ -3,6 +3,8 @@
 #include <vector>
 
 #include "Util.h"
+#include "GL.h"
+#include "GLM.h"
 
 // Using namespaces
 using namespace Renderer;
@@ -73,10 +75,9 @@ void BloomRenderer::RenderDownSamples()
 		// Set view port
 		glViewport(0, 0, mip->width, mip->height);
 		// Attach to FBO
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, mip->type, mip->id, 0);
+		glNamedFramebufferTexture(bloomBuffer.buffer->id, GL_COLOR_ATTACHMENT0, mip->id, 0);
 		// Clear
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		GL::ClearColor(bloomBuffer.buffer->id, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 		// Render quad
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, m_vao->vertexCount);
 		// Set current mip as texture input
@@ -102,7 +103,7 @@ void BloomRenderer::RenderUpSamples()
 		// Set view port
 		glViewport(0, 0, nextMip->width, nextMip->height);
 		// Attach to FBO
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, nextMip->type, nextMip->id, 0);
+		glNamedFramebufferTexture(bloomBuffer.buffer->id, GL_COLOR_ATTACHMENT0, nextMip->id, 0);
 		// Render quad
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, m_vao->vertexCount);
 	}

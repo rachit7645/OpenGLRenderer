@@ -47,12 +47,10 @@ WaterFrameBuffers::WaterFrameBuffers()
 
 	// Create reflection FBO
 	reflectionFBO->CreateFrameBuffer();
-	reflectionFBO->Bind();
 	reflectionFBO->AddTexture(reflectionFBO->colorTextures[0], color0);
 	reflectionFBO->AddBuffer(reflectionFBO->depthRenderBuffer, depth);
 	reflectionFBO->CheckStatus();
 	reflectionFBO->EnableDepth();
-	reflectionFBO->Unbind();
 
 	// Set refraction dimensions
 	refractionFBO->width  = refractionSize.x;
@@ -60,12 +58,10 @@ WaterFrameBuffers::WaterFrameBuffers()
 
 	// Create refraction FBO
 	refractionFBO->CreateFrameBuffer();
-	refractionFBO->Bind();
 	refractionFBO->AddTexture(refractionFBO->colorTextures[0], color0);
 	refractionFBO->AddBuffer(refractionFBO->depthRenderBuffer, depth);
 	refractionFBO->CheckStatus();
 	refractionFBO->EnableDepth();
-	refractionFBO->Unbind();
 }
 
 void WaterFrameBuffers::BindReflection() const

@@ -14,8 +14,12 @@ namespace Renderer
 		RenderBuffer(GLsizei width, GLsizei height, GLenum internalformat);
 		// Destructor
 		~RenderBuffer();
+		// Sets storage to new dimensions
+		void SetStorage(GLsizei width, GLsizei height);
 		// OpenGL ID
 		GLuint id = 0;
+		// Format
+		GLenum format = 0;
 	};
 }
 

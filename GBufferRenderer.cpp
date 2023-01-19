@@ -1,7 +1,5 @@
 #include "GBufferRenderer.h"
 
-#include <utility>
-
 using namespace Renderer;
 
 using Shader::GBufferShader;

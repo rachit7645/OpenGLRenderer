@@ -2,8 +2,10 @@
 
 #include <vector>
 
+// Using namespaces
 using namespace Renderer;
 
+// Usings
 using Shader::LightingShader;
 
 LightingRenderer::LightingRenderer
@@ -18,6 +20,7 @@ LightingRenderer::LightingRenderer
 	  gBuffer(gBuffer),
 	  iblMaps(iblMaps)
 {
+	// Quad vertices
 	const std::vector<f32> QUAD_VERTICES =
 	{
 		-1.0f,  1.0f,
@@ -26,8 +29,10 @@ LightingRenderer::LightingRenderer
 		 1.0f, -1.0f
 	};
 
+	// Create quad vao
 	m_vao = std::make_shared<VertexArray>(2, QUAD_VERTICES);
 
+	// Connect texture units
 	shader.Start();
 	shader.ConnectTextureUnits();
 	shader.Stop();

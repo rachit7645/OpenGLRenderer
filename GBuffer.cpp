@@ -99,7 +99,6 @@ GBuffer::GBuffer()
 
 	// Create frame buffer
 	buffer->CreateFrameBuffer();
-	buffer->Bind();
 	buffer->AddTexture(buffer->colorTextures[0], normal);
 	buffer->AddTexture(buffer->colorTextures[1], albedo);
 	buffer->AddTexture(buffer->colorTextures[2], emmisive);
@@ -108,7 +107,6 @@ GBuffer::GBuffer()
 	buffer->SetDrawBuffers(drawBuffers);
 	buffer->CheckStatus();
 	buffer->EnableDepth();
-	buffer->Unbind();
 }
 
 void GBuffer::BindGBuffer() const

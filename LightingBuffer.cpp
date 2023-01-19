@@ -48,13 +48,11 @@ LightingBuffer::LightingBuffer()
 
 	// Create frame buffer
 	buffer->CreateFrameBuffer();
-	buffer->Bind();
 	buffer->AddTexture(buffer->colorTextures[0], color0);
 	buffer->AddBuffer(buffer->depthRenderBuffer, depth);
 	buffer->SetDrawBuffers(drawBuffers);
 	buffer->CheckStatus();
 	buffer->EnableDepth();
-	buffer->Unbind();
 }
 
 void LightingBuffer::BindLightingBuffer() const

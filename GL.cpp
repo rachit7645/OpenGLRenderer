@@ -1,3 +1,9 @@
+#include "Settings.h"
+#include "Window.h"
+#include "Maths.h"
+#include <fmt/format.h>
+#include <GL/glew.h>
+#include "RenderManager.h"
 #include "GL.h"
 
 #include <unordered_map>
@@ -81,6 +87,24 @@ std::string_view GL::GetString(GLenum name)
 	auto newString = reinterpret_cast<const char*>(string);
 	// Return
 	return std::string_view(newString);
+}
+
+void GL::ClearColor(GLuint id, const glm::vec4& color)
+{
+	// Load clear color
+	glClearNamedFramebufferfv(id, GL_COLOR, 0, &color[0]);
+}
+
+void GL::ClearDepth(GLuint id, f32 depth)
+{
+	// Load clear depth
+	glClearNamedFramebufferfv(id, GL_DEPTH, 0, &depth);
+}
+
+void GL::ClearDepthStencil(GLuint id, GLfloat depth, GLint stencil)
+{
+	// Load clear depth and stencil
+	glClearNamedFramebufferfi(id, GL_DEPTH_STENCIL, 0, depth, stencil);
 }
 
 void GL::Init(const glm::ivec2& dimensions)

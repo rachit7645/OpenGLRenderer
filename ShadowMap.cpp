@@ -59,7 +59,6 @@ ShadowMap::ShadowMap()
 
 	// Create frame buffer object
 	buffer->CreateFrameBuffer();
-	buffer->Bind();
 	// Set color buffer to none
 	buffer->SetDrawBuffer(GL_NONE);
 	buffer->SetReadBuffer(GL_NONE);
@@ -68,7 +67,6 @@ ShadowMap::ShadowMap()
 	// Finish up
 	buffer->CheckStatus();
 	buffer->EnableDepth();
-	buffer->Unbind();
 
 	// Load cascade distances
 	m_matrixBuffer->LoadDistances(shadowLevels);
