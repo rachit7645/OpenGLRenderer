@@ -1,7 +1,6 @@
 #version 430 core
 
 // Constants
-const float BLOOM_STRENGTH   = 0.03f;
 const float INV_GAMMA_FACTOR = 1.0f / 2.2f;
 
 // Vertex inputs
@@ -10,6 +9,7 @@ in vec2 txCoords;
 // Uniforms
 uniform sampler2D lightingBuffer;
 uniform sampler2D bloomBuffer;
+uniform float     bloomStrength;
 
 // Fragment outputs
 layout (location = 0) out vec4 outColor;
@@ -27,7 +27,7 @@ void main()
 	// Get bloom color
 	vec3 bloomColor = texture(bloomBuffer, txCoords).rgb;
 	// Add bloom color
-	vec3 color = mix(hdrColor, bloomColor, BLOOM_STRENGTH);
+	vec3 color = mix(hdrColor, bloomColor, bloomStrength);
 	// Convert to LDR & SRGB
 	color = GammaCorrect(ToneMap(color));
 	// Set output

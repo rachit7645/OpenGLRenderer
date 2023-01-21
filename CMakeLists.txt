@@ -70,7 +70,7 @@ add_executable(engine
 	InstanceBuffer.cpp
 	FastInstancedShader.cpp
 	ShadowMap.cpp
-	ShadowInstancedShader.cpp
+		ShadowShader.cpp
     ShadowBuffer.cpp
 	GBuffer.cpp
 	GBufferShader.cpp

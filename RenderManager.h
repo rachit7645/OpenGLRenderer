@@ -22,7 +22,7 @@
 #include "FastInstancedShader.h"
 #include "RenderConstants.h"
 #include "ShadowMap.h"
-#include "ShadowInstancedShader.h"
+#include "ShadowShader.h"
 #include "GBuffer.h"
 #include "GBufferShader.h"
 #include "GBufferRenderer.h"
@@ -85,9 +85,9 @@ namespace Renderer
 		// Instances Shader Storage Buffer
 		std::shared_ptr<InstanceBuffer> m_instances;
 		// Instanced renderer and shaders
-		Shader::FastInstancedShader   m_fastInstancedShader;
-		Shader::ShadowInstancedShader m_shadowInstancedShader;
-		Renderer::InstancedRenderer   m_instancedRenderer;
+		Shader::FastInstancedShader m_fastInstancedShader;
+		Shader::ShadowShader        m_shadowShader;
+		Renderer::InstancedRenderer m_instancedRenderer;
 
 		// Deferred renderers and shaders
 		Shader::GBufferShader         m_gShader;

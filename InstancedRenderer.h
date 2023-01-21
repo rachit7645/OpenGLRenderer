@@ -10,7 +10,7 @@
 #include "InstanceBuffer.h"
 #include "FastInstancedShader.h"
 #include "RenderConstants.h"
-#include "ShadowInstancedShader.h"
+#include "ShadowShader.h"
 #include "ShadowMap.h"
 #include "IBLMaps.h"
 
@@ -29,7 +29,7 @@ namespace Renderer
 		InstancedRenderer
 		(
 			Shader::FastInstancedShader& fastShader,
-			Shader::ShadowInstancedShader& shadowShader,
+			Shader::ShadowShader& shadowShader,
 			Renderer::ShadowMap& shadowMap,
 			Renderer::IBLMaps& iblMaps,
 			BufferPtr instances
@@ -37,7 +37,7 @@ namespace Renderer
 
 		// Shaders
 		Shader::FastInstancedShader& fastShader;
-		Shader::ShadowInstancedShader& shadowShader;
+		Shader::ShadowShader&        shadowShader;
 
 		// Other data
 		Renderer::ShadowMap& shadowMap;

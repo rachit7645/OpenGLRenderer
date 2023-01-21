@@ -11,9 +11,6 @@ using namespace Renderer;
 using Shader::DownSampleShader;
 using Shader::UpSampleShader;
 
-// Constants
-constexpr f32 BLOOM_RADIUS = 0.005f;
-
 BloomRenderer::BloomRenderer
 (
 	DownSampleShader& downShader,
@@ -46,7 +43,6 @@ BloomRenderer::BloomRenderer
 	// Set up shader
 	upShader.Start();
 	upShader.ConnectTextureUnits();
-	upShader.LoadFilterRadius(BLOOM_RADIUS);
 	upShader.Stop();
 }
 
@@ -92,6 +88,8 @@ void BloomRenderer::RenderUpSamples()
 {
 	// Bind vao
 	glBindVertexArray(m_vao->id);
+	// Load bloom radius
+	upShader.LoadFilterRadius(m_bloomRadius);
 
 	for (usize i = bloomBuffer.mipChain.size() - 1; i > 0; --i)
 	{
@@ -111,4 +109,23 @@ void BloomRenderer::RenderUpSamples()
 
 	// Unbind vao
 	glBindVertexArray(0);
+}
+
+void BloomRenderer::RenderImGui()
+{
+	// If main menu bar is visible
+	if (ImGui::BeginMainMenuBar())
+	{
+		// If bloom menu is visible
+		if (ImGui::BeginMenu("Bloom"))
+		{
+			// Bloom radius
+			ImGui::Text("Radius:");
+			ImGui::DragFloat("##brad", &m_bloomRadius, 0.0005f, 0.0f, 0.1f, "%.4f");
+			// End menu
+			ImGui::EndMenu();
+		}
+		// End menu bar
+		ImGui::EndMainMenuBar();
+	}
 }

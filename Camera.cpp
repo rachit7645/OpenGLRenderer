@@ -37,21 +37,31 @@ void Camera::Move()
 
 void Camera::ImGuiDisplay()
 {
+	// If main menu bar is visible
 	if (ImGui::BeginMainMenuBar())
 	{
+		// If camera menu is visible
 		if (ImGui::BeginMenu("Camera"))
 		{
+			// Camera position
 			ImGui::Text("Position:");
 			ImGui::InputFloat3("##cpos", &position[0], "%.1f");
+			// Camera rotation
 			ImGui::Text("Rotation:");
 			ImGui::InputFloat3("##crot", &rotation[0], "%.1f");
+			// Camera's distance from player
 			ImGui::Text("Distance From Player:");
 			ImGui::InputFloat("##cdfp", &distance, 0.0f, 0.0f, "%.1f");
+			// Camera's angle around the player
 			ImGui::Text("Angle Around Player:");
 			ImGui::InputFloat("##carp", &m_angle, 0.0f, 0.0f, "%.1f");
+			// Toggle to cap pitch
 			ImGui::Checkbox("Cap Pitch", &m_capPitch);
+			// End menu
 			ImGui::EndMenu();
 		}
+
+		// End menu bar
 		ImGui::EndMainMenuBar();
 	}
 }

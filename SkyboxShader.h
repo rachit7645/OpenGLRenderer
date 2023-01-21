@@ -11,11 +11,7 @@ namespace Shader
 	public:
 		// Constructor
 		SkyboxShader();
-
-		// Load model matrix
-		void LoadModelMatrix(const glm::mat4& matrix);
-
-		// Get all uniform locations
+		// Get all uniform locations (unused)
 		void GetUniformLocations() override;
 	};
 }

@@ -7,12 +7,12 @@ using namespace Renderer;
 
 // Usings
 using Shader::FastInstancedShader;
-using Shader::ShadowInstancedShader;
+using Shader::ShadowShader;
 
 InstancedRenderer::InstancedRenderer
 (
 	FastInstancedShader& fastShader,
-	ShadowInstancedShader& shadowShader,
+	ShadowShader& shadowShader,
 	ShadowMap& shadowMap,
 	IBLMaps& iblMaps,
 	BufferPtr instances

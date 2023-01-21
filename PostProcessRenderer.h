@@ -15,6 +15,7 @@ namespace Renderer
 	public:
 		// Usings
 		using VAO = std::shared_ptr<VertexArray>;
+
 		// Main constructor
 		PostProcessRenderer
 		(
@@ -22,15 +23,21 @@ namespace Renderer
 			Renderer::LightingBuffer& lightingBuffer,
 			Renderer::BloomBuffer& bloomBuffer
 		);
+
 		// Data
 		Shader::PostProcessShader& shader;
 		Renderer::LightingBuffer&  lightingBuffer;
 		Renderer::BloomBuffer&     bloomBuffer;
+
 		// Render post process pass
 		void Render();
+		// Render ImGui widgets
+		void RenderImGui();
 	private:
 		// Quad VAO
 		VAO m_vao;
+		// Bloom amount
+		f32 m_bloomStrength = 0.03f;
 	};
 }
 
