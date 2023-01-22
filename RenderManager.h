@@ -44,6 +44,7 @@
 #include "DownSampleShader.h"
 #include "UpSampleShader.h"
 #include "BloomRenderer.h"
+#include "SSAOShader.h"
 
 namespace Renderer
 {
@@ -92,6 +93,7 @@ namespace Renderer
 		// Deferred renderers and shaders
 		Shader::GBufferShader         m_gShader;
 		Renderer::GBufferRenderer     m_gRenderer;
+		Shader::SSAOShader            m_ssaoShader;
 		Shader::LightingShader        m_lightShader;
 		Renderer::LightingRenderer    m_lightRenderer;
 		Shader::PostProcessShader     m_postShader;

@@ -8,7 +8,6 @@ using namespace Renderer;
 
 using Detail::MatrixBufferGLSL;
 using Entities::Camera;
-using Entities::PointLight;
 
 MatrixBuffer::MatrixBuffer()
 	: UniformBuffer(0, sizeof(MatrixBufferGLSL), GL_STATIC_DRAW)

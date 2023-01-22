@@ -4,7 +4,6 @@
 #include "GLM.h"
 #include "UniformBuffer.h"
 #include "Camera.h"
-#include "PointLight.h"
 
 namespace Renderer
 {

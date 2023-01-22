@@ -42,11 +42,11 @@ void main()
 	// Pass through texture coords
 	txCoords = texCoords;
 	// Get normal matrix
-	mat4 normalMatrix = instances[gl_InstanceID].modelMatrix;
+	mat3 normalMatrix = transpose(inverse(mat3(instances[gl_InstanceID].modelMatrix)));
 	// Transform normal
-	vec3 N = normalize(normalMatrix * vec4(normal, 0.0f)).xyz;
+	vec3 N = normalize(normalMatrix * normal);
 	// Transform tangent
-	vec3 T = normalize(normalMatrix * vec4(tangent, 0.0f)).xyz;
+	vec3 T = normalize(normalMatrix * tangent);
 	// Re-orthagonalize tangent
 	T = normalize(T - dot(T, N) * N);
 	// Calculate bitangent

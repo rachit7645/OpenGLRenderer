@@ -70,7 +70,7 @@ add_executable(engine
 	InstanceBuffer.cpp
 	FastInstancedShader.cpp
 	ShadowMap.cpp
-		ShadowShader.cpp
+	ShadowShader.cpp
     ShadowBuffer.cpp
 	GBuffer.cpp
 	GBufferShader.cpp
@@ -96,6 +96,10 @@ add_executable(engine
 	DownSampleShader.cpp
 	UpSampleShader.cpp
 	BloomRenderer.cpp
+	SSAOBuffers.cpp
+	SSAOShader.cpp
+	SSAORenderer.cpp
+	SSAOBuffer.cpp
 )
 
 # Precompiled Headers

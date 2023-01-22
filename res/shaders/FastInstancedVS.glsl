@@ -49,8 +49,8 @@ void main()
 	// Interpolate texture coords
 	txCoords = textureCoords;
 	// Calculate normal
-	vec4 transNormal = instances[gl_InstanceID].modelMatrix * vec4(normal, 0.0f);
-	unitNormal       = normalize(transNormal.xyz);
+	vec3 transNormal = transpose(inverse(mat3(instances[gl_InstanceID].modelMatrix))) * normal;
+	unitNormal       = normalize(transNormal);
 	// Calculate view direction
 	viewDir = normalize(cameraPos.xyz - worldPosition.xyz);
 }
