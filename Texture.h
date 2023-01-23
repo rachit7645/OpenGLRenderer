@@ -18,6 +18,7 @@ namespace Renderer
 	public:
 		// Usings
 		using TxPtr = std::shared_ptr<Texture>;
+
 		// Default constructor
 		Texture() = default;
 		// Loads a texture into memory, then an OpenGL object
@@ -66,11 +67,12 @@ namespace Renderer
 		// Loads a RGB16F image using stb image
 		f32* LoadImageHDR(const std::string_view path);
 	public:
-		// All classes that can access the pipeline mode
+		// All classes that can access the pipeline mode go here
 		friend class FrameBuffer;
 		friend class IBLMaps;
 		friend class IBLRenderer;
 		friend class BloomBuffer;
+		friend class SSAOBuffers;
 	};
 }
 #endif

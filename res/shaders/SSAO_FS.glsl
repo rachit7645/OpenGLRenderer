@@ -31,6 +31,7 @@ layout(std140, binding = 5) uniform SSAOBuffer
 in      vec2 txCoords;
 in flat mat4 invProj;
 in flat mat4 invView;
+in flat mat3 invViewNrm;
 
 // Uniforms
 uniform sampler2D gNormal;
@@ -118,5 +119,5 @@ vec3 UnpackNormal(vec2 pNormal)
 	// Y check
 	normal.y += normal.y >= 0.0f ? -flag : flag;
 	// Return normalised normal
-	return normalize(normal); // FIXME: Convert to view space
+	return normalize(invViewNrm * normal);
 }

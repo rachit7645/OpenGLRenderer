@@ -45,6 +45,8 @@
 #include "UpSampleShader.h"
 #include "BloomRenderer.h"
 #include "SSAOShader.h"
+#include "SSAOBlurShader.h"
+#include "SSAOBuffers.h"
 
 namespace Renderer
 {
@@ -61,7 +63,6 @@ namespace Renderer
 		using MdPtr       = std::shared_ptr<Model>;
 		using Batch       = std::unordered_map<MdPtr, EntityPtrs>;
 		using TxPtr       = std::shared_ptr<Texture>;
-		using FbPtr       = std::shared_ptr<FrameBuffer>;
 
 		// Main constructor
 		RenderManager();
@@ -70,6 +71,7 @@ namespace Renderer
 		Renderer::ShadowMap       m_shadowMap;
 		Waters::WaterFrameBuffers m_waterFBOs;
 		Renderer::GBuffer         m_gBuffer;
+		Renderer::SSAOBuffers     m_ssaoBuffers;
 		Renderer::LightingBuffer  m_lightingBuffer;
 		Renderer::BloomBuffer     m_bloomBuffer;
 
@@ -85,17 +87,31 @@ namespace Renderer
 
 		// Instances Shader Storage Buffer
 		std::shared_ptr<InstanceBuffer> m_instances;
+		// Matrix Uniform Buffer
+		std::shared_ptr<MatrixBuffer> m_matrices;
+		// Lights Uniform Buffer
+		std::shared_ptr<LightsBuffer> m_lights;
+		// Shared Uniform Buffer
+		std::shared_ptr<SharedBuffer> m_shared;
+
 		// Instanced renderer and shaders
 		Shader::FastInstancedShader m_fastInstancedShader;
 		Shader::ShadowShader        m_shadowShader;
 		Renderer::InstancedRenderer m_instancedRenderer;
 
-		// Deferred renderers and shaders
-		Shader::GBufferShader         m_gShader;
-		Renderer::GBufferRenderer     m_gRenderer;
-		Shader::SSAOShader            m_ssaoShader;
-		Shader::LightingShader        m_lightShader;
-		Renderer::LightingRenderer    m_lightRenderer;
+		// Geometry renderer and shader
+		Shader::GBufferShader     m_gShader;
+		Renderer::GBufferRenderer m_gRenderer;
+
+		// SSAO renderer and shaders
+		Shader::SSAOShader     m_ssaoShader;
+		Shader::SSAOBlurShader m_ssaoBlurShader;
+
+		// Lighting renderer and shader
+		Shader::LightingShader     m_lightShader;
+		Renderer::LightingRenderer m_lightRenderer;
+
+		// Post process renderer and shader
 		Shader::PostProcessShader     m_postShader;
 		Renderer::PostProcessRenderer m_postRenderer;
 
@@ -116,13 +132,6 @@ namespace Renderer
 		Batch m_entities;
 		// The Skybox
 		Entities::Skybox m_skybox;
-
-		// Matrix Uniform Buffer
-		std::shared_ptr<MatrixBuffer> m_matrices;
-		// Lights Uniform Buffer
-		std::shared_ptr<LightsBuffer> m_lights;
-		// Shared Uniform Buffer
-		std::shared_ptr<SharedBuffer> m_shared;
 
 		// GPU Info
 		std::string m_glVendor;

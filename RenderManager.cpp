@@ -8,8 +8,10 @@
 #include "GL.h"
 #include "Settings.h"
 
+// Using namespaces
 using namespace Renderer;
 
+// Usings
 using Entities::Entity;
 using Entities::PointLight;
 using Entities::Camera;
@@ -23,6 +25,9 @@ RenderManager::RenderManager()
 	: m_iblRenderer(m_converterShader, m_convolutionShader, m_preFilterShader, m_brdfShader),
 	  m_iblMaps(m_iblRenderer),
 	  m_instances(std::make_shared<InstanceBuffer>()),
+	  m_matrices(std::make_shared<MatrixBuffer>()),
+	  m_lights(std::make_shared<LightsBuffer>()),
+	  m_shared(std::make_shared<SharedBuffer>()),
 	  m_instancedRenderer(m_fastInstancedShader, m_shadowShader, m_shadowMap, m_iblMaps, m_instances),
 	  m_gRenderer(m_gShader, m_instances),
 	  m_lightRenderer(m_lightShader, m_shadowMap, m_gBuffer, m_iblMaps),
@@ -31,9 +36,6 @@ RenderManager::RenderManager()
 	  m_skyboxRenderer(m_skyboxShader),
 	  m_waterRenderer(m_waterShader, m_waterFBOs),
 	  m_skybox(m_iblMaps.cubeMap),
-	  m_matrices(std::make_shared<MatrixBuffer>()),
-	  m_lights(std::make_shared<LightsBuffer>()),
-	  m_shared(std::make_shared<SharedBuffer>()),
 	  m_glVendor(GL::GetString(GL_VENDOR)),
 	  m_glRenderer(GL::GetString(GL_RENDERER)),
 	  m_glVersion(GL::GetString(GL_VERSION)),
@@ -334,22 +336,28 @@ void RenderManager::RenderSkyboxScene()
 
 void RenderManager::ProcessEntity(Entity& entity)
 {
+	// Lookup model
 	auto iter = m_entities.find(entity.model);
 
+	// If a batch was found
 	if (iter != m_entities.end())
 	{
+		// Add entity to existing batch
 		iter->second.emplace_back(&entity);
 	}
 	else
 	{
+		// Create a new batch
 		m_entities[entity.model] = {&entity};
 	}
 }
 
 void RenderManager::ProcessEntities(EntityVec& entities)
 {
+	// For all entities
 	for (auto& entity : entities)
 	{
+		// Process entity
 		ProcessEntity(entity);
 	}
 }

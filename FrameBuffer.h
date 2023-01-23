@@ -97,6 +97,7 @@ namespace Renderer
 		friend class IBLRenderer;
 		friend class LightingBuffer;
 		friend class BloomBuffer;
+		friend class SSAOBuffers;
 		friend class Waters::WaterFrameBuffers;
 	};
 }

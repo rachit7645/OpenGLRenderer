@@ -100,6 +100,7 @@ add_executable(engine
 	SSAOShader.cpp
 	SSAORenderer.cpp
 	SSAOBuffer.cpp
+	SSAOBlurShader.cpp
 )
 
 # Precompiled Headers
