@@ -22,10 +22,11 @@ void LightingShader::GetUniformLocations()
 	m_uniforms["gEmmisive"]     = GetUniformLocation("gEmmisive");
 	m_uniforms["gMaterial"]     = GetUniformLocation("gMaterial");
 	m_uniforms["gDepth"]        = GetUniformLocation("gDepth");
-	m_uniforms["shadowMap"]     = GetUniformLocation("shadowMap");
 	m_uniforms["irradianceMap"] = GetUniformLocation("irradianceMap");
 	m_uniforms["prefilterMap"]  = GetUniformLocation("prefilterMap");
 	m_uniforms["brdfLUT"]       = GetUniformLocation("brdfLUT");
+	m_uniforms["shadowMap"]     = GetUniformLocation("shadowMap");
+	m_uniforms["ssaoBlur"]      = GetUniformLocation("ssaoBlur");
 }
 
 void LightingShader::ConnectTextureUnits()
@@ -36,8 +37,9 @@ void LightingShader::ConnectTextureUnits()
 	LoadUniform(m_uniforms["gEmmisive"],     2);
 	LoadUniform(m_uniforms["gMaterial"],     3);
 	LoadUniform(m_uniforms["gDepth"],        4);
-	LoadUniform(m_uniforms["shadowMap"],     5);
-	LoadUniform(m_uniforms["irradianceMap"], 6);
-	LoadUniform(m_uniforms["prefilterMap"],  7);
-	LoadUniform(m_uniforms["brdfLUT"],       8);
+	LoadUniform(m_uniforms["irradianceMap"], 5);
+	LoadUniform(m_uniforms["prefilterMap"],  6);
+	LoadUniform(m_uniforms["brdfLUT"],       7);
+	LoadUniform(m_uniforms["shadowMap"],     8);
+	LoadUniform(m_uniforms["ssaoBlur"],      9);
 }

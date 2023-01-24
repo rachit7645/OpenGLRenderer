@@ -45,8 +45,6 @@ IBLRenderer::IBLRenderer
 	converter.ConnectTextureUnits();
 	// Load projection
 	converter.LoadProjection(m_projection);
-	// Stop shader
-	converter.Stop();
 
 	// Start convolution shader
 	convolution.Start();
@@ -54,8 +52,6 @@ IBLRenderer::IBLRenderer
 	convolution.ConnectTextureUnits();
 	// Load projection
 	convolution.LoadProjection(m_projection);
-	// Stop shader
-	convolution.Stop();
 
 	// Start convolution shader
 	preFilter.Start();

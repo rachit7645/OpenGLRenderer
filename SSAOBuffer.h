@@ -18,7 +18,7 @@ namespace Renderer
 		SSAOBuffer();
 
 		// Load sample kernels
-		void LoadKernels(const std::vector<glm::vec3>& kernels);
+		void LoadKernels(const std::vector<glm::vec4>& kernels);
 	};
 
 	namespace Detail

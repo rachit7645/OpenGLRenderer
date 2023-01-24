@@ -47,6 +47,7 @@
 #include "SSAOShader.h"
 #include "SSAOBlurShader.h"
 #include "SSAOBuffers.h"
+#include "SSAORenderer.h"
 
 namespace Renderer
 {
@@ -106,19 +107,20 @@ namespace Renderer
 		// SSAO renderer and shaders
 		Shader::SSAOShader     m_ssaoShader;
 		Shader::SSAOBlurShader m_ssaoBlurShader;
+		Renderer::SSAORenderer m_ssaoRenderer;
 
 		// Lighting renderer and shader
 		Shader::LightingShader     m_lightShader;
 		Renderer::LightingRenderer m_lightRenderer;
 
-		// Post process renderer and shader
-		Shader::PostProcessShader     m_postShader;
-		Renderer::PostProcessRenderer m_postRenderer;
-
 		// Bloom renderer and shaders
 		Shader::DownSampleShader m_downSampleShader;
 		Shader::UpSampleShader   m_upSampleShader;
 		Renderer::BloomRenderer  m_bloomRenderer;
+
+		// Post process renderer and shader
+		Shader::PostProcessShader     m_postShader;
+		Renderer::PostProcessRenderer m_postRenderer;
 
 		// Skybox renderer and shader
 		Shader::SkyboxShader     m_skyboxShader;
@@ -165,6 +167,8 @@ namespace Renderer
 		void RenderWaterFBOs(const WaterTiles& waters, Entities::Camera& camera);
 		// Render global buffer
 		void RenderGBuffer(const Entities::Camera& camera);
+		// Render SSAO pass
+		void RenderSSAO();
 		// Render lighting pass
 		void RenderLighting(const Entities::Camera& camera);
 		// Render bloom passes

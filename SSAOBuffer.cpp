@@ -25,7 +25,7 @@ SSAOBuffer::SSAOBuffer()
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void SSAOBuffer::LoadKernels(const std::vector<glm::vec3>& kernels)
+void SSAOBuffer::LoadKernels(const std::vector<glm::vec4>& kernels)
 {
 	// Bind UBO
 	glBindBuffer(GL_UNIFORM_BUFFER, id);

@@ -52,6 +52,7 @@ struct GBuffer
 	float metallic;
 	float roughness;
 	float ao;
+	float ssao;
 };
 
 // Per-fragment Shared Data
@@ -116,18 +117,19 @@ in      vec2 txCoords;
 in flat mat4 invProj;
 in flat mat4 invView;
 
-// Samplers
+// GBuffer samplers
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
 uniform sampler2D gEmmisive;
 uniform sampler2D gMaterial;
 uniform sampler2D gDepth;
-uniform sampler2D brdfLUT;
-// Array samplers
-uniform sampler2DArray shadowMap;
-// CubeMap samplers
+// IBL samplers
 uniform samplerCube irradianceMap;
 uniform samplerCube prefilterMap;
+uniform sampler2D   brdfLUT;
+// Other samplers
+uniform sampler2DArray shadowMap;
+uniform sampler2D      ssaoBlur;
 
 // Fragment outputs
 layout (location = 0) out vec3 outColor;
@@ -219,11 +221,12 @@ void main()
 GBuffer GetGBufferData()
 {
 	GBuffer gBuffer;
-	// Retrieve data from G-buffer
+	// Retrieve data from textures
 	vec4 gNorm = texture(gNormal,   txCoords);
 	vec4 gAlb  = texture(gAlbedo,   txCoords);
 	vec4 gEmm  = texture(gEmmisive, txCoords);
 	vec4 gMat  = texture(gMaterial, txCoords);
+	vec4 ssao  = texture(ssaoBlur,  txCoords);
 	// Reconstruct Position
 	gBuffer.fragPos = ReconstructPosition();
 	// Normal
@@ -236,6 +239,8 @@ GBuffer GetGBufferData()
 	gBuffer.ao        = gMat.r;
 	gBuffer.roughness = gMat.g;
 	gBuffer.metallic  = gMat.b;
+	// SSAO data
+	gBuffer.ssao = ssao.r;
 	// Return
 	return gBuffer;
 }
@@ -397,7 +402,7 @@ vec3 CalculateAmbient(SharedData sharedData, GBuffer gBuffer)
 	vec3 specular         = prefilteredColor * (F * brdf.x + brdf.y);
 
 	// Add up ambient
-	vec3 ambient = (kD * diffuse + specular) * gBuffer.ao;
+	vec3 ambient = (kD * diffuse + specular) * gBuffer.ao * gBuffer.ssao;
 
 	// Return
 	return ambient;

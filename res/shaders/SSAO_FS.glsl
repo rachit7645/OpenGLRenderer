@@ -31,7 +31,7 @@ layout(std140, binding = 5) uniform SSAOBuffer
 in      vec2 txCoords;
 in flat mat4 invProj;
 in flat mat4 invView;
-in flat mat3 invViewNrm;
+in flat mat3 nrmView;
 
 // Uniforms
 uniform sampler2D gNormal;
@@ -118,6 +118,6 @@ vec3 UnpackNormal(vec2 pNormal)
 	normal.x += normal.x >= 0.0f ? -flag : flag;
 	// Y check
 	normal.y += normal.y >= 0.0f ? -flag : flag;
-	// Return normalised normal
-	return normalize(invViewNrm * normal);
+	// Return normalised normal in view space
+	return normalize(nrmView * normal);
 }

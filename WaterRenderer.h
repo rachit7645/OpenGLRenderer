@@ -17,19 +17,27 @@ namespace Renderer
 	public:
 		// Usings
 		using VAO = std::shared_ptr<VertexArray>;
+
 		// Main constructor
 		WaterRenderer(Shader::WaterShader& shader, Waters::WaterFrameBuffers& waterFBOs);
 
+		// Data
 		Shader::WaterShader& shader;
 		Waters::WaterFrameBuffers& waterFBOs;
 
+		// Render waters
 		void Render(const std::vector<Waters::WaterTile>& waters);
 	private:
+		// Prepare render
 		void Prepare();
+		// Prepare water
 		void PrepareWater(const Waters::WaterTile& water);
+		// Unbind render
 		void Unbind();
 
+		// Tile VAO
 		VAO m_vao;
+		// Movement factor
 		f32 m_moveFactor = 0.0f;
 	};
 }

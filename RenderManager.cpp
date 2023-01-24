@@ -30,9 +30,10 @@ RenderManager::RenderManager()
 	  m_shared(std::make_shared<SharedBuffer>()),
 	  m_instancedRenderer(m_fastInstancedShader, m_shadowShader, m_shadowMap, m_iblMaps, m_instances),
 	  m_gRenderer(m_gShader, m_instances),
-	  m_lightRenderer(m_lightShader, m_shadowMap, m_gBuffer, m_iblMaps),
-	  m_postRenderer(m_postShader, m_lightingBuffer, m_bloomBuffer),
+	  m_ssaoRenderer(m_ssaoShader, m_ssaoBlurShader, m_ssaoBuffers, m_gBuffer),
+	  m_lightRenderer(m_lightShader, m_shadowMap, m_gBuffer, m_iblMaps, m_ssaoBuffers),
 	  m_bloomRenderer(m_downSampleShader, m_upSampleShader, m_lightingBuffer, m_bloomBuffer),
+	  m_postRenderer(m_postShader, m_lightingBuffer, m_bloomBuffer),
 	  m_skyboxRenderer(m_skyboxShader),
 	  m_waterRenderer(m_waterShader, m_waterFBOs),
 	  m_skybox(m_iblMaps.cubeMap),
@@ -167,6 +168,34 @@ void RenderManager::RenderGBuffer(const Camera& camera)
 	m_gBuffer.BindDefaultFBO();
 	// Disable stencil
 	glDisable(GL_STENCIL_TEST);
+}
+
+void RenderManager::RenderSSAO()
+{
+	// Bind SSAO buffer
+	m_ssaoBuffers.BindSSAOBuffer();
+	// Clear
+	Clear(GL_COLOR_BUFFER_BIT);
+	// Start shader
+	m_ssaoShader.Start();
+	// Render
+	m_ssaoRenderer.RenderSSAO();
+	// Stop shader (unnecessary, but safe)
+	m_ssaoShader.Stop();
+
+	// Bind SSAO blur buffer
+	m_ssaoBuffers.BindSSAOBlurBuffer();
+	// Clear
+	Clear(GL_COLOR_BUFFER_BIT);
+	// Start shader
+	m_ssaoBlurShader.Start();
+	// Render
+	m_ssaoRenderer.RenderSSAOBlur();
+	// Stop shader
+	m_ssaoBlurShader.Stop();
+
+	// Bind default FBO
+	m_ssaoBuffers.BindDefaultFBO();
 }
 
 void RenderManager::RenderLighting(const Camera& camera)
@@ -428,6 +457,16 @@ void RenderManager::RenderImGui()
 			if (ImGui::Button("GDepth"))
 			{
 				m_currentFBO = m_gBuffer.buffer->depthTexture;
+			}
+
+			if (ImGui::Button("SSAO"))
+			{
+				m_currentFBO = m_ssaoBuffers.ssaoBuffer->colorTextures[0];
+			}
+
+			if (ImGui::Button("SSAOBlur"))
+			{
+				m_currentFBO = m_ssaoBuffers.ssaoBlurBuffer->colorTextures[0];
 			}
 
 			if (ImGui::Button("Lighting"))

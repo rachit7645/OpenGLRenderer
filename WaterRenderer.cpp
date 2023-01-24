@@ -14,6 +14,7 @@ WaterRenderer::WaterRenderer(Shader::WaterShader& shader, Waters::WaterFrameBuff
 	: shader(shader),
 	  waterFBOs(waterFBOs)
 {
+	// Tile vertex data
 	const std::vector<f32> TILE_VERTICES =
 	{
 		-1.0f, -1.0f,
@@ -24,8 +25,10 @@ WaterRenderer::WaterRenderer(Shader::WaterShader& shader, Waters::WaterFrameBuff
 		 1.0f,  1.0f
 	};
 
+	// Create tile VAO
 	m_vao = std::make_shared<VertexArray>(2, TILE_VERTICES);
 
+	// Connect texture units
 	shader.Start();
 	shader.ConnectTextureUnits();
 	shader.Stop();
@@ -33,12 +36,17 @@ WaterRenderer::WaterRenderer(Shader::WaterShader& shader, Waters::WaterFrameBuff
 
 void WaterRenderer::Render(const std::vector<WaterTile>& waters)
 {
+	// Prepare render
 	Prepare();
+	// For all waters
 	for (const auto& water : waters)
 	{
+		// Prepare water
 		PrepareWater(water);
+		// Draw water tile
 		glDrawArrays(GL_TRIANGLES, 0, m_vao->vertexCount);
 	}
+	// Unbind render
 	Unbind();
 }
 
@@ -75,5 +83,6 @@ void WaterRenderer::PrepareWater(const WaterTile& water)
 
 void WaterRenderer::Unbind()
 {
+	// Unbind VAO
 	glBindVertexArray(0);
 }

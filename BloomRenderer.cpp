@@ -38,7 +38,6 @@ BloomRenderer::BloomRenderer
 	// Set down shader
 	downShader.Start();
 	downShader.ConnectTextureUnits();
-	downShader.Stop();
 
 	// Set up shader
 	upShader.Start();

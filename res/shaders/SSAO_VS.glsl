@@ -14,7 +14,7 @@ layout(location = 0) in vec2 position;
 out      vec2 txCoords;
 out flat mat4 invProj;
 out flat mat4 invView;
-out flat mat3 invViewNrm;
+out flat mat3 nrmView;
 
 // Entry point
 void main()
@@ -25,7 +25,7 @@ void main()
 	txCoords = position + vec2(1.0f);
 	txCoords = txCoords / 2.0f;
 	// Set inverse matrices
-	invProj    = inverse(projectionMatrix);
-	invView    = inverse(viewMatrix);
-	invViewNrm = inverse(mat3(viewMatrix));
+	invProj = inverse(projectionMatrix);
+	invView = inverse(viewMatrix);
+	nrmView = transpose(inverse(mat3(viewMatrix)));
 }

@@ -111,7 +111,7 @@ void SSAOBuffers::CreateNoiseTexture()
 void SSAOBuffers::LoadKernels()
 {
 	// Create kernel sample data
-	std::vector<glm::vec3> ssaoKernel;
+	std::vector<glm::vec4> ssaoKernel;
 	// Allocate memory for data
 	ssaoKernel.reserve(64);
 
@@ -138,6 +138,27 @@ void SSAOBuffers::LoadKernels()
 		sample *= scale;
 
 		// Add sample to kernel
-		ssaoKernel.emplace_back(sample);
+		ssaoKernel.emplace_back(sample, 1.0f);
 	}
+
+	// Load to GPU
+	m_ssaoBuffer->LoadKernels(ssaoKernel);
+}
+
+void SSAOBuffers::BindSSAOBuffer() const
+{
+	// Bind SSAO buffer
+	ssaoBuffer->Bind();
+}
+
+void SSAOBuffers::BindSSAOBlurBuffer() const
+{
+	// Bind SSAO blur buffer
+	ssaoBlurBuffer->Bind();
+}
+
+void SSAOBuffers::BindDefaultFBO() const
+{
+	// Unbind
+	ssaoBuffer->Unbind();
 }
