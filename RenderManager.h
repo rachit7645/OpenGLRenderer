@@ -64,6 +64,7 @@ namespace Renderer
 		using MdPtr       = std::shared_ptr<Model>;
 		using Batch       = std::unordered_map<MdPtr, EntityPtrs>;
 		using TxPtr       = std::shared_ptr<Texture>;
+		using FbPtr       = std::shared_ptr<FrameBuffer>;
 
 		// Main constructor
 		RenderManager();
@@ -180,8 +181,8 @@ namespace Renderer
 	private:
 		// Clears current frame buffer according to set flags
 		void Clear(GLbitfield flags);
-		// Copy depth from GBuffer to main FBO
-		void CopyDepth();
+		// Copy selected data from GBuffer to selected FBO
+		void CopyGBuffer(FbPtr& drawBuffer, GLbitfield flags);
 		// Render water scene (forward)
 		void RenderWaterScene(const Entities::Camera& camera, const glm::vec4& clipPlane);
 		// Render shadow scene (forward)

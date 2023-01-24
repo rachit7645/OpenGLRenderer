@@ -10,6 +10,9 @@ using namespace Renderer;
 // Usings
 using Engine::Settings;
 
+// Constants
+constexpr usize NUM_SAMPLES = 6;
+
 SSAOBuffers::SSAOBuffers()
 	: ssaoBuffer(std::make_shared<FrameBuffer>()),
 	  ssaoBlurBuffer(std::make_shared<FrameBuffer>()),
@@ -41,6 +44,13 @@ void SSAOBuffers::InitBuffers()
 		GL_COLOR_ATTACHMENT0
 	};
 
+	// Stencil attachment
+	Renderer::FBOAttachment stencil = {};
+	{
+		stencil.intFormat = GL_STENCIL_INDEX8;
+		stencil.slot      = GL_STENCIL_ATTACHMENT;
+	}
+
 	// Draw buffers
 	std::vector<GLenum> drawBuffers =
 	{
@@ -55,6 +65,7 @@ void SSAOBuffers::InitBuffers()
 	ssaoBuffer->CreateFrameBuffer();
 	ssaoBuffer->Bind();
 	ssaoBuffer->AddTexture(ssaoBuffer->colorTextures[0], occlusion);
+	ssaoBuffer->AddBuffer(ssaoBuffer->stencilRenderBuffer, stencil);
 	ssaoBuffer->SetDrawBuffers(drawBuffers);
 	ssaoBuffer->CheckStatus();
 	ssaoBuffer->Unbind();
@@ -67,6 +78,7 @@ void SSAOBuffers::InitBuffers()
 	ssaoBlurBuffer->CreateFrameBuffer();
 	ssaoBlurBuffer->Bind();
 	ssaoBlurBuffer->AddTexture(ssaoBlurBuffer->colorTextures[0], occlusion);
+	ssaoBlurBuffer->AddBuffer(ssaoBlurBuffer->stencilRenderBuffer, stencil);
 	ssaoBlurBuffer->SetDrawBuffers(drawBuffers);
 	ssaoBlurBuffer->CheckStatus();
 	ssaoBlurBuffer->Unbind();
@@ -113,10 +125,10 @@ void SSAOBuffers::LoadKernels()
 	// Create kernel sample data
 	std::vector<glm::vec4> ssaoKernel;
 	// Allocate memory for data
-	ssaoKernel.reserve(64);
+	ssaoKernel.reserve(NUM_SAMPLES);
 
 	// For each kernel
-	for (usize i = 0; i < 64; ++i)
+	for (usize i = 0; i < NUM_SAMPLES; ++i)
 	{
 		// Create sample
 		auto sample = glm::vec3
@@ -131,7 +143,7 @@ void SSAOBuffers::LoadKernels()
 		sample *= Util::RandRange(0.0f, 1.0f);
 
 		// Get scale factor
-		f32 scale = static_cast<f32>(i) / 64.0f;
+		f32 scale = static_cast<f32>(i) / static_cast<f32>(NUM_SAMPLES);
 		// Scale samples to align them to the center
 		scale = Maths::Lerp(0.1f, 1.0f, scale * scale);
 		// Offset sample by scale

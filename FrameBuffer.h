@@ -51,6 +51,7 @@ namespace Renderer
 		// RenderBuffers
 		RdBufPtr colorRenderBuffer;
 		RdBufPtr depthRenderBuffer;
+		RdBufPtr stencilRenderBuffer;
 
 		// Set buffers
 		void SetDrawBuffer(GLenum value);

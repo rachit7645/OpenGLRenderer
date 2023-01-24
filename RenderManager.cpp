@@ -172,10 +172,24 @@ void RenderManager::RenderGBuffer(const Camera& camera)
 
 void RenderManager::RenderSSAO()
 {
+	// Disable depth test
+	glDisable(GL_DEPTH_TEST);
+	// Enable stencil
+	glEnable(GL_STENCIL_TEST);
+
 	// Bind SSAO buffer
 	m_ssaoBuffers.BindSSAOBuffer();
+	// Clear all bits
+	glStencilMask(0xFF);
 	// Clear
-	Clear(GL_COLOR_BUFFER_BIT);
+	Clear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	// Copy stencil
+	CopyGBuffer(m_ssaoBuffers.ssaoBuffer, GL_STENCIL_BUFFER_BIT);
+	// Bind FBO again
+	m_ssaoBuffers.BindSSAOBuffer();
+	// Set stencil parameters
+	glStencilFunc(GL_EQUAL, 1, 0xFF);
+	glStencilMask(0x00);
 	// Start shader
 	m_ssaoShader.Start();
 	// Render
@@ -185,8 +199,17 @@ void RenderManager::RenderSSAO()
 
 	// Bind SSAO blur buffer
 	m_ssaoBuffers.BindSSAOBlurBuffer();
+	// Clear all bits
+	glStencilMask(0xFF);
 	// Clear
-	Clear(GL_COLOR_BUFFER_BIT);
+	Clear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	// Copy stencil
+	CopyGBuffer(m_ssaoBuffers.ssaoBlurBuffer, GL_STENCIL_BUFFER_BIT);
+	// Bind FBO again
+	m_ssaoBuffers.BindSSAOBlurBuffer();
+	// Set stencil parameters
+	glStencilFunc(GL_EQUAL, 1, 0xFF);
+	glStencilMask(0x00);
 	// Start shader
 	m_ssaoBlurShader.Start();
 	// Render
@@ -194,24 +217,30 @@ void RenderManager::RenderSSAO()
 	// Stop shader
 	m_ssaoBlurShader.Stop();
 
+	// Disable stencil
+	glDisable(GL_STENCIL_TEST);
+	// Re-enable depth test
+	glEnable(GL_DEPTH_TEST);
 	// Bind default FBO
 	m_ssaoBuffers.BindDefaultFBO();
 }
 
 void RenderManager::RenderLighting(const Camera& camera)
 {
-	// Bind FBO
-	m_lightingBuffer.BindLightingBuffer();
 	// Disable depth test
 	glDisable(GL_DEPTH_TEST);
 	// Enable stencil
 	glEnable(GL_STENCIL_TEST);
+
+	// Bind FBO
+	m_lightingBuffer.BindLightingBuffer();
 	// Clear all bits
 	glStencilMask(0xFF);
 	// Clear FBO
 	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	// Copy depth
-	CopyDepth();
+	CopyGBuffer(m_lightingBuffer.buffer, GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
 	// Bind FBO again
 	m_lightingBuffer.BindLightingBuffer();
 	// Set stencil parameters
@@ -224,6 +253,7 @@ void RenderManager::RenderLighting(const Camera& camera)
 	m_lightShader.Start();
 	m_lightRenderer.Render();
 	m_lightShader.Stop();
+
 	// Disable stencil
 	glDisable(GL_STENCIL_TEST);
 	// Re-enable depth test
@@ -295,24 +325,24 @@ void RenderManager::RenderSkybox()
 	m_lightingBuffer.BindDefaultFBO();
 }
 
-void RenderManager::CopyDepth()
+void RenderManager::CopyGBuffer(FbPtr& drawBuffer, GLbitfield flags)
 {
-	// Get settings
-	const auto& settings = Settings::GetInstance();
 	// Bind buffers
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_gBuffer.buffer->id);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_lightingBuffer.buffer->id);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawBuffer->id);
 	// Copy depth
 	glBlitFramebuffer
 	(
-		0, 0,
-		settings.window.dimensions.x,
-		settings.window.dimensions.y,
-		0, 0,
-		settings.window.dimensions.x,
-		settings.window.dimensions.y,
-		GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
-		GL_NEAREST
+		0,                        // Source X bound
+		0,                        // Source Y bound
+		m_gBuffer.buffer->width,  // Source width
+		m_gBuffer.buffer->height, // Source height
+		0,                        // Destination X bound
+		0,                        // Destination Y bound
+		drawBuffer->width,        // Destination width
+		drawBuffer->height,       // Destination height
+		flags,                    // Copy flags
+		GL_NEAREST                // Filtering
 	);
 	// Unbind
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);

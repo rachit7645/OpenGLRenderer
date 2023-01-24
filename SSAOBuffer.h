@@ -23,6 +23,7 @@ namespace Renderer
 
 	namespace Detail
 	{
+		// Internal representation of GPU data
 		struct SSAOBufferGLSL
 		{
 			alignas(16) GL::Int   kernelSize;

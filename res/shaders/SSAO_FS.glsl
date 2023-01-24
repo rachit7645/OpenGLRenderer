@@ -45,6 +45,9 @@ layout(location = 0) out float outColor;
 vec3 ReconstructPosition(vec2 coords);
 vec3 UnpackNormal(vec2 pNormal);
 
+// Branchless functions
+vec4 WhenGreaterEqual(vec4 x, vec4 y);
+
 // Entry point
 void main()
 {
@@ -84,7 +87,8 @@ void main()
 
 		// Range check and accumulate
 		float rangeCheck = smoothstep(0.0f, 1.0f, RADIUS / abs(fragPos.z - sampleDepth));
-		occlusion       += (sampleDepth >= samplePos.z + BIAS ? 1.0f : 0.0f) * rangeCheck;
+		float checkDepth = WhenGreaterEqual(vec4(sampleDepth), vec4(samplePos.z + BIAS)).x;
+		occlusion       += checkDepth * rangeCheck;
 	}
 
 	// Finalise occlusion
@@ -120,4 +124,14 @@ vec3 UnpackNormal(vec2 pNormal)
 	normal.y += normal.y >= 0.0f ? -flag : flag;
 	// Return normalised normal in view space
 	return normalize(nrmView * normal);
+}
+
+// Branchless implementation of
+// if (x >= y)
+//	 return 1;
+// else
+// 	 return 0;
+vec4 WhenGreaterEqual(vec4 x, vec4 y)
+{
+	return 1.0f - max(sign(y - x), 0.0f);
 }
