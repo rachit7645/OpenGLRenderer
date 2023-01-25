@@ -425,11 +425,6 @@ void RenderManager::RenderImGui()
 				m_currentFBO = m_gBuffer.buffer->colorTextures[2];
 			}
 
-			if (ImGui::Button("GMaterial"))
-			{
-				m_currentFBO = m_gBuffer.buffer->colorTextures[3];
-			}
-
 			if (ImGui::Button("GDepth"))
 			{
 				m_currentFBO = m_gBuffer.buffer->depthTexture;

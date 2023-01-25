@@ -1,17 +1,5 @@
 #version 430 core
 
-// Disable on other vendors
-#define VENDOR_NVIDIA 1
-
-// Nvidia specific optimisations
-#ifdef VENDOR_NVIDIA
-// Unroll all loops
-// #pragma optionNV(unroll all)
-// Inline all functions
-// #pragma optionNV(inline all)
-// End Nvidia
-#endif
-
 // Lighting constants
 const float PI                 = 3.14159265359;
 const int   MAX_LIGHTS         = 4;
@@ -71,26 +59,25 @@ struct SharedData
 {
 	vec3 N;
 	vec3 V;
-	vec3 R;
 	vec3 F0;
 };
 
 // Common Light Information
 struct LightInfo
 {
-	vec3  position;
-	vec3  color;
-	vec3  distance;
-	vec3  intensity;
-	float attenuation;
-	float spotIntensity;
+	vec3 L;
+	vec3 radiance;
 };
 
 // Matrix buffer
 layout(std140, binding = 0) uniform Matrices
 {
-	mat4 projectionMatrix;
-	mat4 viewMatrix;
+	// Regular matrices
+	mat4 projection;
+	mat4 cameraView;
+	// Inverse matrices
+	mat4 invProjection;
+	mat4 invCameraView;
 };
 
 // Lights buffer
@@ -124,15 +111,12 @@ layout (std140, binding = 4) uniform ShadowBuffer
 };
 
 // Vertex inputs
-in      vec2 txCoords;
-in flat mat4 invProj;
-in flat mat4 invView;
+in vec2 txCoords;
 
 // GBuffer samplers
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
 uniform sampler2D gEmmisive;
-uniform sampler2D gMaterial;
 uniform sampler2D gDepth;
 // IBL samplers
 uniform samplerCube irradianceMap;
@@ -150,6 +134,10 @@ SharedData GetSharedData(GBuffer gBuffer);
 LightInfo  GetDirLightInfo(int index);
 LightInfo  GetPointLightInfo(int index, GBuffer gBuffer);
 LightInfo  GetSpotLightInfo(int index, GBuffer gBuffer);
+
+// Special light functions
+float CalculateAttenuation(vec3 position, vec3 ATT, GBuffer gBuffer);
+float CalculateSpotIntensity(vec3 L, vec3 direction, vec2 cutOff, GBuffer gBuffer);
 
 // Memory compression functions
 vec3 ReconstructPosition();
@@ -235,19 +223,17 @@ GBuffer GetGBufferData()
 	vec4 gNorm = texture(gNormal,   txCoords);
 	vec4 gAlb  = texture(gAlbedo,   txCoords);
 	vec4 gEmm  = texture(gEmmisive, txCoords);
-	vec4 gMat  = texture(gMaterial, txCoords);
 	// Reconstruct Position
 	gBuffer.fragPos = ReconstructPosition();
-	// Normal
-	gBuffer.normal = UnpackNormal(gNorm.rg);
-	// Albedo
-	gBuffer.albedo = gAlb.rgb;
-	// Emmisive color
+	// Normal + AO + Roughness
+	gBuffer.normal    = UnpackNormal(gNorm.rg);
+	gBuffer.ao        = gNorm.b;
+	gBuffer.roughness = gNorm.a;
+	// Albedo + Metallic
+	gBuffer.albedo   = gAlb.rgb;
+	gBuffer.metallic = gAlb.a;
+	// Emmisive
 	gBuffer.emmisive = gEmm.rgb;
-	// AO + Roughness + Metallic
-	gBuffer.ao        = gMat.r;
-	gBuffer.roughness = gMat.g;
-	gBuffer.metallic  = gMat.b;
 	// Return
 	return gBuffer;
 }
@@ -259,8 +245,6 @@ SharedData GetSharedData(GBuffer gBuffer)
 	sharedData.N = gBuffer.normal;
 	// Camera vector
 	sharedData.V = normalize(cameraPos.xyz - gBuffer.fragPos);
-	// Reflection vector
-	sharedData.R = reflect(-sharedData.V, sharedData.N);
 	// Metallic coefficient
 	sharedData.F0 = mix(vec3(0.04f), gBuffer.albedo, gBuffer.metallic);
 	// Return shared data
@@ -270,18 +254,12 @@ SharedData GetSharedData(GBuffer gBuffer)
 LightInfo GetDirLightInfo(int index)
 {
 	LightInfo info;
-	// Position
-	info.position = dirLights[index].position.xyz;
-	// Color
-	info.color = dirLights[index].color.rgb;
-	// Distance
-	info.distance = -info.position;
-	// Intensity
-	info.intensity = dirLights[index].intensity.xyz;
-	// Attenuation
-	info.attenuation = 1.0f;
-	// Spot Intensity
-	info.spotIntensity = 1.0f;
+	// Get light
+	DirLight light = dirLights[index];
+	// Light vector
+	info.L = normalize(-light.position.xyz);
+	// Radiance
+	info.radiance = light.color.rgb * light.intensity.xyz;
 	// Return
 	return info;
 }
@@ -289,21 +267,14 @@ LightInfo GetDirLightInfo(int index)
 LightInfo GetPointLightInfo(int index, GBuffer gBuffer)
 {
 	LightInfo info;
-	// Position
-	info.position = pointLights[index].position.xyz;
-	// Color
-	info.color = pointLights[index].color.rgb;
-	// Distance
-	info.distance = info.position - gBuffer.fragPos;
-	// Intensity
-	info.intensity = pointLights[index].intensity.xyz;
+	// Get light
+	PointLight light = pointLights[index];
+	// Light vector
+	info.L = normalize(light.position.xyz - gBuffer.fragPos);
 	// Attenuation
-	vec3  ATT        = pointLights[index].attenuation.xyz;
-	float distance   = length(info.distance);
-	info.attenuation = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
-	info.attenuation = 1.0f / info.attenuation;
-	// Spot Intensity
-	info.spotIntensity = 1.0f;
+	float attenuation = CalculateAttenuation(light.position.xyz, light.attenuation.xyz, gBuffer);
+	// Radiance
+	info.radiance = light.color.rgb * light.intensity.xyz * attenuation;
 	// Return
 	return info;
 }
@@ -311,25 +282,42 @@ LightInfo GetPointLightInfo(int index, GBuffer gBuffer)
 LightInfo GetSpotLightInfo(int index, GBuffer gBuffer)
 {
 	LightInfo info;
-	// Position
-	info.position = spotLights[index].position.xyz;
-	// Color
-	info.color = spotLights[index].color.rgb;
-	// Distance
-	info.distance = info.position - gBuffer.fragPos;
-	// Intensity
-	info.intensity = spotLights[index].intensity.xyz;
+	// Get light
+	SpotLight light = spotLights[index];
+	// Light vector
+	info.L = normalize(light.position.xyz - gBuffer.fragPos);
 	// Attenuation
-	vec3  ATT        = spotLights[index].attenuation.xyz;
-	float distance   = length(info.distance);
-	info.attenuation = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
-	info.attenuation = 1.0f / info.attenuation;
-	// Spot Intensity
-	float theta        = dot(normalize(info.distance), normalize(-spotLights[index].direction.xyz));
-	float epsilon      = spotLights[index].cutOff.x - spotLights[index].cutOff.y;
-	info.spotIntensity = smoothstep(0.0f, 1.0f, (theta - spotLights[index].cutOff.y) / epsilon);
+	float attenuation = CalculateAttenuation(light.position.xyz, light.attenuation.xyz, gBuffer);
+	// Spot intensity
+	float intensity = CalculateSpotIntensity(info.L, light.direction.xyz, light.cutOff.xy, gBuffer);
+	// Radiance
+	info.radiance = light.color.rgb * light.intensity.xyz * attenuation * intensity;
 	// Return
 	return info;
+}
+
+float CalculateAttenuation(vec3 position, vec3 ATT, GBuffer gBuffer)
+{
+	// Get distance
+	float distance = length(position - gBuffer.fragPos);
+	// Calculate attenuation
+	float attenuation = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
+	// Make attenuation multiplicable
+	attenuation = 1.0f / attenuation;
+	// Return
+	return attenuation;
+}
+
+float CalculateSpotIntensity(vec3 L, vec3 direction, vec2 cutOff, GBuffer gBuffer)
+{
+	// Calculate angle
+	float theta = dot(L, normalize(-direction));
+	// Calculate cut off epsilon
+	float epsilon = cutOff.x - cutOff.y;
+	// Calculate intensity
+	float intensity = smoothstep(0.0f, 1.0f, (theta - cutOff.y) / epsilon);
+	// Return
+	return intensity;
 }
 
 vec3 ReconstructPosition()
@@ -337,11 +325,11 @@ vec3 ReconstructPosition()
 	// Get depth
 	float depth = texture(gDepth, txCoords).r;
 	// Invert projection
-	vec4 projectedPos = invProj * (vec4(txCoords, depth, 1.0f) * 2.0f - 1.0f);
+	vec4 projectedPos = invProjection * (vec4(txCoords, depth, 1.0f) * 2.0f - 1.0f);
 	// Invert view
 	vec3 viewPos = projectedPos.xyz / projectedPos.w;
 	// Get world position
-	vec3 worldPos = vec3(invView * vec4(viewPos, 1.0f));
+	vec3 worldPos = vec3(invCameraView * vec4(viewPos, 1.0f));
 	// Return
 	return worldPos;
 }
@@ -365,21 +353,22 @@ vec3 UnpackNormal(vec2 pNormal)
 
 vec3 CalculateLight(SharedData sharedData, GBuffer gBuffer, LightInfo lightInfo)
 {
-	// Irradiance
-	vec3 L        = normalize(lightInfo.distance);
-	vec3 H        = normalize(sharedData.V + L);
-	vec3 radiance = lightInfo.color * lightInfo.intensity * lightInfo.attenuation * lightInfo.spotIntensity;
+	// Calculate half-way vector
+	vec3 H = normalize(sharedData.V + lightInfo.L);
+	// Calculate dots
+	float NdotL = max(dot(sharedData.N, lightInfo.L), 0.0f);
 
 	// Cook-Torrance BRDF
 	float NDF = DistributionGGX(sharedData.N, H, gBuffer.roughness);
-	float G   = GeometrySmith(sharedData.N, sharedData.V, L, gBuffer.roughness);
+	float G   = GeometrySmith(sharedData.N, sharedData.V, lightInfo.L, gBuffer.roughness);
 	vec3  F   = FresnelSchlick(max(dot(H, sharedData.V), 0.0f), sharedData.F0);
 
 	// Combine specular
-	vec3 numerator = NDF * G * F;
-	// To prevent division by zero, divide by at least 0.0001f (close enough)
-	float denominator = max(4.0f * max(dot(sharedData.N, sharedData.V), 0.0f) * max(dot(sharedData.N, L), 0.0f), 0.0001f);
-	vec3  specular    = numerator / denominator;
+	vec3  numerator   = NDF * G * F;
+	float denominator = 4.0f * max(dot(sharedData.N, sharedData.V), 0.0f) * max(dot(sharedData.N, lightInfo.L), 0.0f);
+	// To prevent division by zero, divide by epsilon
+	denominator   = max(denominator, 0.0001f);
+	vec3 specular = numerator / denominator;
 
 	// Diffuse energy conservation
 	vec3 kS = F;
@@ -387,12 +376,14 @@ vec3 CalculateLight(SharedData sharedData, GBuffer gBuffer, LightInfo lightInfo)
 	kD     *= 1.0f - gBuffer.metallic;
 
 	// Add everthing up to Lo
-	float NdotL = max(dot(sharedData.N, L), 0.0f);
-	return (kD * gBuffer.albedo / PI + specular) * radiance * NdotL;
+	return (kD * gBuffer.albedo / PI + specular) * lightInfo.radiance * NdotL;
 }
 
 vec3 CalculateAmbient(SharedData sharedData, GBuffer gBuffer)
 {
+	// Reflection vector
+	vec3 R = reflect(-sharedData.V, sharedData.N);
+
 	// Ambient energy conservation
 	vec3 F  = FresnelSchlick(max(dot(sharedData.N, sharedData.V), 0.0f), sharedData.F0, gBuffer.roughness);
 	vec3 kS = F;
@@ -404,7 +395,7 @@ vec3 CalculateAmbient(SharedData sharedData, GBuffer gBuffer)
 	vec3 diffuse    = irradiance * gBuffer.albedo;
 
 	// Specular
-	vec3 prefilteredColor = textureLod(prefilterMap, sharedData.R, gBuffer.roughness * MAX_REFLECTION_LOD).rgb;
+	vec3 prefilteredColor = textureLod(prefilterMap, R, gBuffer.roughness * MAX_REFLECTION_LOD).rgb;
 	vec2 brdf             = texture(brdfLUT, vec2(max(dot(sharedData.N, sharedData.V), 0.0f), gBuffer.roughness)).rg;
 	vec3 specular         = prefilteredColor * (F * brdf.x + brdf.y);
 
@@ -483,7 +474,7 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0, float roughness)
 int GetCurrentLayer(GBuffer gBuffer)
 {
 	// Get view-space position
-	vec4 viewPosition = viewMatrix * vec4(gBuffer.fragPos, 1.0f);
+	vec4 viewPosition = cameraView * vec4(gBuffer.fragPos, 1.0f);
 	// Get depth
 	float depthValue = abs(viewPosition.z);
 	// Set layer to the highest value

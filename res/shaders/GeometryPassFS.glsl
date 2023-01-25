@@ -15,10 +15,9 @@ uniform sampler2D aoRghMtlMap;
 uniform sampler2D emmisiveMap;
 
 // Fragment outputs
-layout (location = 0) out vec2 gNormal;
-layout (location = 1) out vec3 gAlbedo;
+layout (location = 0) out vec4 gNormal;
+layout (location = 1) out vec4 gAlbedo;
 layout (location = 2) out vec3 gEmmisive;
-layout (location = 3) out vec3 gMaterial;
 
 // Normal functions
 vec3 GetNormalFromMap(vec3 normal);
@@ -32,14 +31,15 @@ void main()
 	vec4 gNrm = texture(normalMap,   txCoords);
 	vec4 gEmm = texture(emmisiveMap, txCoords);
 	vec4 gMat = texture(aoRghMtlMap, txCoords);
-	// Normal
+	// Normal + AO + Roughness
 	gNormal.rg = PackNormal(GetNormalFromMap(gNrm.rgb));
-	// Albedo
-	gAlbedo = pow(gAlb.rgb, vec3(GAMMA_FACTOR));
+	gNormal.b  = gMat.r;
+	gNormal.a  = gMat.g;
+	// Albedo + Metallic
+	gAlbedo.rgb = pow(gAlb.rgb, vec3(GAMMA_FACTOR));
+	gAlbedo.a   = gMat.b;
 	// Emmisive color
 	gEmmisive = pow(gEmm.rgb, vec3(GAMMA_FACTOR));
-	// AO + Roughness + Metallic
-	gMaterial = gMat.rgb;
 }
 
 vec3 GetNormalFromMap(vec3 normal)

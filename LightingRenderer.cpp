@@ -49,23 +49,20 @@ void LightingRenderer::Render()
 	// Activate gEmmisive
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[2]->id);
-	// Activate gMaterial
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->colorTextures[3]->id);
 	// Activate gDepth
-	glActiveTexture(GL_TEXTURE4);
+	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, gBuffer.buffer->depthTexture->id);
 	// Activate irradiance map
-	glActiveTexture(GL_TEXTURE5);
+	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, iblMaps.irradiance->id);
 	// Activate pre-filter map
-	glActiveTexture(GL_TEXTURE6);
+	glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, iblMaps.preFilter->id);
 	// Activate BRDF LUT map
-	glActiveTexture(GL_TEXTURE7);
+	glActiveTexture(GL_TEXTURE6);
 	glBindTexture(GL_TEXTURE_2D, iblMaps.brdfLut->id);
 	// Activate shadow map
-	glActiveTexture(GL_TEXTURE8);
+	glActiveTexture(GL_TEXTURE7);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, shadowMap.buffer->depthTexture->id);
 	// Render quad
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, m_vao->vertexCount);

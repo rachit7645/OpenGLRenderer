@@ -9,8 +9,12 @@ struct Instance
 // Matrix buffer
 layout(std140, binding = 0) uniform Matrices
 {
-	mat4 projectionMatrix;
-	mat4 viewMatrix;
+	// Regular matrices
+	mat4 projection;
+	mat4 cameraView;
+	// Inverse matrices
+	mat4 invProjection;
+	mat4 invCameraView;
 };
 
 // Instance data SSBO
@@ -38,7 +42,7 @@ void main()
 	// Set world position
 	worldPos = fragPos.xyz;
 	// Transform from world to clip space
-	gl_Position = projectionMatrix * viewMatrix * fragPos;
+	gl_Position = projection * cameraView * fragPos;
 	// Pass through texture coords
 	txCoords = texCoords;
 	// Get normal matrix

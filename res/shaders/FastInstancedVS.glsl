@@ -9,8 +9,12 @@ struct Instance
 // Matrix buffer
 layout(std140, binding = 0) uniform Matrices
 {
-	mat4 projectionMatrix;
-	mat4 viewMatrix;
+	// Regular matrices
+	mat4 projection;
+	mat4 cameraView;
+	// Inverse matrices
+	mat4 invProjection;
+	mat4 invCameraView;
 };
 
 // Shared buffer
@@ -43,7 +47,7 @@ void main()
 {
 	// Calculate position
 	worldPosition = instances[gl_InstanceID].modelMatrix * vec4(position, 1.0f);
-	gl_Position   = projectionMatrix * viewMatrix * worldPosition;
+	gl_Position   = projection * cameraView * worldPosition;
 	// Calculate clip plane
 	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
 	// Interpolate texture coords
