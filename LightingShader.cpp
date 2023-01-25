@@ -26,7 +26,6 @@ void LightingShader::GetUniformLocations()
 	m_uniforms["prefilterMap"]  = GetUniformLocation("prefilterMap");
 	m_uniforms["brdfLUT"]       = GetUniformLocation("brdfLUT");
 	m_uniforms["shadowMap"]     = GetUniformLocation("shadowMap");
-	m_uniforms["ssaoBlur"]      = GetUniformLocation("ssaoBlur");
 }
 
 void LightingShader::ConnectTextureUnits()
@@ -41,5 +40,4 @@ void LightingShader::ConnectTextureUnits()
 	LoadUniform(m_uniforms["prefilterMap"],  6);
 	LoadUniform(m_uniforms["brdfLUT"],       7);
 	LoadUniform(m_uniforms["shadowMap"],     8);
-	LoadUniform(m_uniforms["ssaoBlur"],      9);
 }

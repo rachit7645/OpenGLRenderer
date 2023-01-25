@@ -74,7 +74,6 @@ add_executable(engine
     ShadowBuffer.cpp
 	GBuffer.cpp
 	GBufferShader.cpp
-	GBufferRenderer.cpp
 	LightingRenderer.cpp
 	LightingShader.cpp
 	Vertex.cpp
@@ -96,11 +95,6 @@ add_executable(engine
 	DownSampleShader.cpp
 	UpSampleShader.cpp
 	BloomRenderer.cpp
-	SSAOBuffers.cpp
-	SSAOShader.cpp
-	SSAORenderer.cpp
-	SSAOBuffer.cpp
-	SSAOBlurShader.cpp
 )
 
 # Precompiled Headers

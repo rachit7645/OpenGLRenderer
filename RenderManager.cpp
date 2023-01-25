@@ -28,10 +28,8 @@ RenderManager::RenderManager()
 	  m_matrices(std::make_shared<MatrixBuffer>()),
 	  m_lights(std::make_shared<LightsBuffer>()),
 	  m_shared(std::make_shared<SharedBuffer>()),
-	  m_instancedRenderer(m_fastInstancedShader, m_shadowShader, m_shadowMap, m_iblMaps, m_instances),
-	  m_gRenderer(m_gShader, m_instances),
-	  m_ssaoRenderer(m_ssaoShader, m_ssaoBlurShader, m_ssaoBuffers, m_gBuffer),
-	  m_lightRenderer(m_lightShader, m_shadowMap, m_gBuffer, m_iblMaps, m_ssaoBuffers),
+	  m_instancedRenderer(m_gShader, m_fastInstancedShader, m_shadowShader, m_iblMaps, m_instances),
+	  m_lightRenderer(m_lightShader, m_shadowMap, m_gBuffer, m_iblMaps),
 	  m_bloomRenderer(m_downSampleShader, m_upSampleShader, m_lightingBuffer, m_bloomBuffer),
 	  m_postRenderer(m_postShader, m_lightingBuffer, m_bloomBuffer),
 	  m_skyboxRenderer(m_skyboxShader),
@@ -153,76 +151,24 @@ void RenderManager::RenderGBuffer(const Camera& camera)
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 	// Bind GBuffer
 	m_gBuffer.BindGBuffer();
+
 	// Clear all bits
 	glStencilMask(0xFF);
 	// Clear FBO
 	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
 	// Set stencil parameters
 	glStencilFunc(GL_ALWAYS, 1, 0xFF);
 	// Load data
 	m_matrices->LoadView(camera);
 	m_shared->LoadCameraPos(camera);
 	// Render
-	m_gRenderer.Render(m_entities);
+	m_instancedRenderer.Render(m_entities, Mode::Deferred);
+
 	// Unbind GBuffer
 	m_gBuffer.BindDefaultFBO();
 	// Disable stencil
 	glDisable(GL_STENCIL_TEST);
-}
-
-void RenderManager::RenderSSAO()
-{
-	// Disable depth test
-	glDisable(GL_DEPTH_TEST);
-	// Enable stencil
-	glEnable(GL_STENCIL_TEST);
-
-	// Bind SSAO buffer
-	m_ssaoBuffers.BindSSAOBuffer();
-	// Clear all bits
-	glStencilMask(0xFF);
-	// Clear
-	Clear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	// Copy stencil
-	CopyGBuffer(m_ssaoBuffers.ssaoBuffer, GL_STENCIL_BUFFER_BIT);
-	// Bind FBO again
-	m_ssaoBuffers.BindSSAOBuffer();
-	// Set stencil parameters
-	glStencilFunc(GL_EQUAL, 1, 0xFF);
-	glStencilMask(0x00);
-	// Start shader
-	m_ssaoShader.Start();
-	// Render
-	m_ssaoRenderer.RenderSSAO();
-	// Stop shader (unnecessary, but safe)
-	m_ssaoShader.Stop();
-
-	// Bind SSAO blur buffer
-	m_ssaoBuffers.BindSSAOBlurBuffer();
-	// Clear all bits
-	glStencilMask(0xFF);
-	// Clear
-	Clear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	// Copy stencil
-	CopyGBuffer(m_ssaoBuffers.ssaoBlurBuffer, GL_STENCIL_BUFFER_BIT);
-	// Bind FBO again
-	m_ssaoBuffers.BindSSAOBlurBuffer();
-	// Set stencil parameters
-	glStencilFunc(GL_EQUAL, 1, 0xFF);
-	glStencilMask(0x00);
-	// Start shader
-	m_ssaoBlurShader.Start();
-	// Render
-	m_ssaoRenderer.RenderSSAOBlur();
-	// Stop shader
-	m_ssaoBlurShader.Stop();
-
-	// Disable stencil
-	glDisable(GL_STENCIL_TEST);
-	// Re-enable depth test
-	glEnable(GL_DEPTH_TEST);
-	// Bind default FBO
-	m_ssaoBuffers.BindDefaultFBO();
 }
 
 void RenderManager::RenderLighting(const Camera& camera)
@@ -487,16 +433,6 @@ void RenderManager::RenderImGui()
 			if (ImGui::Button("GDepth"))
 			{
 				m_currentFBO = m_gBuffer.buffer->depthTexture;
-			}
-
-			if (ImGui::Button("SSAO"))
-			{
-				m_currentFBO = m_ssaoBuffers.ssaoBuffer->colorTextures[0];
-			}
-
-			if (ImGui::Button("SSAOBlur"))
-			{
-				m_currentFBO = m_ssaoBuffers.ssaoBlurBuffer->colorTextures[0];
 			}
 
 			if (ImGui::Button("Lighting"))

@@ -25,7 +25,6 @@
 #include "ShadowShader.h"
 #include "GBuffer.h"
 #include "GBufferShader.h"
-#include "GBufferRenderer.h"
 #include "LightingShader.h"
 #include "LightingRenderer.h"
 #include "InstanceBuffer.h"
@@ -44,10 +43,6 @@
 #include "DownSampleShader.h"
 #include "UpSampleShader.h"
 #include "BloomRenderer.h"
-#include "SSAOShader.h"
-#include "SSAOBlurShader.h"
-#include "SSAOBuffers.h"
-#include "SSAORenderer.h"
 
 namespace Renderer
 {
@@ -73,7 +68,6 @@ namespace Renderer
 		Renderer::ShadowMap       m_shadowMap;
 		Waters::WaterFrameBuffers m_waterFBOs;
 		Renderer::GBuffer         m_gBuffer;
-		Renderer::SSAOBuffers     m_ssaoBuffers;
 		Renderer::LightingBuffer  m_lightingBuffer;
 		Renderer::BloomBuffer     m_bloomBuffer;
 
@@ -97,18 +91,10 @@ namespace Renderer
 		std::shared_ptr<SharedBuffer> m_shared;
 
 		// Instanced renderer and shaders
+		Shader::GBufferShader       m_gShader;
 		Shader::FastInstancedShader m_fastInstancedShader;
 		Shader::ShadowShader        m_shadowShader;
 		Renderer::InstancedRenderer m_instancedRenderer;
-
-		// Geometry renderer and shader
-		Shader::GBufferShader     m_gShader;
-		Renderer::GBufferRenderer m_gRenderer;
-
-		// SSAO renderer and shaders
-		Shader::SSAOShader     m_ssaoShader;
-		Shader::SSAOBlurShader m_ssaoBlurShader;
-		Renderer::SSAORenderer m_ssaoRenderer;
 
 		// Lighting renderer and shader
 		Shader::LightingShader     m_lightShader;
@@ -168,8 +154,6 @@ namespace Renderer
 		void RenderWaterFBOs(const WaterTiles& waters, Entities::Camera& camera);
 		// Render global buffer
 		void RenderGBuffer(const Entities::Camera& camera);
-		// Render SSAO pass
-		void RenderSSAO();
 		// Render lighting pass
 		void RenderLighting(const Entities::Camera& camera);
 		// Render bloom passes

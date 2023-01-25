@@ -1,5 +1,17 @@
 #version 430 core
 
+// Disable on other vendors
+#define VENDOR_NVIDIA 1
+
+// Nvidia specific optimisations
+#ifdef VENDOR_NVIDIA
+// Unroll all loops
+// #pragma optionNV(unroll all)
+// Inline all functions
+// #pragma optionNV(inline all)
+// End Nvidia
+#endif
+
 // Lighting constants
 const float PI                 = 3.14159265359;
 const int   MAX_LIGHTS         = 4;
@@ -52,7 +64,6 @@ struct GBuffer
 	float metallic;
 	float roughness;
 	float ao;
-	float ssao;
 };
 
 // Per-fragment Shared Data
@@ -129,7 +140,6 @@ uniform samplerCube prefilterMap;
 uniform sampler2D   brdfLUT;
 // Other samplers
 uniform sampler2DArray shadowMap;
-uniform sampler2D      ssaoBlur;
 
 // Fragment outputs
 layout (location = 0) out vec3 outColor;
@@ -226,7 +236,6 @@ GBuffer GetGBufferData()
 	vec4 gAlb  = texture(gAlbedo,   txCoords);
 	vec4 gEmm  = texture(gEmmisive, txCoords);
 	vec4 gMat  = texture(gMaterial, txCoords);
-	vec4 ssao  = texture(ssaoBlur,  txCoords);
 	// Reconstruct Position
 	gBuffer.fragPos = ReconstructPosition();
 	// Normal
@@ -239,8 +248,6 @@ GBuffer GetGBufferData()
 	gBuffer.ao        = gMat.r;
 	gBuffer.roughness = gMat.g;
 	gBuffer.metallic  = gMat.b;
-	// SSAO data
-	gBuffer.ssao = ssao.r;
 	// Return
 	return gBuffer;
 }
@@ -402,7 +409,7 @@ vec3 CalculateAmbient(SharedData sharedData, GBuffer gBuffer)
 	vec3 specular         = prefilteredColor * (F * brdf.x + brdf.y);
 
 	// Add up ambient
-	vec3 ambient = (kD * diffuse + specular) * gBuffer.ao * gBuffer.ssao;
+	vec3 ambient = (kD * diffuse + specular) * gBuffer.ao;
 
 	// Return
 	return ambient;

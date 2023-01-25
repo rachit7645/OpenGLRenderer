@@ -11,14 +11,12 @@ LightingRenderer::LightingRenderer
 	LightingShader& shader,
 	ShadowMap& shadowMap,
 	GBuffer& gBuffer,
-	IBLMaps& iblMaps,
-	SSAOBuffers& ssaoBuffers
+	IBLMaps& iblMaps
 )
 	: shader(shader),
 	  shadowMap(shadowMap),
 	  gBuffer(gBuffer),
-	  iblMaps(iblMaps),
-	  ssaoBuffers(ssaoBuffers)
+	  iblMaps(iblMaps)
 {
 	// Quad vertices
 	const std::vector<f32> QUAD_VERTICES =
@@ -69,9 +67,6 @@ void LightingRenderer::Render()
 	// Activate shadow map
 	glActiveTexture(GL_TEXTURE8);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, shadowMap.buffer->depthTexture->id);
-	// Activate SSAO map
-	glActiveTexture(GL_TEXTURE9);
-	glBindTexture(GL_TEXTURE_2D, ssaoBuffers.ssaoBlurBuffer->colorTextures[0]->id);
 	// Render quad
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, m_vao->vertexCount);
 	// Unbind vao

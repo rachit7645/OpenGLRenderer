@@ -1,29 +1,32 @@
 #include "InstancedRenderer.h"
 
-#include <utility>
-
 // Using namespaces
 using namespace Renderer;
 
 // Usings
+using Shader::GBufferShader;
 using Shader::FastInstancedShader;
 using Shader::ShadowShader;
 
 InstancedRenderer::InstancedRenderer
 (
+	Shader::GBufferShader& gShader,
 	FastInstancedShader& fastShader,
 	ShadowShader& shadowShader,
-	ShadowMap& shadowMap,
 	IBLMaps& iblMaps,
 	BufferPtr instances
 )
-	: fastShader(fastShader),
+	: gShader(gShader),
+	  fastShader(fastShader),
 	  shadowShader(shadowShader),
-	  shadowMap(shadowMap),
 	  iblMaps(iblMaps),
 	  instances(std::move(instances))
 {
-	// Connect texture units
+	// Connect geometry shader texture units
+	gShader.Start();
+	gShader.ConnectTextureUnits();
+
+	// Connect fast shader texture units
 	fastShader.Start();
 	fastShader.ConnectTextureUnits();
 	fastShader.Stop();
@@ -68,11 +71,23 @@ void InstancedRenderer::BeginRender(Mode mode)
 	// Select mode
 	switch (mode)
 	{
+	case Mode::Deferred:
+		// Start geometry shader
+		gShader.Start();
+		break;
+
 	case Mode::Fast:
 		// Start fast shader
 		fastShader.Start();
-		// Load IBL Textures
-		LoadIBLTextures();
+		// Activate irradiance map
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, iblMaps.irradiance->id);
+		// Activate pre-filter map
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, iblMaps.preFilter->id);
+		// Activate BRDF LUT map
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, iblMaps.brdfLut->id);
 		break;
 
 	case Mode::Shadow:
@@ -90,6 +105,11 @@ void InstancedRenderer::EndRender(Mode mode)
 	// Select mode
 	switch (mode)
 	{
+	case Mode::Deferred:
+		// Stop geometry shader
+		gShader.Stop();
+		break;
+
 	case Mode::Fast:
 		// Stop fast shader
 		fastShader.Stop();
@@ -116,41 +136,38 @@ void InstancedRenderer::PrepareMesh(const Mesh& mesh, Mode mode)
 	// Select mode
 	switch (mode)
 	{
+	case Mode::Deferred:
+		// Activate albedo
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, mesh.textures.albedo->id);
+		// Activate normal
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, mesh.textures.normal->id);
+		// Activate ambient occlusion, metallic and roughness
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, mesh.textures.aoRghMtl->id);
+		// Activate emmisive
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, mesh.textures.emmisive->id);
+		break;
+
 	case Mode::Fast:
-		// Load textures
-		LoadTextures(mesh);
+		// Load albedo
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, mesh.textures.albedo->id);
+		// Load aoMtlRgh
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, mesh.textures.aoRghMtl->id);
 		break;
 
 	case Mode::Shadow:
-		// We don't need anything here for shadows
+		// Nothing to do here
 		break;
 	}
 }
 
-void InstancedRenderer::LoadTextures(const Mesh& mesh)
-{
-	// Load albedo
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, mesh.textures.albedo->id);
-	// Load aoMtlRgh
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, mesh.textures.aoRghMtl->id);
-}
-
-void InstancedRenderer::LoadIBLTextures()
-{
-	// Activate irradiance map
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, iblMaps.irradiance->id);
-	// Activate pre-filter map
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, iblMaps.preFilter->id);
-	// Activate BRDF LUT map
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, iblMaps.brdfLut->id);
-}
-
 void InstancedRenderer::UnbindMesh()
 {
+	// Unbind
 	glBindVertexArray(0);
 }

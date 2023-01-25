@@ -11,8 +11,8 @@
 #include "FastInstancedShader.h"
 #include "RenderConstants.h"
 #include "ShadowShader.h"
-#include "ShadowMap.h"
 #include "IBLMaps.h"
+#include "GBufferShader.h"
 
 namespace Renderer
 {
@@ -28,19 +28,19 @@ namespace Renderer
 		// Main constructor
 		InstancedRenderer
 		(
+			Shader::GBufferShader& gShader,
 			Shader::FastInstancedShader& fastShader,
 			Shader::ShadowShader& shadowShader,
-			Renderer::ShadowMap& shadowMap,
 			Renderer::IBLMaps& iblMaps,
 			BufferPtr instances
 		);
 
 		// Shaders
+		Shader::GBufferShader&       gShader;
 		Shader::FastInstancedShader& fastShader;
 		Shader::ShadowShader&        shadowShader;
 
 		// Other data
-		Renderer::ShadowMap& shadowMap;
 		Renderer::IBLMaps&   iblMaps;
 		BufferPtr            instances;
 

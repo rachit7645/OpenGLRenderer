@@ -46,8 +46,6 @@ void Instance::Run()
 
 		// Deferred geometry pass
 		m_renderer.RenderGBuffer(m_camera);
-		// SSAO pass
-		m_renderer.RenderSSAO();
 		// Deferred lighting pass
 		m_renderer.RenderLighting(m_camera);
 
