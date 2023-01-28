@@ -7,6 +7,7 @@
 #include "Log.h"
 #include "Files.h"
 #include "Vertex.h"
+#include "AABB.h"
 
 // Using namespaces
 using namespace Renderer;
@@ -16,13 +17,18 @@ using Engine::Files;
 using Engine::Resources;
 
 // Assimp flags
-constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate      | // Triangles are easier to work with
-							 aiProcess_FlipUVs          | // Flip textures
-							 aiProcess_OptimizeMeshes   | // Optimise meshes
-							 aiProcess_OptimizeGraph    | // Optimise scene graph
-							 aiProcess_GenSmoothNormals | // Generate normals if none are available
-							 aiProcess_CalcTangentSpace | // Generate tangents if none are available
-							 aiProcess_GenUVCoords;       // Generate texture coordinates if none are available
+constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate              | // Only triangles are supported
+							 aiProcess_FlipUVs                  | // Flip textures
+							 aiProcess_OptimizeMeshes           | // Optimise meshes
+							 aiProcess_OptimizeGraph            | // Optimise scene graph
+							 aiProcess_GenSmoothNormals         | // Generate normals
+							 aiProcess_CalcTangentSpace         | // Generate tangents
+							 aiProcess_GenUVCoords              | // Generate texture coordinates
+							 aiProcess_GenBoundingBoxes         | // Generate bounding boxes
+							 aiProcess_JoinIdenticalVertices    | // Join identical vertex groups
+							 aiProcess_ImproveCacheLocality     | // Improves cache efficiency
+							 aiProcess_RemoveRedundantMaterials ; // Removes unnecessary materials
+
 
 Model::Model(const std::string_view path, const MeshTextures& textures)
 {
@@ -111,8 +117,10 @@ Mesh Model::ProcessMesh
 		indices.emplace_back(face.mIndices[2]);
 	}
 
+	// Get AABB of mesh
+	auto aabb = Maths::AABB(mesh->mAABB);
 	// Return mesh
-	return Mesh(vertices, indices, ProcessTextures(mesh, scene, textures, directory));
+	return Mesh(vertices, indices, ProcessTextures(mesh, scene, textures, directory), aabb);
 }
 
 MeshTextures Model::ProcessTextures

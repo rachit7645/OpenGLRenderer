@@ -1,9 +1,12 @@
 #version 430 core
 
-// Struct describing an instance
+// Entity instance
 struct Instance
 {
+	// Model matrix
 	mat4 modelMatrix;
+	// Transposed inverse model matrix
+	mat4 normalMatrix;
 };
 
 // Matrix buffer
@@ -28,6 +31,7 @@ layout(std140, binding = 2) uniform Shared
 // Tnstance data SSBO
 layout(std430, binding = 3) readonly buffer InstanceData
 {
+	// Instance array
 	Instance instances[];
 };
 
@@ -45,16 +49,17 @@ out vec4 worldPosition;
 // Entry point
 void main()
 {
+	// Get instance
+	Instance instance = instances[gl_InstanceID];
 	// Calculate position
-	worldPosition = instances[gl_InstanceID].modelMatrix * vec4(position, 1.0f);
+	worldPosition = instance.modelMatrix * vec4(position, 1.0f);
 	gl_Position   = projection * cameraView * worldPosition;
 	// Calculate clip plane
 	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
 	// Interpolate texture coords
 	txCoords = textureCoords;
 	// Calculate normal
-	vec3 transNormal = transpose(inverse(mat3(instances[gl_InstanceID].modelMatrix))) * normal;
-	unitNormal       = normalize(transNormal);
+	unitNormal = normalize(mat3(instance.normalMatrix) * normal);
 	// Calculate view direction
 	viewDir = normalize(cameraPos.xyz - worldPosition.xyz);
 }

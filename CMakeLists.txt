@@ -95,6 +95,9 @@ add_executable(engine
 	DownSampleShader.cpp
 	UpSampleShader.cpp
 	BloomRenderer.cpp
+	AABB.cpp
+	Plane.cpp
+	Frustum.cpp
 )
 
 # Precompiled Headers

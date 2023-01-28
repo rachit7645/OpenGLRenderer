@@ -43,6 +43,7 @@
 #include "DownSampleShader.h"
 #include "UpSampleShader.h"
 #include "BloomRenderer.h"
+#include "Frustum.h"
 
 namespace Renderer
 {
@@ -119,8 +120,12 @@ namespace Renderer
 
 		// The entity map
 		Batch m_entities;
+		// Culled entity map
+		Batch m_culledEntities;
 		// The Skybox
 		Entities::Skybox m_skybox;
+		// View frustum
+		Maths::Frustum m_viewFrustum;
 
 		// GPU Info
 		std::string m_glVendor;
@@ -177,6 +182,8 @@ namespace Renderer
 		void ProcessEntity(Entities::Entity& entity);
 		// Process a vector of entities
 		void ProcessEntities(EntityVec& entities);
+		// Cull entities
+		void CullEntities(const Entities::Camera& camera);
 		// Draw ImGui Windows
 		void RenderImGui();
 	};

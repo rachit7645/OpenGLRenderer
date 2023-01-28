@@ -39,7 +39,7 @@ void Instance::Run()
 
 		// Begin render
 		m_renderer.BeginFrame(m_entities, m_dirLights, m_pointLights, m_spotLights, m_player);
-		// Draw shadow framebuffer
+		// Draw shadow map
 		m_renderer.RenderShadows(m_camera, m_dirLights[0].position);
 		// Draw water framebuffers
 		m_renderer.RenderWaterFBOs(m_waters, m_camera);

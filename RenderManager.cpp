@@ -146,6 +146,9 @@ void RenderManager::RenderWaterFBOs(const WaterTiles& waters, Camera& camera)
 
 void RenderManager::RenderGBuffer(const Camera& camera)
 {
+	// Cull entities
+	CullEntities(camera);
+
 	// Enable stencil
 	glEnable(GL_STENCIL_TEST);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -163,7 +166,7 @@ void RenderManager::RenderGBuffer(const Camera& camera)
 	m_matrices->LoadView(camera);
 	m_shared->LoadCameraPos(camera);
 	// Render
-	m_instancedRenderer.Render(m_entities, Mode::Deferred);
+	m_instancedRenderer.Render(m_culledEntities, Mode::Deferred);
 
 	// Unbind GBuffer
 	m_gBuffer.BindDefaultFBO();
@@ -364,6 +367,33 @@ void RenderManager::ProcessEntities(EntityVec& entities)
 	{
 		// Process entity
 		ProcessEntity(entity);
+	}
+}
+
+// TODO: Enable culling for all entities
+void RenderManager::CullEntities(const Camera& camera)
+{
+	// Copy entities (may be slow)
+	m_culledEntities = m_entities;
+
+	// Loop over all pairs
+	for (auto& [model, entities] : m_culledEntities)
+	{
+		// Find elements to be removed
+		auto toRemove = std::remove_if(entities.begin(), entities.end(), [camera, this] (const auto& entity)
+		{
+			// Return true if entity is not visible
+			return !m_viewFrustum.IsVisible(*entity, camera);
+		});
+		// Remove elements
+		entities.erase(toRemove, entities.end());
+
+		// If no entities remain
+		if (entities.empty())
+		{
+			// Remove batch
+			m_culledEntities.erase(model);
+		}
 	}
 }
 
