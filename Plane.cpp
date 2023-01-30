@@ -24,5 +24,5 @@ void Plane::NormalizePlane()
 f32 Plane::GetDistance(const glm::vec3& point) const
 {
 	// Return distance
-	return glm::dot(normal, point) + distance;
+	return glm::dot(normal, point) - distance;
 }

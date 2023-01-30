@@ -13,9 +13,18 @@ namespace Maths
 	public:
 		// Main constructor
 		explicit AABB(const aiAABB& aabb);
-		// Global constructor
-		AABB(const glm::vec3& center, f32 iI, f32 iJ, f32 iK);
-		// Minimum bound
+        // Transform constructor
+        AABB(const glm::vec3& center, const glm::vec3& extents);
+
+        // Transform current AABB into a new one
+		AABB Transform(const glm::mat4& model) const;
+
+        // Get positive intersection
+        glm::vec3 GetPositive(const glm::vec3& normal) const;
+        // Get negative intersection
+        glm::vec3 GetNegative(const glm::vec3& normal) const;
+
+        // Minimum bound
 		glm::vec3 min = {};
 		// Maximum bound
 		glm::vec3 max = {};
@@ -23,6 +32,8 @@ namespace Maths
 		glm::vec3 center = {};
 		// Extents
 		glm::vec3 extents = {};
+        // Size
+        glm::vec3 size = {};
 	};
 }
 
