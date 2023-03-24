@@ -1,6 +1,9 @@
 #ifndef AABB_H
 #define AABB_H
 
+#include <array>
+#include <vector>
+
 #include <assimp/aabb.h>
 
 #include "GLM.h"
@@ -14,26 +17,19 @@ namespace Maths
 		// Main constructor
 		explicit AABB(const aiAABB& aabb);
         // Transform constructor
-        AABB(const glm::vec3& center, const glm::vec3& extents);
+        AABB(const glm::vec3& min, const glm::vec3& max);
 
         // Transform current AABB into a new one
-		AABB Transform(const glm::mat4& model) const;
-
-        // Get positive intersection
-        glm::vec3 GetPositive(const glm::vec3& normal) const;
-        // Get negative intersection
-        glm::vec3 GetNegative(const glm::vec3& normal) const;
+		AABB Transform(const glm::mat4& matrix) const;
 
         // Minimum bound
 		glm::vec3 min = {};
 		// Maximum bound
 		glm::vec3 max = {};
-		// Center
-		glm::vec3 center = {};
-		// Extents
-		glm::vec3 extents = {};
-        // Size
-        glm::vec3 size = {};
+        // AABB corners
+        std::array<glm::vec3, 8> corners = {};
+        // AABB vertices for debugging
+        std::vector<f32> vertices = {};
 	};
 }
 

@@ -22,15 +22,11 @@ namespace Maths
 	private:
 		// Check if AABB is on frustum
 		bool IsOnFrustum(const Maths::AABB& aabb) const;
-		// Check if AABB is on plane
-		bool IsOnPlane(const Maths::Plane& plane, const Maths::AABB& aabb) const;
 		// Update frustum bounds
 		void Update(const Entities::Entity& entity, const Entities::Camera& camera);
 
 		// Frustum Planes
 		std::array<Maths::Plane, 6> m_planes = {};
-		// Frustum corners
-		std::array<glm::vec4, 8> m_points = {};
 
 		// Plane IDs
 		enum Planes : usize

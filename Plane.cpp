@@ -3,9 +3,10 @@
 // Using namespaces
 using namespace Maths;
 
-Plane::Plane(f32 x, f32 y, f32 z, f32 w)
-	: normal(x, y, z),
-      distance(w)
+Plane::Plane(const glm::vec4& equation)
+	: equation(equation),
+      normal(equation.x, equation.y, equation.z),
+      distance(equation.w)
 {
 	// Normalize plane equation
 	NormalizePlane();
@@ -19,10 +20,4 @@ void Plane::NormalizePlane()
 	normal /= magnitude;
 	// Normalize distance
 	distance /= magnitude;
-}
-
-f32 Plane::GetDistance(const glm::vec3& point) const
-{
-	// Return distance
-	return glm::dot(normal, point) - distance;
 }

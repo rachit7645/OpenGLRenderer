@@ -4,99 +4,74 @@
 using namespace Maths;
 
 AABB::AABB(const aiAABB& aabb)
-	: min(glm::ai_cast(aabb.mMin)),
-	  max(glm::ai_cast(aabb.mMax)),
-  	  center((max + min) * 0.5f),
-  	  extents(glm::abs(max - center)),
-      size(2.0f * extents)
+	: AABB(glm::ai_cast(aabb.mMin), glm::ai_cast(aabb.mMax))
 {
 }
 
-AABB::AABB(const glm::vec3& center, const glm::vec3& extents)
-	: center(center),
-      extents(extents),
-      size(2.0f * extents)
+AABB::AABB(const glm::vec3& min, const glm::vec3& max)
+	: min(min),
+      max(max)
 {
-	// Calculate minimum
-    min = center - extents;
-    // Calculate maximum
-    max = center + extents;
+    // Create corners
+    corners =
+    {
+        glm::vec3(min.x, max.y, min.z),
+        glm::vec3(min.x, min.y, max.z),
+        glm::vec3(min.x, max.y, max.z),
+        glm::vec3(max.x, min.y, min.z),
+        glm::vec3(min.x, min.y, min.z),
+        glm::vec3(max.x, max.y, min.z),
+        glm::vec3(max.x, min.y, max.z),
+        glm::vec3(max.x, max.y, max.z),
+    };
+
+    // Helper macro
+    #define VERTEX(vertex) (vertex).x, (vertex).y, (vertex).z
+
+    // Create vertices
+    vertices =
+    {
+        VERTEX(corners[0]), VERTEX(corners[1]), // Line #1
+        VERTEX(corners[2]), VERTEX(corners[3]), // Line #2
+        VERTEX(corners[4]), VERTEX(corners[5]), // Line #3
+        VERTEX(corners[6]), VERTEX(corners[7]), // Line #4
+
+        VERTEX(corners[0]), VERTEX(corners[2]), // Line #5
+        VERTEX(corners[1]), VERTEX(corners[3]), // Line #6
+        VERTEX(corners[4]), VERTEX(corners[6]), // Line #7
+        VERTEX(corners[5]), VERTEX(corners[7]), // Line #8
+
+        VERTEX(corners[0]), VERTEX(corners[4]), // Line #9
+        VERTEX(corners[1]), VERTEX(corners[5]), // Line #10
+        VERTEX(corners[2]), VERTEX(corners[6]), // Line #11
+        VERTEX(corners[3]), VERTEX(corners[7]), // Line #12
+    };
 }
 
-AABB AABB::Transform(const glm::mat4& model) const
+AABB AABB::Transform(const glm::mat4& matrix) const
 {
-    // Get new matrix
-    auto M = glm::mat3(model);
+    // Corners of the new AABB
+    std::array<glm::vec3, 8> newCorners = {};
 
-    // Transform extents
-    auto X = M * glm::vec3(extents.x, 0.0f, 0.0f);
-    auto Y = M * glm::vec3(0.0f, extents.y, 0.0f);
-    auto Z = M * glm::vec3(0.0f, 0.0f, extents.z);
+    // For each new corner
+    for (usize i = 0; i < corners.size(); ++i)
+    {
+        // Transform old corner
+        newCorners[i] = glm::vec3(matrix * glm::vec4(corners[i], 1.0f));
+    }
 
-    // Calculate variables
-    auto newExtents = glm::abs(X) + glm::abs(Y) + glm::abs(Z);
-    auto newCenter  = glm::vec3(model * glm::vec4(center, 1.0f));
+    // New minimum and maximum bounds
+    glm::vec3 newMin = newCorners[0];
+    glm::vec3 newMax = newMin;
+
+    // For each corner
+    for (const auto& corner : newCorners)
+    {
+        // Compare minimum and maximum bounds
+        newMin = glm::min(newMin, corner);
+        newMax = glm::max(newMax, corner);
+    }
 
     // Return new AABB
-    return AABB(newCenter, newExtents);
-}
-
-glm::vec3 AABB::GetPositive(const glm::vec3& normal) const
-{
-    // Set result to minimum value
-    glm::vec3 result = min;
-
-    // Check X
-    if (normal.x > 0.0f)
-    {
-        // Increase result in X direction
-        result.x += size.x;
-    }
-
-    // Check Y
-    if (normal.y > 0.0f)
-    {
-        // Increase result in Y direction
-        result.y += size.y;
-    }
-
-    // Check Z
-    if (normal.z > 0.0f)
-    {
-        // Increase result in Z direction
-        result.z += size.z;
-    }
-
-    // Return
-    return result;
-}
-
-glm::vec3 AABB::GetNegative(const glm::vec3& normal) const
-{
-    // Set result to minimum value
-    glm::vec3 result = min;
-
-    // Check X
-    if (normal.x < 0.0f)
-    {
-        // Increase result in X direction
-        result.x += size.x;
-    }
-
-    // Check Y
-    if (normal.y < 0.0f)
-    {
-        // Increase result in Y direction
-        result.y += size.y;
-    }
-
-    // Check Z
-    if (normal.z < 0.0f)
-    {
-        // Increase result in Z direction
-        result.z += size.z;
-    }
-
-    // Return
-    return result;
+    return AABB(newMin, newMax);
 }

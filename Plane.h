@@ -12,13 +12,13 @@ namespace Maths
 		// Default constructor
 		Plane() = default;
 		// Main constructor
-		explicit Plane(f32 x, f32 y, f32 z, f32 w);
+		explicit Plane(const glm::vec4& equation);
 
 		// Normalise plane equation
 		void NormalizePlane();
-		// Get distance from point
-		f32 GetDistance(const glm::vec3& point) const;
 
+        // Plane equation
+        glm::vec4 equation = {};
 		// Normal vector
 		glm::vec3 normal = {};
 		// Distance from origin

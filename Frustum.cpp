@@ -4,6 +4,7 @@
 
 #include "RenderConstants.h"
 #include "Maths.h"
+#include "Log.h"
 
 // Using namespaces
 using namespace Maths;
@@ -14,12 +15,11 @@ using Entities::Camera;
 using Maths::AABB;
 using Maths::Plane;
 
-// TODO:  Only update frustum if camera changes
-// FIXME: Does not work for large objects
+// TODO: Only update frustum if camera changes
 
 Frustum::Frustum()
 {
-	// Create projection matrix
+	// Create projection matrix (must be the same as the one used for rendering)
 	m_projection = glm::perspective
 	(
 		glm::radians(Renderer::FOV),
@@ -45,31 +45,22 @@ bool Frustum::IsVisible(const Entity& entity, const Camera& camera)
 
 bool Frustum::IsOnFrustum(const AABB& aabb) const
 {
-	// Return true if aabb is on any plane
-	return std::any_of(m_planes.begin(), m_planes.end(), [aabb, this] (const auto& plane)
-	{
-		// Check if AABB is on plane
-		return IsOnPlane(plane, aabb);
-	});
-}
-
-bool Frustum::IsOnPlane(const Plane& plane, const AABB& aabb) const
-{
-    // Check positive
-    if (plane.GetDistance(aabb.GetPositive(plane.normal)) < 0.0f)
+    // For each plane
+	for (const auto& plane : m_planes)
     {
-        // AABB is not on plane
-        return false;
+        // For each corner
+        for (const auto& corner : aabb.corners)
+        {
+            // Check plane intersection
+            if (glm::dot(plane.equation, glm::vec4(corner, 1.0f)) < 0.0f)
+            {
+                // AABB is not visible
+                return false;
+            }
+        }
     }
 
-    // Check negative
-    if (plane.GetDistance(aabb.GetNegative(plane.normal)) < 0.0f)
-    {
-        // AABB is not on plane
-        return false;
-    }
-
-    // AABB is on plane
+    // AABB is (potentially) visible
     return true;
 }
 
@@ -80,60 +71,14 @@ void Frustum::Update(const Entity& entity, const Camera& camera)
 	// Create view matrix
 	m_view = Maths::CreateViewMatrix(camera);
 
-	// Combine matrices
-	auto matrix = m_projection * m_view * m_model;
+	// Combine matrices (transpose to left-handed)
+	auto matrix = glm::transpose(m_projection * m_view);
 
-	// Calculate left plane
-	m_planes[PLANE_LEFT] = Maths::Plane
-	(
-		 matrix[0][3] + matrix[0][0],
-         matrix[1][3] + matrix[1][0],
-         matrix[2][3] + matrix[2][0],
-        -matrix[3][3] - matrix[3][0]
-	);
-
-	// Calculate right plane
-	m_planes[PLANE_RIGHT] = Maths::Plane
-	(
-         matrix[0][3] - matrix[0][0],
-         matrix[1][3] - matrix[1][0],
-         matrix[2][3] - matrix[2][0],
-        -matrix[3][3] + matrix[3][0]
-	);
-
-	// Calculate bottom plane
-	m_planes[PLANE_BOTTOM] = Maths::Plane
-	(
-         matrix[0][3] + matrix[0][1],
-         matrix[1][3] + matrix[1][1],
-         matrix[2][3] + matrix[2][1],
-        -matrix[3][3] - matrix[3][1]
-	);
-
-	// Calculate top plane
-	m_planes[PLANE_TOP] = Maths::Plane
-	(
-         matrix[0][3] - matrix[0][1],
-         matrix[1][3] - matrix[1][1],
-         matrix[2][3] - matrix[2][1],
-        -matrix[3][3] + matrix[3][1]
-	);
-
-	// Calculate near plane
-	m_planes[PLANE_NEAR] = Maths::Plane
-	(
-         matrix[0][3] + matrix[0][2],
-         matrix[1][3] + matrix[1][2],
-         matrix[2][3] + matrix[2][2],
-        -matrix[3][3] - matrix[3][2]
-	);
-
-	// Calculate far plane
-	m_planes[PLANE_FAR] = Maths::Plane
-	(
-         matrix[0][3] - matrix[0][2],
-         matrix[1][3] - matrix[1][2],
-         matrix[2][3] - matrix[2][2],
-        -matrix[3][3] + matrix[3][2]
-	);
+	// Calculate planes
+	m_planes[PLANE_LEFT]   = Maths::Plane(matrix[3] + matrix[0]);
+	m_planes[PLANE_RIGHT]  = Maths::Plane(matrix[3] - matrix[0]);
+	m_planes[PLANE_BOTTOM] = Maths::Plane(matrix[3] + matrix[1]);
+	m_planes[PLANE_TOP]    = Maths::Plane(matrix[3] - matrix[1]);
+	m_planes[PLANE_NEAR]   = Maths::Plane(matrix[3] + matrix[2]);
+	m_planes[PLANE_FAR]    = Maths::Plane(matrix[3] - matrix[2]);
 }
