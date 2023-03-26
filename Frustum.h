@@ -20,8 +20,10 @@ namespace Maths
 		// Check if entity is visible
 		bool IsVisible(const Entities::Entity& entity, const Entities::Camera& camera);
 	private:
-		// Check if AABB is on frustum
-		bool IsOnFrustum(const Maths::AABB& aabb) const;
+		// Check if AABB is inside frustum
+		bool IsInFrustum(const Maths::AABB& aabb) const;
+        // Check if corner is in plane
+        bool IsCornerNotInPlane(usize corner, const Maths::Plane& plane, const Maths::AABB& aabb) const;
 		// Update frustum bounds
 		void Update(const Entities::Entity& entity, const Entities::Camera& camera);
 

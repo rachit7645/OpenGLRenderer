@@ -39,29 +39,41 @@ bool Frustum::IsVisible(const Entity& entity, const Camera& camera)
 	return std::any_of(meshes.begin(), meshes.end(), [this] (const auto& mesh)
 	{
 		// Return true if mesh is visible
-		return IsOnFrustum(mesh.aabb.Transform(m_model));
+		return IsInFrustum(mesh.aabb.Transform(m_model));
 	});
 }
 
-bool Frustum::IsOnFrustum(const AABB& aabb) const
+bool Frustum::IsInFrustum(const AABB& aabb) const
 {
     // For each plane
 	for (const auto& plane : m_planes)
     {
-        // For each corner
-        for (const auto& corner : aabb.corners)
+        // Check plane intersection
+        if
+        (
+            IsCornerNotInPlane(0, plane, aabb) &&
+            IsCornerNotInPlane(1, plane, aabb) &&
+            IsCornerNotInPlane(2, plane, aabb) &&
+            IsCornerNotInPlane(3, plane, aabb) &&
+            IsCornerNotInPlane(4, plane, aabb) &&
+            IsCornerNotInPlane(5, plane, aabb) &&
+            IsCornerNotInPlane(6, plane, aabb) &&
+            IsCornerNotInPlane(7, plane, aabb)
+        )
         {
-            // Check plane intersection
-            if (glm::dot(plane.equation, glm::vec4(corner, 1.0f)) < 0.0f)
-            {
-                // AABB is not visible
-                return false;
-            }
+            // AABB is not visible
+            return false;
         }
     }
 
     // AABB is (potentially) visible
     return true;
+}
+
+bool Frustum::IsCornerNotInPlane(usize corner, const Plane& plane, const AABB& aabb) const
+{
+    // Intersection test
+    return glm::dot(plane.equation, glm::vec4(aabb.corners[corner], 1.0f)) < 0.0f;
 }
 
 void Frustum::Update(const Entity& entity, const Camera& camera)

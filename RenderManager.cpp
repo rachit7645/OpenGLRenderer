@@ -376,6 +376,8 @@ void RenderManager::CullEntities(const Camera& camera)
 	// Copy entities (may be slow)
 	m_culledEntities = m_entities;
 
+    #if 1
+
 	// Loop over all pairs
 	for (auto& [model, entities] : m_culledEntities)
 	{
@@ -395,6 +397,8 @@ void RenderManager::CullEntities(const Camera& camera)
 			m_culledEntities.erase(model);
 		}
 	}
+
+    #endif
 }
 
 // This kinda sucks, but it works
@@ -476,10 +480,13 @@ void RenderManager::RenderImGui()
 		ImGui::EndMainMenuBar();
 	}
 
+    // Current FBO widget
 	if (ImGui::Begin("CurrentFBO"))
 	{
+        // Use a child window for better scaling
 		if (ImGui::BeginChild("Current"))
 		{
+            // Invert Y
 			ImGui::Image
 			(
 				reinterpret_cast<ImTextureID>(m_currentFBO->id),
@@ -487,9 +494,11 @@ void RenderManager::RenderImGui()
 				ImVec2(0, 1),
 				ImVec2(1, 0)
 			);
+            // End child window
 			ImGui::EndChild();
 		}
 	}
 
+    // End widget
 	ImGui::End();
 }
