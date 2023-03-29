@@ -36,14 +36,8 @@ void main()
 
 vec3 ToneMap(vec3 color)
 {
-	// Curve fit constants
-	const float A = 2.51f;
-	const float B = 0.03f;
-	const float C = 2.43f;
-	const float D = 0.59f;
-	const float E = 0.14f;
 	// ACES tone map operator
-	return clamp((color * (A * color + B)) / (color * (C * color + D) + E), 0.0f, 1.0f);
+	return clamp((color * (2.51f * color + 0.03f)) / (color * (2.43f * color + 0.59f) + 0.14f), 0.0f, 1.0f);
 }
 
 vec3 GammaCorrect(vec3 color)

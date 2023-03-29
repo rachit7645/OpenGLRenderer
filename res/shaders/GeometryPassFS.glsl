@@ -39,7 +39,7 @@ void main()
 	gAlbedo.rgb = pow(gAlb.rgb, vec3(GAMMA_FACTOR));
 	gAlbedo.a   = gMat.b;
 	// Emmisive color
-	gEmmisive = pow(gEmm.rgb, vec3(GAMMA_FACTOR));
+	gEmmisive = gEmm.rgb;
 }
 
 vec3 GetNormalFromMap(vec3 normal)

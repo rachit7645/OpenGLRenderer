@@ -9,10 +9,8 @@ const float MAX_REFLECTION_LOD = 4.0f;
 const int   MAX_LAYER_COUNT = 16;
 const float MIN_BIAS        = 0.005f;
 const float MAX_BIAS        = 0.05f;
-const float SHADOW_AMOUNT   = 0.16f;
+const float SHADOW_AMOUNT   = 0.65f;
 const float BIAS_MODIFIER   = 0.35f;
-const float PCF_COUNT       = 1.2f;
-const float TOTAL_TEXELS    = (PCF_COUNT * 2.0f - 1.0f) * (PCF_COUNT * 2.0f - 1.0f);
 
 // Directional Light
 struct DirLight
@@ -123,7 +121,7 @@ uniform samplerCube irradianceMap;
 uniform samplerCube prefilterMap;
 uniform sampler2D   brdfLUT;
 // Other samplers
-uniform sampler2DArray shadowMap;
+uniform sampler2DArrayShadow shadowMap;
 
 // Fragment outputs
 layout (location = 0) out vec3 outColor;
@@ -210,7 +208,7 @@ void main()
 	color = color + gBuffer.emmisive;
 	// Calculate shadow
 	vec3 L  = normalize(-dirLights[0].position.xyz);
-	color  *= 1.0f - CalculateShadow(L, gBuffer);
+	color  *= 1.0f - (CalculateShadow(L, gBuffer) * SHADOW_AMOUNT);
 
 	// Output color
 	outColor = color;
@@ -493,6 +491,7 @@ int GetCurrentLayer(GBuffer gBuffer)
 		}
 	}
 
+	// Return
 	return layer;
 }
 
@@ -500,7 +499,7 @@ int GetCurrentLayer(GBuffer gBuffer)
 float TanArcCos(float x)
 {
 	// tan(acos(x)) = sqrt(1 - x^2) / x
-	return sqrt(1.0f - pow(x, 2.0f)) / x;
+	return sqrt(1.0f - (x * x)) / x;
 }
 
 float CalculateBias(int layer, vec3 lightDir, GBuffer gBuffer)
@@ -538,33 +537,14 @@ float CalculateShadow(vec3 lightDir, GBuffer gBuffer)
 	// Perform perspective division
 	vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
 	projCoords      = projCoords * 0.5f + 0.5f;
+
 	// Calculate depth
 	float currentDepth = projCoords.z;
 	// Calculate bias
 	float bias = CalculateBias(layer, lightDir, gBuffer);
-	// Calculate texel size
-	vec2 texelSize = 1.0f / vec2(textureSize(shadowMap, 0));
 
-	// Store shadow
-	float shadow = 0.0f;
-
-	// For each x offset
-	for (float x = -PCF_COUNT; x <= PCF_COUNT; ++x)
-	{
-		// For each y offset
-		for (float y = -PCF_COUNT; y <= PCF_COUNT; ++y)
-		{
-			// Get offseted depth
-			float pcfDepth = texture(shadowMap, vec3(projCoords.xy + vec2(x, y) * texelSize, layer)).r;
-			// Perform shadow comparision
-			shadow += WhenGreater(vec4(currentDepth - bias), vec4(pcfDepth)).x;
-		}
-	}
-
-	// Divide shadow by total texels
-	shadow /= TOTAL_TEXELS;
-	// Modify by shadow amount
-	shadow *= SHADOW_AMOUNT;
+	// Calculate shadow
+	float shadow = texture(shadowMap, vec4(projCoords.xy, layer, currentDepth - bias));
 	// Return if depth < 1.0f
 	return shadow * WhenLesser(vec4(currentDepth), vec4(1.0f)).x;
 }

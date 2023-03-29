@@ -42,8 +42,8 @@ ShadowMap::ShadowMap()
 	// Depth attachment
 	Renderer::FBOAttachment depth =
 	{
-		GL_NEAREST,
-		GL_NEAREST,
+        GL_LINEAR,
+        GL_LINEAR,
 		GL_CLAMP_TO_BORDER,
 		GL_DEPTH_COMPONENT24,
 		GL_DEPTH_COMPONENT,
@@ -69,6 +69,15 @@ ShadowMap::ShadowMap()
 	buffer->CheckStatus();
 	buffer->EnableDepth();
 	buffer->Unbind();
+
+    // Bind depth texture
+    buffer->depthTexture->Bind();
+    // Enable depth comparison mode
+    buffer->depthTexture->SetParameter(GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+    // Set depth compare mode
+    buffer->depthTexture->SetParameter(GL_TEXTURE_COMPARE_FUNC, GL_GREATER);
+    // Unbind depth texture
+    buffer->depthTexture->Bind();
 
 	// Load cascade distances
 	m_matrixBuffer->LoadDistances(shadowLevels);

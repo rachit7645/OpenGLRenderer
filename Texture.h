@@ -73,6 +73,7 @@ namespace Renderer
 		friend class IBLRenderer;
 		friend class BloomBuffer;
 		friend class SSAOBuffers;
+        friend class ShadowMap;
 	};
 }
 #endif
