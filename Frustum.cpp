@@ -15,8 +15,6 @@ using Entities::Camera;
 using Maths::AABB;
 using Maths::Plane;
 
-// TODO: Only update frustum if camera changes
-
 Frustum::Frustum()
 {
 	// Create projection matrix (must be the same as the one used for rendering)
@@ -29,18 +27,35 @@ Frustum::Frustum()
 	);
 }
 
-bool Frustum::IsVisible(const Entity& entity, const Camera& camera)
+bool Frustum::IsVisible(const Entity& entity)
 {
 	// Get meshes
 	const auto& meshes = entity.model->meshes;
-	// Update frustum
-	Update(entity, camera);
+    // Create model matrix
+    glm::mat4 model = Maths::CreateModelMatrix(entity.position, entity.rotation, entity.scale);
 	// Return true if any meshes are visible
-	return std::any_of(meshes.begin(), meshes.end(), [this] (const auto& mesh)
+	return std::any_of(meshes.begin(), meshes.end(), [this, model] (const auto& mesh)
 	{
 		// Return true if mesh is visible
-		return IsInFrustum(mesh.aabb.Transform(m_model));
+		return IsInFrustum(mesh.aabb.Transform(model));
 	});
+}
+
+void Frustum::UpdateView(const Camera& camera)
+{
+    // Create view matrix
+    m_view = Maths::CreateViewMatrix(camera);
+
+    // Combine matrices (transpose to left-handed)
+    auto matrix = glm::transpose(m_projection * m_view);
+
+    // Calculate planes
+    m_planes[PLANE_LEFT]   = Maths::Plane(matrix[3] + matrix[0]);
+    m_planes[PLANE_RIGHT]  = Maths::Plane(matrix[3] - matrix[0]);
+    m_planes[PLANE_BOTTOM] = Maths::Plane(matrix[3] + matrix[1]);
+    m_planes[PLANE_TOP]    = Maths::Plane(matrix[3] - matrix[1]);
+    m_planes[PLANE_NEAR]   = Maths::Plane(matrix[3] + matrix[2]);
+    m_planes[PLANE_FAR]    = Maths::Plane(matrix[3] - matrix[2]);
 }
 
 bool Frustum::IsInFrustum(const AABB& aabb) const
@@ -74,23 +89,4 @@ bool Frustum::IsCornerNotInPlane(usize corner, const Plane& plane, const AABB& a
 {
     // Intersection test
     return glm::dot(plane.equation, glm::vec4(aabb.corners[corner], 1.0f)) < 0.0f;
-}
-
-void Frustum::Update(const Entity& entity, const Camera& camera)
-{
-	// Create model matrix
-	m_model = Maths::CreateModelMatrix(entity.position, entity.rotation, entity.scale);
-	// Create view matrix
-	m_view = Maths::CreateViewMatrix(camera);
-
-	// Combine matrices (transpose to left-handed)
-	auto matrix = glm::transpose(m_projection * m_view);
-
-	// Calculate planes
-	m_planes[PLANE_LEFT]   = Maths::Plane(matrix[3] + matrix[0]);
-	m_planes[PLANE_RIGHT]  = Maths::Plane(matrix[3] - matrix[0]);
-	m_planes[PLANE_BOTTOM] = Maths::Plane(matrix[3] + matrix[1]);
-	m_planes[PLANE_TOP]    = Maths::Plane(matrix[3] - matrix[1]);
-	m_planes[PLANE_NEAR]   = Maths::Plane(matrix[3] + matrix[2]);
-	m_planes[PLANE_FAR]    = Maths::Plane(matrix[3] - matrix[2]);
 }

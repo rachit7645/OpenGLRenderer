@@ -17,15 +17,16 @@ namespace Maths
 	public:
 		// Main constructor
 		Frustum();
-		// Check if entity is visible
-		bool IsVisible(const Entities::Entity& entity, const Entities::Camera& camera);
+
+        // Check if entity is visible
+		bool IsVisible(const Entities::Entity& entity);
+        // Update frustum bounds
+        void UpdateView(const Entities::Camera& camera);
 	private:
 		// Check if AABB is inside frustum
 		bool IsInFrustum(const Maths::AABB& aabb) const;
         // Check if corner is in plane
         bool IsCornerNotInPlane(usize corner, const Maths::Plane& plane, const Maths::AABB& aabb) const;
-		// Update frustum bounds
-		void Update(const Entities::Entity& entity, const Entities::Camera& camera);
 
 		// Frustum Planes
 		std::array<Maths::Plane, 6> m_planes = {};

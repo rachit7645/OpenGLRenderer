@@ -85,6 +85,7 @@ void RenderManager::EndFrame()
 	RenderImGui();
 }
 
+// TODO: Add frustum culling to shadows
 void RenderManager::RenderShadows(const Camera& camera, const glm::vec3& lightPos)
 {
 	// Bind shadow map
@@ -306,14 +307,16 @@ void RenderManager::Clear(GLbitfield flags)
 
 void RenderManager::RenderWaterScene(const Camera& camera, const glm::vec4& clipPlane)
 {
-	// Clear FBO
+    // Cull entities
+    CullEntities(camera);
+    // Clear FBO
 	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Load data
 	m_matrices->LoadView(camera);
 	m_shared->LoadCameraPos(camera);
 	m_shared->LoadClipPlane(clipPlane);
 	// Render entities
-	m_instancedRenderer.Render(m_entities, Mode::Fast);
+	m_instancedRenderer.Render(m_culledEntities, Mode::Fast);
 	// Render skybox
 	RenderSkyboxScene();
 }
@@ -338,6 +341,7 @@ void RenderManager::RenderSkyboxScene()
 	m_skyboxShader.Start();
 	m_skyboxRenderer.Render(m_skybox);
 	m_skyboxShader.Stop();
+    // Reset
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);
 }
@@ -370,22 +374,21 @@ void RenderManager::ProcessEntities(EntityVec& entities)
 	}
 }
 
-// TODO: Enable culling for all entities
 void RenderManager::CullEntities(const Camera& camera)
 {
+    // Update frustum
+    m_viewFrustum.UpdateView(camera);
 	// Copy entities (may be slow)
 	m_culledEntities = m_entities;
-
-    #if 1
 
 	// Loop over all pairs
 	for (auto& [model, entities] : m_culledEntities)
 	{
 		// Find elements to be removed
-		auto toRemove = std::remove_if(entities.begin(), entities.end(), [camera, this] (const auto& entity)
+		auto toRemove = std::remove_if(entities.begin(), entities.end(), [this] (const auto& entity)
 		{
 			// Return true if entity is not visible
-			return !m_viewFrustum.IsVisible(*entity, camera);
+			return !m_viewFrustum.IsVisible(*entity);
 		});
 		// Remove elements
 		entities.erase(toRemove, entities.end());
@@ -397,15 +400,14 @@ void RenderManager::CullEntities(const Camera& camera)
 			m_culledEntities.erase(model);
 		}
 	}
-
-    #endif
 }
 
-// This kinda sucks, but it works
 void RenderManager::RenderImGui()
 {
+    // Begin menu bar
 	if (ImGui::BeginMainMenuBar())
 	{
+        // Begin renderer menu
 		if (ImGui::BeginMenu("Renderer"))
 		{
 			// Display basic info
@@ -418,7 +420,7 @@ void RenderManager::RenderImGui()
 				m_glslVersion.c_str()
 			);
 
-			// If available
+			// If memory info is available
 			if (m_isGPUMemoryInfo)
 			{
 				// Calculate available memory (MB)
@@ -432,51 +434,62 @@ void RenderManager::RenderImGui()
 			ImGui::EndMenu();
 		}
 
+        // Begin FBO selector menu (This kinda sucks, but it works)
 		if (ImGui::BeginMenu("FBO Viewer"))
 		{
+            // Water reflection buffer
 			if (ImGui::Button("WaterReflection"))
 			{
 				m_currentFBO = m_waterFBOs.reflectionFBO->colorTextures[0];
 			}
 
+            // Water refraction buffer
 			if (ImGui::Button("WaterRefraction"))
 			{
 				m_currentFBO = m_waterFBOs.refractionFBO->colorTextures[0];
 			}
 
+            // Normal + Ambient Occlusion + Roughness buffer
 			if (ImGui::Button("GNormal"))
 			{
 				m_currentFBO = m_gBuffer.buffer->colorTextures[0];
 			}
 
+            // Albedo + Metallic buffer
 			if (ImGui::Button("GAlbedo"))
 			{
 				m_currentFBO = m_gBuffer.buffer->colorTextures[1];
 			}
 
+            // Emmisive buffer
 			if (ImGui::Button("GEmmisive"))
 			{
 				m_currentFBO = m_gBuffer.buffer->colorTextures[2];
 			}
 
+            // Depth buffer
 			if (ImGui::Button("GDepth"))
 			{
 				m_currentFBO = m_gBuffer.buffer->depthTexture;
 			}
 
+            // Accumulated lighting buffer (HDR)
 			if (ImGui::Button("Lighting"))
 			{
 				m_currentFBO = m_lightingBuffer.buffer->colorTextures[0];
 			}
 
+            // Bloom buffer (HDR)
 			if (ImGui::Button("Bloom"))
 			{
 				m_currentFBO = m_bloomBuffer.mipChain[0];
 			}
 
+            // End menu
 			ImGui::EndMenu();
 		}
 
+        // End menu bar
 		ImGui::EndMainMenuBar();
 	}
 
