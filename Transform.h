@@ -1,7 +1,7 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
-#include "GLm.h"
+#include "GLM.h"
 
 namespace Entities
 {
