@@ -2,14 +2,14 @@
 
 #include <GL/glew.h>
 
-#include "Maths.h"
-
 // Using namespaces
 using namespace Renderer;
 
 // Usings
-using Detail::MatrixBufferGLSL;
 using Entities::Camera;
+
+// Aliases
+using MatrixBufferGLSL = MatrixBuffer::MatrixBufferGLSL;
 
 MatrixBuffer::MatrixBuffer()
 	: UniformBuffer(0, sizeof(MatrixBufferGLSL), GL_STATIC_DRAW)
@@ -36,7 +36,7 @@ void MatrixBuffer::LoadView(const Camera& camera)
 	glBindBuffer(GL_UNIFORM_BUFFER, id);
 
 	// Create view matrix
-	auto view = Maths::CreateViewMatrix(camera);
+	auto view = camera.GetViewMatrix();
 	// Load view matrix to UBO
 	glBufferSubData
 	(

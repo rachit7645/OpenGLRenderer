@@ -3,7 +3,6 @@
 #include "ImGui.h"
 #include "Inputs.h"
 #include "Settings.h"
-#include "Maths.h"
 
 using namespace Entities;
 
@@ -68,20 +67,23 @@ void Camera::ImGuiDisplay()
 
 void Camera::CalculatePosition()
 {
+    // Get player transform
+    auto& pTransform = player->transform;
+
 	// Calculate base and altitude
 	f32 hDistance = distance * std::cos(glm::radians(rotation.x));
 	f32 vDistance = distance * std::sin(glm::radians(rotation.x));
 
 	// Calculate offsets
-	f32 theta   = player->rotation.y + m_angle;
+	f32 theta   = pTransform.rotation.y + m_angle;
 	f32 offsetX = hDistance * std::sin(glm::radians(theta));
 	f32 offsetZ = hDistance * std::cos(glm::radians(theta));
 
 	// Apply modifiers
-	position.x = player->position.x - offsetX;
-	position.z = player->position.z - offsetZ;
-	position.y = player->position.y + vDistance;
-	rotation.y = 180.0f - (player->rotation.y + m_angle);
+	position.x = pTransform.position.x - offsetX;
+	position.z = pTransform.position.z - offsetZ;
+	position.y = pTransform.position.y + vDistance;
+	rotation.y = 180.0f - (pTransform.rotation.y + m_angle);
 }
 
 void Camera::CalculateZoom()
@@ -90,21 +92,8 @@ void Camera::CalculateZoom()
 	const auto& mouseScroll = Inputs::GetInstance().GetMouseScroll();
 	// Get settings
 	const auto& settings = Settings::GetInstance();
-
-	if (mouseScroll.y > 0)
-	{
-		for (ssize i = 0; i < mouseScroll.y; ++i)
-		{
-			distance -= settings.camera.zoomSpeed;
-		}
-	}
-	else
-	{
-		for (ssize i = 0; i < -mouseScroll.y; ++i)
-		{
-			distance += settings.camera.zoomSpeed;
-		}
-	}
+    // Calculate zoom
+    distance -= settings.camera.zoomSpeed * static_cast<f32>(mouseScroll.y);
 }
 
 void Camera::CalculatePitch()
@@ -120,6 +109,7 @@ void Camera::CalculatePitch()
 	// Cap pitch
 	if (m_capPitch)
 	{
+        // Clamp between minimum and maximum pitch values
 		rotation.x = glm::clamp(rotation.x, settings.camera.minPitch, settings.camera.maxPitch);
 	}
 }
@@ -134,39 +124,34 @@ void Camera::CalculateAAP()
 	m_angle -= static_cast<f32>(mousePos.x) * settings.camera.aapSpeed;
 }
 
+glm::mat4 Camera::GetViewMatrix() const
+{
+    // Create an identity matrix
+	glm::mat4 matrix(1.0f);
+	// Rotate by X (pitch), Y (yaw) and Z (roll)
+	matrix = glm::rotate(matrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+	matrix = glm::rotate(matrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	matrix = glm::rotate(matrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+	// 3. Translate by the negation of the camera position
+	matrix = glm::translate(matrix, -position);
+	// Return
+	return matrix;
+}
+
 void Camera::InvertPitch()
 {
+    // Negate pitch
 	rotation.x = -rotation.x;
-}
-
-glm::vec3 Camera::GetForward() const
-{
-	// Calculate rotation matrix
-	auto matrix = Maths::CreateModelMatrixR(rotation);
-	// Store forward vector
-	glm::vec3 forward = glm::vec3(0.0f, 0.0f, -1.0f);
-	// Rotate forward vector
-	forward = matrix * glm::vec4(forward, 1.0f);
-	// Return
-	return glm::normalize(forward);
-}
-
-glm::vec3 Camera::GetUp() const
-{
-	return glm::normalize(glm::cross(GetRight(), GetForward()));
-}
-
-glm::vec3 Camera::GetRight() const
-{
-	return glm::normalize(glm::cross(GetForward(), glm::vec3(0.0f, 1.0f, 0.0f)));
 }
 
 bool& Camera::GetToMoveCamera()
 {
+    // Return
 	return m_toMoveCamera;
 }
 
 bool& Camera::GetToZoomCamera()
 {
+    // Return
 	return m_toZoomCamera;
 }

@@ -14,10 +14,8 @@ namespace Entities
 		void Move();
 		// Invert pitch
 		void InvertPitch();
-
-		glm::vec3 GetForward() const;
-		glm::vec3 GetUp() const;
-		glm::vec3 GetRight() const;
+        // Get view matrix
+        glm::mat4 GetViewMatrix() const;
 
 		// Global flag to move camera
 		static bool& GetToMoveCamera();

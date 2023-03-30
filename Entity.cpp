@@ -1,19 +1,13 @@
 #include "Entity.h"
 
+// Using namespaces
 using namespace Entities;
 
+// Usings
 using Renderer::Model;
 
-Entity::Entity
-(
-	MdPtr sharedModel,
-	const glm::vec3& position,
-	const glm::vec3& rotation,
-	f32 scale
-)
+Entity::Entity(MdPtr sharedModel, const Transform& transform)
 	: model(std::move(sharedModel)),
-	  position(position),
-	  rotation(rotation),
-	  scale(scale)
+	  transform(transform)
 {
 }

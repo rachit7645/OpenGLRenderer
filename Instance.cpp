@@ -14,7 +14,7 @@ using Renderer::MeshTextures;
 
 Instance::Instance()
 {
-	// Initialse data
+	// Initialise data
 	InitEntities();
 	InitLights();
 	InitMisc();
@@ -257,21 +257,27 @@ void Instance::InitEntities()
 	{
 		{
 			cottageModel,
-			glm::vec3(0.0f),
-			glm::vec3(0.0f),
-			50.0f
+			{
+                glm::vec3(0.0f, 0.0f, 0.0f),
+			    glm::vec3(0.0f, 0.0f, 0.0f),
+			    glm::vec3(50.0f, 50.0f, 50.0f)
+            }
 		},
 		{
 			benchModel,
-			glm::vec3(44.0f, 0.0f, -40.0f),
-			glm::vec3(0.0f, -90.0f, 0.0f),
-			5.0f
+            {
+			    glm::vec3(44.0f, 0.0f, -40.0f),
+			    glm::vec3(0.0f, -90.0f, 0.0f),
+			    glm::vec3(5.0f, 5.0f, 5.0f)
+            }
 		},
 		{
 			boxModel,
-			glm::vec3(-44.0f, 3.6f, -45.0f),
-			glm::vec3(-90.0f, 0.0f, 0.0f),
-			2.0f
+            {
+                glm::vec3(-44.0f, 3.6f, -45.0f),
+                glm::vec3(-90.0f, 0.0f, 0.0f),
+                glm::vec3(2.0f, 2.0f, 2.0f)
+            }
 		}
 	};
 
@@ -279,9 +285,11 @@ void Instance::InitEntities()
 	m_player =
 	{
 		playerModel,
-		glm::vec3(13.0f, 2.3f, 17.0f),
-		glm::vec3(0.0f, 180.0f, 0.0f),
-		0.03f
+        {
+            glm::vec3(13.0f, 2.3f, 17.0f),
+            glm::vec3(0.0f, 180.0f, 0.0f),
+            glm::vec3(0.03f, 0.03f, 0.03f)
+        }
 	};
 
 	// Attach player
@@ -336,7 +344,11 @@ void Instance::InitMisc()
 		{
 			resources.GetTexture("gfx/Water/waterDUDV.png"),
 			resources.GetTexture("gfx/Water/normal.png"),
-			glm::vec3(120.0f, 3.7f, -2.0f)
+            {
+                glm::vec3(120.0f, 3.7f, -2.0f),
+                glm::vec3(0.0f, 0.0f, 0.0f),
+                glm::vec3(Waters::WATER_TILE_SIZE, Waters::WATER_TILE_SIZE, Waters::WATER_TILE_SIZE)
+            }
 		}
 	};
 }

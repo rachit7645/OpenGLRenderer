@@ -1,32 +1,32 @@
 #include "InstanceBuffer.h"
 
 #include "Util.h"
-#include "Maths.h"
 
 // Using namespaces
 using namespace Renderer;
 
 // Usings
-using Detail::InstancedDataGLSL;
-using Detail::InstancedBufferGLSL;
 using Entities::Entity;
 
-using DataVector = InstanceBuffer::DataVector;
+// Aliases
+using InstanceDataGLSL   = InstanceBuffer::InstanceDataGLSL;
+using InstanceBufferGLSL = InstanceBuffer::InstanceBufferGLSL;
+using DataVector         = InstanceBuffer::DataVector;
 
 // Since we update this before every draw call, it's stored as GL_DYNAMIC_DRAW
 InstanceBuffer::InstanceBuffer()
-	: ShaderStorageBuffer(3, sizeof(InstancedBufferGLSL), GL_DYNAMIC_DRAW)
+	: ShaderStorageBuffer(3, sizeof(InstanceBufferGLSL), GL_DYNAMIC_DRAW)
 {
 	// Bind buffer
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, id);
 	// Initialise empty data
-	InstancedBufferGLSL instancedBuffer = {};
+	InstanceBufferGLSL instancedBuffer = {};
 	// Buffer empty data
 	glBufferSubData
 	(
 		GL_SHADER_STORAGE_BUFFER,
 		static_cast<GLintptr>(0),
-		static_cast<GLsizeiptr>(sizeof(InstancedBufferGLSL)),
+		static_cast<GLsizeiptr>(sizeof(InstanceBufferGLSL)),
 		reinterpret_cast<const void*>(&instancedBuffer)
 	);
 	// Unbind buffer
@@ -52,7 +52,7 @@ usize InstanceBuffer::GetSize(const EntityVector& entities)
 	// Choose the one with the minimum size
 	auto length = std::min(entities.size(), NUM_MAX_ENTITIES);
 	// Calculate the size of the data
-	auto size = length * sizeof(InstancedDataGLSL);
+	auto size = length * sizeof(InstanceDataGLSL);
 	// Return as GLsizeiptr
 	return size;
 }
@@ -68,12 +68,7 @@ DataVector InstanceBuffer::GenerateData(const EntityVector& entities)
 	for (usize i = 0; i < entities.size(); ++i)
 	{
 		// Store model matrix
-		data[i].modelMatrix = Maths::CreateModelMatrix
-		(
-			entities[i]->position,
-			entities[i]->rotation,
-			entities[i]->scale
-		);
+		data[i].modelMatrix = entities[i]->transform.GetModelMatrix();
 		// Store normal matrix
 		data[i].normalMatrix = glm::mat4(glm::transpose(glm::inverse(glm::mat3(data[i].modelMatrix))));
 	}

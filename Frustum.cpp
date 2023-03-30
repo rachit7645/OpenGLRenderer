@@ -3,7 +3,6 @@
 #include <algorithm>
 
 #include "RenderConstants.h"
-#include "Maths.h"
 #include "Log.h"
 
 // Using namespaces
@@ -32,7 +31,7 @@ bool Frustum::IsVisible(const Entity& entity)
 	// Get meshes
 	const auto& meshes = entity.model->meshes;
     // Create model matrix
-    glm::mat4 model = Maths::CreateModelMatrix(entity.position, entity.rotation, entity.scale);
+    glm::mat4 model = entity.transform.GetModelMatrix();
 	// Return true if any meshes are visible
 	return std::any_of(meshes.begin(), meshes.end(), [this, model] (const auto& mesh)
 	{
@@ -44,7 +43,7 @@ bool Frustum::IsVisible(const Entity& entity)
 void Frustum::UpdateView(const Camera& camera)
 {
     // Create view matrix
-    m_view = Maths::CreateViewMatrix(camera);
+    m_view = camera.GetViewMatrix();
 
     // Combine matrices (transpose to left-handed)
     auto matrix = glm::transpose(m_projection * m_view);

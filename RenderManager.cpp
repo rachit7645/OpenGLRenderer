@@ -3,7 +3,6 @@
 #include <GL/glew.h>
 #include <fmt/format.h>
 
-#include "Maths.h"
 #include "Window.h"
 #include "GL.h"
 #include "Settings.h"
@@ -126,18 +125,18 @@ void RenderManager::RenderWaterFBOs(const WaterTiles& waters, Camera& camera)
 	// Reflection pass
 	m_waterFBOs.BindReflection();
 	// Move the camera
-	f32 distance = 2.0f * (camera.position.y - waters[0].position.y);
+	f32 distance = 2.0f * (camera.position.y - waters[0].transform.position.y);
 	camera.position.y -= distance;
 	camera.InvertPitch();
 	// Render
-	RenderWaterScene(camera, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].position.y));
+	RenderWaterScene(camera, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].transform.position.y));
 	// Move it back to its original position
 	camera.position.y += distance;
 	camera.InvertPitch();
 
 	// Refraction pass
 	m_waterFBOs.BindRefraction();
-	RenderWaterScene(camera, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].position.y));
+	RenderWaterScene(camera, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].transform.position.y));
 
 	// Disable clip plane 0
 	glDisable(GL_CLIP_DISTANCE0);

@@ -5,7 +5,6 @@
 
 #include "Util.h"
 #include "RenderConstants.h"
-#include "Maths.h"
 #include "FBOAttachment.h"
 #include "Settings.h"
 
@@ -125,7 +124,7 @@ glm::mat4 ShadowMap::CalculateLightSpaceMatrix
 	// Projection needs to be the same as the main projection matrix
 	glm::mat4 proj = glm::perspective(glm::radians(FOV), ASPECT_RATIO, nearPlane, farPlane);
 	// View matrix needs to be the same as the main one
-	Vec4s corners = CalculateFrustumCorners(proj, Maths::CreateViewMatrix(camera));
+	Vec4s corners = CalculateFrustumCorners(proj, camera.GetViewMatrix());
 	// Light view and projection
 	glm::mat4 lightView = CalculateViewMatrix(corners, lightDir);
 	glm::mat4 lightProj = CalculateProjMatrix(corners, lightView);

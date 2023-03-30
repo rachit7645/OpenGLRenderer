@@ -40,7 +40,6 @@ add_executable(engine
 	VertexArray.cpp
 	VertexBuffer.cpp
 	Entity.cpp
-	Maths.cpp
 	Camera.cpp
 	RenderManager.cpp
 	Mesh.cpp
@@ -98,6 +97,7 @@ add_executable(engine
 	AABB.cpp
 	Plane.cpp
 	Frustum.cpp
+	Transform.cpp
 )
 
 # Precompiled Headers

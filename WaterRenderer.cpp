@@ -1,6 +1,5 @@
 #include "WaterRenderer.h"
 
-#include "Maths.h"
 #include "Util.h"
 
 using namespace Renderer;
@@ -73,12 +72,7 @@ void WaterRenderer::PrepareWater(const WaterTile& water)
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, water.normalMap->id);
 	// Load model matrix
-	auto matrix = Maths::CreateModelMatrixTS
-	(
-		water.position,
-		Waters::WATER_TILE_SIZE
-	);
-	shader.LoadModelMatrix(matrix);
+	shader.LoadModelMatrix(water.transform.GetModelMatrix());
 }
 
 void WaterRenderer::Unbind()
