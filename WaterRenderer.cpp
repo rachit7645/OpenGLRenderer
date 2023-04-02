@@ -59,7 +59,7 @@ void WaterRenderer::Prepare()
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, waterFBOs.refractionFBO->colorTextures[0]->id);
 	// Load dudv move factor
-	m_moveFactor += WATER_WAVE_SPEED * g_Delta;
+	m_moveFactor += WATER_WAVE_SPEED * Util::g_Delta;
 	m_moveFactor = std::fmod(m_moveFactor, 1.0f);
 	shader.LoadMoveFactor(m_moveFactor);
 }

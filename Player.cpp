@@ -28,10 +28,10 @@ void Player::Move()
 	CheckInputs();
 
     // Change rotation
-	transform.rotation.y  += m_turnSpeed * g_Delta;
+	transform.rotation.y  += m_turnSpeed * Util::g_Delta;
 
     // Calculate distance
-	f32 distance = m_runSpeed * g_Delta;
+	f32 distance = m_runSpeed * Util::g_Delta;
     // Change position
     transform.position.x  += distance * std::sin(glm::radians(transform.rotation.y));
     transform.position.z  += distance * std::cos(glm::radians(transform.rotation.y));

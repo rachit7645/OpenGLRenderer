@@ -2,6 +2,7 @@
 
 #include "Resources.h"
 #include "MeshTextures.h"
+#include "LightsBuffer.h"
 
 // Using namespaces
 using namespace Engine;
@@ -85,7 +86,7 @@ void Instance::CalculateFPS()
 	// Calculate cycle duration
 	auto cycleDuration = m_endTime - m_startTime;
 	// Calculate frame delta
-	g_Delta = static_cast<f32>(static_cast<f64>(duration.count()) / 1000.0);
+	Util::g_Delta = static_cast<f32>(static_cast<f64>(duration.count()) / 1000.0);
 	// Set this/next frame's start time
 	m_frameStartTime = m_endTime;
 
@@ -130,15 +131,26 @@ void Instance::ImGuiDisplay()
 			// If lights menu is selected
 			if (ImGui::BeginMenu("Lights"))
 			{
-				// Shared indices
-				constexpr std::array<const char*, 4> indices = {"[0]", "[1]", "[2]", "[3]"};
+                // Shared index item getter lambda
+                auto GetItem = [] (void* data, int index, const char** outText) -> bool
+                {
+                    // Get vector
+                    auto& vector = *reinterpret_cast<std::vector<std::string>*>(data);
+                    // Put data
+                    *outText = vector[index].data();
+                    // Return success
+                    return true;
+                };
 
 				// If directional lights menu is selected
 				if (ImGui::BeginMenu("Directional"))
 				{
+                    // Generate indices
+                    auto indices = GenerateIndices(m_dirLights.size());
 					// Light selector
-					ImGui::Combo("Slot", &m_selectedDirLight, indices.data(), indices.size());
-					// Select light
+					ImGui::Combo("Slot", &m_selectedDirLight, GetItem, reinterpret_cast<void*>(&indices), indices.size());
+
+                    // Select light
 					auto& light = m_dirLights[m_selectedDirLight];
 					// Position
 					ImGui::DragFloat3("Position", &light.position[0], 0.5f, -500.0f, 500.0f, "%.1f");
@@ -146,16 +158,44 @@ void Instance::ImGuiDisplay()
 					ImGui::ColorEdit3("Color", &light.color[0]);
 					// Intensity
 					ImGui::DragFloat3("Intensity", &light.intensity[0], 0.5f, 0.0f, 100.0f, "%.1f");
-					// End menu
+
+                    // If new light needs to be added
+                    if (ImGui::Button("Add"))
+                    {
+                        // If light count is less than max
+                        if (m_dirLights.size() < Renderer::SHADER_MAX_LIGHTS)
+                        {
+                            // Create new empty light
+                            m_dirLights.emplace_back();
+                        }
+                    }
+
+                    // If selected light needs to be deleted
+                    if (ImGui::Button("Delete"))
+                    {
+                        // If light count is more than 1 (Light #1 is shadow casting)
+                        if (m_dirLights.size() > 1)
+                        {
+                            // Delete light
+                            m_dirLights.erase(m_dirLights.begin() + m_selectedDirLight);
+                            // Change displayed light index
+                            if (m_selectedDirLight > 0) --m_selectedDirLight;
+                        }
+                    }
+
+                    // End menu
 					ImGui::EndMenu();
 				}
 
 				// If point lights menu is selected
 				if (ImGui::BeginMenu("Point"))
 				{
+					// Generate indices
+                    auto indices = GenerateIndices(m_pointLights.size());
 					// Light selector
-					ImGui::Combo("Slot", &m_selectedPointLight, indices.data(), indices.size());
-					// Select light
+					ImGui::Combo("Slot", &m_selectedPointLight, GetItem, reinterpret_cast<void*>(&indices), indices.size());
+
+                    // Select light
 					auto& light = m_pointLights[m_selectedPointLight];
 					// Position
 					ImGui::DragFloat3("Position", &light.position[0], 0.5f, -500.0f, 500.0f, "%.1f");
@@ -165,16 +205,44 @@ void Instance::ImGuiDisplay()
 					ImGui::DragFloat3("Intensity", &light.intensity[0], 0.5f, 0.0f, 100.0f, "%.1f");
 					// Attenuation
 					ImGui::InputFloat3("Attenuation", &light.attenuation[0], "%.4f");
-					// End menu
+
+                    // If new light needs to be added
+                    if (ImGui::Button("Add"))
+                    {
+                        // If light count is less than max
+                        if (m_pointLights.size() < Renderer::SHADER_MAX_LIGHTS)
+                        {
+                            // Create new empty light
+                            m_pointLights.emplace_back();
+                        }
+                    }
+
+                    // If selected light needs to be deleted
+                    if (ImGui::Button("Delete"))
+                    {
+                        // If light count is not zero
+                        if (m_pointLights.size() > 0)
+                        {
+                            // Delete light
+                            m_pointLights.erase(m_pointLights.begin() + m_selectedPointLight);
+                            // Change displayed light index
+                            if (m_selectedPointLight > 0) --m_selectedPointLight;
+                        }
+                    }
+
+                    // End menu
 					ImGui::EndMenu();
 				}
 
 				// If spot lights menu is selected
 				if (ImGui::BeginMenu("Spot"))
 				{
+					// Generate indices
+                    auto indices = GenerateIndices(m_spotLights.size());
 					// Light selector
-					ImGui::Combo("Slot", &m_selectedSpotLight, indices.data(), indices.size());
-					// Select light
+					ImGui::Combo("Slot", &m_selectedSpotLight, GetItem, reinterpret_cast<void*>(&indices), indices.size());
+
+                    // Select light
 					auto& light = m_spotLights[m_selectedSpotLight];
 					// Position
 					ImGui::DragFloat3("Position", &light.position[0], 0.5f, -500.0f, 500.0f, "%.1f");
@@ -192,7 +260,32 @@ void Instance::ImGuiDisplay()
 					ImGui::DragFloat2("CutOff", &degCutOff[0], 0.5f, 0.0f, 180.0f, "%.1f");
 					// Set new cut off
 					light.SetCutOff(degCutOff);
-					// End menu
+
+                    // If new light needs to be added
+                    if (ImGui::Button("Add"))
+                    {
+                        // If light count is less than max
+                        if (m_spotLights.size() < Renderer::SHADER_MAX_LIGHTS)
+                        {
+                            // Create new empty light
+                            m_spotLights.emplace_back();
+                        }
+                    }
+
+                    // If selected light needs to be deleted
+                    if (ImGui::Button("Delete"))
+                    {
+                        // If light count is not zero
+                        if (m_spotLights.size() > 0)
+                        {
+                            // Delete light
+                            m_spotLights.erase(m_spotLights.begin() + m_selectedSpotLight);
+                            // Change displayed light index
+                            if (m_selectedSpotLight > 0) --m_selectedSpotLight;
+                        }
+                    }
+
+                    // End menu
 					ImGui::EndMenu();
 				}
 
@@ -230,6 +323,22 @@ void Instance::ImGuiUpdate()
 		SDL_GL_SetSwapInterval(selectedSwapMode);
 		m_currentSwapMode = selectedSwapMode;
 	}
+}
+
+std::vector<std::string> Instance::GenerateIndices(usize size)
+{
+    // Create vector
+    std::vector<std::string> indices;
+
+    // For each element
+    for (usize i = 0; i < size; ++i)
+    {
+        // Create index
+        indices.emplace_back("[" + std::to_string(i) + "]");
+    }
+
+    // Return indices
+    return indices;
 }
 
 void Instance::InitEntities()

@@ -301,7 +301,7 @@ float CalculateAttenuation(vec3 position, vec3 ATT, GBuffer gBuffer)
 	// Calculate attenuation
 	float attenuation = ATT.x + (ATT.y * distance) + (ATT.z * distance * distance);
 	// Make attenuation multiplicable
-	attenuation = 1.0f / attenuation;
+	attenuation = 1.0f / max(attenuation, 0.0001f);
 	// Return
 	return attenuation;
 }
