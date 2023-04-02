@@ -104,7 +104,8 @@ add_executable(engine
 target_precompile_headers(engine PRIVATE
 	# ImGui Headers
 	libs/imgui/imgui.h
-	libs/imgui/backends/imgui_impl_sdl.h
+	libs/imgui/imgui_internal.h
+	libs/imgui/backends/imgui_impl_sdl2.h
 	libs/imgui/backends/imgui_impl_opengl3.h
 	libs/imgui/misc/cpp/imgui_stdlib.h
 	# STB Headers
