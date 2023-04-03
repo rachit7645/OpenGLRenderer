@@ -148,7 +148,14 @@ void Instance::ImGuiDisplay()
                     // Generate indices
                     auto indices = GenerateIndices(m_dirLights.size());
 					// Light selector
-					ImGui::Combo("Slot", &m_selectedDirLight, GetItem, reinterpret_cast<void*>(&indices), indices.size());
+					ImGui::Combo
+                    (
+                        "Slot",                            // Displayed name
+                        &m_selectedDirLight,               // Selected light
+                        GetItem,                           // Item Getter
+                        reinterpret_cast<void*>(&indices), // Raw data
+                        static_cast<s32>(indices.size())   // Data size
+                    );
 
                     // Select light
 					auto& light = m_dirLights[m_selectedDirLight];
@@ -169,6 +176,9 @@ void Instance::ImGuiDisplay()
                             m_dirLights.emplace_back();
                         }
                     }
+
+                    // Put both buttons on the same line
+                    ImGui::SameLine();
 
                     // If selected light needs to be deleted
                     if (ImGui::Button("Delete"))
@@ -193,7 +203,14 @@ void Instance::ImGuiDisplay()
 					// Generate indices
                     auto indices = GenerateIndices(m_pointLights.size());
 					// Light selector
-					ImGui::Combo("Slot", &m_selectedPointLight, GetItem, reinterpret_cast<void*>(&indices), indices.size());
+                    ImGui::Combo
+                    (
+                        "Slot",                            // Displayed name
+                        &m_selectedPointLight,             // Selected light
+                        GetItem,                           // Item Getter
+                        reinterpret_cast<void*>(&indices), // Raw data
+                        static_cast<s32>(indices.size())   // Data size
+                    );
 
                     // Select light
 					auto& light = m_pointLights[m_selectedPointLight];
@@ -217,11 +234,14 @@ void Instance::ImGuiDisplay()
                         }
                     }
 
+                    // Put both buttons on the same line
+                    ImGui::SameLine();
+
                     // If selected light needs to be deleted
                     if (ImGui::Button("Delete"))
                     {
                         // If light count is not zero
-                        if (m_pointLights.size() > 0)
+                        if (!m_pointLights.empty())
                         {
                             // Delete light
                             m_pointLights.erase(m_pointLights.begin() + m_selectedPointLight);
@@ -240,7 +260,14 @@ void Instance::ImGuiDisplay()
 					// Generate indices
                     auto indices = GenerateIndices(m_spotLights.size());
 					// Light selector
-					ImGui::Combo("Slot", &m_selectedSpotLight, GetItem, reinterpret_cast<void*>(&indices), indices.size());
+                    ImGui::Combo
+                    (
+                        "Slot",                            // Displayed name
+                        &m_selectedSpotLight,              // Selected light
+                        GetItem,                           // Item Getter
+                        reinterpret_cast<void*>(&indices), // Raw data
+                        static_cast<s32>(indices.size())   // Data size
+                    );
 
                     // Select light
 					auto& light = m_spotLights[m_selectedSpotLight];
@@ -272,11 +299,14 @@ void Instance::ImGuiDisplay()
                         }
                     }
 
+                    // Put both buttons on the same line
+                    ImGui::SameLine();
+
                     // If selected light needs to be deleted
                     if (ImGui::Button("Delete"))
                     {
                         // If light count is not zero
-                        if (m_spotLights.size() > 0)
+                        if (!m_spotLights.empty())
                         {
                             // Delete light
                             m_spotLights.erase(m_spotLights.begin() + m_selectedSpotLight);

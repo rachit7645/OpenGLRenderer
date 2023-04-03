@@ -45,8 +45,8 @@ target_precompile_headers(imgui PRIVATE
 target_include_directories(imgui PRIVATE ${SDL2_INCLUDE_DIRS})
 # ImGUI Includes
 target_include_directories(imgui PUBLIC imgui/ imgui/backends imgui/misc)
-# Define GL_GLEXT_PROTOTYPES
-target_compile_definitions(imgui PRIVATE GL_GLEXT_PROTOTYPES=1)
+# ImGui Defines
+target_compile_definitions(imgui PRIVATE GL_GLEXT_PROTOTYPES=1 IMGUI_DEFINE_MATH_OPERATORS=1)
 # Disable warnings
 target_compile_options(imgui PRIVATE -w)
 # -O3 optimisations
