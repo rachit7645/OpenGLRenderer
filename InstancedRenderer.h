@@ -10,9 +10,9 @@
 #include "InstanceBuffer.h"
 #include "FastInstancedShader.h"
 #include "RenderConstants.h"
-#include "ShadowInstancedShader.h"
-#include "ShadowMap.h"
+#include "ShadowShader.h"
 #include "IBLMaps.h"
+#include "GBufferShader.h"
 
 namespace Renderer
 {
@@ -28,19 +28,19 @@ namespace Renderer
 		// Main constructor
 		InstancedRenderer
 		(
+			Shader::GBufferShader& gShader,
 			Shader::FastInstancedShader& fastShader,
-			Shader::ShadowInstancedShader& shadowShader,
-			Renderer::ShadowMap& shadowMap,
+			Shader::ShadowShader& shadowShader,
 			Renderer::IBLMaps& iblMaps,
 			BufferPtr instances
 		);
 
 		// Shaders
+		Shader::GBufferShader&       gShader;
 		Shader::FastInstancedShader& fastShader;
-		Shader::ShadowInstancedShader& shadowShader;
+		Shader::ShadowShader&        shadowShader;
 
 		// Other data
-		Renderer::ShadowMap& shadowMap;
 		Renderer::IBLMaps&   iblMaps;
 		BufferPtr            instances;
 

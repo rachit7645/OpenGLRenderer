@@ -16,6 +16,7 @@ namespace Renderer
 	public:
 		// Usings
 		using VAO = std::shared_ptr<VertexArray>;
+
 		// Main constructor
 		BloomRenderer
 		(
@@ -24,18 +25,24 @@ namespace Renderer
 			Renderer::LightingBuffer& lightingBuffer,
 			Renderer::BloomBuffer& bloomBuffer
 		);
+
 		// Data
 		Shader::DownSampleShader& downShader;
 		Shader::UpSampleShader&   upShader;
 		Renderer::LightingBuffer& lightingBuffer;
 		Renderer::BloomBuffer&    bloomBuffer;
+
 		// Render down samples
 		void RenderDownSamples();
 		// Render up samples
 		void RenderUpSamples();
+		// Render ImGui widgets
+		void RenderImGui();
 	private:
 		// Quad VAO
 		VAO m_vao;
+		// Bloom radius
+		f32 m_bloomRadius = 0.005f;
 	};
 }
 

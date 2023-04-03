@@ -12,10 +12,9 @@ using Engine::Settings;
 
 // GBuffer Layout
 // Buffer   | Type  | R          | G          | B          | A
-// Normal   | RG8U  | normal.x   | normal.y   | NONE       | NONE
-// Albedo   | RGB8U | albedo.r   | albedo.g   | albedo.b   | NONE
+// Normal   | RG8U  | normal.x   | normal.y   | ao         | roughness
+// Albedo   | RGB8U | albedo.r   | albedo.g   | albedo.b   | metallic
 // Emmisive | RGB8U | emmisive.r | emmisive.g | emmisive.b | NONE
-// Material | RGB8U | ao         | roughness  | metallic   | NONE
 // Depth    | D24S8 | depth      | stencil    | NONE       | NONE
 
 GBuffer::GBuffer()
@@ -30,8 +29,8 @@ GBuffer::GBuffer()
 		GL_NEAREST,
 		GL_NEAREST,
 		GL_CLAMP_TO_EDGE,
-		GL_RG8,
-		GL_RG,
+		GL_RGBA8,
+		GL_RGBA,
 		GL_UNSIGNED_BYTE,
 		GL_COLOR_ATTACHMENT0
 	};
@@ -42,8 +41,8 @@ GBuffer::GBuffer()
 		GL_NEAREST,
 		GL_NEAREST,
 		GL_CLAMP_TO_EDGE,
-		GL_RGB8,
-		GL_RGB,
+		GL_RGBA8,
+		GL_RGBA,
 		GL_UNSIGNED_BYTE,
 		GL_COLOR_ATTACHMENT1
 	};
@@ -58,18 +57,6 @@ GBuffer::GBuffer()
 		GL_RGB,
 		GL_UNSIGNED_BYTE,
 		GL_COLOR_ATTACHMENT2
-	};
-
-	// Material attachment
-	Renderer::FBOAttachment material =
-	{
-		GL_NEAREST,
-		GL_NEAREST,
-		GL_CLAMP_TO_EDGE,
-		GL_RGB8,
-		GL_RGB,
-		GL_UNSIGNED_BYTE,
-		GL_COLOR_ATTACHMENT3
 	};
 
 	// Depth attachment
@@ -89,8 +76,7 @@ GBuffer::GBuffer()
 	{
 		normal.slot,
 		albedo.slot,
-		emmisive.slot,
-		material.slot
+		emmisive.slot
 	};
 
 	// Set buffer width and height
@@ -103,7 +89,6 @@ GBuffer::GBuffer()
 	buffer->AddTexture(buffer->colorTextures[0], normal);
 	buffer->AddTexture(buffer->colorTextures[1], albedo);
 	buffer->AddTexture(buffer->colorTextures[2], emmisive);
-	buffer->AddTexture(buffer->colorTextures[3], material);
 	buffer->AddTexture(buffer->depthTexture,     depth);
 	buffer->SetDrawBuffers(drawBuffers);
 	buffer->CheckStatus();

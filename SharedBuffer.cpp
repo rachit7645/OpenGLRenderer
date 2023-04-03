@@ -2,10 +2,14 @@
 
 #include <GL/glew.h>
 
+// Using namespaces
 using namespace Renderer;
 
-using Detail::SharedBufferGLSL;
+// Usings
 using Entities::Camera;
+
+// Aliases
+using SharedBufferGLSL = SharedBuffer::SharedBufferGLSL;
 
 SharedBuffer::SharedBuffer()
 	: UniformBuffer(2, sizeof(SharedBufferGLSL), GL_STATIC_DRAW)
@@ -28,8 +32,9 @@ SharedBuffer::SharedBuffer()
 
 void SharedBuffer::LoadClipPlane(const glm::vec4& clipPlane)
 {
-	// Load value
+    // Bind buffer
 	glBindBuffer(GL_UNIFORM_BUFFER, id);
+    // Buffer data
 	glBufferSubData
 	(
 		GL_UNIFORM_BUFFER,
@@ -37,15 +42,17 @@ void SharedBuffer::LoadClipPlane(const glm::vec4& clipPlane)
 		static_cast<GLsizeiptr>(sizeof(glm::vec4)),
 		reinterpret_cast<const void*>(&clipPlane[0])
 	);
+    // Unbind buffer
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void SharedBuffer::LoadCameraPos(const Camera& camera)
 {
-	// Adjust position
+	// Pack position
 	auto position = glm::vec4(camera.position, 1.0f);
-	// Load value
+    // Bind buffer
 	glBindBuffer(GL_UNIFORM_BUFFER, id);
+    // Buffer data
 	glBufferSubData
 	(
 		GL_UNIFORM_BUFFER,
@@ -53,6 +60,7 @@ void SharedBuffer::LoadCameraPos(const Camera& camera)
 		static_cast<GLsizeiptr>(sizeof(glm::vec4)),
 		reinterpret_cast<const void*>(&position[0])
 	);
+    // Unbind buffer
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
@@ -60,8 +68,9 @@ void SharedBuffer::LoadResolution(const glm::ivec2& dimensions, f32 nearPlane, f
 {
 	// Pack values
 	auto resolution = glm::vec4(dimensions, nearPlane, farPlane);
-	// Buffer data
+    // Bind buffer
 	glBindBuffer(GL_UNIFORM_BUFFER, id);
+    // Buffer data
 	glBufferSubData
 	(
 		GL_UNIFORM_BUFFER,
@@ -69,5 +78,6 @@ void SharedBuffer::LoadResolution(const glm::ivec2& dimensions, f32 nearPlane, f
 		static_cast<GLsizeiptr>(sizeof(glm::vec4)),
 		reinterpret_cast<const void*>(&resolution)
 	);
+    // Unbind buffer
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }

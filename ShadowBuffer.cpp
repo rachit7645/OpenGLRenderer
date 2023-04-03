@@ -1,10 +1,11 @@
 #include "ShadowBuffer.h"
 
+// Using namespaces
 using namespace Renderer;
 
-using Detail::ShadowBufferGLSL;
-
-using Mat4s = ShadowBuffer::Mat4s;
+// Aliases
+using ShadowBufferGLSL = ShadowBuffer::ShadowBufferGLSL;
+using Mat4s            = ShadowBuffer::Mat4s;
 
 ShadowBuffer::ShadowBuffer()
 	: UniformBuffer(4, sizeof(ShadowBufferGLSL), GL_STATIC_DRAW)

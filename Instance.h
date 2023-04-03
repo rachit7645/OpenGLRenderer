@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <chrono>
+#include <string>
 
 #include "Entity.h"
 #include "DirectionalLight.h"
@@ -37,12 +38,14 @@ namespace Engine
 		// Run engine
 		void Run();
 	private:
+        // Calculates the FPS and the frame delta
+		void CalculateFPS();
 		// Display ImGui Widgets
 		void ImGuiDisplay();
 		// Update menu
 		void ImGuiUpdate();
-		// Calculates the FPS and the frame delta
-		void CalculateFPS();
+        // Get indices for display
+        std::vector<std::string> GenerateIndices(usize size);
 
 		// Initialise entities (and player)
 		void InitEntities();

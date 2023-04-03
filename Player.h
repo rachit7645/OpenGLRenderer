@@ -5,6 +5,7 @@
 #include "Entity.h"
 #include "Util.h"
 #include "Model.h"
+#include "Transform.h"
 
 namespace Entities
 {
@@ -14,13 +15,7 @@ namespace Entities
 		// Default constructor
 		Player();
 		// Main constructor
-		Player
-		(
-			MdPtr model,
-			const glm::vec3& position,
-			const glm::vec3& rotation,
-			f32 scale
-		);
+		Player(MdPtr model, const Transform& transform);
 		// Player update functions
 		void Move();
 	private:

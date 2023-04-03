@@ -46,8 +46,29 @@ void PostProcessRenderer::Render()
 	// Bind bloom buffer
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, bloomBuffer.mipChain[0]->id);
+	// Load bloom strength
+	shader.LoadBloomStrength(m_bloomStrength);
 	// Render quad
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, m_vao->vertexCount);
 	// Unbind vao
 	glBindVertexArray(0);
+}
+
+void PostProcessRenderer::RenderImGui()
+{
+	// If main menu bar is visible
+	if (ImGui::BeginMainMenuBar())
+	{
+		// If bloom menu is visible
+		if (ImGui::BeginMenu("Bloom"))
+		{
+			// Bloom strength
+			ImGui::Text("Strength:");
+			ImGui::DragFloat("##bstr", &m_bloomStrength, 0.00125f, 0.0f, 1.0f, "%.4f");
+			// End menu
+			ImGui::EndMenu();
+		}
+		// End menu bar
+		ImGui::EndMainMenuBar();
+	}
 }

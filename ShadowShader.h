@@ -1,15 +1,15 @@
-#ifndef INSTANCED_SHADOW_SHADER_H
-#define INSTANCED_SHADOW_SHADER_H
+#ifndef SHADOW_SHADER_H
+#define SHADOW_SHADER_H
 
 #include "Shader.h"
 
 namespace Shader
 {
-	class ShadowInstancedShader : public ShaderProgram
+	class ShadowShader : public ShaderProgram
 	{
 	public:
 		// Constructor
-		ShadowInstancedShader();
+		ShadowShader();
 		// Get all uniform locations (Unused in this shader)
 		void GetUniformLocations() override;
 	};

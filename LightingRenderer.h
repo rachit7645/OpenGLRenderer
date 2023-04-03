@@ -16,6 +16,7 @@ namespace Renderer
 	public:
 		// Usings
 		using VAO = std::shared_ptr<VertexArray>;
+
 		// Main constructor
 		LightingRenderer
 		(
@@ -24,11 +25,13 @@ namespace Renderer
 			Renderer::GBuffer& gBuffer,
 			Renderer::IBLMaps& iblMaps
 		);
+
 		// Data
 		Shader::LightingShader& shader;
 		Renderer::ShadowMap&    shadowMap;
 		Renderer::GBuffer&      gBuffer;
 		Renderer::IBLMaps&      iblMaps;
+
 		// Render light pass
 		void Render();
 	private:

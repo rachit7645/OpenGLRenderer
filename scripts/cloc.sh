@@ -1,0 +1,1 @@
+cd ../ && cloc --no-recurse . && cd res/shaders/ && cloc --no-recurse . && cd ../../scripts/ && python3 loc.py

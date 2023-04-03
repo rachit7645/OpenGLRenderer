@@ -4,12 +4,16 @@
 
 #include "Util.h"
 
+// Using namespaces
 using namespace Renderer;
 
+// Usings
 using Entities::DirectionalLight;
 using Entities::PointLight;
 using Entities::SpotLight;
-using Detail::LightsBufferGLSL;
+
+// Aliases
+using LightsBufferGLSL = LightsBuffer::LightsBufferGLSL;
 
 LightsBuffer::LightsBuffer()
 	: UniformBuffer(1, sizeof(LightsBufferGLSL), GL_STATIC_DRAW)

@@ -19,8 +19,6 @@ namespace Renderer
 	private:
 		// Prepare skybox for render
 		void PrepareSkybox(const Entities::Skybox& skybox);
-		// Load identity matrix
-		void LoadModelMatrix();
 		// Unbind skybox
 		void UnbindSkybox();
 	};

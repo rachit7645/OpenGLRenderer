@@ -1,6 +1,5 @@
 #include "WaterFrameBuffers.h"
 
-#include "Window.h"
 #include "FBOAttachment.h"
 #include "Settings.h"
 

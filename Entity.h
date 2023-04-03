@@ -5,6 +5,7 @@
 
 #include "GLM.h"
 #include "Model.h"
+#include "Transform.h"
 
 namespace Entities
 {
@@ -17,24 +18,14 @@ namespace Entities
 		// Default constructor
 		Entity() = default;
 		// Main constructor
-		Entity
-        (
-			MdPtr sharedModel,
-			const glm::vec3& position,
-			const glm::vec3& rotation,
-			f32 scale
-		);
+		Entity(MdPtr sharedModel, const Transform& transform);
 		// Destructor
 		virtual ~Entity() = default;
 
 		// Pointer to model
-		MdPtr model;
-		// Position
-		glm::vec3 position;
-		// Rotation
-		glm::vec3 rotation;
-		// Scale
-		f32 scale;
+		MdPtr model = nullptr;
+		// Transform
+        Transform transform = {};
 	};
 }
 

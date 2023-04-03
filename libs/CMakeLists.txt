@@ -23,7 +23,7 @@ add_library(imgui SHARED
 	imgui/imgui_draw.cpp
 	imgui/imgui_tables.cpp
 	imgui/imgui_widgets.cpp
-	imgui/backends/imgui_impl_sdl.cpp
+	imgui/backends/imgui_impl_sdl2.cpp
 	imgui/backends/imgui_impl_opengl3.cpp
 	imgui/misc/cpp/imgui_stdlib.cpp
 )
@@ -31,10 +31,11 @@ add_library(imgui SHARED
 # ImGui precompiled headers
 target_precompile_headers(imgui PRIVATE
 	imgui/imconfig.h
+	imgui/imgui_internal.h
 	imgui/imgui.h
 	imgui/imstb_rectpack.h
 	imgui/imstb_truetype.h
-	imgui/backends/imgui_impl_sdl.h
+	imgui/backends/imgui_impl_sdl2.h
 	imgui/backends/imgui_impl_opengl3_loader.h
 	imgui/backends/imgui_impl_opengl3.h
 	imgui/misc/cpp/imgui_stdlib.h
@@ -44,8 +45,8 @@ target_precompile_headers(imgui PRIVATE
 target_include_directories(imgui PRIVATE ${SDL2_INCLUDE_DIRS})
 # ImGUI Includes
 target_include_directories(imgui PUBLIC imgui/ imgui/backends imgui/misc)
-# Define GL_GLEXT_PROTOTYPES
-target_compile_definitions(imgui PRIVATE GL_GLEXT_PROTOTYPES=1)
+# ImGui Defines
+target_compile_definitions(imgui PRIVATE GL_GLEXT_PROTOTYPES=1 IMGUI_DEFINE_MATH_OPERATORS=1)
 # Disable warnings
 target_compile_options(imgui PRIVATE -w)
 # -O3 optimisations

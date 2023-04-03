@@ -5,7 +5,6 @@
 
 #include "Util.h"
 #include "RenderConstants.h"
-#include "Maths.h"
 #include "FBOAttachment.h"
 #include "Settings.h"
 
@@ -42,8 +41,8 @@ ShadowMap::ShadowMap()
 	// Depth attachment
 	Renderer::FBOAttachment depth =
 	{
-		GL_NEAREST,
-		GL_NEAREST,
+        GL_LINEAR,
+        GL_LINEAR,
 		GL_CLAMP_TO_BORDER,
 		GL_DEPTH_COMPONENT24,
 		GL_DEPTH_COMPONENT,
@@ -69,6 +68,15 @@ ShadowMap::ShadowMap()
 	buffer->CheckStatus();
 	buffer->EnableDepth();
 	buffer->Unbind();
+
+    // Bind depth texture
+    buffer->depthTexture->Bind();
+    // Enable depth comparison mode
+    buffer->depthTexture->SetParameter(GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+    // Set depth compare mode
+    buffer->depthTexture->SetParameter(GL_TEXTURE_COMPARE_FUNC, GL_GREATER);
+    // Unbind depth texture
+    buffer->depthTexture->Bind();
 
 	// Load cascade distances
 	m_matrixBuffer->LoadDistances(shadowLevels);
@@ -116,7 +124,7 @@ glm::mat4 ShadowMap::CalculateLightSpaceMatrix
 	// Projection needs to be the same as the main projection matrix
 	glm::mat4 proj = glm::perspective(glm::radians(FOV), ASPECT_RATIO, nearPlane, farPlane);
 	// View matrix needs to be the same as the main one
-	Vec4s corners = CalculateFrustumCorners(proj, Maths::CreateViewMatrix(camera));
+	Vec4s corners = CalculateFrustumCorners(proj, camera.GetViewMatrix());
 	// Light view and projection
 	glm::mat4 lightView = CalculateViewMatrix(corners, lightDir);
 	glm::mat4 lightProj = CalculateProjMatrix(corners, lightView);

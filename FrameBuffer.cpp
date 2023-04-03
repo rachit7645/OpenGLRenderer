@@ -252,8 +252,6 @@ void FrameBuffer::CheckStatus()
 
 void FrameBuffer::Bind() const
 {
-	// Make sure that no texture is bound
-	glBindTexture(GL_TEXTURE_2D, 0);
 	// Bind buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, id);
 	// Set viewport

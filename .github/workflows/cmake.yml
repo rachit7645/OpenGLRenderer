@@ -2,9 +2,9 @@ name: CMake
 
 on:
   push:
-    branches: [ "main", "debug" ]
+    branches: [ "main", "dev" ]
   pull_request:
-    branches: [ "main", "debug" ]
+    branches: [ "main", "dev" ]
 
 env:
   BUILD_TYPE: Debug

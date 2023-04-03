@@ -3,19 +3,27 @@
 // Entity instance
 struct Instance
 {
+	// Model matrix
 	mat4 modelMatrix;
+	// Transposed inverse model matrix
+	mat4 normalMatrix;
 };
 
 // Matrix buffer
 layout(std140, binding = 0) uniform Matrices
 {
-	mat4 projectionMatrix;
-	mat4 viewMatrix;
+	// Regular matrices
+	mat4 projection;
+	mat4 cameraView;
+	// Inverse matrices
+	mat4 invProjection;
+	mat4 invCameraView;
 };
 
 // Instance data SSBO
 layout(std430, binding = 3) readonly buffer InstanceData
 {
+	// Instance array
 	Instance instances[];
 };
 
@@ -33,20 +41,20 @@ out mat3 TBNMatrix;
 // Entry point
 void main()
 {
+	// Get instance
+	Instance instance = instances[gl_InstanceID];
 	// Transform vertex by model matrix
-	vec4 fragPos = instances[gl_InstanceID].modelMatrix * vec4(position, 1.0f);
+	vec4 fragPos = instance.modelMatrix * vec4(position, 1.0f);
 	// Set world position
 	worldPos = fragPos.xyz;
 	// Transform from world to clip space
-	gl_Position = projectionMatrix * viewMatrix * fragPos;
+	gl_Position = projection * cameraView * fragPos;
 	// Pass through texture coords
 	txCoords = texCoords;
-	// Get normal matrix
-	mat4 normalMatrix = instances[gl_InstanceID].modelMatrix;
 	// Transform normal
-	vec3 N = normalize(normalMatrix * vec4(normal, 0.0f)).xyz;
+	vec3 N = normalize(mat3(instance.normalMatrix) * normal);
 	// Transform tangent
-	vec3 T = normalize(normalMatrix * vec4(tangent, 0.0f)).xyz;
+	vec3 T = normalize(mat3(instance.normalMatrix) * tangent);
 	// Re-orthagonalize tangent
 	T = normalize(T - dot(T, N) * N);
 	// Calculate bitangent

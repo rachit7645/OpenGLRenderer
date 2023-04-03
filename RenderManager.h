@@ -22,10 +22,9 @@
 #include "FastInstancedShader.h"
 #include "RenderConstants.h"
 #include "ShadowMap.h"
-#include "ShadowInstancedShader.h"
+#include "ShadowShader.h"
 #include "GBuffer.h"
 #include "GBufferShader.h"
-#include "GBufferRenderer.h"
 #include "LightingShader.h"
 #include "LightingRenderer.h"
 #include "InstanceBuffer.h"
@@ -44,6 +43,7 @@
 #include "DownSampleShader.h"
 #include "UpSampleShader.h"
 #include "BloomRenderer.h"
+#include "Frustum.h"
 
 namespace Renderer
 {
@@ -84,23 +84,31 @@ namespace Renderer
 
 		// Instances Shader Storage Buffer
 		std::shared_ptr<InstanceBuffer> m_instances;
-		// Instanced renderer and shaders
-		Shader::FastInstancedShader   m_fastInstancedShader;
-		Shader::ShadowInstancedShader m_shadowInstancedShader;
-		Renderer::InstancedRenderer   m_instancedRenderer;
+		// Matrix Uniform Buffer
+		std::shared_ptr<MatrixBuffer> m_matrices;
+		// Lights Uniform Buffer
+		std::shared_ptr<LightsBuffer> m_lights;
+		// Shared Uniform Buffer
+		std::shared_ptr<SharedBuffer> m_shared;
 
-		// Deferred renderers and shaders
-		Shader::GBufferShader         m_gShader;
-		Renderer::GBufferRenderer     m_gRenderer;
-		Shader::LightingShader        m_lightShader;
-		Renderer::LightingRenderer    m_lightRenderer;
-		Shader::PostProcessShader     m_postShader;
-		Renderer::PostProcessRenderer m_postRenderer;
+		// Instanced renderer and shaders
+		Shader::GBufferShader       m_gShader;
+		Shader::FastInstancedShader m_fastInstancedShader;
+		Shader::ShadowShader        m_shadowShader;
+		Renderer::InstancedRenderer m_instancedRenderer;
+
+		// Lighting renderer and shader
+		Shader::LightingShader     m_lightShader;
+		Renderer::LightingRenderer m_lightRenderer;
 
 		// Bloom renderer and shaders
 		Shader::DownSampleShader m_downSampleShader;
 		Shader::UpSampleShader   m_upSampleShader;
 		Renderer::BloomRenderer  m_bloomRenderer;
+
+		// Post process renderer and shader
+		Shader::PostProcessShader     m_postShader;
+		Renderer::PostProcessRenderer m_postRenderer;
 
 		// Skybox renderer and shader
 		Shader::SkyboxShader     m_skyboxShader;
@@ -112,15 +120,12 @@ namespace Renderer
 
 		// The entity map
 		Batch m_entities;
+		// Culled entity map
+		Batch m_culledEntities;
 		// The Skybox
 		Entities::Skybox m_skybox;
-
-		// Matrix Uniform Buffer
-		std::shared_ptr<MatrixBuffer> m_matrices;
-		// Lights Uniform Buffer
-		std::shared_ptr<LightsBuffer> m_lights;
-		// Shared Uniform Buffer
-		std::shared_ptr<SharedBuffer> m_shared;
+		// View frustum
+		Maths::Frustum m_viewFrustum;
 
 		// GPU Info
 		std::string m_glVendor;
@@ -165,8 +170,8 @@ namespace Renderer
 	private:
 		// Clears current frame buffer according to set flags
 		void Clear(GLbitfield flags);
-		// Copy depth from GBuffer to main FBO
-		void CopyDepth();
+		// Copy selected data from GBuffer to selected FBO
+		void CopyGBuffer(FbPtr& drawBuffer, GLbitfield flags);
 		// Render water scene (forward)
 		void RenderWaterScene(const Entities::Camera& camera, const glm::vec4& clipPlane);
 		// Render shadow scene (forward)
@@ -177,6 +182,8 @@ namespace Renderer
 		void ProcessEntity(Entities::Entity& entity);
 		// Process a vector of entities
 		void ProcessEntities(EntityVec& entities);
+		// Cull entities
+		void CullEntities(const Entities::Camera& camera);
 		// Draw ImGui Windows
 		void RenderImGui();
 	};

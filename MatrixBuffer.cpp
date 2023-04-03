@@ -2,13 +2,14 @@
 
 #include <GL/glew.h>
 
-#include "Maths.h"
-
+// Using namespaces
 using namespace Renderer;
 
-using Detail::MatrixBufferGLSL;
+// Usings
 using Entities::Camera;
-using Entities::PointLight;
+
+// Aliases
+using MatrixBufferGLSL = MatrixBuffer::MatrixBufferGLSL;
 
 MatrixBuffer::MatrixBuffer()
 	: UniformBuffer(0, sizeof(MatrixBufferGLSL), GL_STATIC_DRAW)
@@ -31,10 +32,12 @@ MatrixBuffer::MatrixBuffer()
 
 void MatrixBuffer::LoadView(const Camera& camera)
 {
-	// Create view matrix
-	auto view = Maths::CreateViewMatrix(camera);
-	// Load to UBO
+	// Bind buffer
 	glBindBuffer(GL_UNIFORM_BUFFER, id);
+
+	// Create view matrix
+	auto view = camera.GetViewMatrix();
+	// Load view matrix to UBO
 	glBufferSubData
 	(
 		GL_UNIFORM_BUFFER,
@@ -42,13 +45,28 @@ void MatrixBuffer::LoadView(const Camera& camera)
 		static_cast<GLsizeiptr>(sizeof(glm::mat4)),
 		reinterpret_cast<const void*>(&view[0][0])
 	);
+
+	// Create inverse view matrix
+	auto invView = glm::inverse(view);
+	// Load inverse view matrix to UBO
+	glBufferSubData
+	(
+		GL_UNIFORM_BUFFER,
+		static_cast<GLint>(offsetof(MatrixBufferGLSL, invCameraView)),
+		static_cast<GLsizeiptr>(sizeof(glm::mat4)),
+		reinterpret_cast<const void*>(&invView[0][0])
+	);
+
+	// Unbind buffer
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void MatrixBuffer::LoadProjection(const glm::mat4& projection)
 {
-	// Load to UBO
+	// Bind buffer
 	glBindBuffer(GL_UNIFORM_BUFFER, id);
+
+	// Load projection matrix to UBO
 	glBufferSubData
 	(
 		GL_UNIFORM_BUFFER,
@@ -56,5 +74,18 @@ void MatrixBuffer::LoadProjection(const glm::mat4& projection)
 		static_cast<GLsizeiptr>(sizeof(glm::mat4)),
 		reinterpret_cast<const void*>(&projection[0][0])
 	);
+
+	// Create projection view matrix
+	auto invProj = glm::inverse(projection);
+	// Load inverse view matrix to UBO
+	glBufferSubData
+	(
+		GL_UNIFORM_BUFFER,
+		static_cast<GLint>(offsetof(MatrixBufferGLSL, invProjection)),
+		static_cast<GLsizeiptr>(sizeof(glm::mat4)),
+		reinterpret_cast<const void*>(&invProj[0][0])
+	);
+
+	// Unbind buffer
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }

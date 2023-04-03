@@ -14,9 +14,10 @@ namespace Renderer
 	constexpr f32 NEAR_PLANE   = 0.1f;
 	constexpr f32 FAR_PLANE    = 300.0f;
 
-	// Forward render modes
+	// Render modes
 	enum class Mode
 	{
+		Deferred,
 		Fast,
 		Shadow
 	};

@@ -8,6 +8,9 @@
 
 namespace GL
 {
+    // Initialize OpenGL info
+    void Init(const glm::ivec2& dimensions);
+
 	// Debug message callback
 	void CheckErrors
 	(
@@ -25,9 +28,6 @@ namespace GL
 	// Get string
 	std::string_view GetString(GLenum name);
 
-	// Initialize OpenGL info
-	void Init(const glm::ivec2& dimensions);
-
 	namespace Detail
 	{
 		// std140 data storage rules
@@ -43,6 +43,9 @@ namespace GL
 	using Float = Detail::DataSTD140<GLfloat>;
 	// An int in std140 form
 	using Int = Detail::DataSTD140<GLint>;
+
+    // STD140 data alignment
+    #define ALIGN_GLSL_STD140 alignas(16)
 }
 
 namespace GLEW

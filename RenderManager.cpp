@@ -3,13 +3,14 @@
 #include <GL/glew.h>
 #include <fmt/format.h>
 
-#include "Maths.h"
 #include "Window.h"
 #include "GL.h"
 #include "Settings.h"
 
+// Using namespaces
 using namespace Renderer;
 
+// Usings
 using Entities::Entity;
 using Entities::PointLight;
 using Entities::Camera;
@@ -23,17 +24,16 @@ RenderManager::RenderManager()
 	: m_iblRenderer(m_converterShader, m_convolutionShader, m_preFilterShader, m_brdfShader),
 	  m_iblMaps(m_iblRenderer),
 	  m_instances(std::make_shared<InstanceBuffer>()),
-	  m_instancedRenderer(m_fastInstancedShader, m_shadowInstancedShader, m_shadowMap, m_iblMaps, m_instances),
-	  m_gRenderer(m_gShader, m_instances),
-	  m_lightRenderer(m_lightShader, m_shadowMap, m_gBuffer, m_iblMaps),
-	  m_postRenderer(m_postShader, m_lightingBuffer, m_bloomBuffer),
-	  m_bloomRenderer(m_downSampleShader, m_upSampleShader, m_lightingBuffer, m_bloomBuffer),
-	  m_skyboxRenderer(m_skyboxShader),
-	  m_waterRenderer(m_waterShader, m_waterFBOs),
-	  m_skybox(m_iblMaps.cubeMap),
 	  m_matrices(std::make_shared<MatrixBuffer>()),
 	  m_lights(std::make_shared<LightsBuffer>()),
 	  m_shared(std::make_shared<SharedBuffer>()),
+	  m_instancedRenderer(m_gShader, m_fastInstancedShader, m_shadowShader, m_iblMaps, m_instances),
+	  m_lightRenderer(m_lightShader, m_shadowMap, m_gBuffer, m_iblMaps),
+	  m_bloomRenderer(m_downSampleShader, m_upSampleShader, m_lightingBuffer, m_bloomBuffer),
+	  m_postRenderer(m_postShader, m_lightingBuffer, m_bloomBuffer),
+	  m_skyboxRenderer(m_skyboxShader),
+	  m_waterRenderer(m_waterShader, m_waterFBOs),
+	  m_skybox(m_iblMaps.cubeMap),
 	  m_glVendor(GL::GetString(GL_VENDOR)),
 	  m_glRenderer(GL::GetString(GL_RENDERER)),
 	  m_glVersion(GL::GetString(GL_VERSION)),
@@ -84,6 +84,7 @@ void RenderManager::EndFrame()
 	RenderImGui();
 }
 
+// TODO: Add frustum culling to shadows
 void RenderManager::RenderShadows(const Camera& camera, const glm::vec3& lightPos)
 {
 	// Bind shadow map
@@ -124,18 +125,18 @@ void RenderManager::RenderWaterFBOs(const WaterTiles& waters, Camera& camera)
 	// Reflection pass
 	m_waterFBOs.BindReflection();
 	// Move the camera
-	f32 distance = 2.0f * (camera.position.y - waters[0].position.y);
+	f32 distance = 2.0f * (camera.position.y - waters[0].transform.position.y);
 	camera.position.y -= distance;
 	camera.InvertPitch();
 	// Render
-	RenderWaterScene(camera, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].position.y));
+	RenderWaterScene(camera, glm::vec4(0.0f, 1.0f, 0.0f, -waters[0].transform.position.y));
 	// Move it back to its original position
 	camera.position.y += distance;
 	camera.InvertPitch();
 
 	// Refraction pass
 	m_waterFBOs.BindRefraction();
-	RenderWaterScene(camera, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].position.y));
+	RenderWaterScene(camera, glm::vec4(0.0f, -1.0f, 0.0f, waters[0].transform.position.y));
 
 	// Disable clip plane 0
 	glDisable(GL_CLIP_DISTANCE0);
@@ -145,22 +146,28 @@ void RenderManager::RenderWaterFBOs(const WaterTiles& waters, Camera& camera)
 
 void RenderManager::RenderGBuffer(const Camera& camera)
 {
+	// Cull entities
+	CullEntities(camera);
+
 	// Enable stencil
 	glEnable(GL_STENCIL_TEST);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 	// Bind GBuffer
 	m_gBuffer.BindGBuffer();
+
 	// Clear all bits
 	glStencilMask(0xFF);
 	// Clear FBO
 	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
 	// Set stencil parameters
 	glStencilFunc(GL_ALWAYS, 1, 0xFF);
 	// Load data
 	m_matrices->LoadView(camera);
 	m_shared->LoadCameraPos(camera);
 	// Render
-	m_gRenderer.Render(m_entities);
+	m_instancedRenderer.Render(m_culledEntities, Mode::Deferred);
+
 	// Unbind GBuffer
 	m_gBuffer.BindDefaultFBO();
 	// Disable stencil
@@ -169,18 +176,20 @@ void RenderManager::RenderGBuffer(const Camera& camera)
 
 void RenderManager::RenderLighting(const Camera& camera)
 {
-	// Bind FBO
-	m_lightingBuffer.BindLightingBuffer();
 	// Disable depth test
 	glDisable(GL_DEPTH_TEST);
 	// Enable stencil
 	glEnable(GL_STENCIL_TEST);
+
+	// Bind FBO
+	m_lightingBuffer.BindLightingBuffer();
 	// Clear all bits
 	glStencilMask(0xFF);
 	// Clear FBO
 	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	// Copy depth
-	CopyDepth();
+	CopyGBuffer(m_lightingBuffer.buffer, GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
 	// Bind FBO again
 	m_lightingBuffer.BindLightingBuffer();
 	// Set stencil parameters
@@ -193,6 +202,7 @@ void RenderManager::RenderLighting(const Camera& camera)
 	m_lightShader.Start();
 	m_lightRenderer.Render();
 	m_lightShader.Stop();
+
 	// Disable stencil
 	glDisable(GL_STENCIL_TEST);
 	// Re-enable depth test
@@ -233,6 +243,9 @@ void RenderManager::RenderBloom()
 	glDisable(GL_BLEND);
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
+
+	// Render ImGui pass
+	m_bloomRenderer.RenderImGui();
 }
 
 void RenderManager::RenderPostProcess()
@@ -247,6 +260,8 @@ void RenderManager::RenderPostProcess()
 	m_postShader.Stop();
 	// Re-enable depth test
 	glEnable(GL_DEPTH_TEST);
+	// Render ImGui pass
+	m_postRenderer.RenderImGui();
 }
 
 void RenderManager::RenderSkybox()
@@ -259,24 +274,24 @@ void RenderManager::RenderSkybox()
 	m_lightingBuffer.BindDefaultFBO();
 }
 
-void RenderManager::CopyDepth()
+void RenderManager::CopyGBuffer(FbPtr& drawBuffer, GLbitfield flags)
 {
-	// Get settings
-	const auto& settings = Settings::GetInstance();
 	// Bind buffers
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_gBuffer.buffer->id);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_lightingBuffer.buffer->id);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, drawBuffer->id);
 	// Copy depth
 	glBlitFramebuffer
 	(
-		0, 0,
-		settings.window.dimensions.x,
-		settings.window.dimensions.y,
-		0, 0,
-		settings.window.dimensions.x,
-		settings.window.dimensions.y,
-		GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
-		GL_NEAREST
+		0,                        // Source X bound
+		0,                        // Source Y bound
+		m_gBuffer.buffer->width,  // Source width
+		m_gBuffer.buffer->height, // Source height
+		0,                        // Destination X bound
+		0,                        // Destination Y bound
+		drawBuffer->width,        // Destination width
+		drawBuffer->height,       // Destination height
+		flags,                    // Copy flags
+		GL_NEAREST                // Filtering
 	);
 	// Unbind
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
@@ -291,14 +306,16 @@ void RenderManager::Clear(GLbitfield flags)
 
 void RenderManager::RenderWaterScene(const Camera& camera, const glm::vec4& clipPlane)
 {
-	// Clear FBO
+    // Cull entities
+    CullEntities(camera);
+    // Clear FBO
 	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Load data
 	m_matrices->LoadView(camera);
 	m_shared->LoadCameraPos(camera);
 	m_shared->LoadClipPlane(clipPlane);
 	// Render entities
-	m_instancedRenderer.Render(m_entities, Mode::Fast);
+	m_instancedRenderer.Render(m_culledEntities, Mode::Fast);
 	// Render skybox
 	RenderSkyboxScene();
 }
@@ -323,37 +340,73 @@ void RenderManager::RenderSkyboxScene()
 	m_skyboxShader.Start();
 	m_skyboxRenderer.Render(m_skybox);
 	m_skyboxShader.Stop();
+    // Reset
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);
 }
 
 void RenderManager::ProcessEntity(Entity& entity)
 {
+	// Lookup model
 	auto iter = m_entities.find(entity.model);
 
+	// If a batch was found
 	if (iter != m_entities.end())
 	{
+		// Add entity to existing batch
 		iter->second.emplace_back(&entity);
 	}
 	else
 	{
+		// Create a new batch
 		m_entities[entity.model] = {&entity};
 	}
 }
 
 void RenderManager::ProcessEntities(EntityVec& entities)
 {
+	// For all entities
 	for (auto& entity : entities)
 	{
+		// Process entity
 		ProcessEntity(entity);
 	}
 }
 
-// This kinda sucks, but it works
+void RenderManager::CullEntities(const Camera& camera)
+{
+    // Update frustum
+    m_viewFrustum.UpdateView(camera);
+	// Copy entities (may be slow)
+	m_culledEntities = m_entities;
+
+	// Loop over all pairs
+	for (auto& [model, entities] : m_culledEntities)
+	{
+		// Find elements to be removed
+		auto toRemove = std::remove_if(entities.begin(), entities.end(), [this] (const auto& entity)
+		{
+			// Return true if entity is not visible
+			return !m_viewFrustum.IsVisible(*entity);
+		});
+		// Remove elements
+		entities.erase(toRemove, entities.end());
+
+		// If no entities remain
+		if (entities.empty())
+		{
+			// Remove batch
+			m_culledEntities.erase(model);
+		}
+	}
+}
+
 void RenderManager::RenderImGui()
 {
+    // Begin menu bar
 	if (ImGui::BeginMainMenuBar())
 	{
+        // Begin renderer menu
 		if (ImGui::BeginMenu("Renderer"))
 		{
 			// Display basic info
@@ -366,7 +419,7 @@ void RenderManager::RenderImGui()
 				m_glslVersion.c_str()
 			);
 
-			// If available
+			// If memory info is available
 			if (m_isGPUMemoryInfo)
 			{
 				// Calculate available memory (MB)
@@ -380,63 +433,72 @@ void RenderManager::RenderImGui()
 			ImGui::EndMenu();
 		}
 
+        // Begin FBO selector menu (This kinda sucks, but it works)
 		if (ImGui::BeginMenu("FBO Viewer"))
 		{
+            // Water reflection buffer
 			if (ImGui::Button("WaterReflection"))
 			{
 				m_currentFBO = m_waterFBOs.reflectionFBO->colorTextures[0];
 			}
 
+            // Water refraction buffer
 			if (ImGui::Button("WaterRefraction"))
 			{
 				m_currentFBO = m_waterFBOs.refractionFBO->colorTextures[0];
 			}
 
+            // Normal + Ambient Occlusion + Roughness buffer
 			if (ImGui::Button("GNormal"))
 			{
 				m_currentFBO = m_gBuffer.buffer->colorTextures[0];
 			}
 
+            // Albedo + Metallic buffer
 			if (ImGui::Button("GAlbedo"))
 			{
 				m_currentFBO = m_gBuffer.buffer->colorTextures[1];
 			}
 
+            // Emmisive buffer
 			if (ImGui::Button("GEmmisive"))
 			{
 				m_currentFBO = m_gBuffer.buffer->colorTextures[2];
 			}
 
-			if (ImGui::Button("GMaterial"))
-			{
-				m_currentFBO = m_gBuffer.buffer->colorTextures[3];
-			}
-
+            // Depth buffer
 			if (ImGui::Button("GDepth"))
 			{
 				m_currentFBO = m_gBuffer.buffer->depthTexture;
 			}
 
+            // Accumulated lighting buffer (HDR)
 			if (ImGui::Button("Lighting"))
 			{
 				m_currentFBO = m_lightingBuffer.buffer->colorTextures[0];
 			}
 
+            // Bloom buffer (HDR)
 			if (ImGui::Button("Bloom"))
 			{
 				m_currentFBO = m_bloomBuffer.mipChain[0];
 			}
 
+            // End menu
 			ImGui::EndMenu();
 		}
 
+        // End menu bar
 		ImGui::EndMainMenuBar();
 	}
 
+    // Current FBO widget
 	if (ImGui::Begin("CurrentFBO"))
 	{
+        // Use a child window for better scaling
 		if (ImGui::BeginChild("Current"))
 		{
+            // Invert Y
 			ImGui::Image
 			(
 				reinterpret_cast<ImTextureID>(m_currentFBO->id),
@@ -444,9 +506,11 @@ void RenderManager::RenderImGui()
 				ImVec2(0, 1),
 				ImVec2(1, 0)
 			);
+            // End child window
 			ImGui::EndChild();
 		}
 	}
 
+    // End widget
 	ImGui::End();
 }

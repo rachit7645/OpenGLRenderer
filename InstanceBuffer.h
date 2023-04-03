@@ -7,40 +7,53 @@
 #include "ShaderStorageBuffer.h"
 #include "Entity.h"
 #include "GLM.h"
+#include "Util.h"
+#include "GL.h"
 
 namespace Renderer
 {
-	constexpr auto NUM_MAX_ENTITIES = 512;
-
-	namespace Detail
-	{
-		struct InstancedDataGLSL
-		{
-			alignas(16) glm::mat4 modelMatrix;
-		};
-
-		struct InstancedBufferGLSL
-		{
-			alignas(16) InstancedDataGLSL instances[NUM_MAX_ENTITIES];
-		};
-	}
+	// Maximum entities allowed in one batch
+	constexpr usize NUM_MAX_ENTITIES = 512;
 
 	class InstanceBuffer : ShaderStorageBuffer
-	{
-	public:
-		using DataVector   = std::vector<Detail::InstancedDataGLSL>;
-		using EntityVector = std::vector<Entities::Entity*>;
+    {
+    public:
+        // GLSL representation of per-instance data
+        struct ALIGN_GLSL_STD140 InstanceDataGLSL
+        {
+            // Model matrix
+            glm::mat4 modelMatrix;
+            // Normal matrix
+            glm::mat4 normalMatrix;
+        };
 
-		InstanceBuffer();
+        // GLSL representation of instance buffer
+        struct ALIGN_GLSL_STD140 InstanceBufferGLSL
+        {
+            // Array of instance data
+            InstanceDataGLSL instances[NUM_MAX_ENTITIES];
+        };
 
-		void Bind()   const;
-		void Unbind() const;
+        // Usings
+        using DataVector = std::vector<InstanceBuffer::InstanceDataGLSL>;
+        using EntityVector = std::vector<Entities::Entity*>;
 
-		void LoadInstanceData(const EntityVector& entities);
-	private:
-		DataVector GenerateData(const EntityVector& entities);
-		GLsizeiptr GetSize(const EntityVector& entities, const DataVector& data);
-	};
+        // Main constructor
+        InstanceBuffer();
+
+        // Bind buffer
+        void Bind() const;
+        // Unbind buffer
+        void Unbind() const;
+
+        // Load instance data
+        void LoadInstanceData(const EntityVector& entities);
+    private:
+        // Create instance data
+        DataVector GenerateData(const EntityVector& entities);
+        // Get size of instance data
+        usize GetSize(const EntityVector& entities);
+    };
 }
 
 #endif

@@ -2,6 +2,7 @@
 
 #include "Resources.h"
 #include "MeshTextures.h"
+#include "LightsBuffer.h"
 
 // Using namespaces
 using namespace Engine;
@@ -14,6 +15,7 @@ using Renderer::MeshTextures;
 
 Instance::Instance()
 {
+	// Initialise data
 	InitEntities();
 	InitLights();
 	InitMisc();
@@ -38,7 +40,7 @@ void Instance::Run()
 
 		// Begin render
 		m_renderer.BeginFrame(m_entities, m_dirLights, m_pointLights, m_spotLights, m_player);
-		// Draw shadow framebuffer
+		// Draw shadow map
 		m_renderer.RenderShadows(m_camera, m_dirLights[0].position);
 		// Draw water framebuffers
 		m_renderer.RenderWaterFBOs(m_waters, m_camera);
@@ -84,7 +86,7 @@ void Instance::CalculateFPS()
 	// Calculate cycle duration
 	auto cycleDuration = m_endTime - m_startTime;
 	// Calculate frame delta
-	g_Delta = static_cast<f32>(static_cast<f64>(duration.count()) / 1000.0);
+	Util::g_Delta = static_cast<f32>(static_cast<f64>(duration.count()) / 1000.0);
 	// Set this/next frame's start time
 	m_frameStartTime = m_endTime;
 
@@ -129,15 +131,33 @@ void Instance::ImGuiDisplay()
 			// If lights menu is selected
 			if (ImGui::BeginMenu("Lights"))
 			{
-				// Shared indices
-				constexpr std::array<const char*, 4> indices = {"[0]", "[1]", "[2]", "[3]"};
+                // Shared index item getter lambda
+                auto GetItem = [] (void* data, int index, const char** outText) -> bool
+                {
+                    // Get vector
+                    auto& vector = *reinterpret_cast<std::vector<std::string>*>(data);
+                    // Put data
+                    *outText = vector[index].data();
+                    // Return success
+                    return true;
+                };
 
 				// If directional lights menu is selected
 				if (ImGui::BeginMenu("Directional"))
 				{
+                    // Generate indices
+                    auto indices = GenerateIndices(m_dirLights.size());
 					// Light selector
-					ImGui::Combo("Slot", &m_selectedDirLight, indices.data(), indices.size());
-					// Select light
+					ImGui::Combo
+                    (
+                        "Slot",                            // Displayed name
+                        &m_selectedDirLight,               // Selected light
+                        GetItem,                           // Item Getter
+                        reinterpret_cast<void*>(&indices), // Raw data
+                        static_cast<s32>(indices.size())   // Data size
+                    );
+
+                    // Select light
 					auto& light = m_dirLights[m_selectedDirLight];
 					// Position
 					ImGui::DragFloat3("Position", &light.position[0], 0.5f, -500.0f, 500.0f, "%.1f");
@@ -145,16 +165,54 @@ void Instance::ImGuiDisplay()
 					ImGui::ColorEdit3("Color", &light.color[0]);
 					// Intensity
 					ImGui::DragFloat3("Intensity", &light.intensity[0], 0.5f, 0.0f, 100.0f, "%.1f");
-					// End menu
+
+                    // If new light needs to be added
+                    if (ImGui::Button("Add"))
+                    {
+                        // If light count is less than max
+                        if (m_dirLights.size() < Renderer::SHADER_MAX_LIGHTS)
+                        {
+                            // Create new empty light
+                            m_dirLights.emplace_back();
+                        }
+                    }
+
+                    // Put both buttons on the same line
+                    ImGui::SameLine();
+
+                    // If selected light needs to be deleted
+                    if (ImGui::Button("Delete"))
+                    {
+                        // If light count is more than 1 (Light #1 is shadow casting)
+                        if (m_dirLights.size() > 1)
+                        {
+                            // Delete light
+                            m_dirLights.erase(m_dirLights.begin() + m_selectedDirLight);
+                            // Change displayed light index
+                            if (m_selectedDirLight > 0) --m_selectedDirLight;
+                        }
+                    }
+
+                    // End menu
 					ImGui::EndMenu();
 				}
 
 				// If point lights menu is selected
 				if (ImGui::BeginMenu("Point"))
 				{
+					// Generate indices
+                    auto indices = GenerateIndices(m_pointLights.size());
 					// Light selector
-					ImGui::Combo("Slot", &m_selectedPointLight, indices.data(), indices.size());
-					// Select light
+                    ImGui::Combo
+                    (
+                        "Slot",                            // Displayed name
+                        &m_selectedPointLight,             // Selected light
+                        GetItem,                           // Item Getter
+                        reinterpret_cast<void*>(&indices), // Raw data
+                        static_cast<s32>(indices.size())   // Data size
+                    );
+
+                    // Select light
 					auto& light = m_pointLights[m_selectedPointLight];
 					// Position
 					ImGui::DragFloat3("Position", &light.position[0], 0.5f, -500.0f, 500.0f, "%.1f");
@@ -164,16 +222,54 @@ void Instance::ImGuiDisplay()
 					ImGui::DragFloat3("Intensity", &light.intensity[0], 0.5f, 0.0f, 100.0f, "%.1f");
 					// Attenuation
 					ImGui::InputFloat3("Attenuation", &light.attenuation[0], "%.4f");
-					// End menu
+
+                    // If new light needs to be added
+                    if (ImGui::Button("Add"))
+                    {
+                        // If light count is less than max
+                        if (m_pointLights.size() < Renderer::SHADER_MAX_LIGHTS)
+                        {
+                            // Create new empty light
+                            m_pointLights.emplace_back();
+                        }
+                    }
+
+                    // Put both buttons on the same line
+                    ImGui::SameLine();
+
+                    // If selected light needs to be deleted
+                    if (ImGui::Button("Delete"))
+                    {
+                        // If light count is not zero
+                        if (!m_pointLights.empty())
+                        {
+                            // Delete light
+                            m_pointLights.erase(m_pointLights.begin() + m_selectedPointLight);
+                            // Change displayed light index
+                            if (m_selectedPointLight > 0) --m_selectedPointLight;
+                        }
+                    }
+
+                    // End menu
 					ImGui::EndMenu();
 				}
 
 				// If spot lights menu is selected
 				if (ImGui::BeginMenu("Spot"))
 				{
+					// Generate indices
+                    auto indices = GenerateIndices(m_spotLights.size());
 					// Light selector
-					ImGui::Combo("Slot", &m_selectedSpotLight, indices.data(), indices.size());
-					// Select light
+                    ImGui::Combo
+                    (
+                        "Slot",                            // Displayed name
+                        &m_selectedSpotLight,              // Selected light
+                        GetItem,                           // Item Getter
+                        reinterpret_cast<void*>(&indices), // Raw data
+                        static_cast<s32>(indices.size())   // Data size
+                    );
+
+                    // Select light
 					auto& light = m_spotLights[m_selectedSpotLight];
 					// Position
 					ImGui::DragFloat3("Position", &light.position[0], 0.5f, -500.0f, 500.0f, "%.1f");
@@ -191,7 +287,35 @@ void Instance::ImGuiDisplay()
 					ImGui::DragFloat2("CutOff", &degCutOff[0], 0.5f, 0.0f, 180.0f, "%.1f");
 					// Set new cut off
 					light.SetCutOff(degCutOff);
-					// End menu
+
+                    // If new light needs to be added
+                    if (ImGui::Button("Add"))
+                    {
+                        // If light count is less than max
+                        if (m_spotLights.size() < Renderer::SHADER_MAX_LIGHTS)
+                        {
+                            // Create new empty light
+                            m_spotLights.emplace_back();
+                        }
+                    }
+
+                    // Put both buttons on the same line
+                    ImGui::SameLine();
+
+                    // If selected light needs to be deleted
+                    if (ImGui::Button("Delete"))
+                    {
+                        // If light count is not zero
+                        if (!m_spotLights.empty())
+                        {
+                            // Delete light
+                            m_spotLights.erase(m_spotLights.begin() + m_selectedSpotLight);
+                            // Change displayed light index
+                            if (m_selectedSpotLight > 0) --m_selectedSpotLight;
+                        }
+                    }
+
+                    // End menu
 					ImGui::EndMenu();
 				}
 
@@ -231,6 +355,22 @@ void Instance::ImGuiUpdate()
 	}
 }
 
+std::vector<std::string> Instance::GenerateIndices(usize size)
+{
+    // Create vector
+    std::vector<std::string> indices;
+
+    // For each element
+    for (usize i = 0; i < size; ++i)
+    {
+        // Create index
+        indices.emplace_back("[" + std::to_string(i) + "]");
+    }
+
+    // Return indices
+    return indices;
+}
+
 void Instance::InitEntities()
 {
 	// Get resource handle
@@ -256,21 +396,27 @@ void Instance::InitEntities()
 	{
 		{
 			cottageModel,
-			glm::vec3(0.0f),
-			glm::vec3(0.0f),
-			50.0f
+			{
+                glm::vec3(0.0f, 0.0f, 0.0f),
+			    glm::vec3(0.0f, 0.0f, 0.0f),
+			    glm::vec3(50.0f, 50.0f, 50.0f)
+            }
 		},
 		{
 			benchModel,
-			glm::vec3(44.0f, 0.0f, -40.0f),
-			glm::vec3(0.0f, -90.0f, 0.0f),
-			5.0f
+            {
+			    glm::vec3(44.0f, 0.0f, -40.0f),
+			    glm::vec3(0.0f, -90.0f, 0.0f),
+			    glm::vec3(5.0f, 5.0f, 5.0f)
+            }
 		},
 		{
 			boxModel,
-			glm::vec3(-44.0f, 3.6f, -45.0f),
-			glm::vec3(-90.0f, 0.0f, 0.0f),
-			2.0f
+            {
+                glm::vec3(-44.0f, 3.6f, -45.0f),
+                glm::vec3(-90.0f, 0.0f, 0.0f),
+                glm::vec3(2.0f, 2.0f, 2.0f)
+            }
 		}
 	};
 
@@ -278,9 +424,11 @@ void Instance::InitEntities()
 	m_player =
 	{
 		playerModel,
-		glm::vec3(13.0f, 2.3f, 17.0f),
-		glm::vec3(0.0f, 180.0f, 0.0f),
-		0.03f
+        {
+            glm::vec3(13.0f, 2.3f, 17.0f),
+            glm::vec3(0.0f, 180.0f, 0.0f),
+            glm::vec3(0.03f, 0.03f, 0.03f)
+        }
 	};
 
 	// Attach player
@@ -335,7 +483,11 @@ void Instance::InitMisc()
 		{
 			resources.GetTexture("gfx/Water/waterDUDV.png"),
 			resources.GetTexture("gfx/Water/normal.png"),
-			glm::vec3(120.0f, 3.7f, -2.0f)
+            {
+                glm::vec3(120.0f, 3.7f, -2.0f),
+                glm::vec3(0.0f, 0.0f, 0.0f),
+                glm::vec3(Waters::WATER_TILE_SIZE, Waters::WATER_TILE_SIZE, Waters::WATER_TILE_SIZE)
+            }
 		}
 	};
 }

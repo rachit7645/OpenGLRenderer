@@ -5,11 +5,12 @@
 
 #include "GLM.h"
 #include "Texture.h"
+#include "Transform.h"
 
 namespace Waters
 {
 	// Tile size
-	constexpr auto WATER_TILE_SIZE = 30;
+	constexpr f32 WATER_TILE_SIZE = 30.0f;
 
 	class WaterTile
 	{
@@ -20,14 +21,13 @@ namespace Waters
 		// Default constructor
 		WaterTile() = default;
 		// Main constructor
-		WaterTile(TxPtr dudvMap, TxPtr normalMap, const glm::vec3& position);
+		WaterTile(TxPtr dudvMap, TxPtr normalMap, const Entities::Transform& transform);
 
 		// Maps
 		TxPtr dudvMap;
 		TxPtr normalMap;
-
-		// Position
-		glm::vec3 position = {0.0f, 0.0f, 0.0f};
+        // Transform
+        Entities::Transform transform;
 	};
 }
 

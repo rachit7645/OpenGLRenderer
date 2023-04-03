@@ -19,6 +19,7 @@ void PostProcessShader::GetUniformLocations()
 	// Uniforms
 	m_uniforms["lightingBuffer"] = GetUniformLocation("lightingBuffer");
 	m_uniforms["bloomBuffer"]    = GetUniformLocation("bloomBuffer");
+	m_uniforms["bloomStrength"]  = GetUniformLocation("bloomStrength");
 }
 
 void PostProcessShader::ConnectTextureUnits()
@@ -26,4 +27,10 @@ void PostProcessShader::ConnectTextureUnits()
 	// Connect units
 	LoadUniform(m_uniforms["lightingBuffer"], 0);
 	LoadUniform(m_uniforms["bloomBuffer"],    1);
+}
+
+void PostProcessShader::LoadBloomStrength(f32 strength)
+{
+	// Load
+	LoadUniform(m_uniforms["bloomStrength"], strength);
 }

@@ -1,14 +1,18 @@
 #version 430 core
 
-// Struct describing an instance of an entity
+// Entity instance
 struct Instance
 {
+	// Model matrix
 	mat4 modelMatrix;
+	// Transposed inverse model matrix
+	mat4 normalMatrix;
 };
 
 // Instances data SSBO
 layout(std430, binding = 3) readonly buffer InstanceData
 {
+	// Instance array
 	Instance instances[];
 };
 

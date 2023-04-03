@@ -40,7 +40,6 @@ add_executable(engine
 	VertexArray.cpp
 	VertexBuffer.cpp
 	Entity.cpp
-	Maths.cpp
 	Camera.cpp
 	RenderManager.cpp
 	Mesh.cpp
@@ -70,11 +69,10 @@ add_executable(engine
 	InstanceBuffer.cpp
 	FastInstancedShader.cpp
 	ShadowMap.cpp
-	ShadowInstancedShader.cpp
+	ShadowShader.cpp
     ShadowBuffer.cpp
 	GBuffer.cpp
 	GBufferShader.cpp
-	GBufferRenderer.cpp
 	LightingRenderer.cpp
 	LightingShader.cpp
 	Vertex.cpp
@@ -96,13 +94,18 @@ add_executable(engine
 	DownSampleShader.cpp
 	UpSampleShader.cpp
 	BloomRenderer.cpp
+	AABB.cpp
+	Plane.cpp
+	Frustum.cpp
+	Transform.cpp
 )
 
 # Precompiled Headers
 target_precompile_headers(engine PRIVATE
 	# ImGui Headers
 	libs/imgui/imgui.h
-	libs/imgui/backends/imgui_impl_sdl.h
+	libs/imgui/imgui_internal.h
+	libs/imgui/backends/imgui_impl_sdl2.h
 	libs/imgui/backends/imgui_impl_opengl3.h
 	libs/imgui/misc/cpp/imgui_stdlib.h
 	# STB Headers

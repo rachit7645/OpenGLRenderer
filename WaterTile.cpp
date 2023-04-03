@@ -3,9 +3,12 @@
 // Using namespaces
 using namespace Waters;
 
-WaterTile::WaterTile(TxPtr dudvMap, TxPtr normalMap, const glm::vec3& position)
+// Usings
+using Entities::Transform;
+
+WaterTile::WaterTile(TxPtr dudvMap, TxPtr normalMap, const Entities::Transform& transform)
 	: dudvMap(std::move(dudvMap)),
 	  normalMap(std::move(normalMap)),
-	  position(position)
+      transform(transform)
 {
 }

@@ -6,8 +6,12 @@ const float TEXTURE_TILING = 4.0f;
 // Matrix buffer
 layout(std140, binding = 0) uniform Matrices
 {
-	mat4 projectionMatrix;
-	mat4 viewMatrix;
+	// Regular matrices
+	mat4 projection;
+	mat4 cameraView;
+	// Inverse matrices
+	mat4 invProjection;
+	mat4 invCameraView;
 };
 
 // Shared buffer
@@ -40,7 +44,7 @@ void main()
 {
 	// Calculate position
 	worldPos    = modelMatrix * vec4(position.x, 0.0f, position.y, 1.0f);
-	clipSpace   = projectionMatrix * viewMatrix * worldPos;
+	clipSpace   = projection * cameraView * worldPos;
 	gl_Position = clipSpace;
 	// Calculate texture coords
 	CalculateTxCoords();
