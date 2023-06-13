@@ -6,7 +6,7 @@
 const int MAX_LAYER_COUNT = 16;
 
 // Geometry inputs & outputs
-layout(triangles,      invocations  = 5)  in;
+layout(triangles,      invocations  = 5) in;
 layout(triangle_strip, max_vertices = 3) out;
 
 // Shadow buffer

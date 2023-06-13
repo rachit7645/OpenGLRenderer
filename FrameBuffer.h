@@ -99,6 +99,7 @@ namespace Renderer
 		friend class LightingBuffer;
 		friend class BloomBuffer;
 		friend class SSAOBuffers;
+        friend class OmniShadowMap;
 		friend class Waters::WaterFrameBuffers;
 	};
 }

@@ -24,9 +24,9 @@ namespace Renderer
         // Representation og GLSL data
         struct ALIGN_GLSL_STD140 ShadowBufferGLSL
         {
-            GL::Int   cascadeCount;
-            glm::mat4 matrices[SHADOW_MAX_FRUSTUMS];
-            GL::Float cascadeDistances[SHADOW_MAX_FRUSTUMS];
+            GL::Int   cascadeCount = {};
+            glm::mat4 matrices[SHADOW_MAX_FRUSTUMS] = {};
+            GL::Float cascadeDistances[SHADOW_MAX_FRUSTUMS] = {};
         };
 
         // Main constructor

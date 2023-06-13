@@ -98,6 +98,8 @@ add_executable(engine
 	Plane.cpp
 	Frustum.cpp
 	Transform.cpp
+	OmniShadowMap.cpp
+	OmniShadowShader.cpp
 )
 
 # Precompiled Headers
