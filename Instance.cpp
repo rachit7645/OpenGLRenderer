@@ -386,38 +386,20 @@ void Instance::InitEntities()
 	);
 
 	// All models
-	auto playerModel  = resources.GetModel("gfx/Mario/Mario.gltf",     defaultTextures);
-	auto cottageModel = resources.GetModel("gfx/Cottage/Cottage.gltf", defaultTextures);
-	auto benchModel   = resources.GetModel("gfx/Bench/Bench.gltf",     defaultTextures);
-	auto boxModel     = resources.GetModel("gfx/Box/scene.gltf",       defaultTextures);
+	auto playerModel = resources.GetModel("gfx/Mario/Mario.gltf",  defaultTextures);
+    auto sponzaModel = resources.GetModel("gfx/Sponza/sponza.glb", defaultTextures);
 
 	// Entities
 	m_entities =
 	{
-		{
-			cottageModel,
-			{
+        {
+            sponzaModel,
+            {
                 glm::vec3(0.0f, 0.0f, 0.0f),
-			    glm::vec3(0.0f, 0.0f, 0.0f),
-			    glm::vec3(50.0f, 50.0f, 50.0f)
+                glm::vec3(0.0f, 0.0f, 0.0f),
+                glm::vec3(0.05f, 0.05f, 0.05f)
             }
-		},
-		{
-			benchModel,
-            {
-			    glm::vec3(44.0f, 0.0f, -40.0f),
-			    glm::vec3(0.0f, -90.0f, 0.0f),
-			    glm::vec3(5.0f, 5.0f, 5.0f)
-            }
-		},
-		{
-			boxModel,
-            {
-                glm::vec3(-44.0f, 3.6f, -45.0f),
-                glm::vec3(-90.0f, 0.0f, 0.0f),
-                glm::vec3(2.0f, 2.0f, 2.0f)
-            }
-		}
+        }
 	};
 
 	// Player
@@ -425,8 +407,8 @@ void Instance::InitEntities()
 	{
 		playerModel,
         {
-            glm::vec3(13.0f, 2.3f, 17.0f),
-            glm::vec3(0.0f, 180.0f, 0.0f),
+            glm::vec3(0.0f, 0.0f, -4.0f),
+            glm::vec3(0.0f, -90.0f, 0.0f),
             glm::vec3(0.03f, 0.03f, 0.03f)
         }
 	};
@@ -441,7 +423,7 @@ void Instance::InitLights()
 	m_dirLights =
 	{
 		{
-			glm::vec3(0.1f, 1.0f, 0.1f),
+			glm::vec3(-16.0f, 100.0f, -10.0f),
 			glm::vec3(0.3f, 0.3f, 0.3f),
 			glm::vec3(1.0f, 1.0f, 1.0f)
 		}

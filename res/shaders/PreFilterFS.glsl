@@ -2,7 +2,7 @@
 
 // Constants
 const float PI           = 3.14159265359;
-const uint  SAMPLE_COUNT = 1024u;
+const uint  SAMPLE_COUNT = 2048u;
 
 // Vertex inputs
 in vec3 worldPos;

@@ -3,7 +3,7 @@
 // Constants
 const vec3  N            = vec3(0.0f, 0.0f, 1.0f);
 const float PI           = 3.14159265359;
-const uint  SAMPLE_COUNT = 1024u;
+const uint  SAMPLE_COUNT = 2048u;
 
 // Vertex inputs
 in vec2 txCoords;

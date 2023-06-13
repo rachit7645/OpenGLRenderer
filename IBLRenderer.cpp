@@ -18,10 +18,10 @@ using FbPtr = IBLRenderer::FbPtr;
 
 // Constants
 constexpr usize      PRE_FILTER_MIPMAP_LEVELS = {5};
-constexpr glm::ivec2 CUBEMAP_DIMENSIONS       = {1024, 1024};
-constexpr glm::ivec2 IRRADIANCE_DIMENSIONS    = {32,     32};
-constexpr glm::ivec2 PRE_FILTER_DIMENSIONS    = {128,   128};
-constexpr glm::ivec2 BRDF_LUT_DIMENSIONS      = {512,   512};
+constexpr glm::ivec2 CUBEMAP_DIMENSIONS       = {2048,  2048};
+constexpr glm::ivec2 IRRADIANCE_DIMENSIONS    = {128,    128};
+constexpr glm::ivec2 PRE_FILTER_DIMENSIONS    = {1024,  1024};
+constexpr glm::ivec2 BRDF_LUT_DIMENSIONS      = {1024,  1024};
 
 IBLRenderer::IBLRenderer
 (
