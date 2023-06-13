@@ -17,9 +17,11 @@ WaterFrameBuffers::WaterFrameBuffers()
 	// Get settings instance
 	const auto& settings = Settings::GetInstance();
 
+    // TODO: Add resolution multipliers for water buffers' resolution
+
 	// Calculate sizes
-	auto reflectionSize = settings.window.dimensions / 4;
-	auto refractionSize = settings.window.dimensions / 4;
+	auto reflectionSize = settings.window.dimensions;
+	auto refractionSize = settings.window.dimensions;
 
 	// Color attachment
 	Renderer::FBOAttachment color0 =

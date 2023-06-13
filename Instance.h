@@ -44,8 +44,8 @@ namespace Engine
 		void ImGuiDisplay();
 		// Update menu
 		void ImGuiUpdate();
-        // Get indices for display
-        static std::vector<std::string> GenerateIndices(usize size);
+    // Get indices for display
+    static std::vector<std::string> GenerateIndices(usize size);
 
 		// Initialise entities (and player)
 		void InitEntities();

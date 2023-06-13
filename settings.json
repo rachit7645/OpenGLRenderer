@@ -1,13 +1,13 @@
 {
 	"window":
 	{
-		"width" : 1024,
-		"height": 576
+		"width" : 1280,
+		"height": 768
 	},
 	"shadows":
 	{
-		"width" : 2048,
-		"height": 2048,
+		"width" : 4096,
+		"height": 4096,
 		"offset": 10.0
 	},
 	"ibl":
