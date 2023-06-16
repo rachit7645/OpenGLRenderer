@@ -33,7 +33,7 @@ namespace Renderer
 		// Bind frame buffer
 		void Bind() const;
 		// Unbind frame buffer
-		void Unbind() const;
+		static void Unbind() ;
 
 		// Framebuffer dimensions
 		GLsizei width  = 0;
@@ -54,25 +54,25 @@ namespace Renderer
 		RdBufPtr stencilRenderBuffer;
 
 		// Set buffers
-		void SetDrawBuffer(GLenum value);
-		void SetReadBuffer(GLenum value);
+		static void SetDrawBuffer(GLenum value);
+		static void SetReadBuffer(GLenum value);
 	protected:
 		// Creates a new FBO
 		void CreateFrameBuffer();
 
 		// Create 2D texture
-		void CreateTexture(TxPtr& texture, const FBOAttachment& attachment);
+		void CreateTexture(TxPtr& texture, const FBOAttachment& attachment) const;
 		// Create cube map texture
-		void CreateTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment);
+		void CreateTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment) const;
 		// Create texture array
-		void CreateTextureArray(TxPtr& texture, const FBOAttachment& attachment);
+		void CreateTextureArray(TxPtr& texture, const FBOAttachment& attachment) const;
 
 		// Attach 2D texture
-		void AttachTexture(TxPtr& texture, const FBOAttachment& attachment);
+		static void AttachTexture(TxPtr& texture, const FBOAttachment& attachment);
 		// Attach cube map texture
-		UNUSED void AttachTextureCubeMap(UNUSED TxPtr& texture, UNUSED const FBOAttachment& attachment);
+		UNUSED static void AttachTextureCubeMap(UNUSED TxPtr& texture, UNUSED const FBOAttachment& attachment);
 		// Attach texture array
-		void AttachTextureArray(TxPtr& texture, const FBOAttachment& attachment);
+		static void AttachTextureArray(TxPtr& texture, const FBOAttachment& attachment);
 
 		// Add 2D texture
 		void AddTexture(TxPtr& texture, const FBOAttachment& attachment);
@@ -84,11 +84,11 @@ namespace Renderer
 		void AddBuffer(RdBufPtr& buffer, const FBOAttachment& attachment);
 
 		// Set integer parameter
-		void SetParameter(GLenum pname, GLint param);
+		static void SetParameter(GLenum pname, GLint param);
 		// Set draw buffers
-		void SetDrawBuffers(const std::vector<GLenum>& buffers);
+		static void SetDrawBuffers(const std::vector<GLenum>& buffers);
 		// Enable depth
-		void EnableDepth();
+		static void EnableDepth();
 		// Check status
 		void CheckStatus();
 	public:

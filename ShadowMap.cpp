@@ -3,7 +3,6 @@
 #include <limits>
 #include <vector>
 
-#include "Util.h"
 #include "RenderConstants.h"
 #include "FBOAttachment.h"
 #include "Settings.h"

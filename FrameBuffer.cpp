@@ -16,7 +16,7 @@ void FrameBuffer::CreateFrameBuffer()
 	glGenFramebuffers(1, &id);
 }
 
-void FrameBuffer::CreateTexture(TxPtr& texture, const FBOAttachment& attachment)
+void FrameBuffer::CreateTexture(TxPtr& texture, const FBOAttachment& attachment) const
 {
 	// Set up texture
 	texture         = std::make_shared<Texture>();
@@ -45,7 +45,7 @@ void FrameBuffer::CreateTexture(TxPtr& texture, const FBOAttachment& attachment)
 	texture->Unbind();
 }
 
-void FrameBuffer::CreateTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment)
+void FrameBuffer::CreateTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment) const
 {
 	// Set up cube map
 	texture         = std::make_shared<Texture>();
@@ -80,7 +80,7 @@ void FrameBuffer::CreateTextureCubeMap(TxPtr& texture, const FBOAttachment& atta
 	texture->Unbind();
 }
 
-void FrameBuffer::CreateTextureArray(TxPtr& texture, const FBOAttachment& attachment)
+void FrameBuffer::CreateTextureArray(TxPtr& texture, const FBOAttachment& attachment) const
 {
 	// Set up texture array
 	texture         = std::make_shared<Texture>();
@@ -129,9 +129,16 @@ void FrameBuffer::AttachTexture(TxPtr& texture, const FBOAttachment& attachment)
 	);
 }
 
-UNUSED void FrameBuffer::AttachTextureCubeMap(UNUSED TxPtr& texture, UNUSED const FBOAttachment& attachment)
+void FrameBuffer::AttachTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment)
 {
-	throw std::runtime_error("OpenGL has different rules on cubemap attachment!");
+    // Attach cube map to FBO
+    glFramebufferTexture
+    (
+        GL_FRAMEBUFFER,
+        attachment.slot,
+        texture->id,
+        0
+    );
 }
 
 void FrameBuffer::AttachTextureArray(TxPtr& texture, const FBOAttachment& attachment)
@@ -258,7 +265,7 @@ void FrameBuffer::Bind() const
 	glViewport(0, 0, width, height);
 }
 
-void FrameBuffer::Unbind() const
+void FrameBuffer::Unbind()
 {
 	// Get settings
 	const auto& settings = Settings::GetInstance();

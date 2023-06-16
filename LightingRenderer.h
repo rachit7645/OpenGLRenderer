@@ -8,6 +8,7 @@
 #include "GBuffer.h"
 #include "ShadowMap.h"
 #include "IBLMaps.h"
+#include "OmniShadowMap.h"
 
 namespace Renderer
 {
@@ -22,15 +23,17 @@ namespace Renderer
 		(
 			Shader::LightingShader& shader,
 			Renderer::ShadowMap& shadowMap,
+            Renderer::OmniShadowMap& pointShadowMap,
 			Renderer::GBuffer& gBuffer,
 			Renderer::IBLMaps& iblMaps
 		);
 
 		// Data
-		Shader::LightingShader& shader;
-		Renderer::ShadowMap&    shadowMap;
-		Renderer::GBuffer&      gBuffer;
-		Renderer::IBLMaps&      iblMaps;
+		Shader::LightingShader&  shader;
+		Renderer::ShadowMap&     shadowMap;
+        Renderer::OmniShadowMap& pointShadowMap;
+		Renderer::GBuffer&       gBuffer;
+		Renderer::IBLMaps&       iblMaps;
 
 		// Render light pass
 		void Render();

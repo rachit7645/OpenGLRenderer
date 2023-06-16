@@ -20,7 +20,7 @@ namespace Renderer
 		using Mat4s  = std::vector<glm::mat4>;
 
 		// Main constructor
-		ShadowMap();
+        ShadowMap();
 
 		// Update once per frame
 		void Update(const Entities::Camera& camera, const glm::vec3& lightPos);
@@ -37,14 +37,14 @@ namespace Renderer
 		MtxPtr m_matrixBuffer;
 
 		// Calculates all cascade matrices
-		Mat4s CalculateLightSpaceMatrices
+		static Mat4s CalculateLightSpaceMatrices
 		(
 			const Entities::Camera& camera,
 			const glm::vec3& lightDir
 		);
 
 		// Calculates cascade matrix
-		glm::mat4 CalculateLightSpaceMatrix
+		static glm::mat4 CalculateLightSpaceMatrix
 		(
 			f32 nearPlane,
 			f32 farPlane,
@@ -53,15 +53,15 @@ namespace Renderer
 		);
 
 		// Calculates center of the view frustum
-		glm::vec3 CalculateCenter(const Vec4s& corners);
+		static glm::vec3 CalculateCenter(const Vec4s& corners);
 
 		// Calculates the light view matrix
-		glm::mat4 CalculateViewMatrix(const Vec4s& corners, const glm::vec3& lightDir);
+		static glm::mat4 CalculateViewMatrix(const Vec4s& corners, const glm::vec3& lightDir);
 		// Calculates the light projection matrix
-		glm::mat4 CalculateProjMatrix(const Vec4s& corners, const glm::mat4& lightView);
+		static glm::mat4 CalculateProjMatrix(const Vec4s& corners, const glm::mat4& lightView);
 
 		// Calculates all frustum corners
-		Vec4s CalculateFrustumCorners(const glm::mat4& proj, const glm::mat4& view);
+		static Vec4s CalculateFrustumCorners(const glm::mat4& proj, const glm::mat4& view);
 	};
 }
 

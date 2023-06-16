@@ -12,6 +12,10 @@ const float MAX_BIAS        = 0.05f;
 const float SHADOW_AMOUNT   = 0.65f;
 const float BIAS_MODIFIER   = 0.35f;
 
+// Point shadow constants
+const int   NUM_SAMPLES = 20;
+const float POINT_BIAS = 0.15f;
+
 // Directional Light
 struct DirLight
 {
@@ -108,6 +112,14 @@ layout (std140, binding = 4) uniform ShadowBuffer
 	float cascadeDistances[MAX_LAYER_COUNT];
 };
 
+// Omni Shadow buffer
+layout (std140, binding = 5) uniform OmniShadowBuffer
+{
+	mat4 omniShadowMatrices[6];
+	vec4 shadowPlanes;
+	int  lightIndex;
+};
+
 // Vertex inputs
 in vec2 txCoords;
 
@@ -122,6 +134,7 @@ uniform samplerCube prefilterMap;
 uniform sampler2D   brdfLUT;
 // Other samplers
 uniform sampler2DArrayShadow shadowMap;
+uniform samplerCube          pointShadowMap;
 
 // Fragment outputs
 layout (location = 0) out vec3 outColor;
@@ -158,6 +171,9 @@ int   GetCurrentLayer(GBuffer gBuffer);
 float CalculateBias(int layer, vec3 lightDir, GBuffer gBuffer);
 float CalculateShadow(vec3 lightDir, GBuffer gBuffer);
 
+// Point shadow functions
+float CalculatePointShadow(vec3 lightPos, GBuffer gBuffer);
+
 // Branchless functions
 vec4 WhenGreater(vec4 x, vec4 y);
 vec4 WhenLesser(vec4 x, vec4 y);
@@ -178,8 +194,10 @@ void main()
 	{
 		// Calculate light data
 		LightInfo info = GetDirLightInfo(i);
+		// If light is sun
+		float shadow = CalculateShadow(info.L, gBuffer) * WhenEqual(vec4(i), vec4(0)).x;
 		// Calculate lighting
-		Lo += CalculateLight(sharedData, gBuffer, info);
+		Lo += CalculateLight(sharedData, gBuffer, info) * (1.0f - shadow);
 	}
 
 	// Calculate point lights
@@ -187,8 +205,10 @@ void main()
 	{
 		// Calculate light data
 		LightInfo info = GetPointLightInfo(i, gBuffer);
+		// If light casts shadows
+		float shadow = CalculatePointShadow(pointLights[lightIndex].position.xyz, gBuffer) * WhenEqual(vec4(i), vec4(lightIndex)).x;
 		// Calculate lighting
-		Lo += CalculateLight(sharedData, gBuffer, info);
+		Lo += CalculateLight(sharedData, gBuffer, info) * (1.0f - shadow);
 	}
 
 	// Calculate spot lights
@@ -206,9 +226,6 @@ void main()
 	vec3 color = ambient + Lo;
 	// Apply emmision
 	color = color + gBuffer.emmisive;
-	// Calculate shadow
-	vec3 L  = normalize(-dirLights[0].position.xyz);
-	color  *= 1.0f - (CalculateShadow(L, gBuffer) * SHADOW_AMOUNT);
 
 	// Output color
 	outColor = color;
@@ -547,6 +564,47 @@ float CalculateShadow(vec3 lightDir, GBuffer gBuffer)
 	float shadow = texture(shadowMap, vec4(projCoords.xy, layer, currentDepth - bias));
 	// Return if depth < 1.0f
 	return shadow * WhenLesser(vec4(currentDepth), vec4(1.0f)).x;
+}
+
+float CalculatePointShadow(vec3 lightPos, GBuffer gBuffer)
+{
+	// Sample vectors for soft shadows
+	const vec3 GRID_SAMPLING_DISK[NUM_SAMPLES] = vec3[]
+	(
+		vec3(1.0f, 1.0f,  1.0f), vec3( 1.0f, -1.0f,  1.0f), vec3(-1.0f, -1.0f,  1.0f), vec3(-1.0f, 1.0f,  1.0f),
+		vec3(1.0f, 1.0f, -1.0f), vec3( 1.0f, -1.0f, -1.0f), vec3(-1.0f, -1.0f, -1.0f), vec3(-1.0f, 1.0f, -1.0f),
+		vec3(1.0f, 1.0f,  0.0f), vec3( 1.0f, -1.0f,  0.0f), vec3(-1.0f, -1.0f,  0.0f), vec3(-1.0f, 1.0f,  0.0f),
+		vec3(1.0f, 0.0f,  1.0f), vec3(-1.0f,  0.0f,  1.0f), vec3( 1.0f,  0.0f, -1.0f), vec3(-1.0f, 0.0f, -1.0f),
+		vec3(0.0f, 1.0f,  1.0f), vec3( 0.0f, -1.0f,  1.0f), vec3( 0.0f, -1.0f, -1.0f), vec3( 0.0f, 1.0f, -1.0f)
+	);
+
+	// Get vector from frament to light
+	vec3 fragToLight = gBuffer.fragPos - lightPos;
+	// Get current linear depth
+	float currentDepth = length(fragToLight);
+
+	// Store shadow
+	float shadow = 0.0f;
+	// Calculate distance from camera
+	float viewDistance = length(cameraPos.xyz - gBuffer.fragPos);
+	// Calculate samplinbg disk radius
+	float diskRadius = (1.0f + (viewDistance / shadowPlanes.y)) / 25.0f;
+
+	// For each sample
+	for(int i = 0; i < NUM_SAMPLES; ++i)
+	{
+		// Get closest depth
+		float closestDepth = texture(pointShadowMap, fragToLight + GRID_SAMPLING_DISK[i] * diskRadius).r;
+		// Undo previous mapping
+		closestDepth *= shadowPlanes.y;
+		// Check for shadow
+		shadow += 1.0f * WhenGreater(vec4(currentDepth - POINT_BIAS), vec4(closestDepth)).x;
+	}
+
+	// Divide shadow amounht by number of samples
+	shadow /= float(NUM_SAMPLES);
+	// Return shadow
+	return shadow;
 }
 
 // Branchless implementation of

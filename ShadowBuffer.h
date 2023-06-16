@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <array>
+
 #include <GL/glew.h>
 
 #include "GLM.h"

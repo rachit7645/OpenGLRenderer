@@ -100,6 +100,7 @@ add_executable(engine
 	Transform.cpp
 	OmniShadowMap.cpp
 	OmniShadowShader.cpp
+	OmniShadowBuffer.cpp
 )
 
 # Precompiled Headers

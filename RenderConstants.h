@@ -19,7 +19,8 @@ namespace Renderer
 	{
 		Deferred,
 		Fast,
-		Shadow
+		Shadow,
+        OmniShadow
 	};
 }
 

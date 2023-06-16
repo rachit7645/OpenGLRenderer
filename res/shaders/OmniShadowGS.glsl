@@ -1,20 +1,16 @@
 #version 430 core
 
-// Constants
-const int MAX_LAYER_COUNT = 16;
-
 // Primitive inputs
 layout (triangles) in;
 
 // Primitive outputs
 layout (triangle_strip, max_vertices = 18) out;
 
-// Shadow buffer
-layout (std140, binding = 4) uniform ShadowBuffer
+layout (std140, binding = 5) uniform OmniShadowBuffer
 {
-    int   cascadeCount;
-    mat4  shadowMatrices[MAX_LAYER_COUNT];
-    float cascadeDistances[MAX_LAYER_COUNT];
+    mat4 omniShadowMatrices[6];
+    vec4 shadowPlanes;
+    int  lightIndex;
 };
 
 // Geometry outputs
@@ -35,7 +31,7 @@ void main()
             // In-built input from vertex shader
             fragPos = gl_in[i].gl_Position.xyz;
             // Transform by shadow matrix
-            gl_Position = shadowMatrices[face] * gl_in[i].gl_Position;
+            gl_Position = omniShadowMatrices[face] * gl_in[i].gl_Position;
             // Output vertex
             EmitVertex();
         }

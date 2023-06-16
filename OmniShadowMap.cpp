@@ -7,13 +7,12 @@ using namespace Renderer;
 
 // Constants
 constexpr glm::ivec2 SHADOW_DIMENSIONS = {1024, 1024};
+constexpr glm::vec2  SHADOW_PLANES     = {1.0f, 25.0f};
 
 OmniShadowMap::OmniShadowMap()
-    : shadowCubeMap(std::make_shared<FrameBuffer>())
+    : shadowCubeMap(std::make_shared<FrameBuffer>()),
+      m_matrixBuffer(std::make_shared<OmniShadowBuffer>())
 {
-    // Make sure enough space is available on the GPU
-    static_assert(SHADOW_MAX_FRUSTUMS >= 6, "We assume at least 6 shadow matrix slots are available!");
-
     // Depth attachment
     Renderer::FBOAttachment depth =
     {
@@ -39,19 +38,53 @@ OmniShadowMap::OmniShadowMap()
     shadowCubeMap->SetReadBuffer(GL_NONE);
     // Create depth cube map
     shadowCubeMap->AddTextureCubeMap(shadowCubeMap->depthTexture, depth);
+    // Attach cubemap
+    shadowCubeMap->AttachTextureCubeMap(shadowCubeMap->depthTexture, depth);
     // Finish up
     shadowCubeMap->CheckStatus();
     shadowCubeMap->EnableDepth();
     shadowCubeMap->Unbind();
+
+    // Load shadow planes
+    m_matrixBuffer->LoadShadowPlanes(SHADOW_PLANES);
 }
 
-void OmniShadowMap::Bind() const
+void OmniShadowMap::Update(usize lightIndex, const glm::vec3& lightPos)
+{
+    // Shadow projection matrix
+    glm::mat4 shadowProj = glm::perspective
+    (
+        glm::radians(90.0f),
+        static_cast<f32>(SHADOW_DIMENSIONS.x) / static_cast<f32>(SHADOW_DIMENSIONS.y),
+        SHADOW_PLANES.x,
+        SHADOW_PLANES.y
+    );
+
+    // Shadow matrix vector
+    Mat4s shadowMatrices =
+    {
+        // Fill shadow matrices for each face
+        shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)),
+        shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)),
+        shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)),
+        shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)),
+        shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)),
+        shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f))
+    };
+
+    // Upload matrices
+    m_matrixBuffer->LoadMatrices(shadowMatrices);
+    // Load light index
+    m_matrixBuffer->LoadLightIndex(lightIndex);
+}
+
+void OmniShadowMap::BindShadowCubeMap() const
 {
     // Bind
     shadowCubeMap->Bind();
 }
 
-void OmniShadowMap::Unbind() const
+void OmniShadowMap::BindDefaultFBO() const
 {
     // Unbind
     shadowCubeMap->Unbind();

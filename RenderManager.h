@@ -44,6 +44,9 @@
 #include "UpSampleShader.h"
 #include "BloomRenderer.h"
 #include "Frustum.h"
+#include "ShadowBuffer.h"
+#include "OmniShadowShader.h"
+#include "OmniShadowMap.h"
 
 namespace Renderer
 {
@@ -65,8 +68,9 @@ namespace Renderer
 		// Main constructor
 		RenderManager();
 	private:
-		// Framebuffers
+        // Framebuffers
 		Renderer::ShadowMap       m_shadowMap;
+        Renderer::OmniShadowMap   m_pointShadowMap;
 		Waters::WaterFrameBuffers m_waterFBOs;
 		Renderer::GBuffer         m_gBuffer;
 		Renderer::LightingBuffer  m_lightingBuffer;
@@ -95,6 +99,7 @@ namespace Renderer
 		Shader::GBufferShader       m_gShader;
 		Shader::FastInstancedShader m_fastInstancedShader;
 		Shader::ShadowShader        m_shadowShader;
+        Shader::OmniShadowShader    m_omniShadowShader;
 		Renderer::InstancedRenderer m_instancedRenderer;
 
 		// Lighting renderer and shader
@@ -153,6 +158,8 @@ namespace Renderer
 		void EndFrame();
 		// Render shadows
 		void RenderShadows(const Entities::Camera& camera, const glm::vec3& lightPos);
+        // Render point shadow
+        void RenderPointShadows(usize lightIndex, const glm::vec3 lightPos);
 		// Render the waters
 		void RenderWaters(const WaterTiles& waters);
 		// Render water fbos
@@ -169,7 +176,7 @@ namespace Renderer
 		void RenderSkybox();
 	private:
 		// Clears current frame buffer according to set flags
-		void Clear(GLbitfield flags);
+		static void Clear(GLbitfield flags);
 		// Copy selected data from GBuffer to selected FBO
 		void CopyGBuffer(FbPtr& drawBuffer, GLbitfield flags);
 		// Render water scene (forward)

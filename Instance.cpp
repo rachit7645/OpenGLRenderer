@@ -40,9 +40,19 @@ void Instance::Run()
 
 		// Begin render
 		m_renderer.BeginFrame(m_entities, m_dirLights, m_pointLights, m_spotLights, m_player);
-		// Draw shadow map
+
+        // Draw shadow map
 		m_renderer.RenderShadows(m_camera, m_dirLights[0].position);
-		// Draw water framebuffers
+
+        // Get time (t ∈ [-π, π])
+        auto time = std::acos(cos(static_cast<f32>(SDL_GetTicks64()) / 1000.0f));
+        // Change positions
+        m_pointLights[0].position.x = static_cast<f32>(std::cos(time) * 25.0);
+        m_pointLights[0].position.z = static_cast<f32>(std::cos(2 * time) * 7.0);
+        // Draw point shadow map
+        m_renderer.RenderPointShadows(0, m_pointLights[0].position);
+
+        // Draw water framebuffers
 		m_renderer.RenderWaterFBOs(m_waters, m_camera);
 
 		// Deferred geometry pass
@@ -433,7 +443,7 @@ void Instance::InitLights()
 	m_pointLights =
 	{
 		{
-			glm::vec3(40.0f, 4.0f, -40.0f),
+			glm::vec3(4.0f, 20.0f, -3.0f),
 			glm::vec3(0.0f, 1.0f, 1.0f),
 			glm::vec3(1.0f, 7.0f, 5.0f),
 			glm::vec3(1.0f, 0.022f, 0.0019f)

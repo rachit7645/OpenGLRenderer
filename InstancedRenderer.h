@@ -13,6 +13,7 @@
 #include "ShadowShader.h"
 #include "IBLMaps.h"
 #include "GBufferShader.h"
+#include "OmniShadowShader.h"
 
 namespace Renderer
 {
@@ -31,6 +32,7 @@ namespace Renderer
 			Shader::GBufferShader& gShader,
 			Shader::FastInstancedShader& fastShader,
 			Shader::ShadowShader& shadowShader,
+            Shader::OmniShadowShader& omniShadowShader,
 			Renderer::IBLMaps& iblMaps,
 			BufferPtr instances
 		);
@@ -39,6 +41,7 @@ namespace Renderer
 		Shader::GBufferShader&       gShader;
 		Shader::FastInstancedShader& fastShader;
 		Shader::ShadowShader&        shadowShader;
+        Shader::OmniShadowShader&    omniShadowShader;
 
 		// Other data
 		Renderer::IBLMaps&   iblMaps;
@@ -54,13 +57,13 @@ namespace Renderer
 		// Load instance data
 		void LoadData(const EntityVector& entities);
 		// Prepare mesh
-		void PrepareMesh(const Mesh& mesh, Mode mode);
+		static void PrepareMesh(const Mesh& mesh, Mode mode);
 		// Load textures
 		void LoadTextures(const Mesh& mesh);
 		// Load IBL textures
 		void LoadIBLTextures();
 		// Unbind mesh
-		void UnbindMesh();
+		static void UnbindMesh();
 	};
 }
 

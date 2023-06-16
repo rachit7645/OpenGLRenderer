@@ -21,14 +21,16 @@ using Waters::WaterFrameBuffers;
 using Engine::Settings;
 
 RenderManager::RenderManager()
-	: m_iblRenderer(m_converterShader, m_convolutionShader, m_preFilterShader, m_brdfShader),
+	: m_shadowMap(),
+      m_pointShadowMap(),
+      m_iblRenderer(m_converterShader, m_convolutionShader, m_preFilterShader, m_brdfShader),
 	  m_iblMaps(m_iblRenderer),
 	  m_instances(std::make_shared<InstanceBuffer>()),
 	  m_matrices(std::make_shared<MatrixBuffer>()),
 	  m_lights(std::make_shared<LightsBuffer>()),
 	  m_shared(std::make_shared<SharedBuffer>()),
-	  m_instancedRenderer(m_gShader, m_fastInstancedShader, m_shadowShader, m_iblMaps, m_instances),
-	  m_lightRenderer(m_lightShader, m_shadowMap, m_gBuffer, m_iblMaps),
+	  m_instancedRenderer(m_gShader, m_fastInstancedShader, m_shadowShader, m_omniShadowShader, m_iblMaps, m_instances),
+	  m_lightRenderer(m_lightShader, m_shadowMap, m_pointShadowMap, m_gBuffer, m_iblMaps),
 	  m_bloomRenderer(m_downSampleShader, m_upSampleShader, m_lightingBuffer, m_bloomBuffer),
 	  m_postRenderer(m_postShader, m_lightingBuffer, m_bloomBuffer),
 	  m_skyboxRenderer(m_skyboxShader),
@@ -102,6 +104,21 @@ void RenderManager::RenderShadows(const Camera& camera, const glm::vec3& lightPo
 	glDisable(GL_DEPTH_CLAMP);
 	// Unbind shadow map
 	m_shadowMap.BindDefaultFBO();
+}
+
+// TODO: Add frustum culling to shadows
+void RenderManager::RenderPointShadows(usize lightIndex, const glm::vec3 lightPos)
+{
+    // Bind shadow map
+    m_pointShadowMap.BindShadowCubeMap();
+    // Update shadow map
+    m_pointShadowMap.Update(lightIndex, lightPos);
+    // Clear FBO
+    Clear(GL_DEPTH_BUFFER_BIT);
+    // Render entities
+    m_instancedRenderer.Render(m_entities, Mode::OmniShadow);
+    // Unbind shadow map
+    m_pointShadowMap.BindDefaultFBO();
 }
 
 void RenderManager::RenderWaters(const WaterTiles& waters)
@@ -323,7 +340,7 @@ void RenderManager::RenderWaterScene(const Camera& camera, const glm::vec4& clip
 void RenderManager::RenderShadowScene(const Camera& camera)
 {
 	// Clear FBO
-	Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	Clear(GL_DEPTH_BUFFER_BIT);
 	// Load data
 	m_matrices->LoadView(camera);
 	m_shared->LoadCameraPos(camera);
