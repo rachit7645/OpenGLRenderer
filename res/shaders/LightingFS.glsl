@@ -71,6 +71,14 @@ struct LightInfo
 	vec3 radiance;
 };
 
+// Point Light Shadow Struct
+struct PointShadow
+{
+	mat4 omniShadowMatrices[6];
+	vec4 shadowPlanes;
+	int  lightIndex;
+};
+
 // Matrix buffer
 layout(std140, binding = 0) uniform Matrices
 {
@@ -115,9 +123,8 @@ layout (std140, binding = 4) uniform ShadowBuffer
 // Omni Shadow buffer
 layout (std140, binding = 5) uniform OmniShadowBuffer
 {
-	mat4 omniShadowMatrices[6];
-	vec4 shadowPlanes;
-	int  lightIndex;
+	PointShadow omniShadowMaps[MAX_LIGHTS];
+	int         currentIndex;
 };
 
 // Vertex inputs
@@ -134,7 +141,7 @@ uniform samplerCube prefilterMap;
 uniform sampler2D   brdfLUT;
 // Other samplers
 uniform sampler2DArrayShadow shadowMap;
-uniform samplerCube          pointShadowMap;
+uniform samplerCubeArray     pointShadowMap;
 
 // Fragment outputs
 layout (location = 0) out vec3 outColor;
@@ -172,7 +179,7 @@ float CalculateBias(int layer, vec3 lightDir, GBuffer gBuffer);
 float CalculateShadow(vec3 lightDir, GBuffer gBuffer);
 
 // Point shadow functions
-float CalculatePointShadow(vec3 lightPos, GBuffer gBuffer);
+float CalculatePointShadow(PointShadow shadowMap, GBuffer gBuffer);
 
 // Branchless functions
 vec4 WhenGreater(vec4 x, vec4 y);
@@ -205,8 +212,8 @@ void main()
 	{
 		// Calculate light data
 		LightInfo info = GetPointLightInfo(i, gBuffer);
-		// If light casts shadows
-		float shadow = CalculatePointShadow(pointLights[lightIndex].position.xyz, gBuffer) * WhenEqual(vec4(i), vec4(lightIndex)).x;
+		// Calculate shadows
+		float shadow = CalculatePointShadow(omniShadowMaps[i], gBuffer);
 		// Calculate lighting
 		Lo += CalculateLight(sharedData, gBuffer, info) * (1.0f - shadow);
 	}
@@ -566,7 +573,7 @@ float CalculateShadow(vec3 lightDir, GBuffer gBuffer)
 	return shadow * WhenLesser(vec4(currentDepth), vec4(1.0f)).x;
 }
 
-float CalculatePointShadow(vec3 lightPos, GBuffer gBuffer)
+float CalculatePointShadow(PointShadow shadowMap, GBuffer gBuffer)
 {
 	// Sample vectors for soft shadows
 	const vec3 GRID_SAMPLING_DISK[NUM_SAMPLES] = vec3[]
@@ -578,6 +585,13 @@ float CalculatePointShadow(vec3 lightPos, GBuffer gBuffer)
 		vec3(0.0f, 1.0f,  1.0f), vec3( 0.0f, -1.0f,  1.0f), vec3( 0.0f, -1.0f, -1.0f), vec3( 0.0f, 1.0f, -1.0f)
 	);
 
+	// Get index
+	int lightIndex = shadowMap.lightIndex;
+	// Get light position
+	vec3 lightPos = pointLights[lightIndex].position.xyz;
+	// Get shadow planes
+	vec2 planes = omniShadowMaps[currentIndex].shadowPlanes.xy;
+
 	// Get vector from frament to light
 	vec3 fragToLight = gBuffer.fragPos - lightPos;
 	// Get current linear depth
@@ -588,15 +602,15 @@ float CalculatePointShadow(vec3 lightPos, GBuffer gBuffer)
 	// Calculate distance from camera
 	float viewDistance = length(cameraPos.xyz - gBuffer.fragPos);
 	// Calculate samplinbg disk radius
-	float diskRadius = (1.0f + (viewDistance / shadowPlanes.y)) / 25.0f;
+	float diskRadius = (1.0f + (viewDistance / planes.y)) / 25.0f;
 
 	// For each sample
 	for(int i = 0; i < NUM_SAMPLES; ++i)
 	{
 		// Get closest depth
-		float closestDepth = texture(pointShadowMap, fragToLight + GRID_SAMPLING_DISK[i] * diskRadius).r;
+		float closestDepth = texture(pointShadowMap, vec4(fragToLight + GRID_SAMPLING_DISK[i] * diskRadius, lightIndex)).r;
 		// Undo previous mapping
-		closestDepth *= shadowPlanes.y;
+		closestDepth *= planes.y;
 		// Check for shadow
 		shadow += 1.0f * WhenGreater(vec4(currentDepth - POINT_BIAS), vec4(closestDepth)).x;
 	}

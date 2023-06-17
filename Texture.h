@@ -60,7 +60,7 @@ namespace Renderer
 		void LoadImageData3D(u8* data, GLint internalFormat, GLint format, GLint dataType, GLenum target = 0);
 
 		// Generates mipmaps for the texture
-		void GenerateMipmaps();
+		void GenerateMipmaps() const;
 
 		// Loads a RGB8 image using stb image
 		u8* LoadImage(const std::string_view path);

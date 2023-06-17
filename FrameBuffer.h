@@ -64,13 +64,17 @@ namespace Renderer
 		void CreateTexture(TxPtr& texture, const FBOAttachment& attachment) const;
 		// Create cube map texture
 		void CreateTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment) const;
+        // Create cube map array texture
+        void CreateTextureCubeMapArray(TxPtr& texture, const FBOAttachment& attachment) const;
 		// Create texture array
 		void CreateTextureArray(TxPtr& texture, const FBOAttachment& attachment) const;
 
 		// Attach 2D texture
 		static void AttachTexture(TxPtr& texture, const FBOAttachment& attachment);
 		// Attach cube map texture
-		UNUSED static void AttachTextureCubeMap(UNUSED TxPtr& texture, UNUSED const FBOAttachment& attachment);
+        static void AttachTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment);
+        // Attach cube map array texture
+        static void AttachTextureCubeMapArray(TxPtr& texture, const FBOAttachment& attachment);
 		// Attach texture array
 		static void AttachTextureArray(TxPtr& texture, const FBOAttachment& attachment);
 
@@ -78,6 +82,8 @@ namespace Renderer
 		void AddTexture(TxPtr& texture, const FBOAttachment& attachment);
 		// Add cube map texture
 		void AddTextureCubeMap(TxPtr& texture, const FBOAttachment& attachment);
+        // Add cube map array texture
+        void AddTextureCubeMapArray(TxPtr& texture, const FBOAttachment& attachment);
 		// Add texture array
 		void AddTextureArray(TxPtr& texture, const FBOAttachment& attachment);
 		// Add render buffer

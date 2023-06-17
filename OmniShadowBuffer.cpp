@@ -26,63 +26,57 @@ OmniShadowBuffer::OmniShadowBuffer()
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void OmniShadowBuffer::LoadMatrices(const Mat4s& matrices)
+void OmniShadowBuffer::LoadShadowMap(const Mat4s& matrices, glm::vec2 shadowPlanes, usize lightIndex)
 {
-    // Calculate size
-    auto size = std::min(matrices.size(), SHADOW_CUBE_MAP_FACES) * sizeof(glm::mat4);
+    // Temporary shadow data
+    PointShadowGLSL shadowMap = {};
+
+    // Calculate number of matrices
+    auto numMatrices = std::min(matrices.size(), SHADOW_CUBE_MAP_FACES);
+
+    // For each matrix
+    for (usize i = 0; i < numMatrices; ++i)
+    {
+        // Copy matrix
+        shadowMap.matrices[i] = matrices[i];
+    }
+
+    // Convert planes
+    shadowMap.shadowPlanes = glm::vec4(shadowPlanes, 1.0f, 1.0f);
+    // Convert index
+    shadowMap.lightIndex = {static_cast<GLint>(lightIndex)};
 
     // Bind UBO
     glBindBuffer(GL_UNIFORM_BUFFER, id);
 
-    // Buffer matrix data
+    // Buffer shadow map data
     glBufferSubData
     (
         GL_UNIFORM_BUFFER,
-        static_cast<GLintptr>(offsetof(OmniShadowBufferGLSL, matrices)),
-        static_cast<GLsizeiptr>(size),
-        reinterpret_cast<const void*>(&matrices[0])
+        static_cast<GLintptr>(offsetof(OmniShadowBufferGLSL, omniShadowMaps[0]) + sizeof(PointShadowGLSL) * lightIndex),
+        static_cast<GLsizeiptr>(sizeof(PointShadowGLSL)),
+        reinterpret_cast<const void*>(&shadowMap)
     );
 
     // Unbind UBO
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void OmniShadowBuffer::LoadShadowPlanes(const glm::vec2& planes)
+void OmniShadowBuffer::LoadLightIndex(usize lightIndex)
 {
-    // Convert
-    glm::vec4 glPlanes = glm::vec4(planes, 1.0f, 1.0f);
+    // Convert index
+    GL::Int indexGL = {static_cast<GLint>(lightIndex)};
 
     // Bind UBO
     glBindBuffer(GL_UNIFORM_BUFFER, id);
 
-    // Buffer index
+    // Load to UBO
     glBufferSubData
     (
         GL_UNIFORM_BUFFER,
-        static_cast<GLintptr>(offsetof(OmniShadowBufferGLSL, shadowPlanes)),
-        static_cast<GLsizeiptr>(sizeof(glm::vec4)),
-        reinterpret_cast<const void*>(&glPlanes[0])
-    );
-
-    // Unbind UBO
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
-}
-
-void OmniShadowBuffer::LoadLightIndex(usize index)
-{
-    // Convert
-    GL::Int glIndex = {static_cast<GLint>(index)};
-
-    // Bind UBO
-    glBindBuffer(GL_UNIFORM_BUFFER, id);
-
-    // Buffer index
-    glBufferSubData
-    (
-        GL_UNIFORM_BUFFER,
-        static_cast<GLintptr>(offsetof(OmniShadowBufferGLSL, lightIndex)),
+        static_cast<GLintptr>(offsetof(OmniShadowBufferGLSL, currentIndex)),
         static_cast<GLsizeiptr>(sizeof(GL::Int)),
-        reinterpret_cast<const void*>(&glIndex)
+        reinterpret_cast<const void*>(&indexGL)
     );
 
     // Unbind UBO

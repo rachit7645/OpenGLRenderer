@@ -68,7 +68,7 @@ void LightingRenderer::Render()
 	glBindTexture(GL_TEXTURE_2D_ARRAY, shadowMap.buffer->depthTexture->id);
     // Activate point shadow map
     glActiveTexture(GL_TEXTURE8);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, pointShadowMap.shadowCubeMap->depthTexture->id);
+    glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, pointShadowMap.shadowCubeMap->depthTexture->id);
 	// Render quad
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, m_vao->vertexCount);
 	// Unbind vao

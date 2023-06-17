@@ -29,6 +29,7 @@ OmniShadowMap::OmniShadowMap()
     // Set buffer dimensions
     shadowCubeMap->width  = SHADOW_DIMENSIONS.x;
     shadowCubeMap->height = SHADOW_DIMENSIONS.y;
+    shadowCubeMap->depth  = static_cast<GLsizei>(SHADER_MAX_LIGHTS);
 
     // Create frame buffer object
     shadowCubeMap->CreateFrameBuffer();
@@ -37,16 +38,11 @@ OmniShadowMap::OmniShadowMap()
     shadowCubeMap->SetDrawBuffer(GL_NONE);
     shadowCubeMap->SetReadBuffer(GL_NONE);
     // Create depth cube map
-    shadowCubeMap->AddTextureCubeMap(shadowCubeMap->depthTexture, depth);
-    // Attach cubemap
-    shadowCubeMap->AttachTextureCubeMap(shadowCubeMap->depthTexture, depth);
+    shadowCubeMap->AddTextureCubeMapArray(shadowCubeMap->depthTexture, depth);
     // Finish up
     shadowCubeMap->CheckStatus();
     shadowCubeMap->EnableDepth();
     shadowCubeMap->Unbind();
-
-    // Load shadow planes
-    m_matrixBuffer->LoadShadowPlanes(SHADOW_PLANES);
 }
 
 void OmniShadowMap::Update(usize lightIndex, const glm::vec3& lightPos)
@@ -72,9 +68,9 @@ void OmniShadowMap::Update(usize lightIndex, const glm::vec3& lightPos)
         shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f))
     };
 
-    // Upload matrices
-    m_matrixBuffer->LoadMatrices(shadowMatrices);
-    // Load light index
+    // Upload data
+    m_matrixBuffer->LoadShadowMap(shadowMatrices, SHADOW_PLANES, lightIndex);
+    // Upload current light index
     m_matrixBuffer->LoadLightIndex(lightIndex);
 }
 

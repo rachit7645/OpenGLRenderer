@@ -9,6 +9,7 @@
 #include "UniformBuffer.h"
 #include "Util.h"
 #include "GL.h"
+#include "LightsBuffer.h"
 
 namespace Renderer
 {
@@ -21,8 +22,8 @@ namespace Renderer
         // Usings
         using Mat4s = std::vector<glm::mat4>;
 
-        // Internal representation of GLSL data
-        struct ALIGN_GLSL_STD140 OmniShadowBufferGLSL
+        // GLSL representation of shadow buffer
+        struct ALIGN_GLSL_STD140 PointShadowGLSL
         {
             // Shadow matrices
             glm::mat4 matrices[SHADOW_CUBE_MAP_FACES] = {};
@@ -32,15 +33,22 @@ namespace Renderer
             GL::Int lightIndex = {};
         };
 
+        // GLSL representation of shadow buffer
+        struct ALIGN_GLSL_STD140 OmniShadowBufferGLSL
+        {
+            // Shadow maps
+            PointShadowGLSL omniShadowMaps[SHADER_MAX_LIGHTS] = {};
+            // Current light index
+            GL::Int currentIndex = {};
+        };
+
         // Main constructor
         OmniShadowBuffer();
 
-        // Load shadow matrices
-        void LoadMatrices(const Mat4s& matrices);
-        // Load shadow planes
-        void LoadShadowPlanes(const glm::vec2& planes);
-        // Load light position
-        void LoadLightIndex(usize index);
+        // Load shadow map data
+        void LoadShadowMap(const Mat4s& matrices, glm::vec2 shadowPlanes, usize lightIndex);
+        // Load current light index
+        void LoadLightIndex(usize lightIndex);
     };
 }
 

@@ -50,7 +50,7 @@ void Instance::Run()
         m_pointLights[0].position.x = static_cast<f32>(std::cos(time) * 25.0);
         m_pointLights[0].position.z = static_cast<f32>(std::cos(2 * time) * 7.0);
         // Draw point shadow map
-        m_renderer.RenderPointShadows(0, m_pointLights[0].position);
+        m_renderer.RenderPointShadows(m_pointLights);
 
         // Draw water framebuffers
 		m_renderer.RenderWaterFBOs(m_waters, m_camera);
@@ -444,10 +444,16 @@ void Instance::InitLights()
 	{
 		{
 			glm::vec3(4.0f, 20.0f, -3.0f),
-			glm::vec3(0.0f, 1.0f, 1.0f),
+			glm::vec3(0.0f, 0.945f, 0.945f),
 			glm::vec3(1.0f, 7.0f, 5.0f),
 			glm::vec3(1.0f, 0.022f, 0.0019f)
-		}
+		},
+        {
+            glm::vec3(27.0f, 15.0f, -3.0f),
+            glm::vec3(0.0f, 0.031f, 1.0f),
+            glm::vec3(1.0f, 6.0f, 10.0f),
+            glm::vec3(1.0f, 0.027f, 0.0028f)
+        }
 	};
 
 	// Spot lights

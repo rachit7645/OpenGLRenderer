@@ -31,6 +31,14 @@ struct SpotLight
     vec4 cutOff;
 };
 
+// Point Light Shadow Struct
+struct PointShadow
+{
+    mat4 matrices[6];
+    vec4 shadowPlanes;
+    int  lightIndex;
+};
+
 // Lights buffer
 layout(std140, binding = 1) uniform Lights
 {
@@ -56,9 +64,8 @@ layout(std140, binding = 2) uniform Shared
 // Omni Shadow buffer
 layout (std140, binding = 5) uniform OmniShadowBuffer
 {
-    mat4 omniShadowMatrices[6];
-    vec4 shadowPlanes;
-    int  lightIndex;
+    PointShadow omniShadowMaps[MAX_LIGHTS];
+    int         currentIndex;
 };
 
 // Geometry inputs
@@ -67,11 +74,16 @@ in vec3 fragPos;
 // Entry point
 void main()
 {
+    // Get light index
+    int index = omniShadowMaps[currentIndex].lightIndex;
+    // Get shadow planes
+    vec2 planes = omniShadowMaps[currentIndex].shadowPlanes.xy;
+
     // Calulate distance between fragment and light
-    float lightDistance = length(fragPos.xyz - pointLights[lightIndex].position.xyz);
+    float lightDistance = length(fragPos.xyz - pointLights[index].position.xyz);
 
     // Map to [0, 1] range by dividing by far plane
-    lightDistance = lightDistance / shadowPlanes.y;
+    lightDistance = lightDistance / planes.y;
 
     // Write modified depth
     gl_FragDepth = lightDistance;

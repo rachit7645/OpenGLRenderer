@@ -107,16 +107,22 @@ void RenderManager::RenderShadows(const Camera& camera, const glm::vec3& lightPo
 }
 
 // TODO: Add frustum culling to shadows
-void RenderManager::RenderPointShadows(usize lightIndex, const glm::vec3 lightPos)
+void RenderManager::RenderPointShadows(const PointLights& lights)
 {
     // Bind shadow map
     m_pointShadowMap.BindShadowCubeMap();
-    // Update shadow map
-    m_pointShadowMap.Update(lightIndex, lightPos);
+
     // Clear FBO
     Clear(GL_DEPTH_BUFFER_BIT);
-    // Render entities
-    m_instancedRenderer.Render(m_entities, Mode::OmniShadow);
+
+    for (usize i = 0; i < lights.size(); ++i)
+    {
+        // Update shadow map
+        m_pointShadowMap.Update(i, lights[i].position);
+        // Render entities
+        m_instancedRenderer.Render(m_entities, Mode::OmniShadow);
+    }
+
     // Unbind shadow map
     m_pointShadowMap.BindDefaultFBO();
 }
