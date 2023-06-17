@@ -6,24 +6,24 @@
 
 namespace Maths
 {
-	class Plane
-	{
-	public:
-		// Default constructor
-		Plane() = default;
-		// Main constructor
-		explicit Plane(const glm::vec4& equation);
+    class Plane
+    {
+    public:
+        // Default constructor
+        Plane() = default;
+        // Main constructor
+        explicit Plane(const glm::vec4& equation);
 
-		// Normalise plane equation
-		void NormalizePlane();
+        // Normalise plane equation
+        void NormalizePlane();
 
         // Plane equation
         glm::vec4 equation = {};
-		// Normal vector
-		glm::vec3 normal = {};
-		// Distance from origin
-		f32 distance = {};
-	};
+        // Normal vector
+        glm::vec3 normal = {};
+        // Distance from origin
+        f32 distance = {};
+    };
 }
 
 #endif

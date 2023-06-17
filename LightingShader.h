@@ -5,18 +5,18 @@
 
 namespace Shader
 {
-	class LightingShader : public ShaderProgram
-	{
-	public:
-		// Constructor
-		LightingShader();
+    class LightingShader : public ShaderProgram
+    {
+    public:
+        // Constructor
+        LightingShader();
 
-		// Connect GPU texture units
-		void ConnectTextureUnits();
+        // Connect GPU texture units
+        void ConnectTextureUnits();
 
-		// Get all uniform locations
-		void GetUniformLocations() override;
-	};
+        // Get all uniform locations
+        void GetUniformLocations() override;
+    };
 }
 
 #endif

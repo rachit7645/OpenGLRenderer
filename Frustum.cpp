@@ -16,28 +16,28 @@ using Maths::Plane;
 
 Frustum::Frustum()
 {
-	// Create projection matrix (must be the same as the one used for rendering)
-	m_projection = glm::perspective
-	(
-		glm::radians(Renderer::FOV),
-		Renderer::ASPECT_RATIO,
-		Renderer::NEAR_PLANE,
-		Renderer::FAR_PLANE
-	);
+    // Create projection matrix (must be the same as the one used for rendering)
+    m_projection = glm::perspective
+    (
+        glm::radians(Renderer::FOV),
+        Renderer::ASPECT_RATIO,
+        Renderer::NEAR_PLANE,
+        Renderer::FAR_PLANE
+    );
 }
 
 bool Frustum::IsVisible(const Entity& entity)
 {
-	// Get meshes
-	const auto& meshes = entity.model->meshes;
+    // Get meshes
+    const auto& meshes = entity.model->meshes;
     // Create model matrix
     glm::mat4 model = entity.transform.GetModelMatrix();
-	// Return true if any meshes are visible
-	return std::any_of(meshes.begin(), meshes.end(), [this, model] (const auto& mesh)
-	{
-		// Return true if mesh is visible
-		return IsInFrustum(mesh.aabb.Transform(model));
-	});
+    // Return true if any meshes are visible
+    return std::any_of(meshes.begin(), meshes.end(), [this, model] (const auto& mesh)
+    {
+        // Return true if mesh is visible
+        return IsInFrustum(mesh.aabb.Transform(model));
+    });
 }
 
 void Frustum::UpdateView(const Camera& camera)
@@ -60,7 +60,7 @@ void Frustum::UpdateView(const Camera& camera)
 bool Frustum::IsInFrustum(const AABB& aabb) const
 {
     // For each plane
-	for (const auto& plane : m_planes)
+    for (const auto& plane : m_planes)
     {
         // Check plane intersection
         if

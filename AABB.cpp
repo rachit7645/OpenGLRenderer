@@ -4,12 +4,12 @@
 using namespace Maths;
 
 AABB::AABB(const aiAABB& aabb)
-	: AABB(glm::ai_cast(aabb.mMin), glm::ai_cast(aabb.mMax))
+    : AABB(glm::ai_cast(aabb.mMin), glm::ai_cast(aabb.mMax))
 {
 }
 
 AABB::AABB(const glm::vec3& min, const glm::vec3& max)
-	: min(min),
+    : min(min),
       max(max)
 {
     // Create corners
@@ -23,28 +23,6 @@ AABB::AABB(const glm::vec3& min, const glm::vec3& max)
         glm::vec3(max.x, max.y, min.z),
         glm::vec3(max.x, min.y, max.z),
         glm::vec3(max.x, max.y, max.z),
-    };
-
-    // Helper macro
-    #define VERTEX(vertex) (vertex).x, (vertex).y, (vertex).z
-
-    // Create vertices
-    vertices =
-    {
-        VERTEX(corners[0]), VERTEX(corners[1]), // Line #1
-        VERTEX(corners[2]), VERTEX(corners[3]), // Line #2
-        VERTEX(corners[4]), VERTEX(corners[5]), // Line #3
-        VERTEX(corners[6]), VERTEX(corners[7]), // Line #4
-
-        VERTEX(corners[0]), VERTEX(corners[2]), // Line #5
-        VERTEX(corners[1]), VERTEX(corners[3]), // Line #6
-        VERTEX(corners[4]), VERTEX(corners[6]), // Line #7
-        VERTEX(corners[5]), VERTEX(corners[7]), // Line #8
-
-        VERTEX(corners[0]), VERTEX(corners[4]), // Line #9
-        VERTEX(corners[1]), VERTEX(corners[5]), // Line #10
-        VERTEX(corners[2]), VERTEX(corners[6]), // Line #11
-        VERTEX(corners[3]), VERTEX(corners[7]), // Line #12
     };
 }
 
@@ -73,5 +51,5 @@ AABB AABB::Transform(const glm::mat4& matrix) const
     }
 
     // Return new AABB
-    return AABB(newMin, newMax);
+    return {newMin, newMax};
 }

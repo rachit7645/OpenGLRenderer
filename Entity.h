@@ -9,24 +9,24 @@
 
 namespace Entities
 {
-	class Entity
-	{
-	public:
-		// Usings
+    class Entity
+    {
+    public:
+        // Usings
         using MdPtr = std::shared_ptr<Renderer::Model>;
 
-		// Default constructor
-		Entity() = default;
-		// Main constructor
-		Entity(MdPtr sharedModel, const Transform& transform);
-		// Destructor
-		virtual ~Entity() = default;
+        // Default constructor
+        Entity() = default;
+        // Main constructor
+        Entity(MdPtr sharedModel, const Transform& transform);
+        // Destructor
+        virtual ~Entity() = default;
 
-		// Pointer to model
-		MdPtr model = nullptr;
-		// Transform
+        // Pointer to model
+        MdPtr model = nullptr;
+        // Transform
         Transform transform = {};
-	};
+    };
 }
 
 #endif

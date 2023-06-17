@@ -12,59 +12,59 @@ using namespace Renderer;
 using Engine::Settings;
 
 LightingBuffer::LightingBuffer()
-	: buffer(std::make_shared<FrameBuffer>())
+    : buffer(std::make_shared<FrameBuffer>())
 {
-	// Get settings
-	const auto& settings = Settings::GetInstance();
+    // Get settings
+    const auto& settings = Settings::GetInstance();
 
-	// Color Buffer
-	Renderer::FBOAttachment color0 =
-	{
-		GL_NEAREST,
-		GL_NEAREST,
-		GL_CLAMP_TO_EDGE,
-		GL_RGB16F,
-		GL_RGB,
-		GL_FLOAT,
-		GL_COLOR_ATTACHMENT0
-	};
+    // Color Buffer
+    Renderer::FBOAttachment color0 =
+    {
+        GL_NEAREST,
+        GL_NEAREST,
+        GL_CLAMP_TO_EDGE,
+        GL_RGB16F,
+        GL_RGB,
+        GL_FLOAT,
+        GL_COLOR_ATTACHMENT0
+    };
 
-	// Depth and stencil attachment
-	Renderer::FBOAttachment depth = {};
-	{
-		depth.intFormat = GL_DEPTH24_STENCIL8;
-		depth.slot      = GL_DEPTH_STENCIL_ATTACHMENT;
-	}
+    // Depth and stencil attachment
+    Renderer::FBOAttachment depth = {};
+    {
+        depth.intFormat = GL_DEPTH24_STENCIL8;
+        depth.slot      = GL_DEPTH_STENCIL_ATTACHMENT;
+    }
 
-	// Draw buffers
-	std::vector<GLenum> drawBuffers =
-	{
-		color0.slot
-	};
+    // Draw buffers
+    std::vector<GLenum> drawBuffers =
+    {
+        color0.slot
+    };
 
-	// Set buffer width and height
-	buffer->width  = settings.window.dimensions.x;
-	buffer->height = settings.window.dimensions.y;
+    // Set buffer width and height
+    buffer->width  = settings.window.dimensions.x;
+    buffer->height = settings.window.dimensions.y;
 
-	// Create frame buffer
-	buffer->CreateFrameBuffer();
-	buffer->Bind();
-	buffer->AddTexture(buffer->colorTextures[0], color0);
-	buffer->AddBuffer(buffer->depthRenderBuffer, depth);
-	buffer->SetDrawBuffers(drawBuffers);
-	buffer->CheckStatus();
-	buffer->EnableDepth();
-	buffer->Unbind();
+    // Create frame buffer
+    buffer->CreateFrameBuffer();
+    buffer->Bind();
+    buffer->AddTexture(buffer->colorTextures[0], color0);
+    buffer->AddBuffer(buffer->depthRenderBuffer, depth);
+    buffer->SetDrawBuffers(drawBuffers);
+    buffer->CheckStatus();
+    buffer->EnableDepth();
+    buffer->Unbind();
 }
 
 void LightingBuffer::BindLightingBuffer() const
 {
-	// Bind
-	buffer->Bind();
+    // Bind
+    buffer->Bind();
 }
 
 void LightingBuffer::BindDefaultFBO() const
 {
-	// Unbind
-	buffer->Unbind();
+    // Unbind
+    buffer->Unbind();
 }

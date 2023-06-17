@@ -1,18 +1,24 @@
 #include "OmniShadowMap.h"
 
 #include "ShadowBuffer.h"
+#include "Settings.h"
 
 // Using namespaces
 using namespace Renderer;
 
+// Usings
+using Engine::Settings;
+
 // Constants
-constexpr glm::ivec2 SHADOW_DIMENSIONS = {1024, 1024};
-constexpr glm::vec2  SHADOW_PLANES     = {1.0f, 25.0f};
+constexpr glm::vec2 SHADOW_PLANES = {1.0f, 25.0f};
 
 OmniShadowMap::OmniShadowMap()
     : shadowCubeMap(std::make_shared<FrameBuffer>()),
       m_matrixBuffer(std::make_shared<OmniShadowBuffer>())
 {
+    // Get settings
+    const auto& settings = Settings::GetInstance();
+
     // Depth attachment
     Renderer::FBOAttachment depth =
     {
@@ -27,8 +33,8 @@ OmniShadowMap::OmniShadowMap()
     };
 
     // Set buffer dimensions
-    shadowCubeMap->width  = SHADOW_DIMENSIONS.x;
-    shadowCubeMap->height = SHADOW_DIMENSIONS.y;
+    shadowCubeMap->width  = settings.pointShadows.dimensions.x;
+    shadowCubeMap->height = settings.pointShadows.dimensions.y;
     shadowCubeMap->depth  = static_cast<GLsizei>(SHADER_MAX_LIGHTS);
 
     // Create frame buffer object
@@ -47,11 +53,14 @@ OmniShadowMap::OmniShadowMap()
 
 void OmniShadowMap::Update(usize lightIndex, const glm::vec3& lightPos)
 {
+    // Get settings
+    const auto& settings = Settings::GetInstance();
+
     // Shadow projection matrix
     glm::mat4 shadowProj = glm::perspective
     (
         glm::radians(90.0f),
-        static_cast<f32>(SHADOW_DIMENSIONS.x) / static_cast<f32>(SHADOW_DIMENSIONS.y),
+        static_cast<f32>(settings.pointShadows.dimensions.x) / static_cast<f32>(settings.pointShadows.dimensions.y),
         SHADOW_PLANES.x,
         SHADOW_PLANES.y
     );

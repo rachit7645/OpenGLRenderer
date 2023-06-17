@@ -8,9 +8,9 @@
 
 namespace Renderer
 {
-	class SharedBuffer : public UniformBuffer
-	{
-	public:
+    class SharedBuffer : public UniformBuffer
+    {
+    public:
         // GLSL implementation struct
         struct ALIGN_GLSL_STD140 SharedBufferGLSL
         {
@@ -23,13 +23,13 @@ namespace Renderer
         };
 
         // Main constructor
-		SharedBuffer();
+        SharedBuffer();
 
         // Loading functions
-		void LoadClipPlane(const glm::vec4& clipPlane);
-		void LoadCameraPos(const Entities::Camera& camera);
-		void LoadResolution(const glm::ivec2& dimensions, f32 nearPlane, f32 farPlane);
-	};
+        void LoadClipPlane(const glm::vec4& clipPlane);
+        void LoadCameraPos(const Entities::Camera& camera);
+        void LoadResolution(const glm::ivec2& dimensions, f32 nearPlane, f32 farPlane);
+    };
 
 }
 

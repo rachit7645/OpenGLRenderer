@@ -5,14 +5,14 @@
 
 namespace Shader
 {
-	class BRDFShader : public ShaderProgram
-	{
-	public:
-		// Constructor
-		BRDFShader();
-		// Get all uniform locations (Unused in this shader)
-		void GetUniformLocations() override;
-	};
+    class BRDFShader : public ShaderProgram
+    {
+    public:
+        // Constructor
+        BRDFShader();
+        // Get all uniform locations (Unused in this shader)
+        void GetUniformLocations() override;
+    };
 }
 
 #endif

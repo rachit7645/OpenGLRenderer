@@ -12,6 +12,6 @@ layout (location = 0) out vec3 outColor;
 // Entry point
 void main()
 {
-	// Sample cube map
-	outColor = texture(cubeMap, txCoords).rgb;
+    // Sample cube map
+    outColor = texture(cubeMap, txCoords).rgb;
 }

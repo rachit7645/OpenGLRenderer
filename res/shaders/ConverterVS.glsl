@@ -13,9 +13,9 @@ out vec3 worldPos;
 // Entry point
 void main()
 {
-	// Set position
-	worldPos    = position;
-	gl_Position = projection * view * vec4(position, 1.0f);
-	// Trick to guarantee early depth test
-	gl_Position = gl_Position.xyww;
+    // Set position
+    worldPos    = position;
+    gl_Position = projection * view * vec4(position, 1.0f);
+    // Trick to guarantee early depth test
+    gl_Position = gl_Position.xyww;
 }

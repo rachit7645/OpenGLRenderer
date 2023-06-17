@@ -5,16 +5,16 @@
 
 namespace Shader
 {
-	class FastInstancedShader : public ShaderProgram
-	{
-	public:
-		// Constructor
-		FastInstancedShader();
-		// Connects GL texture units
-		void ConnectTextureUnits();
-		// Get all uniform locations
-		void GetUniformLocations() override;
-	};
+    class FastInstancedShader : public ShaderProgram
+    {
+    public:
+        // Constructor
+        FastInstancedShader();
+        // Connects GL texture units
+        void ConnectTextureUnits();
+        // Get all uniform locations
+        void GetUniformLocations() override;
+    };
 }
 
 #endif

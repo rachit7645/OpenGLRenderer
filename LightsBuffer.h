@@ -12,13 +12,13 @@
 
 namespace Renderer
 {
-	// Must match the shaders constant
-	constexpr usize SHADER_MAX_LIGHTS = 4;
+    // Must match the shaders constant
+    constexpr usize SHADER_MAX_LIGHTS = 4;
 
-	// A class describing a lights buffer
-	class LightsBuffer : public UniformBuffer
-	{
-	public:
+    // A class describing a lights buffer
+    class LightsBuffer : public UniformBuffer
+    {
+    public:
         // GLSL Data
         struct ALIGN_GLSL_STD140 LightsBufferGLSL
         {
@@ -34,15 +34,15 @@ namespace Renderer
         };
 
         // Main constructor
-		LightsBuffer();
+        LightsBuffer();
 
         // Load directional lights
-		void LoadDirectionalLights(const std::vector<Entities::DirectionalLight>& lights);
-		// Load point lights
-		void LoadPointLights(const std::vector<Entities::PointLight>& lights);
-		// Load spot lights
-		void LoadSpotLights(const std::vector<Entities::SpotLight>& lights);
-	};
+        void LoadDirectionalLights(const std::vector<Entities::DirectionalLight>& lights);
+        // Load point lights
+        void LoadPointLights(const std::vector<Entities::PointLight>& lights);
+        // Load spot lights
+        void LoadSpotLights(const std::vector<Entities::SpotLight>& lights);
+    };
 }
 
 #endif

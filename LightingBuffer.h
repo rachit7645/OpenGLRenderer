@@ -5,23 +5,23 @@
 
 namespace Renderer
 {
-	class LightingBuffer
-	{
-	public:
-		// Usings
-		using FbPtr = std::shared_ptr<FrameBuffer>;
+    class LightingBuffer
+    {
+    public:
+        // Usings
+        using FbPtr = std::shared_ptr<FrameBuffer>;
 
-		// Main constructor
-		LightingBuffer();
+        // Main constructor
+        LightingBuffer();
 
-		// Bind FBO
-		void BindLightingBuffer() const;
-		// Unbind FBO
-		void BindDefaultFBO()const;
+        // Bind FBO
+        void BindLightingBuffer() const;
+        // Unbind FBO
+        void BindDefaultFBO()const;
 
-		// Frame buffer
-		FbPtr buffer;
-	};
+        // Frame buffer
+        FbPtr buffer;
+    };
 }
 
 #endif

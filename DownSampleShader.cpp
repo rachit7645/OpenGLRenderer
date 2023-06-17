@@ -5,30 +5,30 @@ using namespace Shader;
 
 // Constants
 constexpr auto VERTEX_PATH = "shaders/DownSampleVS.glsl",
-	FRAGMENT_PATH = "shaders/DownSampleFS.glsl";
+    FRAGMENT_PATH = "shaders/DownSampleFS.glsl";
 
 DownSampleShader::DownSampleShader()
-	: ShaderProgram(VERTEX_PATH, FRAGMENT_PATH)
+    : ShaderProgram(VERTEX_PATH, FRAGMENT_PATH)
 {
-	// Query uniform locations
-	GetUniformLocations();
+    // Query uniform locations
+    GetUniformLocations();
 }
 
 void DownSampleShader::GetUniformLocations()
 {
-	// Uniforms
-	m_uniforms["srcTexture"]    = GetUniformLocation("srcTexture");
-	m_uniforms["isFirstSample"] = GetUniformLocation("isFirstSample");
+    // Uniforms
+    m_uniforms["srcTexture"]    = GetUniformLocation("srcTexture");
+    m_uniforms["isFirstSample"] = GetUniformLocation("isFirstSample");
 }
 
 void DownSampleShader::ConnectTextureUnits()
 {
-	// Connect texture
-	LoadUniform(m_uniforms["srcTexture"], 0);
+    // Connect texture
+    LoadUniform(m_uniforms["srcTexture"], 0);
 }
 
 void DownSampleShader::SetIsFirstSample(bool firstSample)
 {
-	// Load flag
-	LoadUniform(m_uniforms["isFirstSample"], firstSample);
+    // Load flag
+    LoadUniform(m_uniforms["isFirstSample"], firstSample);
 }

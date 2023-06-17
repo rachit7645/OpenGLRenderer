@@ -7,21 +7,21 @@
 
 namespace Renderer
 {
-	class SkyboxRenderer
-	{
-	public:
-		// Main constructor
-		explicit SkyboxRenderer(Shader::SkyboxShader& shaderRef);
-		// Shader
-		Shader::SkyboxShader& shader;
-		// Render skybox
-		void Render(const Entities::Skybox& skybox);
-	private:
-		// Prepare skybox for render
-		void PrepareSkybox(const Entities::Skybox& skybox);
-		// Unbind skybox
-		void UnbindSkybox();
-	};
+    class SkyboxRenderer
+    {
+    public:
+        // Main constructor
+        explicit SkyboxRenderer(Shader::SkyboxShader& shaderRef);
+        // Shader
+        Shader::SkyboxShader& shader;
+        // Render skybox
+        void Render(const Entities::Skybox& skybox);
+    private:
+        // Prepare skybox for render
+        void PrepareSkybox(const Entities::Skybox& skybox);
+        // Unbind skybox
+        void UnbindSkybox();
+    };
 }
 
 #endif

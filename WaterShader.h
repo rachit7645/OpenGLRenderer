@@ -7,22 +7,22 @@
 
 namespace Shader
 {
-	class WaterShader : public ShaderProgram
-	{
-	public:
-		// Constructor
-		WaterShader();
+    class WaterShader : public ShaderProgram
+    {
+    public:
+        // Constructor
+        WaterShader();
 
-		// Load model matrix
-		void LoadModelMatrix(const glm::mat4& matrix);
-		// Load water move factor
-		void LoadMoveFactor(f32 moveFactor);
-		// Connect GPU texture units
-		void ConnectTextureUnits();
+        // Load model matrix
+        void LoadModelMatrix(const glm::mat4& matrix);
+        // Load water move factor
+        void LoadMoveFactor(f32 moveFactor);
+        // Connect GPU texture units
+        void ConnectTextureUnits();
 
-		// Get all uniform locations
-		void GetUniformLocations() override;
-	};
+        // Get all uniform locations
+        void GetUniformLocations() override;
+    };
 }
 
 #endif

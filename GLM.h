@@ -31,10 +31,10 @@
 
 namespace glm
 {
-	// Cast an aiVector2D to a glm::vec2
-	vec2 ai_cast(const aiVector2D& vector);
-	// Cast an aiVector3D to a glm::vec3
-	vec3 ai_cast(const aiVector3D& vector);
+    // Cast an aiVector2D to a glm::vec2
+    vec2 ai_cast(const aiVector2D& vector);
+    // Cast an aiVector3D to a glm::vec3
+    vec3 ai_cast(const aiVector3D& vector);
 }
 
 #endif

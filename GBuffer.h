@@ -7,18 +7,18 @@
 
 namespace Renderer
 {
-	class GBuffer
-	{
-	public:
-		using FbPtr = std::shared_ptr<FrameBuffer>;
+    class GBuffer
+    {
+    public:
+        using FbPtr = std::shared_ptr<FrameBuffer>;
 
-		GBuffer();
+        GBuffer();
 
-		void BindGBuffer()    const;
-		void BindDefaultFBO() const;
+        void BindGBuffer()    const;
+        void BindDefaultFBO() const;
 
-		FbPtr buffer;
-	};
+        FbPtr buffer;
+    };
 }
 
 #endif

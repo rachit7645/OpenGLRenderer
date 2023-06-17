@@ -6,18 +6,18 @@
 
 namespace Shader
 {
-	class GBufferShader : public ShaderProgram
-	{
-	public:
-		// Constructor
-		GBufferShader();
+    class GBufferShader : public ShaderProgram
+    {
+    public:
+        // Constructor
+        GBufferShader();
 
-		// Connect GPU texture units
-		void ConnectTextureUnits();
+        // Connect GPU texture units
+        void ConnectTextureUnits();
 
-		// Get all uniform locations
-		void GetUniformLocations() override;
-	};
+        // Get all uniform locations
+        void GetUniformLocations() override;
+    };
 }
 
 #endif
