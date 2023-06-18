@@ -47,6 +47,8 @@
 #include "ShadowBuffer.h"
 #include "OmniShadowShader.h"
 #include "OmniShadowMap.h"
+#include "SpotShadowShader.h"
+#include "SpotShadowMap.h"
 
 namespace Renderer
 {
@@ -71,6 +73,7 @@ namespace Renderer
         // Framebuffers
         Renderer::ShadowMap       m_shadowMap;
         Renderer::OmniShadowMap   m_pointShadowMap;
+        Renderer::SpotShadowMap   m_spotShadowMap;
         Waters::WaterFrameBuffers m_waterFBOs;
         Renderer::GBuffer         m_gBuffer;
         Renderer::LightingBuffer  m_lightingBuffer;
@@ -100,6 +103,7 @@ namespace Renderer
         Shader::FastInstancedShader m_fastInstancedShader;
         Shader::ShadowShader        m_shadowShader;
         Shader::OmniShadowShader    m_omniShadowShader;
+        Shader::SpotShadowShader    m_spotShadowShader;
         Renderer::InstancedRenderer m_instancedRenderer;
 
         // Lighting renderer and shader

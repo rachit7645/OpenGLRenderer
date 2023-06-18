@@ -62,7 +62,7 @@ void OmniShadowBuffer::LoadShadowMap(const Mat4s& matrices, glm::vec2 shadowPlan
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void OmniShadowBuffer::LoadLightIndex(usize lightIndex)
+void OmniShadowBuffer::LoadCurrentLightIndex(usize lightIndex)
 {
     // Convert index
     GL::Int indexGL = {static_cast<GLint>(lightIndex)};

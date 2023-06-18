@@ -22,7 +22,7 @@ namespace Renderer
         // Default constructor
         Texture() = default;
         // Loads a texture into memory, then an OpenGL object
-        explicit Texture(const std::string_view path);
+        explicit Texture(std::string_view path);
         // Loads a cube map texture
         explicit Texture(const std::array<const std::string_view, 6>& files);
         // Destructor
@@ -63,9 +63,9 @@ namespace Renderer
         void GenerateMipmaps() const;
 
         // Loads a RGB8 image using stb image
-        u8* LoadImage(const std::string_view path);
+        u8* LoadImage(std::string_view path);
         // Loads a RGB16F image using stb image
-        f32* LoadImageHDR(const std::string_view path);
+        f32* LoadImageHDR(std::string_view path);
     public:
         // All classes that can access the pipeline mode go here
         friend class FrameBuffer;
@@ -74,6 +74,7 @@ namespace Renderer
         friend class BloomBuffer;
         friend class SSAOBuffers;
         friend class ShadowMap;
+        friend class SpotShadowMap;
     };
 }
 #endif

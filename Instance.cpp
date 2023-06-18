@@ -47,8 +47,8 @@ void Instance::Run()
         // Get time (t ∈ [-π, π])
         auto time = std::acos(cos(static_cast<f32>(SDL_GetTicks64()) / 1000.0f));
         // Change positions
-        m_pointLights[0].position.x = static_cast<f32>(std::cos(time) * 25.0);
-        m_pointLights[0].position.z = static_cast<f32>(std::cos(2 * time) * 7.0);
+        m_pointLights[0].position.x = static_cast<f32>(std::cos(1.0 * time) * 25.0);
+        m_pointLights[0].position.z = static_cast<f32>(std::cos(2.0 * time) * 7.0);
         // Draw point shadow map
         m_renderer.RenderPointShadows(m_pointLights);
 

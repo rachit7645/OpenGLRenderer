@@ -80,7 +80,7 @@ void OmniShadowMap::Update(usize lightIndex, const glm::vec3& lightPos)
     // Upload data
     m_matrixBuffer->LoadShadowMap(shadowMatrices, SHADOW_PLANES, lightIndex);
     // Upload current light index
-    m_matrixBuffer->LoadLightIndex(lightIndex);
+    m_matrixBuffer->LoadCurrentLightIndex(lightIndex);
 }
 
 void OmniShadowMap::BindShadowCubeMap() const

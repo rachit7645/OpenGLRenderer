@@ -106,6 +106,7 @@ namespace Renderer
         friend class BloomBuffer;
         friend class SSAOBuffers;
         friend class OmniShadowMap;
+        friend class SpotShadowMap;
         friend class Waters::WaterFrameBuffers;
     };
 }

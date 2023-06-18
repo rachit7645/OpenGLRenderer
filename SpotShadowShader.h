@@ -1,15 +1,15 @@
-#ifndef OMNI_SHADOW_SHADER_H
-#define OMNI_SHADOW_SHADER_H
+#ifndef SPOT_SHADOW_SHADER_H
+#define SPOT_SHADOW_SHADER_H
 
 #include "Shader.h"
 
 namespace Shader
 {
-    class OmniShadowShader : public ShaderProgram
+    class SpotShadowShader : public ShaderProgram
     {
     public:
         // Constructor
-        OmniShadowShader();
+        SpotShadowShader();
 
         // Get all uniform locations
         void GetUniformLocations() override;

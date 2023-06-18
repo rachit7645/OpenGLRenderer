@@ -48,7 +48,7 @@ namespace Renderer
         // Load shadow map data
         void LoadShadowMap(const Mat4s& matrices, glm::vec2 shadowPlanes, usize lightIndex);
         // Load current light index
-        void LoadLightIndex(usize lightIndex);
+        void LoadCurrentLightIndex(usize lightIndex);
     };
 }
 

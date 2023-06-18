@@ -101,6 +101,9 @@ add_executable(engine
     OmniShadowMap.cpp
     OmniShadowShader.cpp
     OmniShadowBuffer.cpp
+    SpotShadowMap.cpp
+    SpotShadowShader.cpp
+    SpotShadowBuffer.cpp
 )
 
 # Precompiled Headers
