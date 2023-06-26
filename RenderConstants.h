@@ -20,7 +20,8 @@ namespace Renderer
         Deferred,
         Fast,
         Shadow,
-        OmniShadow
+        OmniShadow,
+        SpotShadow
     };
 }
 

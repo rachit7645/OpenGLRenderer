@@ -6,8 +6,8 @@
 using namespace Renderer;
 
 // Constants
-constexpr glm::ivec2 SHADOW_DIMENSIONS = {1024, 1024};
-constexpr glm::vec2  SHADOW_PLANES     = {0.1f, 300.0f};
+constexpr glm::ivec2 SHADOW_DIMENSIONS = {2048, 2048};
+constexpr glm::vec2  SHADOW_PLANES     = {0.1f, 100.0f};
 constexpr glm::vec4  MAP_BORDER        = {1.0f, 1.0f, 1.0f, 1.0f};
 
 SpotShadowMap::SpotShadowMap()
@@ -51,7 +51,7 @@ SpotShadowMap::SpotShadowMap()
     // Set depth compare mode
     buffer->depthTexture->SetParameter(GL_TEXTURE_COMPARE_FUNC, GL_GREATER);
     // Unbind depth texture
-    buffer->depthTexture->Bind();
+    buffer->depthTexture->Unbind();
 }
 
 void SpotShadowMap::Update(usize index, const glm::vec3& lightPos)
@@ -78,4 +78,16 @@ void SpotShadowMap::Update(usize index, const glm::vec3& lightPos)
 
     // Load shadow data
     m_matrixBuffer->LoadShadowMap(index, shadowMatrix);
+}
+
+void SpotShadowMap::BindShadowFBO() const
+{
+    // Bind buffer
+    buffer->Bind();
+}
+
+void SpotShadowMap::BindDefaultFBO() const
+{
+    // Unbind buffer
+    buffer->Unbind();
 }

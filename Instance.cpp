@@ -52,6 +52,9 @@ void Instance::Run()
         // Draw point shadow map
         m_renderer.RenderPointShadows(m_pointLights);
 
+        // Draw spot shadow map
+        m_renderer.RenderSpotShadows(0, m_pointLights[0].position);
+
         // Draw water framebuffers
         m_renderer.RenderWaterFBOs(m_waters, m_camera);
 

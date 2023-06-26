@@ -9,12 +9,15 @@ const float MAX_REFLECTION_LOD = 4.0f;
 const int   MAX_LAYER_COUNT = 16;
 const float MIN_BIAS        = 0.005f;
 const float MAX_BIAS        = 0.05f;
-const float SHADOW_AMOUNT   = 0.65f;
 const float BIAS_MODIFIER   = 0.35f;
 
 // Point shadow constants
 const int   NUM_SAMPLES = 20;
-const float POINT_BIAS = 0.15f;
+const float POINT_BIAS  = 0.15f;
+
+// Spot shadow constants
+const float MIN_SPOT_BIAS = 0.000005f;
+const float MAX_SPOT_BIAS = 0.00025f;
 
 // Directional Light
 struct DirLight
@@ -127,6 +130,13 @@ layout (std140, binding = 5) uniform OmniShadowBuffer
     int         currentIndex;
 };
 
+// Spot shadow buffer
+layout(std140, binding = 6) uniform SpotShadowBuffer
+{
+    mat4 spotShadowMatrix;
+    int  lightIndex;
+};
+
 // Vertex inputs
 in vec2 txCoords;
 
@@ -142,6 +152,7 @@ uniform sampler2D   brdfLUT;
 // Other samplers
 uniform sampler2DArrayShadow shadowMap;
 uniform samplerCubeArray     pointShadowMap;
+uniform sampler2DShadow      spotShadowMap;
 
 // Fragment outputs
 layout (location = 0) out vec3 outColor;
@@ -180,6 +191,9 @@ float CalculateShadow(vec3 lightDir, GBuffer gBuffer);
 
 // Point shadow functions
 float CalculatePointShadow(PointShadow shadowMap, GBuffer gBuffer);
+
+// Spot shadow functions
+float CalculateSpotShadow(vec3 lightPos, GBuffer gBuffer);
 
 // Branchless functions
 vec4 WhenGreater(vec4 x, vec4 y);
@@ -223,8 +237,10 @@ void main()
     {
         // Calculate light data
         LightInfo info = GetSpotLightInfo(i, gBuffer);
+        // Calculate shadow
+        float shadow = CalculateSpotShadow(pointLights[0].position.xyz, gBuffer);
         // Calculate lighting
-        Lo += CalculateLight(sharedData, gBuffer, info);
+        Lo += CalculateLight(sharedData, gBuffer, info) * (1.0f - shadow);
     }
 
     // Calculate ambient
@@ -619,6 +635,28 @@ float CalculatePointShadow(PointShadow shadowMap, GBuffer gBuffer)
     shadow /= float(NUM_SAMPLES);
     // Return shadow
     return shadow;
+}
+
+float CalculateSpotShadow(vec3 lightPos, GBuffer gBuffer)
+{
+    // Get shadow space position
+    vec4 lightSpacePos = spotShadowMatrix * vec4(gBuffer.fragPos, 1.0f);
+    // Perform perspective division
+    vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
+    projCoords      = projCoords * 0.5f + 0.5f;
+
+    // Calculate depth
+    float currentDepth = projCoords.z;
+
+    // Calculate slope-scaled bias
+    float cosTheta = clamp(dot(gBuffer.normal, normalize(lightPos)), 0.0f, 1.0f);
+    float bias     = MIN_SPOT_BIAS * TanArcCos(cosTheta);
+    bias           = clamp(bias, 0.0f, MAX_SPOT_BIAS);
+
+    // Calculate shadow
+    float shadow = texture(spotShadowMap, projCoords.xyz, currentDepth - bias);
+    // Return if depth < 1.0f
+    return shadow * WhenLesser(vec4(currentDepth), vec4(1.0f)).x;
 }
 
 // Branchless implementation of

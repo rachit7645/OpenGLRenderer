@@ -26,6 +26,7 @@ void LightingShader::GetUniformLocations()
     m_uniforms["brdfLUT"]        = GetUniformLocation("brdfLUT");
     m_uniforms["shadowMap"]      = GetUniformLocation("shadowMap");
     m_uniforms["pointShadowMap"] = GetUniformLocation("pointShadowMap");
+    m_uniforms["spotShadowMap"]  = GetUniformLocation("spotShadowMap");
 }
 
 void LightingShader::ConnectTextureUnits()
@@ -40,4 +41,5 @@ void LightingShader::ConnectTextureUnits()
     LoadUniform(m_uniforms["brdfLUT"],        6);
     LoadUniform(m_uniforms["shadowMap"],      7);
     LoadUniform(m_uniforms["pointShadowMap"], 8);
+    LoadUniform(m_uniforms["spotShadowMap"],  9);
 }

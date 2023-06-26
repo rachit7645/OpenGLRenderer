@@ -29,8 +29,8 @@ RenderManager::RenderManager()
       m_matrices(std::make_shared<MatrixBuffer>()),
       m_lights(std::make_shared<LightsBuffer>()),
       m_shared(std::make_shared<SharedBuffer>()),
-      m_instancedRenderer(m_gShader, m_fastInstancedShader, m_shadowShader, m_omniShadowShader, m_iblMaps, m_instances),
-      m_lightRenderer(m_lightShader, m_shadowMap, m_pointShadowMap, m_gBuffer, m_iblMaps),
+      m_instancedRenderer(m_gShader, m_fastInstancedShader, m_shadowShader, m_omniShadowShader, m_spotShadowShader, m_iblMaps, m_instances),
+      m_lightRenderer(m_lightShader, m_shadowMap, m_pointShadowMap, m_spotShadowMap, m_gBuffer, m_iblMaps),
       m_bloomRenderer(m_downSampleShader, m_upSampleShader, m_lightingBuffer, m_bloomBuffer),
       m_postRenderer(m_postShader, m_lightingBuffer, m_bloomBuffer),
       m_skyboxRenderer(m_skyboxShader),
@@ -125,6 +125,32 @@ void RenderManager::RenderPointShadows(const PointLights& lights)
 
     // Unbind shadow map
     m_pointShadowMap.BindDefaultFBO();
+}
+
+// TODO: Add frustum culling to shadows
+void RenderManager::RenderSpotShadows(usize index, const glm::vec3& lightPos)
+{
+    // Bind shadow map
+    m_spotShadowMap.BindShadowFBO();
+    // Update cascades
+    m_spotShadowMap.Update(index, lightPos);
+
+    // Peter-panning fix
+    glCullFace(GL_FRONT);
+    // Cascade clipping fix
+    glEnable(GL_DEPTH_CLAMP);
+
+    // Clear depth
+    Clear(GL_DEPTH_BUFFER_BIT);
+    // Render entities
+    m_instancedRenderer.Render(m_entities, Mode::SpotShadow);
+
+    // Reset
+    glCullFace(GL_BACK);
+    glDisable(GL_DEPTH_CLAMP);
+
+    // Unbind shadow map
+    m_shadowMap.BindDefaultFBO();
 }
 
 void RenderManager::RenderWaters(const WaterTiles& waters)

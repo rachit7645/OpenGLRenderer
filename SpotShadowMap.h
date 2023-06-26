@@ -22,6 +22,11 @@ namespace Renderer
         // Update shadow map
         void Update(usize index, const glm::vec3& lightPos);
 
+        // Bind FBO
+        void BindShadowFBO() const;
+        // Unbind FBO
+        void BindDefaultFBO() const;
+
         // Shadow buffer
         FbPtr buffer;
     private:

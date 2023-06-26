@@ -8,6 +8,7 @@ using Shader::GBufferShader;
 using Shader::FastInstancedShader;
 using Shader::ShadowShader;
 using Shader::OmniShadowShader;
+using Shader::SpotShadowShader;
 
 InstancedRenderer::InstancedRenderer
 (
@@ -15,6 +16,7 @@ InstancedRenderer::InstancedRenderer
     FastInstancedShader& fastShader,
     ShadowShader& shadowShader,
     OmniShadowShader& omniShadowShader,
+    SpotShadowShader& spotShadowShader,
     IBLMaps& iblMaps,
     BufferPtr instances
 )
@@ -22,6 +24,7 @@ InstancedRenderer::InstancedRenderer
       fastShader(fastShader),
       shadowShader(shadowShader),
       omniShadowShader(omniShadowShader),
+      spotShadowShader(spotShadowShader),
       iblMaps(iblMaps),
       instances(std::move(instances))
 {
@@ -102,6 +105,11 @@ void InstancedRenderer::BeginRender(Mode mode)
         // Start omni shadow shader
         omniShadowShader.Start();
         break;
+
+    case Mode::SpotShadow:
+        // Start spot shadow shader
+        spotShadowShader.Start();
+        break;
     }
 }
 
@@ -129,7 +137,13 @@ void InstancedRenderer::EndRender(Mode mode)
         break;
 
     case Mode::OmniShadow:
+        // Stop omni shadow shader
         omniShadowShader.Stop();
+        break;
+
+    case Mode::SpotShadow:
+        // Stop spot shadow shader
+        spotShadowShader.Stop();
         break;
     }
 }
@@ -174,6 +188,7 @@ void InstancedRenderer::PrepareMesh(const Mesh& mesh, Mode mode)
 
     case Mode::Shadow:
     case Mode::OmniShadow:
+    case Mode::SpotShadow:
         // Nothing to do here
         break;
     }

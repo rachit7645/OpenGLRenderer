@@ -9,6 +9,7 @@
 #include "ShadowMap.h"
 #include "IBLMaps.h"
 #include "OmniShadowMap.h"
+#include "SpotShadowMap.h"
 
 namespace Renderer
 {
@@ -24,6 +25,7 @@ namespace Renderer
             Shader::LightingShader& shader,
             Renderer::ShadowMap& shadowMap,
             Renderer::OmniShadowMap& pointShadowMap,
+            Renderer::SpotShadowMap& spotShadowMap,
             Renderer::GBuffer& gBuffer,
             Renderer::IBLMaps& iblMaps
         );
@@ -32,6 +34,7 @@ namespace Renderer
         Shader::LightingShader&  shader;
         Renderer::ShadowMap&     shadowMap;
         Renderer::OmniShadowMap& pointShadowMap;
+        Renderer::SpotShadowMap& spotShadowMap;
         Renderer::GBuffer&       gBuffer;
         Renderer::IBLMaps&       iblMaps;
 

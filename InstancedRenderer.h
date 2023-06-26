@@ -14,6 +14,7 @@
 #include "IBLMaps.h"
 #include "GBufferShader.h"
 #include "OmniShadowShader.h"
+#include "SpotShadowShader.h"
 
 namespace Renderer
 {
@@ -33,6 +34,7 @@ namespace Renderer
             Shader::FastInstancedShader& fastShader,
             Shader::ShadowShader& shadowShader,
             Shader::OmniShadowShader& omniShadowShader,
+            Shader::SpotShadowShader& spotShadowShader,
             Renderer::IBLMaps& iblMaps,
             BufferPtr instances
         );
@@ -42,6 +44,7 @@ namespace Renderer
         Shader::FastInstancedShader& fastShader;
         Shader::ShadowShader&        shadowShader;
         Shader::OmniShadowShader&    omniShadowShader;
+        Shader::SpotShadowShader&    spotShadowShader;
 
         // Other data
         Renderer::IBLMaps&   iblMaps;
