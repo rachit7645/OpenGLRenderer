@@ -30,6 +30,7 @@ SpotShadowMap::SpotShadowMap()
     // Set buffer dimensions
     buffer->width  = SHADOW_DIMENSIONS.x;
     buffer->height = SHADOW_DIMENSIONS.y;
+    buffer->depth  = SHADER_MAX_LIGHTS;
 
     // Create frame buffer object
     buffer->CreateFrameBuffer();
@@ -38,7 +39,7 @@ SpotShadowMap::SpotShadowMap()
     buffer->SetDrawBuffer(GL_NONE);
     buffer->SetReadBuffer(GL_NONE);
     // Create depth texture
-    buffer->AddTexture(buffer->depthTexture, depth);
+    buffer->AddTextureArray(buffer->depthTexture, depth);
     // Finish up
     buffer->CheckStatus();
     buffer->EnableDepth();
@@ -78,6 +79,8 @@ void SpotShadowMap::Update(usize index, const glm::vec3& lightPos)
 
     // Load shadow data
     m_matrixBuffer->LoadShadowMap(index, shadowMatrix);
+    // Load current light index
+    m_matrixBuffer->LoadCurrentLightIndex(index);
 }
 
 void SpotShadowMap::BindShadowFBO() const

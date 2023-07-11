@@ -16,13 +16,6 @@ layout(std430, binding = 3) readonly buffer InstanceData
     Instance instances[];
 };
 
-// Spot shadow buffer
-layout(std140, binding = 6) uniform SpotShadowBuffer
-{
-    mat4 spotShadowMatrix;
-    int  lightIndex;
-};
-
 // Vertex inputs
 layout (location = 0) in vec3 position;
 
@@ -30,5 +23,5 @@ layout (location = 0) in vec3 position;
 void main()
 {
     // Transform to shadow space
-    gl_Position = spotShadowMatrix * instances[gl_InstanceID].modelMatrix * vec4(position, 1.0f);
+    gl_Position = instances[gl_InstanceID].modelMatrix * vec4(position, 1.0f);
 }

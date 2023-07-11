@@ -82,6 +82,13 @@ struct PointShadow
     int  lightIndex;
 };
 
+// Spot light shadow struct
+struct SpotShadow
+{
+    mat4 shadowMatrix;
+    int  lightIndex;
+};
+
 // Matrix buffer
 layout(std140, binding = 0) uniform Matrices
 {
@@ -127,14 +134,14 @@ layout (std140, binding = 4) uniform ShadowBuffer
 layout (std140, binding = 5) uniform OmniShadowBuffer
 {
     PointShadow omniShadowMaps[MAX_LIGHTS];
-    int         currentIndex;
+    int         currentPointIndex;
 };
 
 // Spot shadow buffer
 layout(std140, binding = 6) uniform SpotShadowBuffer
 {
-    mat4 spotShadowMatrix;
-    int  lightIndex;
+    SpotShadow spotShadowMaps[MAX_LIGHTS];
+    int        currentSpotIndex;
 };
 
 // Vertex inputs
@@ -152,7 +159,7 @@ uniform sampler2D   brdfLUT;
 // Other samplers
 uniform sampler2DArrayShadow shadowMap;
 uniform samplerCubeArray     pointShadowMap;
-uniform sampler2DShadow      spotShadowMap;
+uniform sampler2DArrayShadow spotShadowMap;
 
 // Fragment outputs
 layout (location = 0) out vec3 outColor;
@@ -193,7 +200,7 @@ float CalculateShadow(vec3 lightDir, GBuffer gBuffer);
 float CalculatePointShadow(PointShadow shadowMap, GBuffer gBuffer);
 
 // Spot shadow functions
-float CalculateSpotShadow(vec3 lightPos, GBuffer gBuffer);
+float CalculateSpotShadow(SpotShadow shadowMap, GBuffer gBuffer);
 
 // Branchless functions
 vec4 WhenGreater(vec4 x, vec4 y);
@@ -238,7 +245,7 @@ void main()
         // Calculate light data
         LightInfo info = GetSpotLightInfo(i, gBuffer);
         // Calculate shadow
-        float shadow = CalculateSpotShadow(pointLights[0].position.xyz, gBuffer);
+        float shadow = CalculateSpotShadow(spotShadowMaps[i], gBuffer);
         // Calculate lighting
         Lo += CalculateLight(sharedData, gBuffer, info) * (1.0f - shadow);
     }
@@ -601,12 +608,12 @@ float CalculatePointShadow(PointShadow shadowMap, GBuffer gBuffer)
         vec3(0.0f, 1.0f,  1.0f), vec3( 0.0f, -1.0f,  1.0f), vec3( 0.0f, -1.0f, -1.0f), vec3( 0.0f, 1.0f, -1.0f)
     );
 
-    // Get index
+    // Get light index
     int lightIndex = shadowMap.lightIndex;
     // Get light position
     vec3 lightPos = pointLights[lightIndex].position.xyz;
     // Get shadow planes
-    vec2 planes = omniShadowMaps[currentIndex].shadowPlanes.xy;
+    vec2 planes = omniShadowMaps[lightIndex].shadowPlanes.xy;
 
     // Get vector from frament to light
     vec3 fragToLight = gBuffer.fragPos - lightPos;
@@ -637,10 +644,15 @@ float CalculatePointShadow(PointShadow shadowMap, GBuffer gBuffer)
     return shadow;
 }
 
-float CalculateSpotShadow(vec3 lightPos, GBuffer gBuffer)
+float CalculateSpotShadow(SpotShadow shadowMap, GBuffer gBuffer)
 {
+    // Get light index
+    int lightIndex = shadowMap.lightIndex;
+    // Get light position
+    vec3 lightPos = spotLights[lightIndex].position.xyz;
+
     // Get shadow space position
-    vec4 lightSpacePos = spotShadowMatrix * vec4(gBuffer.fragPos, 1.0f);
+    vec4 lightSpacePos = shadowMap.shadowMatrix * vec4(gBuffer.fragPos, 1.0f);
     // Perform perspective division
     vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
     projCoords      = projCoords * 0.5f + 0.5f;
@@ -654,7 +666,7 @@ float CalculateSpotShadow(vec3 lightPos, GBuffer gBuffer)
     bias           = clamp(bias, 0.0f, MAX_SPOT_BIAS);
 
     // Calculate shadow
-    float shadow = texture(spotShadowMap, projCoords.xyz, currentDepth - bias);
+    float shadow = texture(spotShadowMap, vec4(projCoords.xy, lightIndex, currentDepth - bias));
     // Return if depth < 1.0f
     return shadow * WhenLesser(vec4(currentDepth), vec4(1.0f)).x;
 }

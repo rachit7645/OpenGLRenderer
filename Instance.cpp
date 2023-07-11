@@ -53,7 +53,7 @@ void Instance::Run()
         m_renderer.RenderPointShadows(m_pointLights);
 
         // Draw spot shadow map
-        m_renderer.RenderSpotShadows(0, m_pointLights[0].position);
+        m_renderer.RenderSpotShadows(m_spotLights);
 
         // Draw water framebuffers
         m_renderer.RenderWaterFBOs(m_waters, m_camera);
@@ -463,12 +463,20 @@ void Instance::InitLights()
     m_spotLights =
     {
         {
-            glm::vec3(-40.0f, 4.0f, 40.0f),
+            glm::vec3(22.0f, 10.0f, 6.0f),
             glm::vec3(1.0f, 0.0f, 0.0f),
             glm::vec3(10.0f, 1.0f, 1.0f),
             glm::vec3(1.0f, 0.007f, 0.0002f),
-            glm::vec3(0.0f, 0.0f, -0.8f),
-            glm::vec2(10.0f, 25.0f)
+            glm::vec3(-1.0f, 0.0f, -0.3f),
+            glm::vec2(10.0f, 30.0f)
+        },
+        {
+            glm::vec3(62.0f, 2.0f, -2.0f),
+            glm::vec3(0.941f, 0.0f, 1.0f),
+            glm::vec3(10.0f, 10.0f, 10.0f),
+            glm::vec3(1.0f, 0.022f, 0.0019f),
+            glm::vec3(-1.0f, 0.3f, -0.1f),
+            glm::vec2(10.0f, 50.0f)
         }
     };
 }

@@ -93,15 +93,21 @@ void RenderManager::RenderShadows(const Camera& camera, const glm::vec3& lightPo
     m_shadowMap.BindShadowFBO();
     // Update cascades
     m_shadowMap.Update(camera, lightPos);
+
     // Peter-panning fix
     glCullFace(GL_FRONT);
     // Cascade clipping fix
     glEnable(GL_DEPTH_CLAMP);
-    // Render
-    RenderShadowScene(camera);
+
+    // Clear FBO
+    Clear(GL_DEPTH_BUFFER_BIT);
+    // Render entities
+    m_instancedRenderer.Render(m_entities, Mode::Shadow);
+
     // Reset
     glCullFace(GL_BACK);
     glDisable(GL_DEPTH_CLAMP);
+
     // Unbind shadow map
     m_shadowMap.BindDefaultFBO();
 }
@@ -128,12 +134,10 @@ void RenderManager::RenderPointShadows(const PointLights& lights)
 }
 
 // TODO: Add frustum culling to shadows
-void RenderManager::RenderSpotShadows(usize index, const glm::vec3& lightPos)
+void RenderManager::RenderSpotShadows(const SpotLights& lights)
 {
     // Bind shadow map
     m_spotShadowMap.BindShadowFBO();
-    // Update cascades
-    m_spotShadowMap.Update(index, lightPos);
 
     // Peter-panning fix
     glCullFace(GL_FRONT);
@@ -142,8 +146,15 @@ void RenderManager::RenderSpotShadows(usize index, const glm::vec3& lightPos)
 
     // Clear depth
     Clear(GL_DEPTH_BUFFER_BIT);
-    // Render entities
-    m_instancedRenderer.Render(m_entities, Mode::SpotShadow);
+
+    // Update each light
+    for (usize i = 0; i < lights.size(); ++i)
+    {
+        // Update cascades
+        m_spotShadowMap.Update(i, lights[i].position);
+        // Render entities
+        m_instancedRenderer.Render(m_entities, Mode::SpotShadow);
+    }
 
     // Reset
     glCullFace(GL_BACK);
@@ -367,17 +378,6 @@ void RenderManager::RenderWaterScene(const Camera& camera, const glm::vec4& clip
     m_instancedRenderer.Render(m_culledEntities, Mode::Fast);
     // Render skybox
     RenderSkyboxScene();
-}
-
-void RenderManager::RenderShadowScene(const Camera& camera)
-{
-    // Clear FBO
-    Clear(GL_DEPTH_BUFFER_BIT);
-    // Load data
-    m_matrices->LoadView(camera);
-    m_shared->LoadCameraPos(camera);
-    // Render entities
-    m_instancedRenderer.Render(m_entities, Mode::Shadow);
 }
 
 void RenderManager::RenderSkyboxScene()

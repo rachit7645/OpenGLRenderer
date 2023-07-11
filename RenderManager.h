@@ -165,7 +165,7 @@ namespace Renderer
         // Render point shadow
         void RenderPointShadows(const PointLights& lights);
         // Render spot shadows
-        void RenderSpotShadows(usize index, const glm::vec3& lightPos);
+        void RenderSpotShadows(const SpotLights& lights);
         // Render the waters
         void RenderWaters(const WaterTiles& waters);
         // Render water FBOs
