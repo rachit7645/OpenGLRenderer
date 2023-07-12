@@ -6,18 +6,18 @@
 
 namespace Shader
 {
-	class UpSampleShader : public ShaderProgram
-	{
-	public:
-		// Constructor
-		UpSampleShader();
-		// Connect texture units
-		void ConnectTextureUnits();
-		// Load filter radius
-		void LoadFilterRadius(f32 radius);
-		// Get all uniform locations
-		void GetUniformLocations() override;
-	};
+    class UpSampleShader : public ShaderProgram
+    {
+    public:
+        // Constructor
+        UpSampleShader();
+        // Connect texture units
+        void ConnectTextureUnits();
+        // Load filter radius
+        void LoadFilterRadius(f32 radius);
+        // Get all uniform locations
+        void GetUniformLocations() override;
+    };
 }
 
 #endif

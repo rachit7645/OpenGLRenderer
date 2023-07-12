@@ -8,24 +8,24 @@
 
 namespace Renderer
 {
-	class IBLMaps
-	{
-	public:
-		// Usings
-		using TxPtr = std::shared_ptr<Texture>;
+    class IBLMaps
+    {
+    public:
+        // Usings
+        using TxPtr = std::shared_ptr<Texture>;
 
-		// Main constructor
-		IBLMaps(IBLRenderer& iblRenderer);
+        // Main constructor
+        IBLMaps(IBLRenderer& iblRenderer);
 
-		// Data
-		TxPtr cubeMap;
-		TxPtr irradiance;
-		TxPtr preFilter;
-		TxPtr brdfLut;
-	private:
-		// Helper functions
-		TxPtr LoadHDRMap();
-	};
+        // Data
+        TxPtr cubeMap;
+        TxPtr irradiance;
+        TxPtr preFilter;
+        TxPtr brdfLut;
+    private:
+        // Helper functions
+        TxPtr LoadHDRMap();
+    };
 }
 
 #endif

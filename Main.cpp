@@ -8,10 +8,10 @@
 
 int main(UNUSED int argc, UNUSED char** argv)
 {
-	// Create instance
-	auto instance = Engine::Instance();
-	// Start instance
-	instance.Run();
-	// Return
-	return 0;
+    // Create instance
+    auto instance = Engine::Instance();
+    // Start instance
+    instance.Run();
+    // Return
+    return 0;
 }

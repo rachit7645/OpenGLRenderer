@@ -26,60 +26,60 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0, float roughness);
 // Entry point
 void main()
 {
-	// Fetch albedo color
-	vec4 albedo = texture(albedoMap, txCoords);
-	// Fetch material data
-	vec4 aoRghMtl = texture(aoRghMtlMap, txCoords);
-	// Set output to ambient light color
-	outColor = CalculateAmbient(albedo.rgb, aoRghMtl.rgb);
+    // Fetch albedo color
+    vec4 albedo = texture(albedoMap, txCoords);
+    // Fetch material data
+    vec4 aoRghMtl = texture(aoRghMtlMap, txCoords);
+    // Set output to ambient light color
+    outColor = CalculateAmbient(albedo.rgb, aoRghMtl.rgb);
 }
 
 vec3 CalculateAmbient(vec3 albedo, vec3 aoRghMtl)
 {
-	// AO
-	float ao = aoRghMtl.r;
-	// Roughness
-	float roughness = aoRghMtl.g;
-	// Metallic
-	float metallic = aoRghMtl.b;
+    // AO
+    float ao = aoRghMtl.r;
+    // Roughness
+    float roughness = aoRghMtl.g;
+    // Metallic
+    float metallic = aoRghMtl.b;
 
-	// Normal
-	vec3 N = unitNormal;
-	// Camera vector
-	vec3 V = viewDir;
-	// Reflection vector
-	vec3 R = reflect(-V, N);
+    // Normal
+    vec3 N = unitNormal;
+    // Camera vector
+    vec3 V = viewDir;
+    // Reflection vector
+    vec3 R = reflect(-V, N);
 
-	// Metallic coefficient
-	vec3 F0 = mix(vec3(0.04f), albedo, metallic);
-	// Dot products
-	float NDotV = max(dot(N, V), 0.0f);
+    // Metallic coefficient
+    vec3 F0 = mix(vec3(0.04f), albedo, metallic);
+    // Dot products
+    float NDotV = max(dot(N, V), 0.0f);
 
-	// Ambient energy conservation
-	vec3 F  = FresnelSchlick(NDotV, F0, roughness);
-	vec3 kS = F;
-	vec3 kD = vec3(1.0f) - kS;
-	kD     *= 1.0f - metallic;
+    // Ambient energy conservation
+    vec3 F  = FresnelSchlick(NDotV, F0, roughness);
+    vec3 kS = F;
+    vec3 kD = vec3(1.0f) - kS;
+    kD     *= 1.0f - metallic;
 
-	// Irradiance
-	vec3 irradiance = texture(irradianceMap, N).rgb;
-	vec3 diffuse    = irradiance * albedo;
+    // Irradiance
+    vec3 irradiance = texture(irradianceMap, N).rgb;
+    vec3 diffuse    = irradiance * albedo;
 
-	// Specular
-	vec3 prefilteredColor = textureLod(prefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
-	vec2 brdf             = texture(brdfLUT, vec2(NDotV, roughness)).rg;
-	vec3 specular         = prefilteredColor * (F * brdf.x + brdf.y);
+    // Specular
+    vec3 prefilteredColor = textureLod(prefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
+    vec2 brdf             = texture(brdfLUT, vec2(NDotV, roughness)).rg;
+    vec3 specular         = prefilteredColor * (F * brdf.x + brdf.y);
 
-	// Add up ambient
-	vec3 ambient = (kD * diffuse + specular) * ao;
+    // Add up ambient
+    vec3 ambient = (kD * diffuse + specular) * ao;
 
-	// Return
-	return ambient;
+    // Return
+    return ambient;
 }
 
 // Fresnel equation function with injected roughness paramenter for IBL
 vec3 FresnelSchlick(float cosTheta, vec3 F0, float roughness)
 {
-	// Clamp to avoid artifacts
-	return F0 + (max(vec3(1.0f - roughness), F0) - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
+    // Clamp to avoid artifacts
+    return F0 + (max(vec3(1.0f - roughness), F0) - F0) * pow(clamp(1.0f - cosTheta, 0.0f, 1.0f), 5.0f);
 }

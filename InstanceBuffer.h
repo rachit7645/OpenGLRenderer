@@ -12,10 +12,10 @@
 
 namespace Renderer
 {
-	// Maximum entities allowed in one batch
-	constexpr usize NUM_MAX_ENTITIES = 512;
+    // Maximum entities allowed in one batch
+    constexpr usize NUM_MAX_ENTITIES = 512;
 
-	class InstanceBuffer : ShaderStorageBuffer
+    class InstanceBuffer : ShaderStorageBuffer
     {
     public:
         // GLSL representation of per-instance data

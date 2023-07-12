@@ -8,24 +8,24 @@
 
 namespace Waters
 {
-	class WaterFrameBuffers
-	{
-	public:
-		// Usings
-		using FbPtr = std::shared_ptr<Renderer::FrameBuffer>;
+    class WaterFrameBuffers
+    {
+    public:
+        // Usings
+        using FbPtr = std::shared_ptr<Renderer::FrameBuffer>;
 
-		// Main constructor
-		WaterFrameBuffers();
+        // Main constructor
+        WaterFrameBuffers();
 
-		// Binding functions
-		void BindReflection() const;
-		void BindRefraction() const;
-		void BindDefaultFBO() const;
+        // Binding functions
+        void BindReflection() const;
+        void BindRefraction() const;
+        void BindDefaultFBO() const;
 
-		// Framebuffers
-		FbPtr reflectionFBO;
-		FbPtr refractionFBO;
-	};
+        // Framebuffers
+        FbPtr reflectionFBO;
+        FbPtr refractionFBO;
+    };
 }
 
 #endif

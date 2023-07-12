@@ -3,12 +3,12 @@
 using namespace Shader;
 
 constexpr auto VERTEX_PATH = "shaders/ComputeBRDF_VS.glsl",
-	FRAGMENT_PATH = "shaders/ComputeBRDF_FS.glsl";
+    FRAGMENT_PATH = "shaders/ComputeBRDF_FS.glsl";
 
 BRDFShader::BRDFShader()
-	: ShaderProgram(VERTEX_PATH, FRAGMENT_PATH)
+    : ShaderProgram(VERTEX_PATH, FRAGMENT_PATH)
 {
-	GetUniformLocations();
+    GetUniformLocations();
 }
 
 void BRDFShader::GetUniformLocations()

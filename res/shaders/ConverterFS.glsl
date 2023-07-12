@@ -18,22 +18,22 @@ vec2 GetSphericalMapUV(vec3 v);
 // Entry point
 void main()
 {
-	// Get normal
-	vec3 normal = normalize(worldPos);
-	// Get UV coords
-	vec2 uv = GetSphericalMapUV(normal);
-	// Sample at new UV coords
-	vec4 hdrMap = texture(hdrMap, uv);
-	// Set output
-	outColor = hdrMap.rgb;
+    // Get normal
+    vec3 normal = normalize(worldPos);
+    // Get UV coords
+    vec2 uv = GetSphericalMapUV(normal);
+    // Sample at new UV coords
+    vec4 hdrMap = texture(hdrMap, uv);
+    // Set output
+    outColor = hdrMap.rgb;
 }
 
 vec2 GetSphericalMapUV(vec3 v)
 {
-	// Convert to spherical coords
-	vec2 uv = vec2(atan(v.z, v.x), asin(v.y));
-	uv     *= INVERSE_ATAN;
-	uv     += 0.5f;
-	// Return
-	return uv;
+    // Convert to spherical coords
+    vec2 uv = vec2(atan(v.z, v.x), asin(v.y));
+    uv     *= INVERSE_ATAN;
+    uv     += 0.5f;
+    // Return
+    return uv;
 }

@@ -5,14 +5,14 @@
 
 namespace Shader
 {
-	class ShadowShader : public ShaderProgram
-	{
-	public:
-		// Constructor
-		ShadowShader();
-		// Get all uniform locations (Unused in this shader)
-		void GetUniformLocations() override;
-	};
+    class ShadowShader : public ShaderProgram
+    {
+    public:
+        // Constructor
+        ShadowShader();
+        // Get all uniform locations (Unused in this shader)
+        void GetUniformLocations() override;
+    };
 }
 
 #endif

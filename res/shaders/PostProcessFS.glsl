@@ -22,26 +22,26 @@ vec3 GammaCorrect(vec3 color);
 // Entry point
 void main()
 {
-	// Get lighting color
-	vec3 hdrColor = texture(lightingBuffer, txCoords).rgb;
-	// Get bloom color
-	vec3 bloomColor = texture(bloomBuffer, txCoords).rgb;
-	// Add bloom color
-	vec3 color = mix(hdrColor, bloomColor, bloomStrength);
-	// Convert to LDR & SRGB
-	color = GammaCorrect(ToneMap(color));
-	// Set output
-	outColor = vec4(color, 1.0f);
+    // Get lighting color
+    vec3 hdrColor = texture(lightingBuffer, txCoords).rgb;
+    // Get bloom color
+    vec3 bloomColor = texture(bloomBuffer, txCoords).rgb;
+    // Add bloom color
+    vec3 color = mix(hdrColor, bloomColor, bloomStrength);
+    // Convert to LDR & SRGB
+    color = GammaCorrect(ToneMap(color));
+    // Set output
+    outColor = vec4(color, 1.0f);
 }
 
 vec3 ToneMap(vec3 color)
 {
-	// ACES tone map operator
-	return clamp((color * (2.51f * color + 0.03f)) / (color * (2.43f * color + 0.59f) + 0.14f), 0.0f, 1.0f);
+    // ACES tone map operator
+    return clamp((color * (2.51f * color + 0.03f)) / (color * (2.43f * color + 0.59f) + 0.14f), 0.0f, 1.0f);
 }
 
 vec3 GammaCorrect(vec3 color)
 {
-	// Convert to SRGB
-	return pow(color, vec3(INV_GAMMA_FACTOR));
+    // Convert to SRGB
+    return pow(color, vec3(INV_GAMMA_FACTOR));
 }

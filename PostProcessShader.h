@@ -6,18 +6,18 @@
 
 namespace Shader
 {
-	class PostProcessShader : public ShaderProgram
-	{
-	public:
-		// Constructor
-		PostProcessShader();
-		// Connect texture units
-		void ConnectTextureUnits();
-		// Load bloom strength
-		void LoadBloomStrength(f32 strength);
-		// Get all uniform locations
-		void GetUniformLocations() override;
-	};
+    class PostProcessShader : public ShaderProgram
+    {
+    public:
+        // Constructor
+        PostProcessShader();
+        // Connect texture units
+        void ConnectTextureUnits();
+        // Load bloom strength
+        void LoadBloomStrength(f32 strength);
+        // Get all uniform locations
+        void GetUniformLocations() override;
+    };
 }
 
 #endif

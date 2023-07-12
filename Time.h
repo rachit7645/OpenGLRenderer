@@ -5,7 +5,7 @@
 
 namespace Util
 {
-	std::string GetTime();
+    std::string GetTime();
 }
 
 #endif

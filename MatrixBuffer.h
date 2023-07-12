@@ -8,9 +8,9 @@
 
 namespace Renderer
 {
-	class MatrixBuffer : public UniformBuffer
-	{
-	public:
+    class MatrixBuffer : public UniformBuffer
+    {
+    public:
         // Internal representation of GPU data
         struct ALIGN_GLSL_STD140 MatrixBufferGLSL
         {
@@ -22,14 +22,14 @@ namespace Renderer
             glm::mat4 invCameraView;
         };
 
-		// Main constructor
-		MatrixBuffer();
+        // Main constructor
+        MatrixBuffer();
 
         // Load view and inverse view matrix
-		void LoadView(const Entities::Camera& camera);
-		// Load projection and inverse projection matrix
-		void LoadProjection(const glm::mat4& projection);
-	};
+        void LoadView(const Entities::Camera& camera);
+        // Load projection and inverse projection matrix
+        void LoadProjection(const glm::mat4& projection);
+    };
 }
 
 #endif

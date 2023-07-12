@@ -1,5 +1,5 @@
-#ifndef JSON_H
 #define JSON_H
+#ifndef JSON_H
 
 #include "libs/simdjson/singleheader/simdjson.h"
 

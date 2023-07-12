@@ -5,18 +5,18 @@
 
 namespace Renderer
 {
-	class RenderBuffer
-	{
-	public:
-		// Default constructor
-		RenderBuffer() = default;
-		// Main constructor
-		RenderBuffer(GLsizei width, GLsizei height, GLenum internalformat);
-		// Destructor
-		~RenderBuffer();
-		// OpenGL ID
-		GLuint id = 0;
-	};
+    class RenderBuffer
+    {
+    public:
+        // Default constructor
+        RenderBuffer() = default;
+        // Main constructor
+        RenderBuffer(GLsizei width, GLsizei height, GLenum internalformat);
+        // Destructor
+        ~RenderBuffer();
+        // OpenGL ID
+        GLuint id = 0;
+    };
 }
 
 #endif

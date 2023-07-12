@@ -7,7 +7,7 @@ using namespace Entities;
 using Renderer::Model;
 
 Entity::Entity(MdPtr sharedModel, const Transform& transform)
-	: model(std::move(sharedModel)),
-	  transform(transform)
+    : model(std::move(sharedModel)),
+      transform(transform)
 {
 }

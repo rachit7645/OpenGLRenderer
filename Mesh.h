@@ -11,28 +11,28 @@
 
 namespace Renderer
 {
-	class Mesh
-	{
-	public:
-		// Usings
-		using VAO = std::shared_ptr<VertexArray>;
+    class Mesh
+    {
+    public:
+        // Usings
+        using VAO = std::shared_ptr<VertexArray>;
 
-		// Main constructor
-		Mesh
-		(
-			const std::vector<Vertex>& vertices,
-			const std::vector<u32>& indices,
-			const Renderer::MeshTextures& textures,
-			const Maths::AABB& aabb
-		);
+        // Main constructor
+        Mesh
+        (
+            const std::vector<Vertex>& vertices,
+            const std::vector<u32>& indices,
+            const Renderer::MeshTextures& textures,
+            const Maths::AABB& aabb
+        );
 
-		// Vertex Attribute Object
-		VAO vao;
-		// Textures
-		MeshTextures textures;
-		// Axis Aligned Bounding Box
-		Maths::AABB aabb;
-	};
+        // Vertex Attribute Object
+        VAO vao;
+        // Textures
+        MeshTextures textures;
+        // Axis Aligned Bounding Box
+        Maths::AABB aabb;
+    };
 }
 
 #endif

@@ -1,30 +1,40 @@
 {
-	"window":
-	{
-		"width" : 1280,
-		"height": 768
-	},
-	"shadows":
-	{
-		"width" : 4096,
-		"height": 4096,
-		"offset": 10.0
-	},
-	"ibl":
-	{
-		"env_map_path": "gfx/IBL/Milkyway_small.hdr"
-	},
-	"player":
-	{
-		"run_speed" : 45.0,
-		"turn_speed": 170.0
-	},
-	"camera":
-	{
-		"zoom_speed" : 1.0,
-		"pitch_speed": 0.1,
-		"aap_speed"  : 0.3,
-		"pitch_min"  : 0.0,
-		"pitch_max"  : 90.0
-	}
+    "window":
+    {
+        "width" : 1280,
+        "height": 768
+    },
+    "shadows":
+    {
+        "width" : 2048,
+        "height": 2048,
+        "offset": 10.0
+    },
+    "point_shadows":
+    {
+        "width" : 1024,
+        "height": 1024
+    },
+    "water":
+    {
+        "width_multiplier" : 1.0,
+        "height_multiplier": 1.0
+    },
+    "ibl":
+    {
+        "env_map_path": "gfx/IBL/Milkyway_small.hdr"
+    },
+    "player":
+    {
+        "run_speed" : 45.0,
+        "turn_speed": 170.0
+    },
+    "camera":
+    {
+        "zoom_speed" : 1.0,
+        "pitch_speed": 0.1,
+        "aap_speed"  : 0.3,
+        "pitch_min"  : 0.0,
+        "pitch_max"  : 90.0
+    }
 }

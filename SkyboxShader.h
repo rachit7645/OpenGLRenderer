@@ -6,14 +6,14 @@
 
 namespace Shader
 {
-	class SkyboxShader : public ShaderProgram
-	{
-	public:
-		// Constructor
-		SkyboxShader();
-		// Get all uniform locations (unused)
-		void GetUniformLocations() override;
-	};
+    class SkyboxShader : public ShaderProgram
+    {
+    public:
+        // Constructor
+        SkyboxShader();
+        // Get all uniform locations (unused)
+        void GetUniformLocations() override;
+    };
 }
 
 #endif

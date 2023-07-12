@@ -3,5 +3,5 @@
 // Entry point
 void main()
 {
-	// Empty fragment shader
+    // Empty fragment shader
 }

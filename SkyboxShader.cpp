@@ -5,13 +5,13 @@ using namespace Shader;
 
 // Constants
 constexpr auto VERTEX_PATH = "shaders/SkyboxVS.glsl",
-	FRAGMENT_PATH = "shaders/SkyboxFS.glsl";
+    FRAGMENT_PATH = "shaders/SkyboxFS.glsl";
 
 SkyboxShader::SkyboxShader()
-	: ShaderProgram(VERTEX_PATH, FRAGMENT_PATH)
+    : ShaderProgram(VERTEX_PATH, FRAGMENT_PATH)
 {
-	// Query uniforms
-	GetUniformLocations();
+    // Query uniforms
+    GetUniformLocations();
 }
 
 
