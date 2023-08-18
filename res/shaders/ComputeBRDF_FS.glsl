@@ -2,6 +2,9 @@
 
 // Constants
 const vec3  N            = vec3(0.0f, 0.0f, 1.0f);
+const vec3  UP            = vec3(1.0f, 0.0f, 0.0f);
+const vec3  TANGENT       = normalize(cross(UP, N));
+const vec3  BITANGENT     = cross(N, TANGENT);
 const float PI           = 3.14159265359;
 const uint  SAMPLE_COUNT = 2048u;
 
@@ -32,11 +35,6 @@ void main()
 
 vec2 IntegrateBRDF(float NdotV, float roughness)
 {
-    // Convert from tangent to world space
-    vec3 up        = vec3(1.0f, 0.0f, 0.0f);
-    vec3 tangent   = normalize(cross(up, N));
-    vec3 bitangent = cross(N, tangent);
-
     // Get view direction
     vec3 V = vec3
     (
@@ -54,7 +52,7 @@ vec2 IntegrateBRDF(float NdotV, float roughness)
     {
         // Importance Sampling
         vec2 Xi = Hammersley(i, SAMPLE_COUNT);
-        vec3 H  = ImportanceSampleGGX(Xi, N, tangent, bitangent, roughness);
+        vec3 H  = ImportanceSampleGGX(Xi, N, TANGENT, BITANGENT, roughness);
         vec3 L  = normalize(2.0f * dot(V, H) * H - V);
 
         // Dot products

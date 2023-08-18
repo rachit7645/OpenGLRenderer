@@ -3,6 +3,8 @@
 // Using namespaces
 using namespace Maths;
 
+// This is honestly pretty slow
+
 AABB::AABB(const aiAABB& aabb)
     : AABB(glm::ai_cast(aabb.mMin), glm::ai_cast(aabb.mMax))
 {

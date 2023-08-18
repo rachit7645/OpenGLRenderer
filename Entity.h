@@ -6,6 +6,7 @@
 #include "GLM.h"
 #include "Model.h"
 #include "Transform.h"
+#include "CullState.h"
 
 namespace Entities
 {
@@ -26,6 +27,8 @@ namespace Entities
         MdPtr model = nullptr;
         // Transform
         Transform transform = {};
+        // Entity culling state
+        CullState cullState = {};
     };
 }
 

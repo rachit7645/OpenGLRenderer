@@ -19,7 +19,7 @@ namespace Renderer
         // Usings
         using TxPtr = std::shared_ptr<Texture>;
         // Main constructor
-        Model(const std::string_view path, const MeshTextures& textures);
+        Model(std::string_view path, const MeshTextures& textures);
         // Data
         std::vector<Mesh> meshes;
     private:
@@ -29,18 +29,24 @@ namespace Renderer
             aiNode* node,
             const aiScene* scene,
             const MeshTextures& textures,
-            const std::string& directory
+            const std::string& directory,
+            std::string_view path,
+            std::string nodeName = ""
         );
+
         // Process each mesh in the node
-        Mesh ProcessMesh
+        static Mesh ProcessMesh
         (
             aiMesh* mesh,
             const aiScene* scene,
             const MeshTextures& textures,
-            const std::string& directory
+            const std::string& directory,
+            std::string_view path,
+            const std::string& nodeName
         );
+
         // Process each texture in the mesh
-        MeshTextures ProcessTextures
+        static MeshTextures ProcessTextures
         (
             aiMesh* mesh,
             const aiScene* scene,

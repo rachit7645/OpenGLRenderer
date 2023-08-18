@@ -10,4 +10,9 @@ Entity::Entity(MdPtr sharedModel, const Transform& transform)
     : model(std::move(sharedModel)),
       transform(transform)
 {
+    if (model != nullptr)
+    {
+        // Initialise with mesh size
+        cullState = CullState(model->meshes);
+    }
 }

@@ -20,12 +20,15 @@ namespace Renderer
         // Main constructor
         Mesh
         (
+            usize hash,
             const std::vector<Vertex>& vertices,
             const std::vector<u32>& indices,
-            const Renderer::MeshTextures& textures,
+            Renderer::MeshTextures textures,
             const Maths::AABB& aabb
         );
 
+        // ID Hash
+        usize id;
         // Vertex Attribute Object
         VAO vao;
         // Textures

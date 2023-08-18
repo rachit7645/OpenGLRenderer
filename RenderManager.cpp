@@ -426,28 +426,30 @@ void RenderManager::CullEntities(const Camera& camera)
 {
     // Update frustum
     m_viewFrustum.UpdateView(camera);
-    // Copy entities (may be slow)
+
+    // Clear
+    // m_culledEntities.clear();
+
     m_culledEntities = m_entities;
 
-    // Loop over all pairs
-    for (auto& [model, entities] : m_culledEntities)
+    /*// For each batch
+    for (const auto& [model, entities] : m_entities)
     {
-        // Find elements to be removed
-        auto toRemove = std::remove_if(entities.begin(), entities.end(), [this] (const auto& entity)
+        // For each entity
+        for (auto& entity : entities)
         {
-            // Return true if entity is not visible
-            return !m_viewFrustum.IsVisible(*entity);
-        });
-        // Remove elements
-        entities.erase(toRemove, entities.end());
+            // Update mesh data
+            m_viewFrustum.IsVisible(*entity);
 
-        // If no entities remain
-        if (entities.empty())
-        {
-            // Remove batch
-            m_culledEntities.erase(model);
+            // Get culling data
+            const auto& cullingData = entity->cullState.isEntityCulled;
+
+            // Is everything fully culled
+            bool isFullyCulled = std::all_of(cullingData.begin(), cullingData.end(), [this] (const auto& it) {
+                return it.second;
+            });
         }
-    }
+    }*/
 }
 
 void RenderManager::RenderImGui()

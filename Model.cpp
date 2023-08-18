@@ -1,5 +1,7 @@
 #include "Model.h"
 
+#include <unordered_map>
+
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
@@ -50,7 +52,7 @@ Model::Model(const std::string_view path, const MeshTextures& textures)
     }
 
     // Process scene nodes
-    ProcessNode(scene->mRootNode, scene, textures, files.GetDirectory(path));
+    ProcessNode(scene->mRootNode, scene, textures, files.GetDirectory(path), path);
 }
 
 void Model::ProcessNode
@@ -58,21 +60,35 @@ void Model::ProcessNode
     aiNode* node,
     const aiScene* scene,
     const MeshTextures& textures,
-    const std::string& directory
+    const std::string& directory,
+    const std::string_view path,
+    std::string nodeName
 )
 {
+    // Prefix for node name
+    std::string prefix;
+    // If node is not the initial node
+    if (!nodeName.empty())
+    {
+        // apply a prefix
+        prefix = "_";
+    }
+
+    // Set node name
+    nodeName += prefix + node->mName.C_Str();
+
     // Iterate over all the node's meshes
     for (u32 i = 0; i < node->mNumMeshes; ++i)
     {
         // Add meshes
-        meshes.emplace_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], scene, textures, directory));
+        meshes.emplace_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], scene, textures, directory, path, nodeName));
     }
 
     // Iterate over all the child nodes
     for (u32 i = 0; i < node->mNumChildren; ++i)
     {
         // Process nodes recursively
-        ProcessNode(node->mChildren[i], scene, textures, directory);
+        ProcessNode(node->mChildren[i], scene, textures, directory, path, nodeName);
     }
 }
 
@@ -81,7 +97,9 @@ Mesh Model::ProcessMesh
     aiMesh* mesh,
     const aiScene* scene,
     const MeshTextures& textures,
-    const std::string& directory
+    const std::string& directory,
+    const std::string_view path,
+    const std::string& nodeName
 )
 {
     // Vertex data (packed)
@@ -119,8 +137,12 @@ Mesh Model::ProcessMesh
 
     // Get AABB of mesh
     auto aabb = Maths::AABB(mesh->mAABB);
+    // Calculate hash
+    std::string hashString = std::string(path.data()) + "_" + nodeName + "_" + mesh->mName.C_Str();
+    usize       hash       = std::hash<std::string>{}(hashString);
+    // LOG_DEBUG("Hash String: {}, Hash: {}\n", hashString, hash);
     // Return mesh
-    return Mesh(vertices, indices, ProcessTextures(mesh, scene, textures, directory), aabb);
+    return {hash, vertices, indices, ProcessTextures(mesh, scene, textures, directory), aabb};
 }
 
 MeshTextures Model::ProcessTextures

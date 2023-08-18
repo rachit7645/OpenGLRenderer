@@ -26,18 +26,25 @@ Frustum::Frustum()
     );
 }
 
-bool Frustum::IsVisible(const Entity& entity)
+void Frustum::IsVisible(Entity& entity)
 {
-    // Get meshes
+    // Get data
     const auto& meshes = entity.model->meshes;
+    auto& cullState    = entity.cullState.isEntityCulled;
     // Create model matrix
     glm::mat4 model = entity.transform.GetModelMatrix();
-    // Return true if any meshes are visible
-    return std::any_of(meshes.begin(), meshes.end(), [this, model] (const auto& mesh)
+    // Check mesh visibility
+    for (const auto& mesh : meshes)
     {
-        // Return true if mesh is visible
-        return IsInFrustum(mesh.aabb.Transform(model));
-    });
+        // If ID was not found
+        if (!cullState.count(mesh.id))
+        {
+            // Log error
+            LOG_ERROR("Mesh ID not found in culling state!: ID={}\n", mesh.id);
+        }
+
+        cullState[mesh.id] = IsInFrustum(mesh.aabb.Transform(model));
+    }
 }
 
 void Frustum::UpdateView(const Camera& camera)
@@ -84,7 +91,7 @@ bool Frustum::IsInFrustum(const AABB& aabb) const
     return true;
 }
 
-bool Frustum::IsCornerNotInPlane(usize corner, const Plane& plane, const AABB& aabb) const
+bool Frustum::IsCornerNotInPlane(usize corner, const Plane& plane, const AABB& aabb)
 {
     // Intersection test
     return glm::dot(plane.equation, glm::vec4(aabb.corners[corner], 1.0f)) < 0.0f;
