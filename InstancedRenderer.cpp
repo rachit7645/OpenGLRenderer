@@ -18,7 +18,8 @@ InstancedRenderer::InstancedRenderer
     OmniShadowShader& omniShadowShader,
     SpotShadowShader& spotShadowShader,
     IBLMaps& iblMaps,
-    BufferPtr instances
+    BufferPtr instances,
+    HandlesPtr handles
 )
     : gShader(gShader),
       fastShader(fastShader),
@@ -26,7 +27,8 @@ InstancedRenderer::InstancedRenderer
       omniShadowShader(omniShadowShader),
       spotShadowShader(spotShadowShader),
       iblMaps(iblMaps),
-      instances(std::move(instances))
+      instances(std::move(instances)),
+      handles(std::move(handles))
 {
     // Connect geometry shader texture units
     gShader.Start();
@@ -42,11 +44,13 @@ void InstancedRenderer::Render(const Batch& batch, Mode mode)
 {
     // Begin render pass
     BeginRender(mode);
+
     // For each pair
     for (const auto& [model, entities] : batch)
     {
         // Load instance data
-        LoadData(entities);
+        LoadInstanceData(entities);
+
         // For each mesh
         for (const auto& mesh : model->meshes)
         {
@@ -65,6 +69,7 @@ void InstancedRenderer::Render(const Batch& batch, Mode mode)
             UnbindMesh();
         }
     }
+
     // End render pass
     EndRender(mode);
 }
@@ -148,7 +153,44 @@ void InstancedRenderer::EndRender(Mode mode)
     }
 }
 
-void InstancedRenderer::LoadData(const EntityVector& entities)
+void InstancedRenderer::LoadData(const Batch& batch, Mode mode)
+{
+    // Check if we are in a shadow mode
+    if (mode != Mode::Deferred && mode != Mode::Fast)
+    {
+        // No textures are needed for shadow modes
+        return;
+    }
+
+    // Create texture vector
+    TextureVector textureSets = {};
+    textureSets.reserve(Renderer::SHADER_MAX_TEXTURE_SETS); // Inefficient, but IDC (I kinda do)
+
+    // Loop over all models in batch
+    for (const auto& [model, _] : batch)
+    {
+        // Load textures
+        LoadTextures(textureSets, model);
+    }
+
+    // Upload textures
+    handles->LoadTextures(textureSets);
+}
+
+void InstancedRenderer::LoadTextures(TextureVector& textures, const MdPtr& model)
+{
+    // Get meshes
+    const auto& meshes = model->meshes;
+
+    // For each mesh
+    for (const auto& mesh : meshes)
+    {
+        // Add texture to vector
+        textures.emplace_back(mesh.textures);
+    }
+}
+
+void InstancedRenderer::LoadInstanceData(const EntityVector& entities)
 {
     // Load data
     instances->LoadInstanceData(entities);

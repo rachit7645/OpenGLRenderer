@@ -1,6 +1,7 @@
 #include "InstanceBuffer.h"
 
 #include "Util.h"
+#include "TextureBuffer.h"
 
 // Using namespaces
 using namespace Renderer;
@@ -9,6 +10,7 @@ using namespace Renderer;
 using Entities::Entity;
 
 // Aliases
+
 using InstanceDataGLSL   = InstanceBuffer::InstanceDataGLSL;
 using InstanceBufferGLSL = InstanceBuffer::InstanceBufferGLSL;
 using DataVector         = InstanceBuffer::DataVector;
@@ -35,26 +37,42 @@ InstanceBuffer::InstanceBuffer()
 
 void InstanceBuffer::LoadInstanceData(const EntityVector& entities)
 {
+    // Bind buffer
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, id);
     // Create data
     auto data = GenerateData(entities);
+    // Get count
+    auto count = GL::Int{static_cast<GLint>(GetCount(entities))};
+    // Buffer count
+    glBufferSubData
+    (
+        GL_SHADER_STORAGE_BUFFER,
+        static_cast<GLintptr>(offsetof(InstanceBufferGLSL, instanceCount)),
+        static_cast<GLsizeiptr>(sizeof(GL::Int)),
+        reinterpret_cast<const void*>(&count)
+    );
     // Buffer data
     glBufferSubData
     (
         GL_SHADER_STORAGE_BUFFER,
-        static_cast<GLintptr>(0),
+        static_cast<GLintptr>(offsetof(InstanceBufferGLSL, instances)),
         static_cast<GLsizeiptr>(GetSize(entities)),
         reinterpret_cast<const void*>(&data[0])
     );
+    // Unbind buffer
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+}
+
+usize InstanceBuffer::GetCount(const InstanceBuffer::EntityVector& entities)
+{
+    // Choose the one with the minimum size
+    return std::min(entities.size(), NUM_MAX_ENTITIES);
 }
 
 usize InstanceBuffer::GetSize(const EntityVector& entities)
 {
-    // Choose the one with the minimum size
-    auto length = std::min(entities.size(), NUM_MAX_ENTITIES);
     // Calculate the size of the data
-    auto size = length * sizeof(InstanceDataGLSL);
-    // Return as GLsizeiptr
-    return size;
+    return GetCount(entities) * sizeof(InstanceDataGLSL);
 }
 
 DataVector InstanceBuffer::GenerateData(const EntityVector& entities)
@@ -62,7 +80,7 @@ DataVector InstanceBuffer::GenerateData(const EntityVector& entities)
     // Create data vector
     DataVector data = {};
     // Allocate data vector's memory
-    data.reserve(GetSize(entities));
+    data.reserve(GetCount(entities));
 
     // For each entity
     for (usize i = 0; i < entities.size(); ++i)
@@ -83,7 +101,7 @@ void InstanceBuffer::Bind() const
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, id);
 }
 
-void InstanceBuffer::Unbind() const
+void InstanceBuffer::Unbind()
 {
     // Unbind
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);

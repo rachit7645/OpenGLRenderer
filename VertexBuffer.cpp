@@ -8,15 +8,15 @@ void VertexBuffer::CreateBuffer()
     glGenBuffers(1, &id);
 }
 
-void VertexBuffer::BufferData(GLenum type, const std::vector<Vertex>& data)
+void VertexBuffer::BufferData(GLenum type, GLintptr offset, const std::vector<Vertex>& data)
 {
     // Buffer packed data
-    glBufferData
+    glBufferSubData
     (
         type,
+        static_cast<GLintptr>(offset * sizeof(Vertex)),
         static_cast<GLsizeiptr>(data.size() * sizeof(Vertex)),
-        data.data(),
-        GL_STATIC_DRAW
+        reinterpret_cast<const void*>(data.data())
     );
 }
 
@@ -32,22 +32,40 @@ void VertexBuffer::BufferData(GLenum type, const std::vector<GLfloat>& data)
     );
 }
 
-void VertexBuffer::BufferData(GLenum type, const std::vector<GLuint>& data)
+void VertexBuffer::BufferData(GLenum type, GLintptr offset, const std::vector<GLuint>& data)
 {
     // Buffer u32 data
+    glBufferSubData
+    (
+        type,
+        static_cast<GLintptr>(offset * sizeof(GLuint)),
+        static_cast<GLsizeiptr>(data.size() * sizeof(GLuint)),
+        reinterpret_cast<const void*>(data.data())
+    );
+}
+
+// Allocate space for data
+// FIXME: This is NOT how you reallocate data
+void VertexBuffer::AllocateMemory(GLenum type, GLsizeiptr bufferSize)
+{
+    // Set size
+    size = bufferSize;
+    // Allocate memory
     glBufferData
     (
         type,
-        static_cast<GLsizeiptr>(data.size() * sizeof(GLuint)),
-        data.data(),
+        bufferSize,
+        nullptr,
         GL_STATIC_DRAW
     );
+    // Set flag
+    isMemoryAllocated = true;
 }
 
 void VertexBuffer::SetVertexAttribute
 (
     GLuint index,
-    GLint size,
+    GLint nComponents,
     GLenum type,
     GLsizei stride,
     const void* pointer
@@ -57,7 +75,7 @@ void VertexBuffer::SetVertexAttribute
     glVertexAttribPointer
     (
         index,
-        size,
+        nComponents,
         type,
         GL_FALSE,
         stride,

@@ -23,6 +23,8 @@ layout(std140, binding = 0) uniform Matrices
 // Instance data SSBO
 layout(std430, binding = 3) readonly buffer InstanceData
 {
+    // Instance count
+    int instanceCount;
     // Instance array
     Instance instances[];
 };

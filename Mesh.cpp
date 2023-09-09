@@ -18,8 +18,10 @@ Mesh::Mesh
 )
     :
       id(hash),
-      vao(std::make_shared<VertexArray>(vertices, indices)),
+      vao(std::make_shared<VertexArray>()),
       textures(std::move(textures)),
       aabb(aabb)
 {
+    // Add data to VAO
+    vao->AppendData(vertices, indices, 0, 0);
 }

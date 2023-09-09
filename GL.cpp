@@ -119,6 +119,13 @@ void GL::Init(const glm::ivec2& dimensions)
         ids.data(),          // ids
         GL_FALSE             // enabled
     );
+
+    // Set up bindless textures
+    if(!GLEW::GetExtension("GL_ARB_bindless_texture"))
+    {
+        // We need bindless textures to run now
+        LOG_ERROR("{} extension not found!\n", "GL_ARB_bindless_texture");
+    }
 }
 
 std::string_view GLEW::GetString(GLenum name)
@@ -128,7 +135,7 @@ std::string_view GLEW::GetString(GLenum name)
     // Convert to different format
     auto newString = reinterpret_cast<const char*>(string);
     // Return
-    return std::string_view(newString);
+    return {newString};
 }
 
 bool GLEW::GetExtension(const std::string_view name)

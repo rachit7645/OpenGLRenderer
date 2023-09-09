@@ -24,22 +24,29 @@ namespace Renderer
 
         // Buffer ID
         GLuint id = 0;
+        // Buffer size
+        GLsizeiptr size = 0;
+        // Memory allocation flag
+        bool isMemoryAllocated = false;
     protected:
         // Creates a buffer
         void CreateBuffer();
 
         // Buffer packed vertex data
-        void BufferData(GLenum type, const std::vector<Vertex>& data);
+        void BufferData(GLenum type, GLintptr offset, const std::vector<Vertex>& data);
         // Buffer floating point vertex data
         void BufferData(GLenum type, const std::vector<GLfloat>& data);
         // Buffer unsigned vertex data
-        void BufferData(GLenum type, const std::vector<GLuint>& data);
+        void BufferData(GLenum type, GLintptr offset, const std::vector<GLuint>& data);
+
+        // Allocate space for data
+        void AllocateMemory(GLenum type, GLsizeiptr bufferSize);
 
         // Set vertex attribute
         void SetVertexAttribute
         (
             GLuint index,
-            GLint size,
+            GLint nComponents,
             GLenum type,
             GLsizei stride,
             const void* pointer
@@ -47,6 +54,7 @@ namespace Renderer
     public:
         // Classes that can access pipeline mode
         friend class VertexArray;
+        friend class VertexPool;
     };
 }
 

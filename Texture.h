@@ -33,8 +33,9 @@ namespace Renderer
         void Unbind() const;
 
         // Opengl Data
-        GLuint id   = 0;
-        GLenum type = GL_TEXTURE_2D;
+        GLuint   id     = 0;
+        GLuint64 handle = 0;
+        GLenum   type   = GL_TEXTURE_2D;
 
         // Internal image data
         int width    = 0;
@@ -45,14 +46,17 @@ namespace Renderer
         // Creates the texture
         void CreateTexture();
 
+        // Create texture handle and make it resident
+        void GenerateHandle();
+
         // Sets an integer pixel parameter
-        void SetPixelParameter(GLenum name, GLint param);
+        static void SetPixelParameter(GLenum name, GLint param);
         // Sets an integer texture parameter
-        void SetParameter(GLenum name, GLint param);
+        void SetParameter(GLenum name, GLint param) const;
         // Sets a float texture parameter
-        void SetParameter(GLenum name, GLfloat param);
+        void SetParameter(GLenum name, GLfloat param) const;
         // Sets an float array texture parameter
-        void SetParameter(GLenum name, const GLfloat* param);
+        void SetParameter(GLenum name, const GLfloat* param) const;
 
         // Loads image data
         void LoadImageData(u8* data, GLint internalFormat, GLint format, GLint dataType, GLenum target = 0);

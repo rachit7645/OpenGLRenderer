@@ -105,6 +105,8 @@ add_executable(engine
     SpotShadowShader.cpp
     SpotShadowBuffer.cpp
     CullState.cpp
+    TextureBuffer.cpp
+    VertexPool.cpp
 )
 
 # Precompiled Headers

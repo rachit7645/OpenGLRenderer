@@ -23,6 +23,7 @@ layout (location = 2) out vec3 gEmmisive;
 vec3 GetNormalFromMap(vec3 normal);
 vec2 OctWrap(vec2 vector);
 vec2 PackNormal(vec3 normal);
+vec4 WhenEqual(vec4 x, vec4 y);
 
 void main()
 {
@@ -83,4 +84,14 @@ vec2 PackNormal(vec3 normal)
     normal.xy = normal.xy * 0.5f + 0.5f;
     // Return packed normal
     return normal.xy;
+}
+
+// Branchless implementation of
+// if (x == y)
+//	 return 1;
+// else
+// 	 return 0;
+vec4 WhenEqual(vec4 x, vec4 y)
+{
+    return 1.0f - abs(sign(x - y));
 }

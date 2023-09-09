@@ -2,8 +2,7 @@
 
 using namespace Renderer;
 
-VertexArray::VertexArray(const std::vector<Vertex>& vertices, const std::vector<u32>& indices)
-    : vertexCount(static_cast<GLsizei>(indices.size()))
+VertexArray::VertexArray()
 {
     // Create VAO
     glGenVertexArrays(1, &id);
@@ -19,7 +18,6 @@ VertexArray::VertexArray(const std::vector<Vertex>& vertices, const std::vector<
     buffers["vertices"] = std::make_shared<VertexBuffer>();
     buffers["vertices"]->CreateBuffer();
     buffers["vertices"]->Bind(GL_ARRAY_BUFFER);
-    buffers["vertices"]->BufferData(GL_ARRAY_BUFFER, vertices);
 
     // Enable position
     buffers["vertices"]->SetVertexAttribute
@@ -68,7 +66,6 @@ VertexArray::VertexArray(const std::vector<Vertex>& vertices, const std::vector<
     buffers["indices"] = std::make_shared<VertexBuffer>();
     buffers["indices"]->CreateBuffer();
     buffers["indices"]->Bind(GL_ELEMENT_ARRAY_BUFFER);
-    buffers["indices"]->BufferData(GL_ELEMENT_ARRAY_BUFFER, indices);
 
     // Unbind
     glBindVertexArray(0);
@@ -97,6 +94,63 @@ VertexArray::VertexArray
 
     // Unbind
     glBindVertexArray(0);
+}
+
+void VertexArray::AppendData
+(
+    const std::vector<Vertex>& vertices,
+    const std::vector<u32>& indices,
+    usize vertexOffset,
+    usize indexOffset
+)
+{
+    // Bind VAO
+    glBindVertexArray(id);
+
+    // Bind vertex data
+    buffers["vertices"]->Bind(GL_ARRAY_BUFFER);
+    // Allocate more memory if needed
+    if (CheckMemory(buffers["vertices"], vertices.size(), vertexOffset, sizeof(Vertex)))
+    {
+        auto count = static_cast<GLsizeiptr>(vertexOffset) + vertices.size();
+        // Allocate more memory
+        buffers["vertices"]->AllocateMemory(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(count * sizeof(Vertex)));
+    }
+    // Buffer vertex data
+    buffers["vertices"]->BufferData(GL_ARRAY_BUFFER, static_cast<GLintptr>(vertexOffset), vertices);
+
+    // Bind index data
+    buffers["indices"]->Bind(GL_ELEMENT_ARRAY_BUFFER);
+    // Allocate more memory if needed
+    if (CheckMemory(buffers["indices"], indices.size(), indexOffset, sizeof(GLuint)))
+    {
+        auto count = static_cast<GLsizeiptr>(indexOffset) + indices.size();
+        // Allocate more memory
+        buffers["indices"]->AllocateMemory(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(count * sizeof(GLuint)));
+    }
+    // Buffer index data
+    buffers["indices"]->BufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLintptr>(indexOffset), indices);
+
+    // Set vertex count
+    vertexCount += static_cast<GLsizei>(indices.size());
+
+    // Unbind
+    glBindVertexArray(0);
+}
+
+bool VertexArray::CheckMemory(const VertexArray::VBO& buffer, usize newCount, usize offset, usize elementSize)
+{
+    // Check if memory is allocated
+    bool allocationCheck = !buffer->isMemoryAllocated;
+
+    // Check space left and space required
+    GLsizeiptr spaceLeft     = buffer->size - static_cast<GLsizeiptr>(offset * elementSize);
+    auto       spaceRequired = static_cast<GLsizeiptr>(newCount * elementSize);
+    // Compare
+    bool spaceCheck = spaceRequired > spaceLeft;
+
+    // Return
+    return allocationCheck || spaceCheck;
 }
 
 VertexArray::~VertexArray()

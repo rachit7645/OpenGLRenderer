@@ -49,6 +49,7 @@
 #include "OmniShadowMap.h"
 #include "SpotShadowShader.h"
 #include "SpotShadowMap.h"
+#include "TextureBuffer.h"
 
 namespace Renderer
 {
@@ -91,6 +92,8 @@ namespace Renderer
 
         // Instances Shader Storage Buffer
         std::shared_ptr<InstanceBuffer> m_instances;
+        // Textures Uniform Buffer
+        std::shared_ptr<TextureBuffer> m_textures;
         // Matrix Uniform Buffer
         std::shared_ptr<MatrixBuffer> m_matrices;
         // Lights Uniform Buffer
