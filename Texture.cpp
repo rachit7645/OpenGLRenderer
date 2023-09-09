@@ -33,8 +33,11 @@ Texture::Texture(const std::string_view path)
     auto data = LoadImage(path);
     // Load data
     LoadImageData(data, GL_RGB, GL_RGB, GL_UNSIGNED_BYTE);
+
     // Generate mipmaps
     GenerateMipmaps();
+    // Create texture handle (texture is immutable(?) after this point)
+    GenerateHandle();
 
     // Unbind
     Unbind();
@@ -146,25 +149,35 @@ void Texture::CreateTexture()
     glGenTextures(1, &id);
 }
 
+void Texture::GenerateHandle()
+{
+    // Generate handle
+    handle = glGetTextureHandleARB(id);
+    // Make texture resident on GPU
+    glMakeTextureHandleResidentARB(handle);
+    // Print handle
+    // LOG_INFO("Texture handle for [ID={}] = [{}]\n", id, handle);
+}
+
 void Texture::SetPixelParameter(GLenum name, GLint param)
 {
     // Set integer pixel storage parameter
     glPixelStorei(name, param);
 }
 
-void Texture::SetParameter(GLenum name, GLint param)
+void Texture::SetParameter(GLenum name, GLint param) const
 {
     // Set integer texture parameter
     glTexParameteri(type, name, param);
 }
 
-void Texture::SetParameter(GLenum name, GLfloat param)
+void Texture::SetParameter(GLenum name, GLfloat param) const
 {
     // Set float texture parameter
     glTexParameterf(type, name, param);
 }
 
-void Texture::SetParameter(GLenum name, const GLfloat* param)
+void Texture::SetParameter(GLenum name, const GLfloat* param) const
 {
     // Set float array texture parameter
     glTexParameterfv(type, name, param);
@@ -189,8 +202,6 @@ void Texture::LoadImageData(u8* data, GLint internalFormat, GLint format, GLint 
 
 void Texture::LoadImageData3D(u8* data, GLint internalFormat, GLint format, GLint dataType, GLenum target)
 {
-    LOG_DEBUG("Width: {}, Height: {}, Depth: {}\n", width, height, depth);
-
     // Load 3D image data
     glTexImage3D
     (

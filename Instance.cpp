@@ -394,7 +394,7 @@ void Instance::InitEntities()
     (
         resources.GetTexture("gfx/def.png"),
         resources.GetTexture("gfx/defNrm.png"),
-        resources.GetTexture("gfx/def.png"),
+        resources.GetTexture("gfx/defMtl.png"),
         resources.GetTexture("gfx/defEmm.png")
     );
 

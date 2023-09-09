@@ -140,7 +140,6 @@ Mesh Model::ProcessMesh
     // Calculate hash
     std::string hashString = std::string(path.data()) + "_" + nodeName + "_" + mesh->mName.C_Str();
     usize       hash       = std::hash<std::string>{}(hashString);
-    // LOG_DEBUG("Hash String: {}, Hash: {}\n", hashString, hash);
     // Return mesh
     return {hash, vertices, indices, ProcessTextures(mesh, scene, textures, directory), aabb};
 }

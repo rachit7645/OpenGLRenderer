@@ -43,6 +43,8 @@ namespace GL
     using Float = Detail::DataSTD140<GLfloat>;
     // An int in std140 form
     using Int = Detail::DataSTD140<GLint>;
+    // A 64 bit unsigned integer in std140 form
+    using UInt64 = Detail::DataSTD140<GLuint64>;
 
     // STD140 data alignment
     #define ALIGN_GLSL_STD140 alignas(16)
