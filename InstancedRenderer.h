@@ -16,26 +16,20 @@
 #include "OmniShadowShader.h"
 #include "SpotShadowShader.h"
 #include "TextureBuffer.h"
+#include "VertexPool.h"
+#include "DrawCall.h"
+#include "VertexBuffer.h"
 
 namespace Renderer
 {
     class InstancedRenderer
     {
     public:
-        // Draw call for MultiDrawIndirect
-        struct DrawCall
-        {
-            GLuint count         = 0;
-            GLuint instanceCount = 0;
-            GLuint firstIndex    = 0;
-            GLint  baseVertex    = 0;
-            GLuint baseInstance  = 0;
-        };
-
         // Usings
         using BufferPtr      = std::shared_ptr<InstanceBuffer>;
         using HandlesPtr     = std::shared_ptr<TextureBuffer>;
         using MdPtr          = std::shared_ptr<Model>;
+        using VBO            = std::shared_ptr<VertexBuffer>;
         using EntityVector   = std::vector<Entities::Entity*>;
         using TextureVector  = std::vector<MeshTextures>;
         using DrawCallVector = std::vector<DrawCall>;
@@ -50,6 +44,7 @@ namespace Renderer
             Shader::OmniShadowShader& omniShadowShader,
             Shader::SpotShadowShader& spotShadowShader,
             Renderer::IBLMaps& iblMaps,
+            VertexPool& vertexPool,
             BufferPtr instances,
             HandlesPtr handles
         );
@@ -62,13 +57,17 @@ namespace Renderer
         Shader::SpotShadowShader&    spotShadowShader; // Spot Shadow Shader
 
         // Other data
-        Renderer::IBLMaps& iblMaps;   // IBL data
-        BufferPtr          instances; // Instance data
-        HandlesPtr         handles;   // Texture handles
+        Renderer::IBLMaps& iblMaps;    // IBL data
+        VertexPool&        vertexPool; // Vertex data pool
+        BufferPtr          instances;  // Instance data
+        HandlesPtr         handles;    // Texture handles
 
         // Render batch
         void Render(const Batch& batch, Mode mode);
     private:
+        // Indirect buffer
+        VBO indirectBuffer = nullptr;
+
         // Begin rendering
         void BeginRender(Mode mode);
         // End rendering
@@ -81,6 +80,8 @@ namespace Renderer
 
         // Prepare indirect draw data
         DrawCallVector CreateDrawCalls(const MdPtr& model, const EntityVector& entities);
+        // Load draw call data
+        static void LoadDrawCalls(const std::vector<Renderer::DrawCall>& drawCalls);
 
         // Prepare mesh
         static void PrepareMesh(const Mesh& mesh, Mode mode);

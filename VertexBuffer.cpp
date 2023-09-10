@@ -58,7 +58,7 @@ void VertexBuffer::AllocateMemory(GLenum type, GLsizeiptr bufferSize)
     );
 }
 
-void VertexBuffer::ReAllocateMemory(GLsizeiptr count, GLsizeiptr elementSize)
+void VertexBuffer::ReAllocateMemory(GLenum type, GLsizeiptr count, GLsizeiptr elementSize)
 {
     // Copy old data
     GLuint     oldBuffer = id;
@@ -75,10 +75,13 @@ void VertexBuffer::ReAllocateMemory(GLsizeiptr count, GLsizeiptr elementSize)
 
     // Create new buffer
     CreateBuffer();
-    Bind(GL_COPY_WRITE_BUFFER);
+    // Bind as required type
+    Bind(type);
     // Allocate more memory (x2 as much to avoid more allocations)
-    AllocateMemory(GL_COPY_WRITE_BUFFER, 2 * count * elementSize);
+    AllocateMemory(type, 2 * count * elementSize);
 
+    // Bind new VBO as copy write type
+    Bind(GL_COPY_WRITE_BUFFER);
     // Copy data on GPU
     glCopyBufferSubData
     (
@@ -88,6 +91,10 @@ void VertexBuffer::ReAllocateMemory(GLsizeiptr count, GLsizeiptr elementSize)
         0,
         oldSize
     );
+
+    // Unbind both buffers
+    Unbind(GL_COPY_READ_BUFFER);
+    Unbind(GL_COPY_WRITE_BUFFER);
 
     // Delete old buffer
     glDeleteBuffers(1, &oldBuffer);

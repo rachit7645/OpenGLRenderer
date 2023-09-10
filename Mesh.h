@@ -4,7 +4,6 @@
 #include <vector>
 #include <memory>
 
-#include "VertexArray.h"
 #include "MeshTextures.h"
 #include "Vertex.h"
 #include "AABB.h"
@@ -31,8 +30,6 @@ namespace Renderer
 
         // ID Hash
         usize id;
-        // Vertex Attribute Object
-        VAO vao;
         // Textures
         MeshTextures textures;
         // Axis Aligned Bounding Box

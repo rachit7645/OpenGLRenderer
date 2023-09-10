@@ -19,11 +19,9 @@ Mesh::Mesh
 )
     :
       id(hash),
-      vao(std::make_shared<VertexArray>(vertices.size(), indices.size())),
       textures(std::move(textures)),
       aabb(aabb)
 {
     // Add data to VAO
-    vao->AppendData(vertices, indices, 0, 0);
     pool.AppendData(id, vertices, indices);
 }

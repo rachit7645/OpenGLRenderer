@@ -40,7 +40,7 @@ namespace Renderer
         // Allocate space for data
         void AllocateMemory(GLenum type, GLsizeiptr bufferSize);
         // Reallocate more memory
-        void ReAllocateMemory(GLsizeiptr count, GLsizeiptr elementSize);
+        void ReAllocateMemory(GLenum type, GLsizeiptr count, GLsizeiptr elementSize);
 
         // Set vertex attribute
         static void SetVertexAttribute
@@ -54,7 +54,7 @@ namespace Renderer
     public:
         // Classes that can access pipeline mode
         friend class VertexArray;
-        friend class VertexPool;
+        friend class InstancedRenderer;
     };
 }
 

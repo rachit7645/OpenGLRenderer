@@ -21,6 +21,7 @@ InstancedRenderer::InstancedRenderer
     OmniShadowShader& omniShadowShader,
     SpotShadowShader& spotShadowShader,
     IBLMaps& iblMaps,
+    VertexPool& vertexPool,
     BufferPtr instances,
     HandlesPtr handles
 )
@@ -30,8 +31,10 @@ InstancedRenderer::InstancedRenderer
       omniShadowShader(omniShadowShader),
       spotShadowShader(spotShadowShader),
       iblMaps(iblMaps),
+      vertexPool(vertexPool),
       instances(std::move(instances)),
-      handles(std::move(handles))
+      handles(std::move(handles)),
+      indirectBuffer(std::make_shared<VertexBuffer>())
 {
     // Connect geometry shader texture units
     gShader.Start();
@@ -41,6 +44,14 @@ InstancedRenderer::InstancedRenderer
     fastShader.Start();
     fastShader.ConnectTextureUnits();
     fastShader.Stop();
+
+    // Unbind VAO
+    glBindVertexArray(0);
+    // Create buffer
+    indirectBuffer->CreateBuffer();
+    indirectBuffer->Bind(GL_DRAW_INDIRECT_BUFFER);
+    indirectBuffer->AllocateMemory(GL_DRAW_INDIRECT_BUFFER, MAX_DRAW_CALLS * sizeof(DrawCall));
+    indirectBuffer->Unbind(GL_DRAW_INDIRECT_BUFFER);
 }
 
 void InstancedRenderer::Render(const Batch& batch, Mode mode)
@@ -53,24 +64,18 @@ void InstancedRenderer::Render(const Batch& batch, Mode mode)
     {
         // Load instance data
         LoadInstanceData(entities);
+        // Create draw calls
+        auto drawCalls = CreateDrawCalls(model, entities);
 
-        // For each mesh
-        for (const auto& mesh : model->meshes)
-        {
-            // Prepare mesh
-            PrepareMesh(mesh, mode);
-            // Draw instances
-            glDrawElementsInstanced
-            (
-                GL_TRIANGLES,
-                mesh.vao->vertexCount,
-                GL_UNSIGNED_INT,
-                nullptr,
-                static_cast<GLint>(entities.size())
-            );
-            // Unbind mesh
-            UnbindMesh();
-        }
+        // Draw
+        glMultiDrawElementsIndirect
+        (
+            GL_TRIANGLES,
+            GL_UNSIGNED_INT,
+            reinterpret_cast<const void*>(0),
+            static_cast<GLsizei>(drawCalls.size()),
+            0
+        );
     }
 
     // End render pass
@@ -81,6 +86,10 @@ void InstancedRenderer::BeginRender(Mode mode)
 {
     // Bind instance SSBO
     instances->Bind();
+    // Bind VAO
+    glBindVertexArray(vertexPool.poolVAO->id);
+    // Bind indirect VBO
+    indirectBuffer->Bind(GL_DRAW_INDIRECT_BUFFER);
 
     // Select mode
     switch (mode)
@@ -125,6 +134,10 @@ void InstancedRenderer::EndRender(Mode mode)
 {
     // Unbind instance SSBO
     instances->Unbind();
+    // Unbind VAO
+    glBindVertexArray(0);
+    // Bind indirect VBO
+    indirectBuffer->Bind(GL_ELEMENT_ARRAY_BUFFER);
 
     // Select mode
     switch (mode)
@@ -201,9 +214,6 @@ void InstancedRenderer::LoadInstanceData(const EntityVector& entities)
 
 void InstancedRenderer::PrepareMesh(const Mesh& mesh, Mode mode)
 {
-    // Bind VAO
-    glBindVertexArray(mesh.vao->id);
-
     // Select mode
     switch (mode)
     {
@@ -247,12 +257,44 @@ void InstancedRenderer::UnbindMesh()
 
 DrawCallVector InstancedRenderer::CreateDrawCalls(const MdPtr& model, const EntityVector& entities)
 {
+    // Create draw call vector
     DrawCallVector drawCalls = {};
     drawCalls.reserve(model->meshes.size());
 
+    // For every mesh
     for (const Mesh& mesh : model->meshes)
     {
+        // Get mesh specification
+        const auto& spec = vertexPool.specs[mesh.id];
+
+        // Initialise draw call
+        DrawCall call = {};
+        // Add parameters
+        call.count         = static_cast<GLuint>(spec.vertexCount);
+        call.instanceCount = static_cast<GLuint>(entities.size());
+        call.firstIndex    = static_cast<GLuint>(spec.indexOffset);
+        call.baseVertex    = static_cast<GLint>(spec.vertexOffset);
+        call.baseInstance  = 0;
+
+        // Add to vector
+        drawCalls.emplace_back(call);
     }
 
+    // Load draw calls to buffer
+    LoadDrawCalls(drawCalls);
+
+    // Return vector
     return drawCalls;
+}
+
+void InstancedRenderer::LoadDrawCalls(const std::vector<DrawCall>& drawCalls)
+{
+    // Buffer indirect data
+    glBufferSubData
+    (
+        GL_DRAW_INDIRECT_BUFFER,
+        static_cast<GLintptr>(0),
+        static_cast<GLsizeiptr>(drawCalls.size() * sizeof(DrawCall)),
+        reinterpret_cast<const void*>(&drawCalls[0])
+    );
 }

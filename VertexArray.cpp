@@ -1,4 +1,6 @@
 #include "VertexArray.h"
+#include "InstancedRenderer.h"
+#include "DrawCall.h"
 
 // Using namespaces
 using namespace Renderer;
@@ -118,7 +120,7 @@ void VertexArray::AppendData
         // Get element count
         auto count = static_cast<GLsizeiptr>(vertexOffset + vertices.size());
         // Allocate more memory
-        buffers["vertices"]->ReAllocateMemory(count, sizeof(Vertex));
+        buffers["vertices"]->ReAllocateMemory(GL_ARRAY_BUFFER, count, sizeof(Vertex));
     }
 
     // Allocate more memory if needed
@@ -127,7 +129,7 @@ void VertexArray::AppendData
         // Get element count
         auto count = static_cast<GLsizeiptr>(indexOffset + indices.size());
         // Allocate more memory
-        buffers["indices"]->ReAllocateMemory(count, sizeof(GLuint));
+        buffers["indices"]->ReAllocateMemory(GL_ELEMENT_ARRAY_BUFFER, count, sizeof(GLuint));
     }
 
     // Bind vertex data

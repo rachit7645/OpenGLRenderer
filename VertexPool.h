@@ -8,6 +8,7 @@
 #include "VertexArray.h"
 #include "Util.h"
 #include "GLM.h"
+#include "DrawCall.h"
 
 namespace Renderer
 {
@@ -39,6 +40,7 @@ namespace Renderer
         VAO poolVAO = nullptr;
         // Mesh map
         std::unordered_map<usize, MeshSpec> specs = {};
+
     private:
         // Vertex data offset
         usize m_vertexOffset = {};

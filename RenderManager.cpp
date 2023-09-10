@@ -30,7 +30,7 @@ RenderManager::RenderManager()
       m_matrices(std::make_shared<MatrixBuffer>()),
       m_lights(std::make_shared<LightsBuffer>()),
       m_shared(std::make_shared<SharedBuffer>()),
-      m_instancedRenderer(m_gShader, m_fastInstancedShader, m_shadowShader, m_omniShadowShader, m_spotShadowShader, m_iblMaps, m_instances, m_textures),
+      m_instancedRenderer(m_gShader, m_fastInstancedShader, m_shadowShader, m_omniShadowShader, m_spotShadowShader, m_iblMaps, vertexPool, m_instances, m_textures),
       m_lightRenderer(m_lightShader, m_shadowMap, m_pointShadowMap, m_spotShadowMap, m_gBuffer, m_iblMaps),
       m_bloomRenderer(m_downSampleShader, m_upSampleShader, m_lightingBuffer, m_bloomBuffer),
       m_postRenderer(m_postShader, m_lightingBuffer, m_bloomBuffer),
