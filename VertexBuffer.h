@@ -20,30 +20,30 @@ namespace Renderer
         // Bind vertex buffer
         void Bind(GLenum type) const;
         // Unbind vertex buffer
-        void Unbind(GLenum type) const;
+        static void Unbind(GLenum type) ;
 
         // Buffer ID
         GLuint id = 0;
         // Buffer size
         GLsizeiptr size = 0;
-        // Memory allocation flag
-        bool isMemoryAllocated = false;
     protected:
         // Creates a buffer
         void CreateBuffer();
 
         // Buffer packed vertex data
-        void BufferData(GLenum type, GLintptr offset, const std::vector<Vertex>& data);
+        static void BufferData(GLenum type, GLintptr offset, const std::vector<Vertex>& data);
         // Buffer floating point vertex data
-        void BufferData(GLenum type, const std::vector<GLfloat>& data);
+        static void BufferData(GLenum type, const std::vector<GLfloat>& data);
         // Buffer unsigned vertex data
-        void BufferData(GLenum type, GLintptr offset, const std::vector<GLuint>& data);
+        static void BufferData(GLenum type, GLintptr offset, const std::vector<GLuint>& data);
 
         // Allocate space for data
         void AllocateMemory(GLenum type, GLsizeiptr bufferSize);
+        // Reallocate more memory
+        void ReAllocateMemory(GLsizeiptr count, GLsizeiptr elementSize);
 
         // Set vertex attribute
-        void SetVertexAttribute
+        static void SetVertexAttribute
         (
             GLuint index,
             GLint nComponents,

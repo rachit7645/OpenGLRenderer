@@ -11,11 +11,23 @@
 
 namespace Renderer
 {
+    // Constants
+    constexpr usize PRE_ALLOC_VERTEX_COUNT = 1024;
+    constexpr usize PRE_ALLOC_INDEX_COUNT  = 1024;
+
     class VertexPool
     {
     public:
         // Usings
         using VAO = std::shared_ptr<Renderer::VertexArray>;
+
+        // Mesh information
+        struct MeshSpec
+        {
+            usize vertexOffset;
+            usize indexOffset;
+            usize vertexCount;
+        };
 
         // Constructor
         VertexPool();
@@ -26,11 +38,12 @@ namespace Renderer
         // Main VAO
         VAO poolVAO = nullptr;
         // Mesh map
-        std::unordered_map<usize, glm::ivec2> offsets = {};
+        std::unordered_map<usize, MeshSpec> specs = {};
+    private:
         // Vertex data offset
-        usize vertexOffset = {};
+        usize m_vertexOffset = {};
         // Index data offset
-        usize indexOffset = {};
+        usize m_indexOffset = {};
     };
 }
 

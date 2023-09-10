@@ -70,6 +70,9 @@ namespace Renderer
 
         // Main constructor
         RenderManager();
+
+        // Vertex pool
+        Renderer::VertexPool vertexPool;
     private:
         // Framebuffers
         Renderer::ShadowMap       m_shadowMap;

@@ -22,13 +22,24 @@ namespace Renderer
     class InstancedRenderer
     {
     public:
+        // Draw call for MultiDrawIndirect
+        struct DrawCall
+        {
+            GLuint count         = 0;
+            GLuint instanceCount = 0;
+            GLuint firstIndex    = 0;
+            GLint  baseVertex    = 0;
+            GLuint baseInstance  = 0;
+        };
+
         // Usings
-        using BufferPtr     = std::shared_ptr<InstanceBuffer>;
-        using HandlesPtr    = std::shared_ptr<TextureBuffer>;
-        using MdPtr         = std::shared_ptr<Model>;
-        using EntityVector  = std::vector<Entities::Entity*>;
-        using TextureVector = std::vector<MeshTextures>;
-        using Batch         = std::unordered_map<MdPtr, EntityVector>;
+        using BufferPtr      = std::shared_ptr<InstanceBuffer>;
+        using HandlesPtr     = std::shared_ptr<TextureBuffer>;
+        using MdPtr          = std::shared_ptr<Model>;
+        using EntityVector   = std::vector<Entities::Entity*>;
+        using TextureVector  = std::vector<MeshTextures>;
+        using DrawCallVector = std::vector<DrawCall>;
+        using Batch          = std::unordered_map<MdPtr, EntityVector>;
 
         // Main constructor
         InstancedRenderer
@@ -62,16 +73,22 @@ namespace Renderer
         void BeginRender(Mode mode);
         // End rendering
         void EndRender(Mode mode);
+
         // Load instance data
         void LoadInstanceData(const EntityVector& entities);
+        // Load render data
+        void LoadData(const Batch& batch, Mode mode);
+
+        // Prepare indirect draw data
+        DrawCallVector CreateDrawCalls(const MdPtr& model, const EntityVector& entities);
+
         // Prepare mesh
         static void PrepareMesh(const Mesh& mesh, Mode mode);
         // Load textures
         static void LoadTextures(TextureVector& textures, const MdPtr& model);
+
         // Unbind mesh
         static void UnbindMesh();
-        // Load render data
-        void LoadData(const Batch& batch, Mode mode);
     };
 }
 

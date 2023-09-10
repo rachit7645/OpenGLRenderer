@@ -17,6 +17,7 @@
 #include <glm/ext/vector_int4.hpp>
 
 // Unsigned integer vector types
+#include <glm/ext/vector_uint2.hpp>
 #include <glm/ext/vector_uint3.hpp>
 
 // Core operations

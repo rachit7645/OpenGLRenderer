@@ -19,7 +19,7 @@ namespace Renderer
         using VBO = std::shared_ptr<VertexBuffer>;
 
         // Init default VAO
-        VertexArray();
+        explicit VertexArray(usize vertexCount, usize indexCount);
         // Init VAO for glDrawArrays
         VertexArray(GLint coordSize, const std::vector<f32>& vertices);
 

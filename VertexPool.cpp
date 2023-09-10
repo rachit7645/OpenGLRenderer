@@ -4,18 +4,19 @@
 using namespace Renderer;
 
 VertexPool::VertexPool()
-    : poolVAO(std::make_shared<VertexArray>())
+    : poolVAO(std::make_shared<VertexArray>(PRE_ALLOC_VERTEX_COUNT, PRE_ALLOC_INDEX_COUNT))
 {
 }
 
 void VertexPool::AppendData(usize hash, const std::vector<Vertex>& vertices, const std::vector<u32>& indices)
 {
     // Load to VAO
-    poolVAO->AppendData(vertices, indices, vertexOffset, indexOffset);
+    poolVAO->AppendData(vertices, indices, m_vertexOffset, m_indexOffset);
 
-    // Calculate vertex and index offsets
-    vertexOffset += vertices.size();
-    indexOffset  += indices.size();
+    // Store to map
+    specs[hash] = {m_vertexOffset, m_indexOffset, indices.size()};
 
-    // Store to vector
+    // Calculate new vertex and index offsets
+    m_vertexOffset += vertices.size();
+    m_indexOffset  += indices.size();
 }

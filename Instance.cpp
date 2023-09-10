@@ -399,8 +399,8 @@ void Instance::InitEntities()
     );
 
     // All models
-    auto playerModel = resources.GetModel("gfx/Mario/Mario.gltf",  defaultTextures);
-    auto sponzaModel = resources.GetModel("gfx/Sponza/sponza.glb", defaultTextures);
+    auto playerModel = resources.GetModel("gfx/Mario/Mario.gltf",  defaultTextures, m_renderer.vertexPool);
+    auto sponzaModel = resources.GetModel("gfx/Sponza/sponza.glb", defaultTextures, m_renderer.vertexPool);
 
     // Entities
     m_entities =

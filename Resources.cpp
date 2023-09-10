@@ -10,6 +10,7 @@ using namespace Engine;
 using Renderer::Texture;
 using Renderer::Model;
 using Renderer::MeshTextures;
+using Renderer::VertexPool;
 
 // Aliases
 using TxPtr = Resources::TxPtr;
@@ -36,7 +37,7 @@ TxPtr Resources::GetTexture(const std::string& path)
     }
 }
 
-MdPtr Resources::GetModel(const std::string& path, const MeshTextures& textures)
+MdPtr Resources::GetModel(const std::string& path, const MeshTextures& texture, VertexPool& vertexPool)
 {
     // Try to locate model
     auto result = m_models.find(path);
@@ -53,7 +54,7 @@ MdPtr Resources::GetModel(const std::string& path, const MeshTextures& textures)
     else
     {
         // Load model
-        return m_models[path] = std::make_shared<Model>(path, textures);
+        return m_models[path] = std::make_shared<Model>(path, texture, vertexPool);
     }
 }
 

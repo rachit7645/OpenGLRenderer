@@ -44,8 +44,6 @@ void VertexBuffer::BufferData(GLenum type, GLintptr offset, const std::vector<GL
     );
 }
 
-// Allocate space for data
-// FIXME: This is NOT how you reallocate data
 void VertexBuffer::AllocateMemory(GLenum type, GLsizeiptr bufferSize)
 {
     // Set size
@@ -58,8 +56,41 @@ void VertexBuffer::AllocateMemory(GLenum type, GLsizeiptr bufferSize)
         nullptr,
         GL_STATIC_DRAW
     );
-    // Set flag
-    isMemoryAllocated = true;
+}
+
+void VertexBuffer::ReAllocateMemory(GLsizeiptr count, GLsizeiptr elementSize)
+{
+    // Copy old data
+    GLuint     oldBuffer = id;
+    GLsizeiptr oldSize   = size;
+    // Bind old buffer as read point
+    Bind(GL_COPY_READ_BUFFER);
+
+    // Make sure that there is enough memory for copying
+    if (count * elementSize < oldSize)
+    {
+        // New element count
+        count = oldSize / elementSize;
+    }
+
+    // Create new buffer
+    CreateBuffer();
+    Bind(GL_COPY_WRITE_BUFFER);
+    // Allocate more memory (x2 as much to avoid more allocations)
+    AllocateMemory(GL_COPY_WRITE_BUFFER, 2 * count * elementSize);
+
+    // Copy data on GPU
+    glCopyBufferSubData
+    (
+        GL_COPY_READ_BUFFER,
+        GL_COPY_WRITE_BUFFER,
+        0,
+        0,
+        oldSize
+    );
+
+    // Delete old buffer
+    glDeleteBuffers(1, &oldBuffer);
 }
 
 void VertexBuffer::SetVertexAttribute
@@ -89,7 +120,7 @@ void VertexBuffer::Bind(GLenum type) const
     glBindBuffer(type, id);
 }
 
-void VertexBuffer::Unbind(GLenum type) const
+void VertexBuffer::Unbind(GLenum type)
 {
     // Unbind
     glBindBuffer(type, 0);

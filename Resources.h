@@ -7,6 +7,7 @@
 
 #include "Texture.h"
 #include "Model.h"
+#include "VertexPool.h"
 
 namespace Engine
 {
@@ -24,7 +25,7 @@ namespace Engine
         TxPtr GetTexture(const std::string& path);
         // If the same model exists, it returns it (fast)
         // Otherwise it generates it (slow)
-        MdPtr GetModel(const std::string& path, const Renderer::MeshTextures& textures);
+        MdPtr GetModel(const std::string& path, const Renderer::MeshTextures& textures, Renderer::VertexPool& vertexPool);
         // Clears the cache
         void Clear();
     private:

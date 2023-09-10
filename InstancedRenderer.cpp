@@ -10,6 +10,9 @@ using Shader::ShadowShader;
 using Shader::OmniShadowShader;
 using Shader::SpotShadowShader;
 
+// Aliases
+using DrawCallVector = InstancedRenderer::DrawCallVector;
+
 InstancedRenderer::InstancedRenderer
 (
     Shader::GBufferShader& gShader,
@@ -240,4 +243,16 @@ void InstancedRenderer::UnbindMesh()
 {
     // Unbind
     glBindVertexArray(0);
+}
+
+DrawCallVector InstancedRenderer::CreateDrawCalls(const MdPtr& model, const EntityVector& entities)
+{
+    DrawCallVector drawCalls = {};
+    drawCalls.reserve(model->meshes.size());
+
+    for (const Mesh& mesh : model->meshes)
+    {
+    }
+
+    return drawCalls;
 }

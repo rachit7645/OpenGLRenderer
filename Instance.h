@@ -57,6 +57,9 @@ namespace Engine
         // SDL handle
         Engine::Window m_window;
 
+        // Renderer
+        Renderer::RenderManager m_renderer = {};
+
         // Entity vector
         EntityVec m_entities = {};
         // Water tiles
@@ -73,9 +76,6 @@ namespace Engine
         Entities::Player m_player;
         // Camera
         Entities::Camera m_camera;
-
-        // Renderer
-        Renderer::RenderManager m_renderer = {};
 
         // Cycle start time
         TimePoint m_startTime = {};

@@ -32,7 +32,7 @@ constexpr u32 ASSIMP_FLAGS = aiProcess_Triangulate              | // Only triang
                              aiProcess_RemoveRedundantMaterials ; // Removes unnecessary materials
 
 
-Model::Model(const std::string_view path, const MeshTextures& textures)
+Model::Model(const std::string_view path, const MeshTextures& textures, VertexPool& vertexPool)
 {
     // Log
     LOG_INFO("Loading model: {}\n", path);
@@ -52,7 +52,7 @@ Model::Model(const std::string_view path, const MeshTextures& textures)
     }
 
     // Process scene nodes
-    ProcessNode(scene->mRootNode, scene, textures, files.GetDirectory(path), path);
+    ProcessNode(scene->mRootNode, scene, textures, files.GetDirectory(path), path, vertexPool);
 }
 
 void Model::ProcessNode
@@ -62,6 +62,7 @@ void Model::ProcessNode
     const MeshTextures& textures,
     const std::string& directory,
     const std::string_view path,
+    VertexPool& vertexPool,
     std::string nodeName
 )
 {
@@ -81,14 +82,25 @@ void Model::ProcessNode
     for (u32 i = 0; i < node->mNumMeshes; ++i)
     {
         // Add meshes
-        meshes.emplace_back(ProcessMesh(scene->mMeshes[node->mMeshes[i]], scene, textures, directory, path, nodeName));
+        meshes.emplace_back
+        (
+            ProcessMesh(
+                scene->mMeshes[node->mMeshes[i]],
+                scene,
+                textures,
+                directory,
+                path,
+                vertexPool,
+                nodeName
+            )
+        );
     }
 
     // Iterate over all the child nodes
     for (u32 i = 0; i < node->mNumChildren; ++i)
     {
         // Process nodes recursively
-        ProcessNode(node->mChildren[i], scene, textures, directory, path, nodeName);
+        ProcessNode(node->mChildren[i], scene, textures, directory, path, vertexPool, nodeName);
     }
 }
 
@@ -99,6 +111,7 @@ Mesh Model::ProcessMesh
     const MeshTextures& textures,
     const std::string& directory,
     const std::string_view path,
+    VertexPool& vertexPool,
     const std::string& nodeName
 )
 {
@@ -141,7 +154,7 @@ Mesh Model::ProcessMesh
     std::string hashString = std::string(path.data()) + "_" + nodeName + "_" + mesh->mName.C_Str();
     usize       hash       = std::hash<std::string>{}(hashString);
     // Return mesh
-    return {hash, vertices, indices, ProcessTextures(mesh, scene, textures, directory), aabb};
+    return {hash, vertices, indices, ProcessTextures(mesh, scene, textures, directory), aabb, vertexPool};
 }
 
 MeshTextures Model::ProcessTextures

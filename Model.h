@@ -10,6 +10,7 @@
 #include "Util.h"
 #include "Mesh.h"
 #include "MeshTextures.h"
+#include "VertexPool.h"
 
 namespace Renderer
 {
@@ -19,7 +20,7 @@ namespace Renderer
         // Usings
         using TxPtr = std::shared_ptr<Texture>;
         // Main constructor
-        Model(std::string_view path, const MeshTextures& textures);
+        Model(std::string_view path, const MeshTextures& textures, VertexPool& vertexPool);
         // Data
         std::vector<Mesh> meshes;
     private:
@@ -31,6 +32,7 @@ namespace Renderer
             const MeshTextures& textures,
             const std::string& directory,
             std::string_view path,
+            VertexPool& vertexPool,
             std::string nodeName = ""
         );
 
@@ -42,6 +44,7 @@ namespace Renderer
             const MeshTextures& textures,
             const std::string& directory,
             std::string_view path,
+            VertexPool& vertexPool,
             const std::string& nodeName
         );
 

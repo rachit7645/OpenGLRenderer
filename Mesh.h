@@ -8,6 +8,7 @@
 #include "MeshTextures.h"
 #include "Vertex.h"
 #include "AABB.h"
+#include "VertexPool.h"
 
 namespace Renderer
 {
@@ -24,7 +25,8 @@ namespace Renderer
             const std::vector<Vertex>& vertices,
             const std::vector<u32>& indices,
             Renderer::MeshTextures textures,
-            const Maths::AABB& aabb
+            const Maths::AABB& aabb,
+            VertexPool& pool
         );
 
         // ID Hash
