@@ -1,4 +1,5 @@
 #include "InstancedRenderer.h"
+#include "Log.h"
 
 // Using namespaces
 using namespace Renderer;
@@ -59,23 +60,32 @@ void InstancedRenderer::Render(const Batch& batch, Mode mode)
     // Begin render pass
     BeginRender(mode);
 
+    // Load textures
+    LoadData(batch, mode);
+    // Create draw calls
+    auto nDrawCalls = CreateDrawCalls(batch);
+
+    // Current draw index
+    usize currentDrawCall = 0;
+
     // For each pair
     for (const auto& [model, entities] : batch)
     {
         // Load instance data
         LoadInstanceData(entities);
-        // Create draw calls
-        auto drawCalls = CreateDrawCalls(model, entities);
-
         // Draw
         glMultiDrawElementsIndirect
         (
             GL_TRIANGLES,
             GL_UNSIGNED_INT,
-            reinterpret_cast<const void*>(0),
-            static_cast<GLsizei>(drawCalls.size()),
+            reinterpret_cast<const void*>(currentDrawCall * sizeof(DrawCall)),
+            static_cast<GLsizei>(model->meshes.size()),
             0
         );
+        // Increment
+        currentDrawCall += model->meshes.size();
+        // Cap current draw call
+        currentDrawCall = glm::clamp(currentDrawCall, static_cast<usize>(0), nDrawCalls + 1);
     }
 
     // End render pass
@@ -137,7 +147,7 @@ void InstancedRenderer::EndRender(Mode mode)
     // Unbind VAO
     glBindVertexArray(0);
     // Bind indirect VBO
-    indirectBuffer->Bind(GL_ELEMENT_ARRAY_BUFFER);
+    indirectBuffer->Unbind(GL_DRAW_INDIRECT_BUFFER);
 
     // Select mode
     switch (mode)
@@ -212,89 +222,54 @@ void InstancedRenderer::LoadInstanceData(const EntityVector& entities)
     instances->LoadInstanceData(entities);
 }
 
-void InstancedRenderer::PrepareMesh(const Mesh& mesh, Mode mode)
-{
-    // Select mode
-    switch (mode)
-    {
-    case Mode::Deferred:
-        // Activate albedo
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, mesh.textures.albedo->id);
-        // Activate normal
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, mesh.textures.normal->id);
-        // Activate ambient occlusion, metallic and roughness
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, mesh.textures.aoRghMtl->id);
-        // Activate emmisive
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, mesh.textures.emmisive->id);
-        break;
-
-    case Mode::Fast:
-        // Load albedo
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, mesh.textures.albedo->id);
-        // Load aoMtlRgh
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, mesh.textures.aoRghMtl->id);
-        break;
-
-    case Mode::Shadow:
-    case Mode::OmniShadow:
-    case Mode::SpotShadow:
-        // Nothing to do here
-        break;
-    }
-}
-
-void InstancedRenderer::UnbindMesh()
-{
-    // Unbind
-    glBindVertexArray(0);
-}
-
-DrawCallVector InstancedRenderer::CreateDrawCalls(const MdPtr& model, const EntityVector& entities)
+usize InstancedRenderer::CreateDrawCalls(const Batch& batch)
 {
     // Create draw call vector
     DrawCallVector drawCalls = {};
-    drawCalls.reserve(model->meshes.size());
 
-    // For every mesh
-    for (const Mesh& mesh : model->meshes)
+    for (const auto& [model, entities] : batch)
     {
-        // Get mesh specification
-        const auto& spec = vertexPool.specs[mesh.id];
+        // For every mesh
+        for (const Mesh& mesh : model->meshes)
+        {
+            // Get mesh specification
+            const auto& spec = vertexPool.specs[mesh.id];
 
-        // Initialise draw call
-        DrawCall call = {};
-        // Add parameters
-        call.count         = static_cast<GLuint>(spec.vertexCount);
-        call.instanceCount = static_cast<GLuint>(entities.size());
-        call.firstIndex    = static_cast<GLuint>(spec.indexOffset);
-        call.baseVertex    = static_cast<GLint>(spec.vertexOffset);
-        call.baseInstance  = 0;
+            // Initialise draw call
+            DrawCall call = {};
+            // Add parameters
+            call.count = static_cast<GLuint>(spec.vertexCount);
+            call.instanceCount = static_cast<GLuint>(entities.size());
+            call.firstIndex = static_cast<GLuint>(spec.indexOffset);
+            call.baseVertex = static_cast<GLint>(spec.vertexOffset);
+            call.baseInstance = 0;
 
-        // Add to vector
-        drawCalls.emplace_back(call);
+            // Add to vector
+            drawCalls.emplace_back(call);
+        }
     }
 
     // Load draw calls to buffer
     LoadDrawCalls(drawCalls);
 
     // Return vector
-    return drawCalls;
+    return drawCalls.size();
 }
 
 void InstancedRenderer::LoadDrawCalls(const std::vector<DrawCall>& drawCalls)
 {
-    // Buffer indirect data
-    glBufferSubData
+    // Get size in bytes
+    usize sizeBytes = drawCalls.size() * sizeof(DrawCall);
+    // Get pointer
+    auto ptr = glMapBufferRange
     (
         GL_DRAW_INDIRECT_BUFFER,
-        static_cast<GLintptr>(0),
-        static_cast<GLsizeiptr>(drawCalls.size() * sizeof(DrawCall)),
-        reinterpret_cast<const void*>(&drawCalls[0])
+        0,
+        static_cast<GLsizeiptr>(sizeBytes),
+        GL_MAP_WRITE_BIT
     );
+    // Copy
+    std::memcpy(ptr, drawCalls.data(), sizeBytes);
+    // Unmap pointer
+    glUnmapBuffer(GL_DRAW_INDIRECT_BUFFER);
 }

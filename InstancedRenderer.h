@@ -77,19 +77,13 @@ namespace Renderer
         void LoadInstanceData(const EntityVector& entities);
         // Load render data
         void LoadData(const Batch& batch, Mode mode);
-
-        // Prepare indirect draw data
-        DrawCallVector CreateDrawCalls(const MdPtr& model, const EntityVector& entities);
-        // Load draw call data
-        static void LoadDrawCalls(const std::vector<Renderer::DrawCall>& drawCalls);
-
-        // Prepare mesh
-        static void PrepareMesh(const Mesh& mesh, Mode mode);
         // Load textures
         static void LoadTextures(TextureVector& textures, const MdPtr& model);
 
-        // Unbind mesh
-        static void UnbindMesh();
+        // Prepare indirect draw data
+        usize CreateDrawCalls(const Batch& batch);
+        // Load draw call data
+        static void LoadDrawCalls(const std::vector<Renderer::DrawCall>& drawCalls);
     };
 }
 

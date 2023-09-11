@@ -1,4 +1,5 @@
 #include "VertexBuffer.h"
+#include "Log.h"
 
 using namespace Renderer;
 
@@ -8,16 +9,25 @@ void VertexBuffer::CreateBuffer()
     glGenBuffers(1, &id);
 }
 
-void VertexBuffer::BufferData(GLenum type, GLintptr offset, const std::vector<Vertex>& data)
+void VertexBuffer::BufferData(GLenum type, GLintptr offset, const std::vector<Vertex>& data) const
 {
-    // Buffer packed data
-    glBufferSubData
+    // Get parameters
+    usize offsetBytes = offset * sizeof(Vertex);
+    usize sizeBytes   = data.size() * sizeof(Vertex);
+    // Quick check
+    assert(static_cast<GLsizeiptr>(offsetBytes + sizeBytes) <= size);
+    // Get pointer
+    auto ptr = glMapBufferRange
     (
         type,
-        static_cast<GLintptr>(offset * sizeof(Vertex)),
-        static_cast<GLsizeiptr>(data.size() * sizeof(Vertex)),
-        reinterpret_cast<const void*>(data.data())
+        static_cast<GLintptr>(offsetBytes),
+        static_cast<GLsizeiptr>(sizeBytes),
+        GL_MAP_WRITE_BIT
     );
+    // Copy
+    std::memcpy(ptr, data.data(), sizeBytes);
+    // Unmap pointer
+    glUnmapBuffer(type);
 }
 
 void VertexBuffer::BufferData(GLenum type, const std::vector<GLfloat>& data)
@@ -32,16 +42,25 @@ void VertexBuffer::BufferData(GLenum type, const std::vector<GLfloat>& data)
     );
 }
 
-void VertexBuffer::BufferData(GLenum type, GLintptr offset, const std::vector<GLuint>& data)
+void VertexBuffer::BufferData(GLenum type, GLintptr offset, const std::vector<GLuint>& data) const
 {
-    // Buffer u32 data
-    glBufferSubData
+    // Get parameters
+    usize offsetBytes = offset * sizeof(GLuint);
+    usize sizeBytes   = data.size() * sizeof(GLuint);
+    // Quick check
+    assert(static_cast<GLsizeiptr>(offsetBytes + sizeBytes) <= size);
+    // Get pointer
+    auto ptr = glMapBufferRange
     (
         type,
-        static_cast<GLintptr>(offset * sizeof(GLuint)),
-        static_cast<GLsizeiptr>(data.size() * sizeof(GLuint)),
-        reinterpret_cast<const void*>(data.data())
+        static_cast<GLintptr>(offsetBytes),
+        static_cast<GLsizeiptr>(sizeBytes),
+        GL_MAP_WRITE_BIT
     );
+    // Copy
+    std::memcpy(ptr, data.data(), sizeBytes);
+    // Unmap pointer
+    glUnmapBuffer(type);
 }
 
 void VertexBuffer::AllocateMemory(GLenum type, GLsizeiptr bufferSize)
@@ -70,7 +89,7 @@ void VertexBuffer::ReAllocateMemory(GLenum type, GLsizeiptr count, GLsizeiptr el
     if (count * elementSize < oldSize)
     {
         // New element count
-        count = oldSize / elementSize;
+        count += oldSize / elementSize;
     }
 
     // Create new buffer

@@ -1,9 +1,12 @@
 #include "VertexArray.h"
 #include "InstancedRenderer.h"
 #include "DrawCall.h"
+#include "Log.h"
 
 // Using namespaces
 using namespace Renderer;
+
+// TODO: Shift a lot of stuff to vertex pool and make this generic
 
 VertexArray::VertexArray(usize vertexCount, usize indexCount)
 {
@@ -23,47 +26,8 @@ VertexArray::VertexArray(usize vertexCount, usize indexCount)
     buffers["vertices"]->Bind(GL_ARRAY_BUFFER);
     // Pre allocate required memory
     buffers["vertices"]->AllocateMemory(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(vertexCount * sizeof(Vertex)));
-
-    // Enable position
-    buffers["vertices"]->SetVertexAttribute
-    (
-        0,
-        3,
-        GL_FLOAT,
-        sizeof(Vertex),
-        reinterpret_cast<void*>(offsetof(Vertex, position))
-    );
-
-    // Enable texture coords
-    buffers["vertices"]->SetVertexAttribute
-    (
-        1,
-        2,
-        GL_FLOAT,
-        sizeof(Vertex),
-        reinterpret_cast<void*>(offsetof(Vertex, txCoord))
-    );
-
-    // Enable normals
-    buffers["vertices"]->SetVertexAttribute
-    (
-        2,
-        3,
-        GL_FLOAT,
-        sizeof(Vertex),
-        reinterpret_cast<void*>(offsetof(Vertex, normal))
-    );
-
-    // Enable tangents
-    buffers["vertices"]->SetVertexAttribute
-    (
-        3,
-        3,
-        GL_FLOAT,
-        sizeof(Vertex),
-        reinterpret_cast<void*>(offsetof(Vertex, tangent))
-    );
-
+    // Setup VAO attributes
+    SetupVertices();
     // Unbind
     buffers["vertices"]->Unbind(GL_ARRAY_BUFFER);
 
@@ -103,6 +67,49 @@ VertexArray::VertexArray
     glBindVertexArray(0);
 }
 
+void VertexArray::SetupVertices()
+{
+    // Enable position
+    buffers["vertices"]->SetVertexAttribute
+    (
+        0,
+        3,
+        GL_FLOAT,
+        sizeof(Vertex),
+        reinterpret_cast<void*>(offsetof(Vertex, position))
+    );
+
+    // Enable texture coords
+    buffers["vertices"]->SetVertexAttribute
+    (
+        1,
+        2,
+        GL_FLOAT,
+        sizeof(Vertex),
+        reinterpret_cast<void*>(offsetof(Vertex, txCoord))
+    );
+
+    // Enable normals
+    buffers["vertices"]->SetVertexAttribute
+    (
+        2,
+        3,
+        GL_FLOAT,
+        sizeof(Vertex),
+        reinterpret_cast<void*>(offsetof(Vertex, normal))
+    );
+
+    // Enable tangents
+    buffers["vertices"]->SetVertexAttribute
+    (
+        3,
+        3,
+        GL_FLOAT,
+        sizeof(Vertex),
+        reinterpret_cast<void*>(offsetof(Vertex, tangent))
+    );
+}
+
 void VertexArray::AppendData
 (
     const std::vector<Vertex>& vertices,
@@ -111,11 +118,25 @@ void VertexArray::AppendData
     usize indexOffset
 )
 {
-    // Bind VAO
-    glBindVertexArray(id);
+    // Vertex memory flag
+    bool memoryFlagVertices = CheckMemory
+    (
+        buffers["vertices"],
+        vertices.size(),
+        vertexOffset,
+        sizeof(Vertex)
+    );
+    // Index memory flag
+    bool memoryFlagIndices = CheckMemory
+    (
+        buffers["indices"],
+        indices.size(),
+        indexOffset,
+        sizeof(GLuint)
+    );
 
     // Allocate more memory if needed
-    if (CheckMemory(buffers["vertices"], vertices.size(), vertexOffset, sizeof(Vertex)))
+    if (memoryFlagVertices)
     {
         // Get element count
         auto count = static_cast<GLsizeiptr>(vertexOffset + vertices.size());
@@ -124,7 +145,7 @@ void VertexArray::AppendData
     }
 
     // Allocate more memory if needed
-    if (CheckMemory(buffers["indices"], indices.size(), indexOffset, sizeof(GLuint)))
+    if (memoryFlagIndices)
     {
         // Get element count
         auto count = static_cast<GLsizeiptr>(indexOffset + indices.size());
@@ -132,8 +153,17 @@ void VertexArray::AppendData
         buffers["indices"]->ReAllocateMemory(GL_ELEMENT_ARRAY_BUFFER, count, sizeof(GLuint));
     }
 
+    // Bind VAO
+    glBindVertexArray(id);
+
     // Bind vertex data
     buffers["vertices"]->Bind(GL_ARRAY_BUFFER);
+    // Update VAO state
+    if (memoryFlagVertices)
+    {
+        // Setup vertex VAO state
+        SetupVertices();
+    }
     // Buffer vertex data
     buffers["vertices"]->BufferData(GL_ARRAY_BUFFER, static_cast<GLintptr>(vertexOffset), vertices);
 
@@ -155,7 +185,7 @@ bool VertexArray::CheckMemory(const VertexArray::VBO& buffer, usize newCount, us
     GLsizeiptr spaceLeft     = buffer->size - static_cast<GLsizeiptr>(offset * elementSize);
     auto       spaceRequired = static_cast<GLsizeiptr>(newCount * elementSize);
     // Return
-    return spaceRequired > spaceLeft;
+    return spaceRequired - spaceLeft >= 0;
 }
 
 VertexArray::~VertexArray()

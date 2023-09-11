@@ -431,10 +431,11 @@ void RenderManager::CullEntities(const Camera& camera)
     // Clear
     // m_culledEntities.clear();
 
+    // Copy
     m_culledEntities = m_entities;
 
-    /*// For each batch
-    for (const auto& [model, entities] : m_entities)
+    /* // For each batch
+    for (auto& [model, entities] : m_entities)
     {
         // For each entity
         for (auto& entity : entities)
@@ -446,11 +447,25 @@ void RenderManager::CullEntities(const Camera& camera)
             const auto& cullingData = entity->cullState.isEntityCulled;
 
             // Is everything fully culled
-            bool isFullyCulled = std::all_of(cullingData.begin(), cullingData.end(), [this] (const auto& it) {
+            bool isFullyCulled = std::all_of(cullingData.begin(), cullingData.end(), [] (const auto& it) {
                 return it.second;
             });
+
+            // If fully culled
+            if (isFullyCulled)
+            {
+                // Remove entity
+                entities.erase(std::find(entities.begin(), entities.end(), entity));
+            }
         }
-    }*/
+
+        // If entity vector is not empty
+        if (!entities.empty())
+        {
+            // Add group
+            m_culledEntities[model] = entities;
+        }
+    } */
 }
 
 void RenderManager::RenderImGui()

@@ -42,6 +42,8 @@ namespace Renderer
         // Vertex buffers
         std::unordered_map<std::string_view, VBO> buffers;
     private:
+        // Set up vertex buffer
+        void SetupVertices();
         // Check whether enough memory is allocated or not
         static bool CheckMemory(const VBO& buffer, usize newCount, usize offset, usize elementSize);
     };

@@ -33,14 +33,14 @@ void main()
     vec4 gEmm = texture(emmisiveMap, txCoords);
     vec4 gMat = texture(aoRghMtlMap, txCoords);
     // Normal + AO + Roughness
-    gNormal.rg = PackNormal(GetNormalFromMap(gNrm.rgb));
-    gNormal.b  = gMat.r;
-    gNormal.a  = gMat.g;
+    gNormal.rg = PackNormal(vec3(0.0f, 1.0f, 0.0f)/*GetNormalFromMap(gNrm.rgb)*/);
+    gNormal.b  = 0.0f;//gMat.r;
+    gNormal.a  = 1.0f;//gMat.g;
     // Albedo + Metallic
-    gAlbedo.rgb = pow(gAlb.rgb, vec3(GAMMA_FACTOR));
-    gAlbedo.a   = gMat.b;
+    gAlbedo.rgb = pow(vec3(1.0f)/*gAlb.rgb*/, vec3(GAMMA_FACTOR));
+    gAlbedo.a   = 0.0f;//gMat.b;
     // Emmisive color
-    gEmmisive = gEmm.rgb;
+    gEmmisive = vec3(0.0f);//gEmm.rgb;
 }
 
 vec3 GetNormalFromMap(vec3 normal)

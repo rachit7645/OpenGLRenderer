@@ -31,11 +31,11 @@ namespace Renderer
         void CreateBuffer();
 
         // Buffer packed vertex data
-        static void BufferData(GLenum type, GLintptr offset, const std::vector<Vertex>& data);
+        void BufferData(GLenum type, GLintptr offset, const std::vector<Vertex>& data) const;
         // Buffer floating point vertex data
         static void BufferData(GLenum type, const std::vector<GLfloat>& data);
         // Buffer unsigned vertex data
-        static void BufferData(GLenum type, GLintptr offset, const std::vector<GLuint>& data);
+        void BufferData(GLenum type, GLintptr offset, const std::vector<GLuint>& data) const;
 
         // Allocate space for data
         void AllocateMemory(GLenum type, GLsizeiptr bufferSize);
