@@ -74,7 +74,7 @@ namespace Renderer
         void EndRender(Mode mode);
 
         // Load instance data
-        void LoadInstanceData(const EntityVector& entities);
+        void LoadInstanceData(const Batch& batch);
         // Load render data
         void LoadData(const Batch& batch, Mode mode);
         // Load textures

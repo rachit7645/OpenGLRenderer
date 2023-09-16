@@ -6,7 +6,7 @@
 namespace Renderer
 {
     // Constants
-    constexpr usize MAX_DRAW_CALLS = 16384;
+    constexpr usize MAX_DRAW_CALLS = 4096;
 
     // Draw call for MultiDrawIndirect
     struct __attribute__((packed)) DrawCall

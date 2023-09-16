@@ -1,15 +1,11 @@
 #include "Util.h"
-#include "InstanceBuffer.h"
 #include "TextureBuffer.h"
-#include "Log.h"
 
 // Using namespaces
 using namespace Renderer;
 
 // Aliases
-using TextureSetGLSL    = TextureBuffer::TextureSetGLSL;
 using TextureBufferGLSL = TextureBuffer::TextureBufferGLSL;
-using TexturesGLSL      = TextureBuffer::Textures;
 
 TextureBuffer::TextureBuffer()
     : ShaderStorageBuffer(7, sizeof(TextureBufferGLSL), GL_DYNAMIC_DRAW)
@@ -40,19 +36,17 @@ void TextureBuffer::LoadTextures(const Textures& textures)
     // Reserve memory
     handles.reserve(size);
 
-    // For every texture (in the EXACT same order)
-    for (usize i = 0; i < size; ++i)
+    // For every texture
+    for (const auto& texture : textures)
     {
-        // Get texture
-        const auto& set = textures[i];
-        // Pack handles
-        handles[i] =
-        {
-            set.albedo->handle,
-            set.normal->handle,
-            set.aoRghMtl->handle,
-            set.emmisive->handle
-        };
+        // Create texture set
+        TextureSetGLSL set = {};
+        set.albedoMap   = texture.albedo->handle;
+        set.normalMap   = texture.normal->handle;
+        set.aoRghMtlMap = texture.aoRghMtl->handle;
+        set.emmisiveMap = texture.emmisive->handle;
+        // Add to vector
+        handles.emplace_back(set);
     }
 
     // Bind buffer
@@ -67,24 +61,6 @@ void TextureBuffer::LoadTextures(const Textures& textures)
         reinterpret_cast<const void*>(&handles[0])
     );
 
-    // Unbind buffer
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-}
-
-void TextureBuffer::SetIndex(usize index)
-{
-    // Bind buffer
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, id);
-    // Empty index
-    GL::Int glIndex = {static_cast<GLint>(index)};
-    // Buffer data
-    glBufferSubData
-    (
-        GL_SHADER_STORAGE_BUFFER,
-        static_cast<GLintptr>(offsetof(TextureBufferGLSL, currentIndex)),
-        static_cast<GLsizeiptr>(sizeof(GL::Int)),
-        reinterpret_cast<const void*>(&glIndex)
-    );
     // Unbind buffer
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }

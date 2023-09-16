@@ -1,4 +1,7 @@
-#version 430 core
+#version 460 core
+
+// Extensions
+#extension GL_ARB_shader_draw_parameters : enable
 
 // Entity instance
 struct Instance
@@ -23,8 +26,6 @@ layout(std140, binding = 0) uniform Matrices
 // Instance data SSBO
 layout(std430, binding = 3) readonly buffer InstanceData
 {
-    // Instance count
-    int instanceCount;
     // Instance array
     Instance instances[];
 };
@@ -40,11 +41,14 @@ out vec2 txCoords;
 out vec3 worldPos;
 out mat3 TBNMatrix;
 
+// Flat vertex outputs
+out flat int drawID;
+
 // Entry point
 void main()
 {
     // Get instance
-    Instance instance = instances[gl_InstanceID];
+    Instance instance = instances[gl_DrawID + gl_InstanceID];
     // Transform vertex by model matrix
     vec4 fragPos = instance.modelMatrix * vec4(position, 1.0f);
     // Set world position
@@ -63,4 +67,6 @@ void main()
     vec3 B = cross(N, T);
     // Compute TBN matrix
     TBNMatrix = mat3(T, B, N);
+    // Set MDI draw ID
+    drawID = gl_DrawID;
 }

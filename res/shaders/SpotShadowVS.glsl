@@ -1,4 +1,7 @@
-#version 430 core
+#version 460 core
+
+// Extensions
+#extension GL_ARB_shader_draw_parameters : enable
 
 // Entity instance
 struct Instance
@@ -12,8 +15,6 @@ struct Instance
 // Instances data SSBO
 layout(std430, binding = 3) readonly buffer InstanceData
 {
-    // Instance count
-    int instanceCount;
     // Instance array
     Instance instances[];
 };
@@ -25,5 +26,5 @@ layout (location = 0) in vec3 position;
 void main()
 {
     // Transform to shadow space
-    gl_Position = instances[gl_InstanceID].modelMatrix * vec4(position, 1.0f);
+    gl_Position = instances[gl_DrawID + gl_InstanceID].modelMatrix * vec4(position, 1.0f);
 }

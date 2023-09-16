@@ -1,4 +1,7 @@
-#version 430 core
+#version 460 core
+
+// Extensions
+#extension GL_ARB_shader_draw_parameters : enable
 
 // Entity instance
 struct Instance
@@ -31,8 +34,6 @@ layout(std140, binding = 2) uniform Shared
 // Tnstance data SSBO
 layout(std430, binding = 3) readonly buffer InstanceData
 {
-    // Instance count
-    int instanceCount;
     // Instance array
     Instance instances[];
 };
@@ -52,7 +53,7 @@ out vec4 worldPosition;
 void main()
 {
     // Get instance
-    Instance instance = instances[gl_InstanceID];
+    Instance instance = instances[gl_DrawID + gl_InstanceID];
     // Calculate position
     worldPosition = instance.modelMatrix * vec4(position, 1.0f);
     gl_Position   = projection * cameraView * worldPosition;

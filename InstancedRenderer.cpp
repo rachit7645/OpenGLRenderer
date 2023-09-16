@@ -62,31 +62,20 @@ void InstancedRenderer::Render(const Batch& batch, Mode mode)
 
     // Load textures
     LoadData(batch, mode);
+    // Load instance data
+    LoadInstanceData(batch);
     // Create draw calls
     auto nDrawCalls = CreateDrawCalls(batch);
 
-    // Current draw index
-    usize currentDrawCall = 0;
-
-    // For each pair
-    for (const auto& [model, entities] : batch)
-    {
-        // Load instance data
-        LoadInstanceData(entities);
-        // Draw
-        glMultiDrawElementsIndirect
-        (
-            GL_TRIANGLES,
-            GL_UNSIGNED_INT,
-            reinterpret_cast<const void*>(currentDrawCall * sizeof(DrawCall)),
-            static_cast<GLsizei>(model->meshes.size()),
-            0
-        );
-        // Increment
-        currentDrawCall += model->meshes.size();
-        // Cap current draw call
-        currentDrawCall = glm::clamp(currentDrawCall, static_cast<usize>(0), nDrawCalls + 1);
-    }
+    // Draw
+    glMultiDrawElementsIndirect
+    (
+        GL_TRIANGLES,
+        GL_UNSIGNED_INT,
+        reinterpret_cast<const void*>(0),
+        static_cast<GLsizei>(nDrawCalls),
+        0
+    );
 
     // End render pass
     EndRender(mode);
@@ -216,10 +205,10 @@ void InstancedRenderer::LoadTextures(TextureVector& textures, const MdPtr& model
     }
 }
 
-void InstancedRenderer::LoadInstanceData(const EntityVector& entities)
+void InstancedRenderer::LoadInstanceData(const Batch& batch)
 {
     // Load data
-    instances->LoadInstanceData(entities);
+    instances->LoadInstanceData(batch);
 }
 
 usize InstancedRenderer::CreateDrawCalls(const Batch& batch)

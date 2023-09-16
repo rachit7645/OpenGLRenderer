@@ -33,8 +33,6 @@ namespace Renderer
         // GLSL implementation struct
         struct ALIGN_GLSL_STD140 TextureBufferGLSL
         {
-            // Current texture index
-            GL::Int currentIndex = {};
             // Array of texture sets
             TextureSetGLSL sets[SHADER_MAX_TEXTURE_SETS] = {};
         };
@@ -44,8 +42,6 @@ namespace Renderer
 
         // Loads textures into the buffer
         void LoadTextures(const Textures& textures);
-        // Set texture index
-        void SetIndex(usize index);
     };
 }
 
