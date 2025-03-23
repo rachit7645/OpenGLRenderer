@@ -17,7 +17,7 @@ uniform samplerCube prefilterMap;
 uniform sampler2D   brdfLUT;
 
 // Fragment outputs
-layout (location = 0) out vec3 outColor;
+layout(location = 0) out vec3 outColor;
 
 // Lighting functions
 vec3 CalculateAmbient(vec3 albedo, vec3 aoRghMtl);
@@ -27,11 +27,11 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0, float roughness);
 void main()
 {
     // Fetch albedo color
-    vec4 albedo = texture(albedoMap, txCoords);
+    vec3 albedo = texture(albedoMap, txCoords).rgb;
     // Fetch material data
-    vec4 aoRghMtl = texture(aoRghMtlMap, txCoords);
+    vec3 aoRghMtl = texture(aoRghMtlMap, txCoords).rgb;
     // Set output to ambient light color
-    outColor = CalculateAmbient(albedo.rgb, aoRghMtl.rgb);
+    outColor = CalculateAmbient(albedo, aoRghMtl);
 }
 
 vec3 CalculateAmbient(vec3 albedo, vec3 aoRghMtl)

@@ -162,7 +162,7 @@ uniform samplerCubeArray     pointShadowMap;
 uniform sampler2DArrayShadow spotShadowMap;
 
 // Fragment outputs
-layout (location = 0) out vec3 outColor;
+layout(location = 0) out vec3 outColor;
 
 // Data functions
 GBuffer    GetGBufferData();

@@ -104,6 +104,7 @@ add_executable(engine
     SpotShadowMap.cpp
     SpotShadowShader.cpp
     SpotShadowBuffer.cpp
+    SDLUtil.cpp
 )
 
 # Precompiled Headers

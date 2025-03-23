@@ -35,7 +35,6 @@ layout(location = 3) in vec3 tangent;
 
 // Vertex outputs
 out vec2 txCoords;
-out vec3 worldPos;
 out mat3 TBNMatrix;
 
 // Entry point
@@ -45,8 +44,6 @@ void main()
     Instance instance = instances[gl_InstanceID];
     // Transform vertex by model matrix
     vec4 fragPos = instance.modelMatrix * vec4(position, 1.0f);
-    // Set world position
-    worldPos = fragPos.xyz;
     // Transform from world to clip space
     gl_Position = projection * cameraView * fragPos;
     // Pass through texture coords
@@ -54,7 +51,7 @@ void main()
     // Transform normal
     vec3 N = normalize(mat3(instance.normalMatrix) * normal);
     // Transform tangent
-    vec3 T = normalize(mat3(instance.normalMatrix) * tangent);
+    vec3 T = normalize(instance.modelMatrix * vec4(tangent, 0.0f)).xyz;
     // Re-orthagonalize tangent
     T = normalize(T - dot(T, N) * N);
     // Calculate bitangent

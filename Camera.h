@@ -29,7 +29,7 @@ namespace Entities
         // Euler rotation
         glm::vec3 rotation = {30.0f, 270.0f, 0.0f};
         // Distance from player
-        f32 distance = 25.0f;
+        f32 distance = 18.0f;
     private:
         // Display ImGui widgets
         void ImGuiDisplay();

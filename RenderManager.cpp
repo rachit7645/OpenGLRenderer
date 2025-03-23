@@ -21,9 +21,7 @@ using Waters::WaterFrameBuffers;
 using Engine::Settings;
 
 RenderManager::RenderManager()
-    : m_shadowMap(),
-      m_pointShadowMap(),
-      m_iblRenderer(m_converterShader, m_convolutionShader, m_preFilterShader, m_brdfShader),
+    : m_iblRenderer(m_converterShader, m_convolutionShader, m_preFilterShader, m_brdfShader),
       m_iblMaps(m_iblRenderer),
       m_instances(std::make_shared<InstanceBuffer>()),
       m_matrices(std::make_shared<MatrixBuffer>()),
@@ -550,7 +548,7 @@ void RenderManager::RenderImGui()
             // Invert Y
             ImGui::Image
             (
-                reinterpret_cast<ImTextureID>(m_currentFBO->id),
+                static_cast<ImTextureID>(m_currentFBO->id),
                 ImGui::GetWindowSize(),
                 ImVec2(0, 1),
                 ImVec2(1, 0)

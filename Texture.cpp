@@ -189,8 +189,6 @@ void Texture::LoadImageData(u8* data, GLint internalFormat, GLint format, GLint 
 
 void Texture::LoadImageData3D(u8* data, GLint internalFormat, GLint format, GLint dataType, GLenum target)
 {
-    LOG_DEBUG("Width: {}, Height: {}, Depth: {}\n", width, height, depth);
-
     // Load 3D image data
     glTexImage3D
     (

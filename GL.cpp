@@ -73,14 +73,14 @@ GLint GL::GetIntegerv(GLenum param)
     return value;
 }
 
-std::string_view GL::GetString(GLenum name)
+std::string GL::GetString(GLenum name)
 {
     // Get string
     auto string = glGetString(name);
     // Convert to different format
     auto newString = reinterpret_cast<const char*>(string);
     // Return
-    return std::string_view(newString);
+    return newString;
 }
 
 void GL::Init(const glm::ivec2& dimensions)
@@ -121,14 +121,14 @@ void GL::Init(const glm::ivec2& dimensions)
     );
 }
 
-std::string_view GLEW::GetString(GLenum name)
+std::string GLEW::GetString(GLenum name)
 {
     // Get string
     auto string = glewGetString(name);
     // Convert to different format
     auto newString = reinterpret_cast<const char*>(string);
     // Return
-    return std::string_view(newString);
+    return newString;
 }
 
 bool GLEW::GetExtension(const std::string_view name)

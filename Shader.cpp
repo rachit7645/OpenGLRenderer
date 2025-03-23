@@ -170,7 +170,7 @@ void ShaderProgram::CheckShader(const std::string_view message, u32 shaderID, GL
         // Get error
         glGetShaderInfoLog(shaderID, SHADER_ERROR_BUFFER_SIZE, nullptr, error.data());
         // Log error
-        LOG_ERROR("{}\n{}", message, error.data());
+        LOG_ERROR("{}\n{}\n", message, error.data());
     }
 }
 
@@ -188,7 +188,7 @@ void ShaderProgram::CheckProgram(const std::string_view message, GLenum type) co
         // Get error
         glGetProgramInfoLog(programID, SHADER_ERROR_BUFFER_SIZE, nullptr, error.data());
         // Log error
-        LOG_ERROR("{}\n{}", message, error.data());
+        LOG_ERROR("{}\n{}\n", message, error.data());
     }
 }
 

@@ -5,7 +5,6 @@ const float GAMMA_FACTOR = 2.2f;
 
 // Vertex inputs
 in vec2 txCoords;
-in vec3 worldPos;
 in mat3 TBNMatrix;
 
 // Uniforms

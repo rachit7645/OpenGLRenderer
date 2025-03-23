@@ -32,7 +32,7 @@ namespace Logger
 #define IMPL_LOG(type, format, ...) \
     do \
     { \
-        Logger::Log(type, Util::GetTime(), Engine::Files::GetInstance().GetName(__FILE__), __LINE__, FMT_STRING(format), __VA_ARGS__); \
+        Logger::Log(type, Util::GetTime(), Engine::Files::GetInstance().GetName(__FILE__), __LINE__, format, __VA_ARGS__); \
     } \
     while (0)
 

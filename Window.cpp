@@ -10,6 +10,7 @@
 #include "Resources.h"
 #include "GL.h"
 #include "Settings.h"
+#include "SDLUtil.h"
 
 // Using namespaces
 using namespace Engine;
@@ -46,19 +47,21 @@ Window::Window()
     }
 
     // Set up opengl context
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL::SetGLAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL::SetGLAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
     // OpenGL Version 4.3 Core
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL::SetGLAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL::SetGLAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
     // RGBA8 + D24 Framebuffer
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE,     8);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,    8);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,   8);
-    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE,   8);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,   24);
+    SDL::SetGLAttribute(SDL_GL_RED_SIZE,   8);
+    SDL::SetGLAttribute(SDL_GL_BLUE_SIZE,  8);
+    SDL::SetGLAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL::SetGLAttribute(SDL_GL_ALPHA_SIZE, 8);
+    SDL::SetGLAttribute(SDL_GL_DEPTH_SIZE, 24);
+
+    // SDL::SetGLAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
     // Create SDL handle
     handle = SDL_CreateWindow
@@ -100,6 +103,23 @@ Window::Window()
         // Log error
         LOG_ERROR("SDL_GL_MakeCurrent Failed\n{}\n", SDL_GetError());
     }
+
+    // Set up opengl context
+    SDL::CheckGLAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL::CheckGLAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+    // OpenGL Version 4.3 Core
+    SDL::CheckGLAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL::CheckGLAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+
+    // RGBA8 + D24 Framebuffer
+    SDL::CheckGLAttribute(SDL_GL_RED_SIZE,   8);
+    SDL::CheckGLAttribute(SDL_GL_BLUE_SIZE,  8);
+    SDL::CheckGLAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL::CheckGLAttribute(SDL_GL_ALPHA_SIZE, 8);
+    SDL::CheckGLAttribute(SDL_GL_DEPTH_SIZE, 24);
+
+    // SDL::CheckGLAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
     // Initialize the real OpenGL context
     LOG_INFO("Initializing GLEW version: {}\n", GLEW::GetString(GLEW_VERSION));

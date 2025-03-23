@@ -1,5 +1,5 @@
-X = 1280
-Y = 768
+X = 1920
+Y = 1080
 
 # Get input
 bits = float(input("Enter bits per pixel: "))

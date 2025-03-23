@@ -26,7 +26,7 @@ namespace GL
     // Get integer
     GLint GetIntegerv(GLenum param);
     // Get string
-    std::string_view GetString(GLenum name);
+    std::string GetString(GLenum name);
 
     namespace Detail
     {
@@ -51,7 +51,7 @@ namespace GL
 namespace GLEW
 {
     // Get string
-    std::string_view GetString(GLenum name);
+    std::string GetString(GLenum name);
     // Check is extension is supported
     bool GetExtension(const std::string_view name);
 }

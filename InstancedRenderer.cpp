@@ -31,6 +31,7 @@ InstancedRenderer::InstancedRenderer
     // Connect geometry shader texture units
     gShader.Start();
     gShader.ConnectTextureUnits();
+    gShader.Stop();
 
     // Connect fast shader texture units
     fastShader.Start();

@@ -30,7 +30,7 @@ void Instance::Run()
     {
         // Prepare ImGui
         ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplSDL2_NewFrame(m_window.handle);
+        ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
         // Update
@@ -422,7 +422,7 @@ void Instance::InitEntities()
         {
             glm::vec3(0.0f, 0.0f, -4.0f),
             glm::vec3(0.0f, -90.0f, 0.0f),
-            glm::vec3(0.03f, 0.03f, 0.03f)
+            glm::vec3(1.0f, 1.0f, 1.0f)
         }
     };
 
